@@ -1,0 +1,82 @@
+[
+  {
+    "title": "Sample Case 1",
+    "desc": "This is a sample description for case 1.",
+    "field": "Family",
+    "location": "Chennai",
+    "budget": "Fixed",
+    "postedBy": "9000000011",
+    "postedAt": "2025-12-11T08:11:33.130Z",
+    "acceptedBy": null
+  },
+  {
+    "title": "Sample Case 2",
+    "desc": "This is a sample description for case 2.",
+    "field": "Property",
+    "location": "Chennai",
+    "budget": "Negotiable",
+    "postedBy": "9000000012",
+    "postedAt": "2025-12-10T08:11:33.130Z",
+    "acceptedBy": null
+  },
+  {
+    "title": "Sample Case 3",
+    "desc": "This is a sample description for case 3.",
+    "field": "Corporate",
+    "location": "Bengaluru",
+    "budget": "Free",
+    "postedBy": "9000000013",
+    "postedAt": "2025-12-09T08:11:33.130Z",
+    "acceptedBy": null
+  },
+  {
+    "title": "Sample Case 4",
+    "desc": "This is a sample description for case 4.",
+    "field": "Property",
+    "location": "Bengaluru",
+    "budget": "Fixed",
+    "postedBy": "9000000014",
+    "postedAt": "2025-12-08T08:11:33.130Z",
+    "acceptedBy": null
+  },
+  {
+    "title": "Sample Case 5",
+    "desc": "This is a sample description for case 5.",
+    "field": "Consumer",
+    "location": "Delhi",
+    "budget": "Negotiable",
+    "postedBy": "9000000015",
+    "postedAt": "2025-12-07T08:11:33.130Z",
+    "acceptedBy": null
+  },
+  {
+    "title": "Sample Case 6",
+    "desc": "This is a sample description for case 6.",
+    "field": "Civil",
+    "location": "Bengaluru",
+    "budget": "Free",
+    "postedBy": "9000000016",
+    "postedAt": "2025-12-06T08:11:33.130Z",
+    "acceptedBy": null
+  },
+  {
+    "title": "Sample Case 7",
+    "desc": "This is a sample description for case 7.",
+    "field": "Family",
+    "location": "Delhi",
+    "budget": "Fixed",
+    "postedBy": "9000000011",
+    "postedAt": "2025-12-05T08:11:33.130Z",
+    "acceptedBy": null
+  },
+  {
+    "title": "Sample Case 8",
+    "desc": "This is a sample description for case 8.",
+    "field": "Criminal",
+    "location": "Bengaluru",
+    "budget": "Negotiable",
+    "postedBy": "9000000012",
+    "postedAt": "2025-12-04T08:11:33.130Z",
+    "acceptedBy": null
+  }
+]

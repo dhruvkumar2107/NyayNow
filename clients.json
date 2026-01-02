@@ -1,0 +1,62 @@
+[
+  {
+    "role": "client",
+    "name": "Client 1",
+    "phone": "9000000011",
+    "passwordHash": null,
+    "headline": "Client headline 1",
+    "bio": "This is a sample bio for client 1.",
+    "location": "Delhi",
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  },
+  {
+    "role": "client",
+    "name": "Client 2",
+    "phone": "9000000012",
+    "passwordHash": null,
+    "headline": "Client headline 2",
+    "bio": "This is a sample bio for client 2.",
+    "location": "Bengaluru",
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  },
+  {
+    "role": "client",
+    "name": "Client 3",
+    "phone": "9000000013",
+    "passwordHash": null,
+    "headline": "Client headline 3",
+    "bio": "This is a sample bio for client 3.",
+    "location": "Chennai",
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  },
+  {
+    "role": "client",
+    "name": "Client 4",
+    "phone": "9000000014",
+    "passwordHash": null,
+    "headline": "Client headline 4",
+    "bio": "This is a sample bio for client 4.",
+    "location": "Kolkata",
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  },
+  {
+    "role": "client",
+    "name": "Client 5",
+    "phone": "9000000015",
+    "passwordHash": null,
+    "headline": "Client headline 5",
+    "bio": "This is a sample bio for client 5.",
+    "location": "Pune",
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  },
+  {
+    "role": "client",
+    "name": "Client 6",
+    "phone": "9000000016",
+    "passwordHash": null,
+    "headline": "Client headline 6",
+    "bio": "This is a sample bio for client 6.",
+    "location": "Mumbai",
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  }
+]

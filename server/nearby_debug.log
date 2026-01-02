@@ -1,0 +1,40 @@
+Request: Coordinates (12.8909312, 77.6404992), Query: legal services
+AI Response: The specific locality/area name for the given coordinates (12.8909312, 77.6404992) is **Electronic City, Bengaluru**.
+
+Based on a radius of 5-10km from Electronic City, here are 5 real legal service locations. Due to the limited presence of dedicated courts or legal aid centers strictly within this specific 5-10km radius from Electronic City, the list primarily consists of police stations which are key legal service locations.
+
+```json
+[
+  {
+    "name": "Electronic City Police Station",
+    "rating": 4.2,
+    "address": "EC Phase I, Doddathoguru, Electronic City, Bengaluru, Karnataka 560100",
+    "type": "police"
+  },
+  {
+    "name": "Bommasandra Police Station",
+    "rating": 4.1,
+    "address": "Bommasandra Industrial Area, Bommasandra, Bengaluru, Karnataka 560099",
+    "type": "police"
+  },
+  {
+    "name": "Begur Police Station",
+    "rating": 4.0,
+    "address": "Begur Main Road, Begur, Bengaluru, Karnataka 560068",
+    "type": "police"
+  },
+  {
+    "name": "Hebbagodi Police Station",
+    "rating": 4.3,
+    "address": "Surya City, Hebbagodi, Bengaluru, Karnataka 560099",
+    "type": "police"
+  },
+  {
+    "name": "Parappana Agrahara Police Station",
+    "rating": 4.4,
+    "address": "Central Prison Road, Muneshwara Layout, Parappana Agrahara, Bengaluru, Karnataka 560100",
+    "type": "police"
+  }
+]
+```
+----------------

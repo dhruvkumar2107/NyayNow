@@ -1,0 +1,86 @@
+[
+  {
+    "role": "lawyer",
+    "name": "Lawyer 1",
+    "phone": "8000000011",
+    "passwordHash": null,
+    "headline": "Family Lawyer",
+    "bio": "Experienced Family lawyer.",
+    "location": "Delhi",
+    "experience": 4,
+    "fields": [
+      "Family"
+    ],
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  },
+  {
+    "role": "lawyer",
+    "name": "Lawyer 2",
+    "phone": "8000000012",
+    "passwordHash": null,
+    "headline": "Property Lawyer",
+    "bio": "Experienced Property lawyer.",
+    "location": "Bengaluru",
+    "experience": 5,
+    "fields": [
+      "Property"
+    ],
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  },
+  {
+    "role": "lawyer",
+    "name": "Lawyer 3",
+    "phone": "8000000013",
+    "passwordHash": null,
+    "headline": "Corporate Lawyer",
+    "bio": "Experienced Corporate lawyer.",
+    "location": "Chennai",
+    "experience": 6,
+    "fields": [
+      "Corporate"
+    ],
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  },
+  {
+    "role": "lawyer",
+    "name": "Lawyer 4",
+    "phone": "8000000014",
+    "passwordHash": null,
+    "headline": "Civil Lawyer",
+    "bio": "Experienced Civil lawyer.",
+    "location": "Kolkata",
+    "experience": 7,
+    "fields": [
+      "Civil"
+    ],
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  },
+  {
+    "role": "lawyer",
+    "name": "Lawyer 5",
+    "phone": "8000000015",
+    "passwordHash": null,
+    "headline": "Consumer Lawyer",
+    "bio": "Experienced Consumer lawyer.",
+    "location": "Pune",
+    "experience": 8,
+    "fields": [
+      "Consumer"
+    ],
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  },
+  {
+    "role": "lawyer",
+    "name": "Lawyer 6",
+    "phone": "8000000016",
+    "passwordHash": null,
+    "headline": "Criminal Lawyer",
+    "bio": "Experienced Criminal lawyer.",
+    "location": "Mumbai",
+    "experience": 9,
+    "fields": [
+      "Criminal"
+    ],
+    "createdAt": "2025-12-12T08:11:33.130Z"
+  }
+]
