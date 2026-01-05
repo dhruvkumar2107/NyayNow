@@ -48,7 +48,8 @@ export default function Register() {
     const res = await register(userData);
 
     if (res.success) {
-      navigate(role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard");
+      alert("Registration Successful! Please login.");
+      navigate("/login");
     } else {
       alert("Registration Failed: " + res.message);
     }
