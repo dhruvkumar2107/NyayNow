@@ -1,0 +1,16 @@
+# Ignore Backend and Infrastructure
+server
+python service
+infra
+data
+migrate_data
+.github
+
+# Ignore Logs and Local Configs
+*.log
+*.txt
+.env
+local_db
+
+# Ignore Docs
+*.md
