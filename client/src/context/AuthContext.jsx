@@ -41,7 +41,7 @@ export function AuthProvider({ children }) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       setUser(user);
-      return { success: true };
+      return { success: true, user };
     } catch (error) {
       console.error("Login failed:", error.response?.data?.message);
       return { success: false, message: error.response?.data?.message || "Login failed" };
