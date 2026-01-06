@@ -18,8 +18,24 @@ const io = new Server(server, {
   }
 });
 
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+
 /* ================= MIDDLEWARE ================= */
 app.use(compression());
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP for now to avoid breaking scripts/images during dev
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 300, // Limit each IP to 300 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
+
 app.use(cors({
   origin: "*",
   credentials: true,
