@@ -179,8 +179,10 @@ export default function Assistant() {
     setLoading(true);
 
     try {
+      const history = messages.slice(-6); // Helper context (Last 6 messages)
       const res = await axios.post("/api/ai/assistant", {
         question: userText,
+        history: history,
         language: language,
         location: "India",
       });

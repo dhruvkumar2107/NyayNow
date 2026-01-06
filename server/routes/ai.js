@@ -12,20 +12,25 @@ const fs = require('fs');
 router.post("/assistant", async (req, res) => {
   fs.appendFileSync('ai_debug.log', `In Request: ${JSON.stringify(req.body)}\n`);
   try {
-    const { question, language, location } = req.body;
+    const { question, history, language, location } = req.body;
+
+    // Construct History Context
+    const conversationHistory = history ? history.map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join("\n") : "";
 
     const prompt = `
       You are Nyay Sathi, an expert Indian legal assistant.
       User Location: ${location || "India"}
       Language: ${language || "English"}
-      User Question: "${question}"
       
-      IMPORTANT: Respond in ${language || "English"}.
+      CONVERSATION HISTORY:
+      ${conversationHistory}
       
-      Provide a helpful, accurate legal response in Markdown format. 
-      Include a section for "Related Questions" at the end.
-      Ensure the tone is professional yet accessible.
-      Double check for Indian constraints (IPC, CrPC, etc).
+      CURRENT QUERY: "${question}"
+      
+      AGENTIC BEHAVIOR INSTRUCTIONS:
+      1. If the user's query is vague (e.g., "I want a divorce"), DO NOT give a generic essay. ASK clarifying questions first (e.g., "Mutual consent or contested?").
+      2. If you have enough details, provide a structured legal answer.
+      3. Respond in MarkDown.
       
       Format the output as JSON with keys: "answer" (markdown string), "related_questions" (array of strings), "intent" (string).
     `;
