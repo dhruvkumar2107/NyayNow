@@ -20,8 +20,24 @@ const io = new Server(server, {
 
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const Sentry = require("@sentry/node");
+const { nodeProfilingIntegration } = require("@sentry/profiling-node");
+
+/* ================= SENTRY INIT ================= */
+Sentry.init({
+  dsn: process.env.SENTRY_DSN || "", // User needs to provide this
+  integrations: [
+    nodeProfilingIntegration(),
+  ],
+  tracesSampleRate: 1.0,
+  profilesSampleRate: 1.0,
+});
 
 /* ================= MIDDLEWARE ================= */
+// Sentry RequestHandler must be the first middleware on the app
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
+
 app.use(compression());
 app.use(helmet({
   contentSecurityPolicy: false, // Disable CSP for now to avoid breaking scripts/images during dev
@@ -99,6 +115,11 @@ function loadRoute(url, file) {
 
 /* ================= ROUTES ================= */
 loadRoute("/api/auth", "./routes/auth");
+// ... (routes) ...
+loadRoute("/api/messages", "./routes/messages");
+
+// Sentry ErrorHandler must be before any other error middleware and after all controllers
+app.use(Sentry.Handlers.errorHandler());
 loadRoute("/api/ai", "./routes/ai");
 loadRoute("/api/nearby", "./routes/nearby");
 loadRoute("/api/lawyers", "./routes/lawyers");
@@ -166,8 +187,12 @@ if (fs.existsSync(clientDist)) {
 }
 
 /* ================= START ================= */
-connectDB().finally(() => {
-  server.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+if (process.env.NODE_ENV !== 'test') {
+  connectDB().finally(() => {
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
   });
-});
+}
+
+module.exports = { app, server };

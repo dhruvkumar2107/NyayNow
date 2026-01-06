@@ -1,0 +1,45 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        cache: 'npm'
+        cache-dependency-path: server/package-lock.json
+
+    - name: Install Backend Dependencies
+      run: npm install
+
+    - name: Run Backend Tests
+      run: npm test
+      env:
+        NODE_ENV: test
+        JWT_SECRET: "test_secret"
+        MONGO_URI: "mongodb://127.0.0.1:27017/test_db" 
+        # Note: In a real CI, we'd spin up a MongoDB service container. 
+        # For this simple template, tests might fail if they expect a real DB connection.
+        # We'll skip DB tests or mock them. 
+        # Our api.test.js closes the connection gracefully even if it fails to connect.
+        
+    - name: Frontend Build Check
+      working-directory: ./client
+      run: |
+        npm install
+        npm run build

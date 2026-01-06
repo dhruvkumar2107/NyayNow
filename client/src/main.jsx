@@ -6,6 +6,19 @@ import "./styles.css";
 
 import posthog from 'posthog-js';
 import { HelmetProvider } from 'react-helmet-async';
+import * as Sentry from "@sentry/react";
+
+// Initialize Sentry
+Sentry.init({
+  dsn: import.meta.env.VITE_SENTRY_DSN || "", // Add to .env
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(),
+  ],
+  tracesSampleRate: 1.0,
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+});
 
 // Initialize PostHog (Analytics)
 // Replace 'phc_TEST' with actual key from .env
