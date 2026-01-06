@@ -1,30 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import { useAuth } from "../context/AuthContext";
+import { io } from "socket.io-client";
 
-/* ---------------------------------------
-   CHAT CONTACTS (Ideally fetched from /api/lawyers)
---------------------------------------- */
-const CONTACTS = [
-  {
-    id: 1,
-    name: "Adv. Rahul Sharma",
-    role: "lawyer",
-    specialization: "Criminal Law"
-  },
-  {
-    id: 2,
-    name: "Adv. Neha Verma",
-    role: "lawyer",
-    specialization: "Corporate Law"
-  },
-  {
-    id: 3,
-    name: "Adv. Ankit Patel",
-    role: "lawyer",
-    specialization: "Family Law"
-  }
-];
+// Connect to Socket.io (Backend URL)
+const socket = io(import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:4000");
 
 export default function Messages() {
   const { user } = useAuth();
@@ -46,11 +23,28 @@ export default function Messages() {
     }
   };
 
-  /* 2. INITIAL LOAD & POLLING */
+  /* 2. REAL-TIME SOCKET CONNECTION */
   useEffect(() => {
+    // Initial Fetch
     fetchMessages();
-    const interval = setInterval(fetchMessages, 3000); // Poll every 3s
-    return () => clearInterval(interval);
+
+    // Join Room (Lawyer Name)
+    socket.emit("join_room", activeChat.name);
+
+    // Listen for incoming messages
+    const handleReceive = (newMessage) => {
+      // Only append if it belongs to current chat
+      if (newMessage.lawyerName === activeChat.name) {
+        setMessages((prev) => [...prev, newMessage]);
+      }
+    };
+
+    socket.on("receive_message", handleReceive);
+
+    // Cleanup
+    return () => {
+      socket.off("receive_message", handleReceive);
+    };
   }, [activeChat]);
 
   /* 3. AUTO SCROLL */
@@ -62,21 +56,21 @@ export default function Messages() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    // Optimistic Update
     const tempMsg = {
       sender: user?.role === 'lawyer' ? 'lawyer' : 'client',
       text: input,
       lawyerName: activeChat.name
     };
-    setMessages([...messages, tempMsg]);
+
+    // Clear input immediately
     setInput("");
 
     try {
       await axios.post("/api/messages", tempMsg);
-      fetchMessages(); // Sync with server
+      // No need to fetchMessages() or setMessages() manually
+      // The Socket.io event "receive_message" will trigger and update the UI for both sender and receiver
     } catch (err) {
       console.error("Send failed", err);
-      // alert("Failed to send");
     }
   };
 
@@ -134,8 +128,8 @@ export default function Messages() {
                 <div
                   key={i}
                   className={`max-w-md px-5 py-3 rounded-2xl shadow-sm text-sm leading-relaxed ${isMe
-                      ? "bg-blue-600 text-white ml-auto rounded-tr-none"
-                      : "bg-white border border-gray-200 text-gray-800 rounded-tl-none"
+                    ? "bg-blue-600 text-white ml-auto rounded-tr-none"
+                    : "bg-white border border-gray-200 text-gray-800 rounded-tl-none"
                     }`}
                 >
                   {msg.text}

@@ -28,8 +28,15 @@ router.post("/", async (req, res) => {
   try {
     const message = new Message(req.body);
     await message.save();
+
+    // Real-time emit to room = lawyerName
+    if (req.io) {
+      req.io.to(req.body.lawyerName).emit("receive_message", message);
+    }
+
     res.json(message);
-  } catch {
+  } catch (error) {
+    console.error(error);
     res.status(400).json({ error: "Failed to send message" });
   }
 });

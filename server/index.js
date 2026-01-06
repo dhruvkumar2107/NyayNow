@@ -6,17 +6,30 @@ const path = require("path");
 const fs = require("fs");
 const mongoose = require("mongoose");
 
+const http = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
-const compression = require("compression");
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
 /* ================= MIDDLEWARE ================= */
 app.use(compression());
-app.use(
-  cors({
-    origin: "*", // Allow all origins for Vercel deployment
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: "*",
+  credentials: true,
+}));
+
+// Attach IO to request for using in routes
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
@@ -36,6 +49,21 @@ async function connectDB() {
     console.error("❌ MongoDB connection failed:", err.message);
   }
 }
+
+/* ================= SOCKET.IO ================= */
+io.on("connection", (socket) => {
+  console.log(`⚡ Client connected: ${socket.id}`);
+
+  // Join a personal room based on User ID/Email (sent from client)
+  socket.on("join_room", (room) => {
+    socket.join(room);
+    console.log(`User joined room: ${room}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
 
 /* ================= HEALTH ================= */
 app.get("/healthz", (req, res) => {
@@ -64,6 +92,7 @@ loadRoute("/api/users", "./routes/users");
 loadRoute("/api/cases", "./routes/cases");
 loadRoute("/api/posts", "./routes/posts");
 loadRoute("/api/topics", "./routes/topics");
+loadRoute("/api/messages", "./routes/messages"); // Ensure messages route is loaded
 
 /* ================= STATIC ================= */
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -81,7 +110,7 @@ if (fs.existsSync(clientDist)) {
 
 /* ================= START ================= */
 connectDB().finally(() => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
   });
 });
