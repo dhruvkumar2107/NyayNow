@@ -18,6 +18,7 @@ const io = new Server(server, {
   }
 });
 
+const compression = require("compression");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const Sentry = require("@sentry/node");
@@ -33,6 +34,7 @@ Sentry.init({
   profilesSampleRate: 1.0,
 });
 
+/* ================= MIDDLEWARE ================= */
 app.use(compression());
 app.use(helmet({
   contentSecurityPolicy: false, // Disable CSP for now to avoid breaking scripts/images during dev
@@ -110,9 +112,6 @@ function loadRoute(url, file) {
 
 /* ================= ROUTES ================= */
 loadRoute("/api/auth", "./routes/auth");
-// ... (routes) ...
-loadRoute("/api/messages", "./routes/messages");
-
 loadRoute("/api/messages", "./routes/messages");
 loadRoute("/api/ai", "./routes/ai");
 loadRoute("/api/nearby", "./routes/nearby");
