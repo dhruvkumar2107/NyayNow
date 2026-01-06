@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 /* ----------------------------------------
@@ -15,6 +16,9 @@ export default function Marketplace() {
   const { user } = useAuth();
   const [lawyers, setLawyers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+
+  const query = searchParams.get("search") || "";
 
   useEffect(() => {
     fetchLawyers();
@@ -35,6 +39,17 @@ export default function Marketplace() {
     }
   };
 
+  // Filter based on search query
+  const filteredLawyers = lawyers.filter(lawyer => {
+    if (!query) return true;
+    const lowerQ = query.toLowerCase();
+    return (
+      lawyer.name?.toLowerCase().includes(lowerQ) ||
+      lawyer.specialization?.toLowerCase().includes(lowerQ) ||
+      lawyer.location?.city?.toLowerCase().includes(lowerQ)
+    );
+  });
+
   return (
     <main className="min-h-screen bg-white text-gray-900 px-6 py-10 pt-24">
       {/* HEADER */}
@@ -53,14 +68,14 @@ export default function Marketplace() {
           <div className="text-center py-20 text-gray-500">
             Finding legal experts...
           </div>
-        ) : lawyers.length === 0 ? (
+        ) : filteredLawyers.length === 0 ? (
           <div className="text-center py-20 text-gray-500 bg-white rounded-2xl border border-dashed border-gray-300">
-            <p className="text-lg">No lawyers found yet.</p>
-            <p className="text-sm mt-2">Be the first to join as a lawyer!</p>
+            <p className="text-lg">No lawyers found matching "{query}".</p>
+            <p className="text-sm mt-2">Try different keywords.</p>
           </div>
         ) : (
           <section className="grid md:grid-cols-3 gap-6">
-            {lawyers.map((lawyer) => (
+            {filteredLawyers.map((lawyer) => (
               <LawyerCard key={lawyer._id} lawyer={lawyer} />
             ))}
           </section>

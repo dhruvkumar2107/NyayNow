@@ -6,11 +6,18 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = () => {
     logout();
     navigate("/");
     setIsMenuOpen(false);
+  };
+
+  const handleSearch = (e) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      navigate(`/marketplace?search=${encodeURIComponent(searchQuery)}`);
+    }
   };
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -46,6 +53,9 @@ export default function Navbar() {
               <input
                 type="text"
                 placeholder="Search lawyers, services..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearch}
                 className="bg-transparent border-none outline-none text-sm text-gray-700 w-full placeholder-gray-500 font-medium"
               />
             </div>
@@ -55,7 +65,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-1 text-xs font-medium text-gray-500">
             <NavLink to={user ? (user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard") : "/"} icon="🏠" label="Home" active={false} />
             <NavLink to="/marketplace" icon="👥" label="Network" />
-            <NavLink to="/nearby" icon="💼" label="Jobs/Nearby" />
+            <NavLink to="/nearby" icon="💼" label="Nearby" />
             <NavLink to="/messages" icon="💬" label="Messaging" />
             <NavLink to="/assistant" icon="🤖" label="Assistant" />
             <NavLink to="/agreements" icon="📄" label="Agreements" />
@@ -123,7 +133,7 @@ export default function Navbar() {
             <div className="space-y-2">
               <MobileLink to={user ? (user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard") : "/"} icon="🏠" label="Home" onClick={closeMenu} />
               <MobileLink to="/marketplace" icon="👥" label="My Network" onClick={closeMenu} />
-              <MobileLink to="/nearby" icon="💼" label="Jobs & Nearby" onClick={closeMenu} />
+              <MobileLink to="/nearby" icon="💼" label="Nearby" onClick={closeMenu} />
               <MobileLink to="/messages" icon="💬" label="Messaging" onClick={closeMenu} />
               <MobileLink to="/assistant" icon="🤖" label="AI Assistant" onClick={closeMenu} />
               <MobileLink to="/agreements" icon="📄" label="Agreements" onClick={closeMenu} />
