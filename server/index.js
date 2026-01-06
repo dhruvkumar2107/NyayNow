@@ -7,8 +7,10 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 
 const app = express();
+const compression = require("compression");
 
 /* ================= MIDDLEWARE ================= */
+app.use(compression());
 app.use(
   cors({
     origin: "*", // Allow all origins for Vercel deployment

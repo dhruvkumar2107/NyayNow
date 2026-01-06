@@ -1,30 +1,40 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-
-/* Pages */
-import Home from "./pages/Home";
-import Assistant from "./pages/Assistant";
-import Analyze from "./pages/Analyze";
-import Agreements from "./pages/Agreements";
-import Marketplace from "./pages/Marketplace";
-import Nearby from "./pages/Nearby";
-import Messages from "./pages/Messages";
-import Pricing from "./pages/Pricing";
-import AgreementForm from "./pages/AgreementForm";
-import PaymentSuccess from "./pages/PaymentSuccess";
-
-/* Auth */
-import Login from "./auth/Login";
-import Register from "./auth/Register";
-
-/* Dashboards */
-import ClientDashboard from "./dashboards/ClientDashboard";
-import LawyerDashboard from "./dashboards/LawyerDashboard";
-import AdminDashboard from "./dashboards/AdminDashboard";
 
 /* Components */
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+
+/* Lazy Load Pages */
+const Home = lazy(() => import("./pages/Home"));
+const Assistant = lazy(() => import("./pages/Assistant"));
+const Analyze = lazy(() => import("./pages/Analyze"));
+const Agreements = lazy(() => import("./pages/Agreements"));
+const Marketplace = lazy(() => import("./pages/Marketplace"));
+const Nearby = lazy(() => import("./pages/Nearby"));
+const Messages = lazy(() => import("./pages/Messages"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const AgreementForm = lazy(() => import("./pages/AgreementForm"));
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+
+/* Lazy Load Auth */
+const Login = lazy(() => import("./auth/Login"));
+const Register = lazy(() => import("./auth/Register"));
+
+/* Lazy Load Dashboards */
+const ClientDashboard = lazy(() => import("./dashboards/ClientDashboard"));
+const LawyerDashboard = lazy(() => import("./dashboards/LawyerDashboard"));
+const AdminDashboard = lazy(() => import("./dashboards/AdminDashboard"));
+
+/* Loading Component */
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center gap-3">
+      <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-gray-500 font-medium animate-pulse">Loading...</p>
+    </div>
+  </div>
+);
 
 export default function App() {
   return (
@@ -36,46 +46,48 @@ export default function App() {
 
         {/* PAGE CONTENT */}
         <main className="pt-20">
-          <Routes>
-            {/* PUBLIC ROUTES */}
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/pricing" element={<Pricing />} />
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              {/* PUBLIC ROUTES */}
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/pricing" element={<Pricing />} />
 
-            {/* CLIENT DASHBOARD */}
-            <Route
-              path="/client/dashboard"
-              element={
-                <ProtectedRoute role="client">
-                  <ClientDashboard />
-                </ProtectedRoute>
-              }
-            />
+              {/* CLIENT DASHBOARD */}
+              <Route
+                path="/client/dashboard"
+                element={
+                  <ProtectedRoute role="client">
+                    <ClientDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* LAWYER DASHBOARD */}
-            <Route
-              path="/lawyer/dashboard"
-              element={
-                <ProtectedRoute role="lawyer">
-                  <LawyerDashboard />
-                </ProtectedRoute>
-              }
-            />
+              {/* LAWYER DASHBOARD */}
+              <Route
+                path="/lawyer/dashboard"
+                element={
+                  <ProtectedRoute role="lawyer">
+                    <LawyerDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* ADMIN DASHBOARD (Hidden/Protected - for now simplified access) */}
-            <Route path="/admin" element={<AdminDashboard />} />
+              {/* ADMIN DASHBOARD (Hidden/Protected - for now simplified access) */}
+              <Route path="/admin" element={<AdminDashboard />} />
 
-            {/* SHARED FEATURES (PUBLIC ACCESS) */}
-            <Route path="/assistant" element={<Assistant />} />
-            <Route path="/analyze" element={<Analyze />} />
-            <Route path="/agreements" element={<Agreements />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/nearby" element={<Nearby />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/rent-agreement" element={<AgreementForm />} />
-            <Route path="/payment/success" element={<PaymentSuccess />} />
-          </Routes>
+              {/* SHARED FEATURES (PUBLIC ACCESS) */}
+              <Route path="/assistant" element={<Assistant />} />
+              <Route path="/analyze" element={<Analyze />} />
+              <Route path="/agreements" element={<Agreements />} />
+              <Route path="/marketplace" element={<Marketplace />} />
+              <Route path="/nearby" element={<Nearby />} />
+              <Route path="/messages" element={<Messages />} />
+              <Route path="/rent-agreement" element={<AgreementForm />} />
+              <Route path="/payment/success" element={<PaymentSuccess />} />
+            </Routes>
+          </Suspense>
         </main>
       </div>
     </BrowserRouter>
