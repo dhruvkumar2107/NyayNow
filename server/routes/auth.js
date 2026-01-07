@@ -22,8 +22,12 @@ router.post("/register", async (req, res) => {
 
     console.log("REGISTER BODY:", req.body);
 
+    // Construct dynamic query to avoid matching everything with empty object
+    const criteria = [{ email }];
+    if (phone) criteria.push({ phone });
+
     const exists = await User.findOne({
-      $or: [{ email }, phone ? { phone } : {}],
+      $or: criteria,
     });
 
     if (exists) {

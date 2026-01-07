@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -22,12 +23,12 @@ export default function Register() {
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
-      alert("Please fill all required fields");
+      toast.error("Please fill all required fields");
       return;
     }
 
     if (role === "lawyer" && (!specialization || !location)) {
-      alert("Please complete lawyer profile details");
+      toast.error("Please complete lawyer profile details");
       return;
     }
 
@@ -48,10 +49,10 @@ export default function Register() {
     const res = await register(userData);
 
     if (res.success) {
-      alert("Registration Successful! Please login.");
+      toast.success("Registration Successful! Please login.");
       navigate("/login");
     } else {
-      alert("Registration Failed: " + res.message);
+      toast.error("Registration Failed: " + res.message);
     }
   };
 

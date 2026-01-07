@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -16,16 +17,17 @@ export default function Login() {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  // const [error, setError] = useState(""); // Removing local error state for toasts
 
   const handleEmailLogin = async () => {
-    if (!email || !password) return setError("Please enter email and password");
+    if (!email || !password) return toast.error("Please enter email and password");
     setLoading(true);
-    setError("");
+
     const res = await login(email, password);
     setLoading(false);
 
     if (res.success) {
+      toast.success("Login Successful!");
       // Smart Redirect based on Role
       if (res.user.role === "lawyer") {
         navigate("/lawyer/dashboard");
@@ -33,37 +35,39 @@ export default function Login() {
         navigate("/client/dashboard");
       }
     } else {
-      setError(res.message);
+      toast.error(res.message);
     }
   };
 
   const handleSendOtp = async () => {
-    if (!phone || phone.length < 10) return setError("Enter valid phone number");
+    if (!phone || phone.length < 10) return toast.error("Enter valid phone number");
     setLoading(true);
-    setError("");
+
     try {
       await axios.post("/api/auth/send-otp", { phone });
       setOtpSent(true);
+      toast.success("OTP Sent!");
       // Mock OTP alert for demo
       // alert("OTP Sent: Check console");
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to send OTP");
+      toast.error(err.response?.data?.message || "Failed to send OTP");
     } finally {
       setLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
-    if (!otp) return setError("Enter OTP");
+    if (!otp) return toast.error("Enter OTP");
     setLoading(true);
-    setError("");
+
     try {
       const res = await axios.post("/api/auth/verify-otp", { phone, otp });
       const { user, token } = res.data;
       loginWithToken(user, token);
+      toast.success("Login Successful!");
       navigate(user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid OTP");
+      toast.error(err.response?.data?.message || "Invalid OTP");
     } finally {
       setLoading(false);
     }

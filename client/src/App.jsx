@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 /* Components */
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
 
 /* Lazy Load Pages */
 const Home = lazy(() => import("./pages/Home"));
@@ -42,6 +43,7 @@ export default function App() {
     <BrowserRouter>
       {/* ROOT APP WRAPPER */}
       <div className="min-h-screen bg-gray-100 text-gray-900 font-sans">
+        <Toaster position="top-right" reverseOrder={false} />
         {/* FIXED NAVBAR */}
         <Navbar />
 

@@ -1,0 +1,7 @@
+[build]
+  # base = ""  <-- using default repo root is safer
+  publish = "client/dist"
+  command = "cd client && npm install && npm run build"
+
+[context.production.environment]
+  CI = "false"

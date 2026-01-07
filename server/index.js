@@ -17,20 +17,16 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://nyaysathi-8new.vercel.app",
   "https://nyaysathi.com",
+  "https://ubiquitous-creponne-ef2464.netlify.app", // User's Netlify site
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, false);
-      }
+      // Allow ANY origin by reflecting it back
+      callback(null, true);
     },
-    methods: ["GET", "POST"],
-    credentials: true
   }
 });
 
@@ -67,12 +63,7 @@ app.use(limiter);
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log("Blocked by CORS:", origin);
-      callback(null, false);
-    }
+    callback(null, true);
   },
   credentials: true,
 }));
