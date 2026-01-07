@@ -10,6 +10,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 const app = express();
+app.set("trust proxy", 1); // Trust first proxy (Required for Render/Vercel)
 const server = http.createServer(app);
 
 const allowedOrigins = [
