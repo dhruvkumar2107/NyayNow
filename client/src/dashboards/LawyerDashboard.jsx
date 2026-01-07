@@ -359,13 +359,13 @@ export default function LawyerDashboard() {
                   <div className="mb-4 rounded-lg overflow-hidden border border-gray-100 bg-black">
                     {post.type === "reel" || (post.mediaUrl && post.mediaUrl.endsWith(".mp4")) ? (
                       <video
-                        src={post.mediaUrl?.startsWith("http") ? post.mediaUrl : `http://localhost:4000${post.mediaUrl}`}
+                        src={post.mediaUrl?.startsWith("http") ? post.mediaUrl : `${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`}
                         controls
                         className="w-full max-h-[400px]"
                       />
                     ) : (
                       <img
-                        src={post.mediaUrl?.startsWith("http") ? post.mediaUrl : `http://localhost:4000${post.mediaUrl}`}
+                        src={post.mediaUrl?.startsWith("http") ? post.mediaUrl : `${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`}
                         alt="Post attachment"
                         className="w-full object-cover"
                       />

@@ -252,9 +252,9 @@ export default function ClientDashboard() {
                     post.mediaUrl && (
                       <div className="mb-4 rounded-lg overflow-hidden border border-gray-100 bg-black">
                         {post.type === "reel" || post.mediaUrl.endsWith(".mp4") ? (
-                          <video src={`http://localhost:4000${post.mediaUrl}`} controls className="w-full max-h-[400px]" />
+                          <video src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} controls className="w-full max-h-[400px]" />
                         ) : (
-                          <img src={`http://localhost:4000${post.mediaUrl}`} alt="Post attachment" className="w-full object-cover" />
+                          <img src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} alt="Post attachment" className="w-full object-cover" />
                         )}
                       </div>
                     )

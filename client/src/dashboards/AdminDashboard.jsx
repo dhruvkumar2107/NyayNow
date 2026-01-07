@@ -78,7 +78,7 @@ export default function AdminDashboard() {
                                     <p className="text-xs text-slate-500 mt-1">Specialization: {lawyer.specialization}</p>
 
                                     {lawyer.resume ? (
-                                        <a href={`http://localhost:4000${lawyer.resume}`} target="_blank" rel="noreferrer" className="text-indigo-400 text-xs hover:underline mt-2 block">
+                                        <a href={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${lawyer.resume}`} target="_blank" rel="noreferrer" className="text-indigo-400 text-xs hover:underline mt-2 block">
                                             📄 View Resume
                                         </a>
                                     ) : (

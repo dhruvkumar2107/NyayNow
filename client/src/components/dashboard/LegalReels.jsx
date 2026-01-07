@@ -24,7 +24,7 @@ export default function LegalReels() {
                     <div key={v._id} className="min-w-[120px] max-w-[120px] group cursor-pointer">
                         <div className="h-48 bg-black rounded-xl relative overflow-hidden mb-2 shadow-sm">
                             <video
-                                src={`http://localhost:4000${v.mediaUrl}`}
+                                src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${v.mediaUrl}`}
                                 className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition"
                             />
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
