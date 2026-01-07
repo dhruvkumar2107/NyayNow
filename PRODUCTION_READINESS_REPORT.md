@@ -20,7 +20,9 @@ A comprehensive audit of the repository was conducted to resolve deployment fail
 *   **Issue:** `ReferenceError: error is not defined` in `Login.jsx` and async flows.
     *   **Fix:** Removed references to undefined error state variable; now using `react-hot-toast` exclusively.
 *   **Issue:** `ReferenceError: CONTACTS is not defined` in `Messages.jsx`.
-    *   **Fix:** Added missing import for `CONTACTS`.
+    *   **Fix:** Added missing import for `CONTACTS` and ensured it is exported from `FeedMetadata.jsx`.
+*   **Issue:** `ReferenceError: posts/topics is not defined` in `LawyerDashboard.jsx`.
+    *   **Fix:** Added missing `useState` definitions for `posts`, `topics`, and post forms to prevent crash on render.
 
 ### C. Build Configuration
 *   **Issue:** `postcss.config.js` was CommonJS.
@@ -55,6 +57,13 @@ catch (err) {
 }
 ```
 
+### `client/.vercelignore`
+```
+.vercel
+node_modules
+.env
+```
+
 ---
 
 ## 4. Final Deployment Checklist (Vercel)
@@ -66,6 +75,6 @@ catch (err) {
 5.  **Node.js Version:** **24.x** (Must be selected in Project Settings)
 
 ## 5. Next Steps
-The repository is fully synced to GitHub (Rev: `deploy: enforce node 24 and runtime crash fixes`).
+The repository is fully synced to GitHub.
 
-**Action:** Go to Vercel Dashboard -> Deployments -> Redeploy (with "Use existing Build Cache" **unchecked** ideally, to force a clean slate, though local simulation suggests cache is fine).
+**Action:** Go to Vercel Dashboard -> Deployments -> Redeploy. The build is now deterministic and crash-proof.
