@@ -6,7 +6,7 @@ const fs = require('fs');
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Use 2.5-flash as it proved successful for Chat
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 /* ---------------- NEARBY SERVICES (Smart AI Search) ---------------- */
 router.get("/", async (req, res) => {
