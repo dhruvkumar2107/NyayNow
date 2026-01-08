@@ -16,7 +16,7 @@ export default function DashboardLayout({ leftSidebar, mainFeed, rightSidebar })
                 </main>
 
                 {/* RIGHT SIDEBAR - EXTRAS (1 col) */}
-                <aside className="md:col-span-1 space-y-6 hidden md:block">
+                <aside className="md:col-span-1 space-y-6 md:block order-last md:order-none">
                     <div className="sticky top-24">
                         {rightSidebar}
                     </div>

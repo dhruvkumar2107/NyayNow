@@ -17,7 +17,7 @@ export default function Home() {
 
           {/* LEFT: TEXT */}
           <div className="space-y-8 animate-in slide-in-from-bottom-8 duration-700">
-            <h1 className="text-6xl font-extrabold tracking-tight text-[#0B1120] leading-[1.1]">
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[#0B1120] leading-[1.1]">
               Legal Intelligence
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">for Everyone.</span>

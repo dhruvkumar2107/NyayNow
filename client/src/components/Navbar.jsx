@@ -104,27 +104,32 @@ export default function Navbar() {
 
       {/* MOBILE MENU */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-20 left-0 w-full bg-white border-b border-slate-100 shadow-xl p-6 flex flex-col gap-4 animate-in slide-in-from-top-4 z-40 text-center">
-          <Link to="/marketplace" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">Find Lawyers</Link>
-          <Link to="/nearby" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">Nearby</Link>
-          <Link to="/messages" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">Messaging</Link>
-          <Link to="/agreements" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">Agreements</Link>
-          <Link to="/assistant" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">AI Assistant</Link>
-          <Link to="/pricing" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-bold py-2">Pricing</Link>
+        <div className="md:hidden fixed inset-0 top-20 bg-white/95 backdrop-blur-xl z-40 flex flex-col p-6 overflow-y-auto animate-in slide-in-from-top-10 duration-300">
+          <div className="flex flex-col gap-4 text-center">
+            <Link to="/marketplace" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Find Lawyers</Link>
+            <Link to="/nearby" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Nearby</Link>
+            <Link to="/messages" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Messaging</Link>
+            <Link to="/agreements" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Agreements</Link>
+            <Link to="/judge-ai" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Judge AI</Link>
+            <Link to="/assistant" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">AI Assistant</Link>
+            <Link to="/pricing" onClick={() => setMobileMenuOpen(false)} className="mx-auto w-full max-w-xs py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-bold text-lg transition">Pricing</Link>
+          </div>
 
-          <div className="h-px bg-slate-100 my-2"></div>
+          <div className="h-px bg-slate-200 my-6 w-1/2 mx-auto"></div>
 
-          {!user ? (
-            <>
-              <Link to="/login" className="w-full text-center py-3 text-slate-700 font-bold bg-slate-50 rounded-xl">Log in</Link>
-              <Link to="/register" className="w-full text-center py-3 bg-[#0B1120] text-white font-bold rounded-xl shadow-lg">Get Started</Link>
-            </>
-          ) : (
-            <>
-              <Link to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"} className="w-full text-center py-3 bg-blue-50 text-blue-700 font-bold rounded-xl">Dashboard</Link>
-              <button onClick={handleLogout} className="w-full text-center py-3 text-red-600 font-bold">Sign Out</button>
-            </>
-          )}
+          <div className="flex flex-col gap-3 w-full max-w-xs mx-auto">
+            {!user ? (
+              <>
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="w-full text-center py-4 text-slate-800 font-bold bg-slate-100 rounded-2xl">Log in</Link>
+                <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="w-full text-center py-4 bg-[#0B1120] text-white font-bold rounded-2xl shadow-xl">Get Started</Link>
+              </>
+            ) : (
+              <>
+                <Link to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"} onClick={() => setMobileMenuOpen(false)} className="w-full text-center py-4 bg-blue-50 text-blue-700 font-bold rounded-2xl border border-blue-100">Go to Dashboard</Link>
+                <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="w-full text-center py-4 text-red-600 font-bold hover:bg-red-50 rounded-2xl transition">Sign Out</button>
+              </>
+            )}
+          </div>
         </div>
       )}
     </nav>
