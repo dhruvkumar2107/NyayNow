@@ -69,7 +69,14 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
+              <Route
+                path="/meet/:id"
+                element={
+                  <ProtectedRoute>
+                    <VideoCall />
+                  </ProtectedRoute>
+                }
+              />
               {/* LAWYER DASHBOARD */}
               <Route
                 path="/lawyer/dashboard"

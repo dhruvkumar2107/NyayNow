@@ -104,6 +104,40 @@ io.on("connection", (socket) => {
     console.log(`User joined room: ${room}`);
   });
 
+  // ---------------- LEGAL UBER (INSTANT CONSULT) ----------------
+  // Lawyers join this pool to receive instant calls
+  socket.on("join_lawyer_pool", () => {
+    socket.join("lawyer_pool");
+    console.log(`Lawyer ${socket.id} joined instant pool`);
+  });
+
+  // Client requests a lawyer
+  // payload: { clientId, clientName, category }
+  socket.on("request_instant_consult", (payload) => {
+    console.log(`Instant Consult Requested by ${payload.clientName}`);
+    // Broadcast to all online lawyers
+    socket.to("lawyer_pool").emit("incoming_lead", payload);
+  });
+
+  // Lawyer accepts the extensive
+  // payload: { lawyerId, clientId, lawyerName }
+  socket.on("accept_consult", (payload) => {
+    const meetingId = `instant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    // Notify Lawyer (Success)
+    socket.emit("consult_start", { meetingId, role: "lawyer" });
+
+    // Notify Client (Accepted)
+    // We assume Client joined their own personal room "clientId"
+    io.to(payload.clientId).emit("consult_start", {
+      meetingId,
+      role: "client",
+      lawyerName: payload.lawyerName
+    });
+
+    console.log(`Consult started: ${meetingId}`);
+  });
+
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });

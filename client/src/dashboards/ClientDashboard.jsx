@@ -7,9 +7,14 @@ import { clientFeed } from "../components/dashboard/FeedMetadata";
 import LegalReels from "../components/dashboard/LegalReels";
 
 import BookingModal from "../components/dashboard/BookingModal";
+import io from "socket.io-client"; // NEW
+import { useNavigate } from "react-router-dom"; // NEW
+
+const socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"); // Initialize Socket
 
 export default function ClientDashboard() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [activeCases, setActiveCases] = useState([]);
   const [suggestedLawyers, setSuggestedLawyers] = useState([]);
   const [connectionsMap, setConnectionsMap] = useState({}); // Stores { userId: status }
@@ -28,9 +33,40 @@ export default function ClientDashboard() {
     if (user) {
       fetchMyCases();
       fetchPosts();
-      fetchConnections(); // Fetch existing connections first
+      fetchConnections();
+      socket.emit("join_room", user._id || user.id); // JOIN PERSONAL ROOM
+
+      // Listen for Consult Start
+      socket.on("consult_start", (data) => {
+        if (data.role === 'client') {
+          const confirmed = window.confirm(`Lawyer ${data.lawyerName} accepted! Start video call?`);
+          if (confirmed) {
+            navigate(`/meet/${data.meetingId}`);
+          }
+        }
+      });
+    }
+    return () => {
+      socket.off("consult_start");
     }
   }, [user]);
+
+  const [isSearching, setIsSearching] = useState(false);
+  const requestInstantConsult = () => {
+    setIsSearching(true);
+    socket.emit("request_instant_consult", {
+      clientId: user._id || user.id,
+      clientName: user.name,
+      category: "General"
+    });
+    // Timeout simulation
+    setTimeout(() => {
+      if (isSearching) {
+        setIsSearching(false);
+        alert("No lawyers available right now. Please try again or book an appointment.");
+      }
+    }, 30000); // 30s timeout
+  };
 
   const fetchConnections = async () => {
     try {
@@ -149,8 +185,11 @@ export default function ClientDashboard() {
 
   if (!user) return <div className="text-white p-10">Loading...</div>;
 
+
+
   return (
     <>
+      {/* EXISING LAYOUT ... */}
       <DashboardLayout
         /* LEFT SIDEBAR */
         leftSidebar={
@@ -201,9 +240,6 @@ export default function ClientDashboard() {
         /* CENTER FEED */
         mainFeed={
           <>
-            {/* Post Action */}
-
-
             <div className="flex items-center justify-between mb-4 px-1">
               <h3 className="font-semibold text-gray-700">Your Legal Feed</h3>
               <span className="text-xs text-gray-500">Sorted by relevance</span>
@@ -224,13 +260,12 @@ export default function ClientDashboard() {
                     onChange={(e) => setPostContent(e.target.value)}
                   />
 
-                  {/* Media Preview */
-                    postFile && (
-                      <div className="mt-2 text-xs text-green-600 font-medium flex items-center gap-1">
-                        <span>📎 Attached: {postFile.name}</span>
-                        <button onClick={() => setPostFile(null)} className="text-red-500 hover:text-red-700">✕</button>
-                      </div>
-                    )}
+                  {postFile && (
+                    <div className="mt-2 text-xs text-green-600 font-medium flex items-center gap-1">
+                      <span>📎 Attached: {postFile.name}</span>
+                      <button onClick={() => setPostFile(null)} className="text-red-500 hover:text-red-700">✕</button>
+                    </div>
+                  )}
 
                   <div className="flex justify-between items-center mt-3">
                     <div className="flex gap-2">
@@ -260,11 +295,6 @@ export default function ClientDashboard() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between mb-4 px-1">
-              <h3 className="font-semibold text-gray-700">Your Legal Feed</h3>
-              <span className="text-xs text-gray-500">Sorted by relevance</span>
-            </div>
-
             {/* Feed Items */}
             {posts.length === 0 ? (
               <p className="text-center text-gray-500 py-10">No posts yet. Be the first to share something!</p>
@@ -283,21 +313,19 @@ export default function ClientDashboard() {
                         </p>
                       </div>
                     </div>
-                    <button className="text-gray-400 hover:text-gray-600">...</button>
                   </div>
 
                   <p className="text-sm text-gray-800 mb-3 whitespace-pre-wrap">{post.content}</p>
 
-                  {/* Media / Reel Display */
-                    post.mediaUrl && (
-                      <div className="mb-4 rounded-lg overflow-hidden border border-gray-100 bg-black">
-                        {post.type === "reel" || post.mediaUrl.endsWith(".mp4") ? (
-                          <video src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} controls className="w-full max-h-[400px]" />
-                        ) : (
-                          <img src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} alt="Post attachment" className="w-full object-cover" />
-                        )}
-                      </div>
-                    )
+                  {post.mediaUrl && (
+                    <div className="mb-4 rounded-lg overflow-hidden border border-gray-100 bg-black">
+                      {post.type === "reel" || post.mediaUrl.endsWith(".mp4") ? (
+                        <video src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} controls className="w-full max-h-[400px]" />
+                      ) : (
+                        <img src={`${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} alt="Post attachment" className="w-full object-cover" />
+                      )}
+                    </div>
+                  )
                   }
 
                   <div className="mt-4 pt-3 border-t border-gray-100 flex gap-6 text-sm text-gray-500">
@@ -399,7 +427,6 @@ export default function ClientDashboard() {
               </Link>
             </div>
 
-            {/* QUICK LINK TO RENT AGREEMENT (ABSOLUTE CONSTRAINT) */}
             <Link to="/rent-agreement" className="block mt-6">
               <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-4 flex items-center justify-between hover:border-emerald-300 transition group shadow-sm">
                 <div>
@@ -410,11 +437,42 @@ export default function ClientDashboard() {
               </div>
             </Link>
 
-            {/* LEGAL REELS (ABSOLUTE CONSTRAINT) */}
             <LegalReels />
           </>
         }
       />
+
+      {/* INSTANT CONSULT FLOATING BUTTON */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {isSearching ? (
+          <div className="bg-[#0B1120] text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-3 animate-pulse border-2 border-blue-500">
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div>
+              <p className="font-bold text-sm">Searching for Lawyer...</p>
+              <p className="text-[10px] text-gray-400">Please wait</p>
+            </div>
+            <button
+              onClick={() => setIsSearching(false)}
+              className="ml-2 text-gray-400 hover:text-white"
+            >✕</button>
+          </div>
+        ) : (
+          <button
+            onClick={requestInstantConsult}
+            className="group relative flex items-center gap-3 bg-[#0B1120] hover:bg-blue-900 text-white px-6 py-4 rounded-full shadow-2xl shadow-blue-900/40 transition-all hover:scale-105 active:scale-95"
+          >
+            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+            </span>
+            <span className="text-2xl">⚡</span>
+            <div className="text-left">
+              <p className="font-bold text-sm leading-tight">Talk to Lawyer</p>
+              <p className="text-[10px] text-blue-200 uppercase tracking-wider font-bold">Instant Connect</p>
+            </div>
+          </button>
+        )}
+      </div>
 
       {/* POST CASE MODAL */}
       {showPostModal && (
