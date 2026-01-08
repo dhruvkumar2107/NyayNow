@@ -16,7 +16,6 @@ const Nearby = lazy(() => import("./pages/Nearby"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const AgreementForm = lazy(() => import("./pages/AgreementForm"));
-const AgreementForm = lazy(() => import("./pages/AgreementForm"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Calendar = lazy(() => import("./pages/Calendar"));
