@@ -82,6 +82,7 @@ router.post("/agreement", verifyToken, checkAiLimit, async (req, res) => {
       - "jurisdictionContext": String (which laws apply, e.g., "Indian Contract Act, 1872").
       - "analysisText": String (Markdown formatted detailed analysis).
       
+      IMPORTANT: Detect the language of the input text and provide the analysis IN THAT SAME LANGUAGE.
       Output ONLY valid JSON.
     `;
 
@@ -97,6 +98,18 @@ router.post("/agreement", verifyToken, checkAiLimit, async (req, res) => {
     }
 
     const analysisData = JSON.parse(cleaned);
+
+    // PAYWALL LOGIC: Free users get limited data
+    if (req.user.plan === 'free') {
+      analysisData.riskLevel = "🔒 Upgrade to Unlock";
+      analysisData.missingClauses = ["🔒 Upgrade to view missing clauses"];
+      analysisData.ambiguousClauses = ["🔒 Upgrade to view ambiguous clauses"];
+      analysisData.accuracyScore = 0; // Or hidden
+      analysisData.isLocked = true;
+    } else {
+      analysisData.isLocked = false;
+    }
+
     res.json(analysisData);
 
   } catch (err) {

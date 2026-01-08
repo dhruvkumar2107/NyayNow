@@ -20,6 +20,9 @@ export default function Agreements() {
     try {
       const res = await axios.post("/api/ai/agreement", { text });
       setResult(res.data);
+      if (res.data.isLocked) {
+        setShowPaywall(true);
+      }
     } catch (err) {
       console.error(err);
       if (err.response?.status === 403) {
