@@ -45,7 +45,7 @@ export default function App() {
   return (
     <BrowserRouter>
       {/* ROOT APP WRAPPER */}
-      <div className="min-h-screen bg-[#0A1F44] text-white font-sans">
+      <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
         <Toaster position="top-right" reverseOrder={false} />
         {/* FIXED NAVBAR */}
         <Navbar />
