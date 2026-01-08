@@ -171,7 +171,7 @@ export default function Pricing() {
         },
 
         theme: {
-          color: "#00D4FF"
+          color: "#0B1120"
         }
       };
 
@@ -188,29 +188,29 @@ export default function Pricing() {
 
   /* ===================== UI ===================== */
   return (
-    <main className="min-h-screen bg-[#0A1F44] text-white py-24 px-6">
+    <main className="min-h-screen bg-white text-slate-900 py-24 px-6 font-sans">
       <div className="max-w-[1128px] mx-auto">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Plans that scale with you
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-extrabold mb-4 text-[#0B1120] tracking-tight">
+            Simple, Transparent Pricing
           </h1>
-          <p className="text-blue-200 text-lg">
+          <p className="text-slate-500 text-xl font-medium">
             Choose the plan that fits your legal needs
           </p>
         </div>
 
         {/* ROLE TABS */}
-        <div className="flex justify-center mb-12">
-          <div className="bg-white/10 p-1 rounded-xl flex gap-1 border border-white/5">
+        <div className="flex justify-center mb-16">
+          <div className="bg-slate-100 p-1.5 rounded-2xl flex gap-1 border border-slate-200/50">
             <button
               onClick={() => setActiveTab("client")}
-              className={`px-8 py-3 rounded-lg font-semibold transition ${activeTab === "client" ? "bg-[#00D4FF] text-[#0A1F44]" : "text-blue-200 hover:text-white"}`}
+              className={`px-8 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "client" ? "bg-white text-[#0B1120] shadow-md shadow-slate-200" : "text-slate-500 hover:text-slate-800"}`}
             >
               For Clients
             </button>
             <button
               onClick={() => setActiveTab("lawyer")}
-              className={`px-8 py-3 rounded-lg font-semibold transition ${activeTab === "lawyer" ? "bg-[#00D4FF] text-[#0A1F44]" : "text-blue-200 hover:text-white"}`}
+              className={`px-8 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "lawyer" ? "bg-white text-[#0B1120] shadow-md shadow-slate-200" : "text-slate-500 hover:text-slate-800"}`}
             >
               For Lawyers
             </button>
@@ -221,30 +221,30 @@ export default function Pricing() {
           {plans[activeTab].map((p, i) => (
             <div
               key={i}
-              className={`relative p-8 rounded-2xl border transition-all duration-300 shadow-xl flex flex-col glass-panel
+              className={`relative p-8 rounded-3xl border transition-all duration-300 shadow-sm flex flex-col group hover:shadow-2xl hover:shadow-blue-900/5
                 ${p.highlight
-                  ? "border-[#00D4FF] ring-2 ring-[#00D4FF]/20 transform scale-105 z-10"
-                  : "border-white/10 hover:border-white/20"}`}
+                  ? "border-blue-500 ring-4 ring-blue-500/10 z-10 bg-white"
+                  : "border-slate-200 bg-white"}`}
             >
               {p.highlight && (
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#00D4FF] text-[#0A1F44] px-4 py-1 rounded-full text-sm font-bold">
-                  Recommended
+                <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-blue-500/30">
+                  Most Popular
                 </span>
               )}
 
-              <h3 className="text-xl font-bold mb-2 text-white">{p.title}</h3>
+              <h3 className="text-xl font-bold mb-3 text-[#0B1120]">{p.title}</h3>
               <div className="flex items-end gap-1 mb-2">
-                <span className="text-4xl font-bold text-white">₹{p.price}</span>
-                <span className="text-blue-300 mb-1">/mo</span>
+                <span className="text-4xl font-extrabold text-[#0B1120]">₹{p.price}</span>
+                <span className="text-slate-400 mb-1 font-medium">/mo</span>
               </div>
-              <p className="text-sm text-[#00D4FF] font-semibold mb-6">
+              <p className="text-sm text-blue-600 font-bold mb-8 bg-blue-50 w-fit px-3 py-1 rounded-lg">
                 {p.benefit}
               </p>
 
               <ul className="space-y-4 flex-1 mb-8">
                 {p.features.map((f, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-blue-100/80 text-sm">
-                    <span className="text-[#00D4FF] font-bold">✓</span>
+                  <li key={idx} className="flex items-start gap-3 text-slate-600 text-sm font-medium">
+                    <span className="text-blue-600 font-bold mt-0.5">✓</span>
                     {f}
                   </li>
                 ))}
@@ -253,12 +253,12 @@ export default function Pricing() {
               <button
                 onClick={() => handleBuy(p.title, p.price)}
                 disabled={loading || p.price === "0" || user?.plan?.toLowerCase() === p.title.toLowerCase()}
-                className={`w-full py-3 rounded-xl font-bold transition
+                className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all transform active:scale-95
                   ${user?.plan?.toLowerCase() === p.title.toLowerCase()
-                    ? "bg-green-600/20 text-green-400 cursor-default border border-green-500/50"
+                    ? "bg-green-50 text-green-700 cursor-default border border-green-200"
                     : p.highlight
-                      ? "bg-[#00D4FF] hover:bg-[#00b4d8] text-[#0A1F44]"
-                      : "bg-white/10 hover:bg-white/20 text-white"
+                      ? "bg-[#0B1120] hover:bg-blue-700 text-white shadow-lg shadow-blue-900/10"
+                      : "bg-slate-50 hover:bg-slate-100 text-slate-900 border border-slate-200"
                   }
                   ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
               >
@@ -266,7 +266,7 @@ export default function Pricing() {
                   ? "Processing..."
                   : user?.plan?.toLowerCase() === p.title.toLowerCase()
                     ? "Current Plan"
-                    : "Upgrade"}
+                    : "Get Started"}
               </button>
             </div>
           ))}
@@ -274,10 +274,11 @@ export default function Pricing() {
 
         {/* Diamond Plan All Benefits Indicator */
           user?.plan === "diamond" && (
-            <div className="mt-12 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl text-white text-center shadow-lg animate-fade-in-up">
-              <h2 className="text-2xl font-bold mb-2">💎 All Premium Features Unlocked!</h2>
-              <p className="opacity-90">
-                You are on the highest tier. Enjoy unlimited access to lawyers, AI analysis, and contract redlining.
+            <div className="mt-16 p-8 bg-[#0B1120] rounded-3xl text-white text-center shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/30 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+              <h2 className="text-3xl font-bold mb-3 relative z-10">💎 Elite Status Unlocked</h2>
+              <p className="text-slate-300 max-w-2xl mx-auto relative z-10">
+                You have access to the most powerful legal tools in the industry. Unlimited usage, concierge support, and global access.
               </p>
             </div>
           )}

@@ -7,19 +7,19 @@ export default function PaywallModal({ isOpen, onClose, title = "Upgrade to Acce
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
                 onClick={onClose}
             ></div>
 
             {/* Modal Content */}
-            <div className="relative bg-[#0F2A5F] border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="relative bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
                 <div className="p-8 text-center">
-                    <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600 shadow-sm border border-blue-100">
                         <span className="text-3xl">💎</span>
                     </div>
 
-                    <h2 className="text-3xl font-bold text-white mb-2">{title}</h2>
-                    <p className="text-blue-200 text-lg mb-8 max-w-lg mx-auto">
+                    <h2 className="text-3xl font-extrabold text-[#0B1120] mb-2">{title}</h2>
+                    <p className="text-slate-500 text-lg mb-8 max-w-lg mx-auto leading-relaxed">
                         You've reached your free trial limit. Unlock unlimited access to AI analysis, drafting, and legal insights.
                     </p>
 
@@ -44,16 +44,16 @@ export default function PaywallModal({ isOpen, onClose, title = "Upgrade to Acce
 
                     <Link
                         to="/pricing"
-                        className="inline-flex items-center gap-2 bg-[#00D4FF] hover:bg-[#00b4d8] text-[#0A1F44] px-8 py-3 rounded-xl font-bold text-lg transition transform hover:scale-105"
+                        className="inline-flex items-center gap-2 bg-[#0B1120] hover:bg-blue-700 text-white px-8 py-3.5 rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/10 transform hover:-translate-y-0.5"
                     >
                         View Upgrade Options <span>→</span>
                     </Link>
 
                     <button
                         onClick={onClose}
-                        className="block mx-auto mt-4 text-sm text-gray-400 hover:text-white transition"
+                        className="block mx-auto mt-6 text-sm text-slate-400 hover:text-slate-600 font-medium transition"
                     >
-                        Maybe Later
+                        No thanks, maybe later
                     </button>
                 </div>
             </div>
@@ -63,13 +63,13 @@ export default function PaywallModal({ isOpen, onClose, title = "Upgrade to Acce
 
 function PlanCard({ name, price, features, highlight }) {
     return (
-        <div className={`p-4 rounded-xl border ${highlight ? 'bg-blue-600/20 border-[#00D4FF]' : 'bg-white/5 border-white/10'}`}>
-            <h3 className={`font-bold ${highlight ? 'text-[#00D4FF]' : 'text-white'}`}>{name}</h3>
-            <div className="text-2xl font-bold text-white my-2">{price}</div>
-            <ul className="space-y-2">
+        <div className={`p-5 rounded-2xl border transition-all ${highlight ? 'bg-white border-blue-500 ring-4 ring-blue-500/5 shadow-xl relative z-10' : 'bg-slate-50 border-slate-200'}`}>
+            <h3 className={`font-bold text-lg mb-1 ${highlight ? 'text-blue-600' : 'text-[#0B1120]'}`}>{name}</h3>
+            <div className="text-2xl font-extrabold text-[#0B1120] mb-3">{price}</div>
+            <ul className="space-y-2.5">
                 {features.map((f, i) => (
-                    <li key={i} className="text-xs text-blue-100 flex items-start gap-2">
-                        <span className="text-[#00D4FF] mt-0.5">✓</span> {f}
+                    <li key={i} className="text-xs text-slate-600 font-medium flex items-start gap-2 leading-snug">
+                        <span className="text-blue-600 font-bold mt-0.5">✓</span> {f}
                     </li>
                 ))}
             </ul>

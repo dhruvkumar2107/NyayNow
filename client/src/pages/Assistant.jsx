@@ -140,60 +140,59 @@
 //           placeholder="Ask a legal question…"
 //         />
 //         <button onClick={sendMessage} className="bg-indigo-600 px-4 py-2 rounded">
-//           Send
-//         </button>
-//       </div>
-//     </main>
-//   );
-// }
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { useNavigate } from "react-router-dom";
 import PaywallModal from "../components/PaywallModal";
-import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Assistant() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Hello 👋 I’m your AI Legal Assistant. Ask me any legal question or draft a notice.",
+      content: `Hello ${user?.name?.split(' ')[0] || ''}! 👋 I’m NyaySathi AI.  \nI can analyze cases, draft legal notices, or explain laws in simple terms.  \n**Try asking:** "Draft a notice for a bounced cheque" or "Is implied consent valid in India?"`,
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
-  // Features
-  const [language, setLanguage] = useState("English");
-  const [showNoticeModal, setShowNoticeModal] = useState(false);
-  const [modalInput, setModalInput] = useState("");
-  const [modalLoading, setModalLoading] = useState(false);
+  // Notice Generation State
+  const [showNoticeForm, setShowNoticeForm] = useState(false);
+  const [noticeData, setNoticeData] = useState({
+    type: "Cheque Bounce",
+    recipientName: "",
+    recipientAddress: "",
+    amount: "",
+    dateOfIncident: "",
+    details: ""
+  });
 
-  const languages = ["English", "Hindi", "Marathi", "Kannada", "Tamil", "Telugu", "Bengali", "Gujarati", "Malayalam", "Punjabi"];
+  const messagesEndRef = useRef(null);
 
-  const handleError = (err) => {
-    if (err.response?.status === 403) {
-      setShowPaywall(true);
-      return "🔒 You have reached your free limit. Please upgrade to continue.";
-    }
-    return err.response?.data?.answer || "⚠️ Unable to reach AI service.";
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userText = input;
-    setMessages((prev) => [...prev, { role: "user", content: userText }]);
+    const userMsg = { role: "user", content: input };
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
 
     try {
-      const history = messages.slice(-6);
       const res = await axios.post("/api/ai/assistant", {
-        question: userText,
-        history: history,
-        language: language,
+        question: input,
+        language: "English", // Could be dynamic
         location: "India",
       });
 
@@ -202,154 +201,191 @@ export default function Assistant() {
         { role: "assistant", content: res.data.answer },
       ]);
     } catch (err) {
-      const msg = handleError(err);
-      setMessages((prev) => [...prev, { role: "assistant", content: msg }]);
+      if (err.response?.status === 403) {
+        setShowPaywall(true);
+        // Remove the user message if it failed or add an error message? 
+        // Better to just show paywall.
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "⚠️ Sorry, I encountered an error. Please try again." },
+        ]);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const generateDocument = async () => {
-    if (!modalInput.trim()) return;
-    setModalLoading(true);
-    setShowNoticeModal(false);
-
-    setMessages((prev) => [...prev, { role: "user", content: `Drafting Legal Notice...` }]);
+  const handleNoticeDraft = async () => {
+    setShowNoticeForm(false);
     setLoading(true);
+    const userMsg = { role: "user", content: `Draft a Legal Notice for ${noticeData.type}` };
+    setMessages((prev) => [...prev, userMsg]);
 
     try {
-      const res = await axios.post('/api/ai/draft-notice', {
-        notice_details: modalInput,
-        language,
-        type: "Legal Notice"
-      });
-
+      const res = await axios.post("/api/ai/draft-notice", noticeData);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: res.data.draft },
+        { role: "assistant", content: res.data.notice },
       ]);
     } catch (err) {
-      const msg = handleError(err);
-      setMessages((prev) => [...prev, { role: "assistant", content: msg }]);
+      if (err.response?.status === 403) {
+        setShowPaywall(true);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "⚠️ Failed to draft notice. Please try again." },
+        ]);
+      }
     } finally {
-      setModalLoading(false);
       setLoading(false);
-      setModalInput("");
     }
   };
 
   return (
-    <main className="min-h-screen bg-[#0A1F44] text-white pb-32 pt-24">
+    <main className="min-h-screen bg-white pt-20 font-sans text-slate-900">
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
-      <div className="max-w-4xl mx-auto px-6 space-y-6">
+      <div className="max-w-4xl mx-auto h-[calc(100vh-80px)] flex flex-col p-4 md:p-6">
 
-        {/* TOP TOOLBAR */}
-        <div className="flex flex-wrap gap-3 justify-between items-center glass-panel p-3 rounded-xl shadow-lg mt-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-blue-200">Language:</span>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="bg-[#0A1F44] text-white text-sm px-3 py-1.5 rounded-lg border border-blue-500/30 focus:outline-none focus:border-[#00D4FF]"
-            >
-              {languages.map(l => <option key={l} value={l}>{l}</option>)}
-            </select>
+        {/* HEADER */}
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+          <div>
+            <h1 className="text-2xl font-extrabold text-[#0B1120]">AI Legal Companion</h1>
+            <p className="text-slate-500 text-sm font-medium">Powered by Gemini Pro • India Jurisdiction</p>
           </div>
-
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowNoticeModal(true)}
-              className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition shadow-lg flex items-center gap-2 font-semibold"
-            >
-              <span>⚖️</span> Draft Notice
-            </button>
-          </div>
+          <button
+            onClick={() => setShowNoticeForm(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl font-bold text-sm transition"
+          >
+            <span>📝</span> Draft Notice
+          </button>
         </div>
 
         {/* CHAT AREA */}
-        <div className="space-y-6">
-          {messages.map((m, i) => (
+        <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar pb-4">
+          {messages.map((msg, i) => (
             <div
               key={i}
-              className={`p-5 rounded-2xl max-w-[85%] shadow-md ${m.role === "user"
-                ? "ml-auto bg-blue-600 text-white"
-                : "glass-panel border-white/5 text-blue-50"
-                }`}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              {m.role === 'assistant' && (
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xl">🤖</span>
-                  <span className="text-xs font-bold text-[#00D4FF] uppercase tracking-wide">NyaySathi AI</span>
+              <div
+                className={`max-w-[85%] md:max-w-[75%] p-5 rounded-2xl text-base leading-relaxed shadow-sm
+                  ${msg.role === "user"
+                    ? "bg-[#0B1120] text-white rounded-br-none"
+                    : "bg-slate-50 text-slate-800 border border-slate-200 rounded-bl-none"
+                  }`}
+              >
+                <div className="prose prose-sm max-w-none dark:prose-invert">
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
                 </div>
-              )}
-              <div className={`prose max-w-none text-sm md:text-base leading-relaxed ${m.role === "user" ? "prose-invert" : "prose-invert"}`}>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {m.content}
-                </ReactMarkdown>
               </div>
             </div>
           ))}
-
           {loading && (
-            <div className="glass-panel p-4 rounded-2xl w-fit flex items-center gap-2">
-              <div className="w-2 h-2 bg-[#00D4FF] rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-[#00D4FF] rounded-full animate-bounce delay-75"></div>
-              <div className="w-2 h-2 bg-[#00D4FF] rounded-full animate-bounce delay-150"></div>
+            <div className="flex justify-start">
+              <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl rounded-bl-none flex gap-2 items-center">
+                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              </div>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
-      </div>
 
-      {/* INPUT AREA */}
-      <div className="fixed bottom-0 left-0 w-full bg-[#0A1F44]/90 backdrop-blur-md border-t border-white/10 p-4 z-40">
-        <div className="max-w-4xl mx-auto flex gap-3">
-          <input
+        {/* INPUT AREA */}
+        <div className="mt-4 bg-white border border-slate-200 rounded-2xl p-2 shadow-lg shadow-slate-200/50 flex items-center gap-2">
+          <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder={`Ask a legal question in ${language}...`}
-            className="flex-1 p-3.5 rounded-xl bg-[#0F2A5F] border border-blue-500/20 focus:border-[#00D4FF] focus:outline-none transition-all text-white placeholder:text-blue-300/50"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
+            placeholder="Ask anything about Indian Law..."
+            className="flex-1 bg-transparent border-none focus:ring-0 p-3 max-h-32 resize-none text-slate-800 placeholder-slate-400 font-medium"
+            rows={1}
           />
           <button
             onClick={sendMessage}
-            disabled={loading}
-            className="px-6 py-3 rounded-xl bg-[#00D4FF] hover:bg-[#00b4d8] text-[#0A1F44] font-bold shadow-[0_0_15px_rgba(0,212,255,0.3)] disabled:opacity-50 disabled:cursor-not-allowed transition"
+            disabled={loading || !input.trim()}
+            className="p-3 bg-[#0B1120] text-white rounded-xl hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95"
           >
-            Send
+            <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
           </button>
         </div>
       </div>
 
-      {/* MODALS */}
-      {showNoticeModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in zoom-in duration-200">
-          <div className="bg-[#0F2A5F] border border-white/10 rounded-2xl p-8 w-full max-w-lg space-y-6 shadow-2xl relative">
-            <button onClick={() => setShowNoticeModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
-
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-2">Draft Legal Notice</h3>
-              <p className="text-blue-200">Who is this for? What are your grievances and demands?</p>
-            </div>
-
-            <textarea
-              rows={6}
-              className="w-full bg-[#0A1F44] border border-blue-500/20 rounded-xl p-4 focus:outline-none focus:border-[#00D4FF] text-white resize-none"
-              placeholder="E.g. Notice to tenant Mr. Sharma for unpaid rent of 3 months..."
-              value={modalInput}
-              onChange={(e) => setModalInput(e.target.value)}
-            />
-
-            <div className="flex gap-3 justify-end pt-2">
-              <button onClick={() => setShowNoticeModal(false)} className="px-5 py-2.5 text-blue-200 hover:text-white hover:bg-white/5 rounded-xl transition font-medium">Cancel</button>
+      {/* NOTICE DRAFTING MODAL */}
+      {showNoticeForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl p-8 animate-in zoom-in-95">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-[#0B1120]">Draft Legal Notice</h2>
               <button
-                onClick={generateDocument}
-                disabled={modalLoading}
-                className="px-6 py-2.5 bg-[#00D4FF] hover:bg-[#00b4d8] text-[#0A1F44] rounded-xl font-bold shadow-[0_0_15px_rgba(0,212,255,0.3)] transition"
-              >
-                {modalLoading ? "Generating..." : "Generate Notice"}
-              </button>
+                onClick={() => setShowNoticeForm(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition"
+              >✕</button>
             </div>
+
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Notice Type</label>
+                <select
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 outline-none"
+                  value={noticeData.type}
+                  onChange={e => setNoticeData({ ...noticeData, type: e.target.value })}
+                >
+                  <option>Cheque Bounce</option>
+                  <option>Divorce Notice</option>
+                  <option>Property Dispute</option>
+                  <option>Consumer Complaint</option>
+                  <option>Employment Dispute</option>
+                  <option>Defamation Notice</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1">Recipient Name</label>
+                  <input
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 outline-none"
+                    value={noticeData.recipientName}
+                    onChange={e => setNoticeData({ ...noticeData, recipientName: e.target.value })}
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1">Date of Incident</label>
+                  <input
+                    type="date"
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 outline-none"
+                    value={noticeData.dateOfIncident}
+                    onChange={e => setNoticeData({ ...noticeData, dateOfIncident: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Key Details</label>
+                <textarea
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 outline-none h-24 resize-none"
+                  placeholder="Describe what happened..."
+                  value={noticeData.details}
+                  onChange={e => setNoticeData({ ...noticeData, details: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={handleNoticeDraft}
+              className="w-full mt-8 py-3.5 bg-[#0B1120] text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-900/10"
+            >
+              Generate Notice
+            </button>
           </div>
         </div>
       )}
