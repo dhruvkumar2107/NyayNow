@@ -4,18 +4,23 @@ const Message = require("../models/Message");
 const router = express.Router();
 
 /**
- * GET /api/messages?lawyer=NAME
- * Fetch messages for a lawyer
+ * GET /api/messages
+ * Fetch messages between specific client and lawyer
  */
 router.get("/", async (req, res) => {
   try {
-    const { lawyer } = req.query;
-    const messages = await Message.find(
-      lawyer ? { lawyerName: lawyer } : {}
-    ).sort({ createdAt: 1 });
+    const { clientId, lawyerId } = req.query;
+
+    if (!clientId || !lawyerId) {
+      return res.status(400).json({ error: "Missing clientId or lawyerId" });
+    }
+
+    const messages = await Message.find({ clientId, lawyerId })
+      .sort({ createdAt: 1 });
 
     res.json(messages);
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Failed to fetch messages" });
   }
 });
@@ -26,12 +31,22 @@ router.get("/", async (req, res) => {
  */
 router.post("/", async (req, res) => {
   try {
-    const message = new Message(req.body);
+    const { text, sender, clientId, lawyerId, senderId } = req.body;
+
+    const message = new Message({
+      text,
+      sender,
+      senderId,
+      clientId,
+      lawyerId
+    });
+
     await message.save();
 
-    // Real-time emit to room = lawyerName
+    // Real-time emit to unique room for this pair
+    const roomName = `${clientId}-${lawyerId}`; // Unique room for this pair
     if (req.io) {
-      req.io.to(req.body.lawyerName).emit("receive_message", message);
+      req.io.to(roomName).emit("receive_message", message);
     }
 
     res.json(message);

@@ -2,9 +2,16 @@ const mongoose = require("mongoose");
 
 const MessageSchema = new mongoose.Schema(
   {
-    sender: { type: String, required: true },   // client / lawyer
-    lawyerName: { type: String, required: true },
+    sender: { type: String, required: true },   // client / lawyer (legacy role) or senderId
+    senderId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Precise Sender
     text: { type: String, required: true },
+
+    // Relationship Mapping
+    clientId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    lawyerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+
+    // Legacy support (optional, can keep for backward compat for a bit)
+    lawyerName: { type: String }
   },
   { timestamps: true }
 );

@@ -24,15 +24,33 @@ export default function ClientDashboard() {
     if (user) {
       fetchMyCases();
       fetchPosts();
-      fetchSuggestedLawyers();
+      fetchConnections(); // Fetch existing connections first
     }
   }, [user]);
 
-  const fetchSuggestedLawyers = async () => {
+  const fetchConnections = async () => {
+    try {
+      const res = await axios.get(`/api/connections?userId=${user._id || user.id}`);
+      // Store IDs of people I am already connected to
+      const connectedIds = res.data.map(p => p._id);
+      fetchSuggestedLawyers(connectedIds);
+    } catch (err) {
+      console.error("Failed to fetch connections", err);
+      fetchSuggestedLawyers([]); // Fallback
+    }
+  };
+
+  const fetchSuggestedLawyers = async (connectedIds = []) => {
     try {
       const res = await axios.get("/api/users?role=lawyer");
-      // Filter out self if I am a lawyer (though this is ClientDashboard)
-      setSuggestedLawyers(res.data.slice(0, 5));
+
+      // Filter out: yourself AND people you are already connected to
+      const filtered = res.data.filter(u =>
+        u._id !== user._id &&
+        !connectedIds.includes(u._id)
+      );
+
+      setSuggestedLawyers(filtered.slice(0, 5));
     } catch (err) {
       console.error("Failed to fetch lawyers");
     }
@@ -319,13 +337,25 @@ export default function ClientDashboard() {
                       <p className="text-sm font-semibold text-gray-900 truncate">{l.name}</p>
                       <p className="text-xs text-gray-500 truncate">{l.specialization || "Lawyer"} • {l.location?.city || l.location || "India"}</p>
                       <button
-                        onClick={() => {
-                          // PLAN-BASED ACCESS CONTROL (ABSOLUTE CONSTRAINT)
+                        onClick={async () => {
+                          // PLAN-BASED ACCESS CONTROL
                           if (user.plan === 'silver' && l.location !== user.location) {
                             alert(`UPGRADE REQUIRED 💎\n\nSilver Plan only allows access to lawyers in your district (${user.location}).\n\nTo contact ${l.name} in ${l.location}, please upgrade to Gold or Diamond.`);
                             return;
                           }
-                          alert(`Connection request sent to ${l.name}`);
+
+                          try {
+                            await axios.post("/api/connections", {
+                              clientId: user._id || user.id,
+                              lawyerId: l._id,
+                              initiatedBy: user._id || user.id
+                            });
+                            alert(`Connection established with ${l.name}! You can now message them.`);
+                            // Refresh list
+                            fetchConnections();
+                          } catch (err) {
+                            alert(err.response?.data?.error || "Failed to connect");
+                          }
                         }}
                         className="mt-2 text-xs border border-blue-200 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-50 transition font-medium"
                       >
