@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 
-// Force redeploy
+// Force mobile redeploy check
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();

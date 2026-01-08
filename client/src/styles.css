@@ -31,6 +31,8 @@ body,
   background-color: #0A1F44;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
 }
 
 /* Glassmorphism Utilities */
