@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 const Home = lazy(() => import("./pages/Home"));
 const Assistant = lazy(() => import("./pages/Assistant"));
 const Analyze = lazy(() => import("./pages/Analyze"));
+const JudgeAI = lazy(() => import("./pages/JudgeAI")); // FIXED: Added Import
 const Agreements = lazy(() => import("./pages/Agreements"));
 const Marketplace = lazy(() => import("./pages/Marketplace"));
 const Nearby = lazy(() => import("./pages/Nearby"));
@@ -85,6 +86,7 @@ export default function App() {
 
               {/* SHARED FEATURES (PUBLIC ACCESS) */}
               <Route path="/assistant" element={<Assistant />} />
+              <Route path="/judge-ai" element={<JudgeAI />} /> {/* FIXED: Added Route */}
               <Route path="/analyze" element={<Analyze />} />
               <Route path="/agreements" element={<Agreements />} />
               <Route path="/marketplace" element={<Marketplace />} />
