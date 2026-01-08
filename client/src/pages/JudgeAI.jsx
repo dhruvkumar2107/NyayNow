@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import PaywallModal from "../components/PaywallModal"; // NEW
 
 export default function JudgeAI() {
     const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function JudgeAI() {
     });
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
+    const [showPaywall, setShowPaywall] = useState(false); // NEW
 
     const handleSubmit = async () => {
         if (!formData.caseDescription) return alert("Please describe the case facts.");
@@ -21,7 +23,11 @@ export default function JudgeAI() {
             const res = await axios.post("/api/ai/predict-outcome", formData);
             setResult(res.data);
         } catch (err) {
-            alert("AI Analysis Failed. " + (err.response?.data?.error || ""));
+            if (err.response?.status === 403) {
+                setShowPaywall(true);
+            } else {
+                alert("AI Analysis Failed. " + (err.response?.data?.error || ""));
+            }
         } finally {
             setLoading(false);
         }
@@ -29,6 +35,7 @@ export default function JudgeAI() {
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+            <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} /> {/* NEW */}
             <Navbar />
 
             <div className="pt-24 pb-12 px-4 max-w-6xl mx-auto">
