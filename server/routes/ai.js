@@ -197,4 +197,56 @@ router.post("/draft-notice", verifyToken, checkAiLimit, async (req, res) => {
 });
 
 
+
+/* ---------------- JUDGE AI (CASE PREDICTOR) ---------------- */
+router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
+  try {
+    const { caseTitle, caseDescription, caseType, oppositionDetails } = req.body;
+
+    const prompt = `
+      ACT AS A SENIOR JUDGE OF THE SUPREME COURT OF INDIA.
+      Verify the user's case details:
+      - Title: "${caseTitle}"
+      - Type: "${caseType}"
+      - Description: "${caseDescription}"
+      - Opposition: "${oppositionDetails}"
+
+      Based on the Indian Penal Code (IPC), CrPC, or Civil Procedure Code as applicable, perform a DEEP DISSECTION:
+      
+      1. **Win Probability**: Give a realistic percentage (0-100%) based on the strength of facts.
+      2. **Major Risks**: What are the 3 biggest loopholes the opposition will use?
+      3. **Strategic Moves**: What are the top 3 legal motions to file immediately?
+      4. **Estimated Timeline**: How long will this take in a Tier-1 Indian city court?
+      5. **Precedent**: Cite 1 relevant real case law.
+
+      RETURN STRICT JSON ONLY:
+      {
+        "win_probability": "75%",
+        "risk_analysis": ["Risk 1", "Risk 2", "Risk 3"],
+        "strategy": ["Move 1", "Move 2", "Move 3"],
+        "estimated_duration": "14-18 months",
+        "relevant_precedent": "State vs. XYZ (2018)"
+      }
+    `;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    let text = response.text();
+
+    // Clean JSON
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      text = text.substring(jsonStart, jsonEnd + 1);
+    }
+
+    res.json(JSON.parse(text));
+
+  } catch (err) {
+    console.error("Judge AI Error:", err.message);
+    res.status(500).json({ error: "Failed to predict outcome. Try again." });
+  }
+});
+
 module.exports = router;

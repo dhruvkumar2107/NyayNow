@@ -35,6 +35,7 @@ export default function Navbar() {
           <NavLink to="/nearby" active={location.pathname === "/nearby"}>Nearby</NavLink>
           <NavLink to="/messages" active={location.pathname === "/messages"}>Messaging</NavLink>
           <NavLink to="/agreements" active={location.pathname === "/agreements"}>Agreements</NavLink>
+          <NavLink to="/judge-ai" active={location.pathname === "/judge-ai"}>Judge AI</NavLink>
           <NavLink to="/assistant" active={location.pathname === "/assistant"}>AI Assistant</NavLink>
           <NavLink to="/pricing" active={location.pathname === "/pricing"}>Pricing</NavLink>
         </div>
