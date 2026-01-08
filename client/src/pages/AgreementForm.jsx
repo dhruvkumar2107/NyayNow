@@ -1,189 +1,207 @@
-import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import SignatureCanvas from 'react-signature-canvas';
+import { useState } from "react";
+import axios from "axios";
+import ReactMarkdown from 'react-markdown';
 import Navbar from "../components/Navbar";
+import { useAuth } from "../context/AuthContext";
+import PaywallModal from "../components/PaywallModal";
 
 export default function AgreementForm() {
-    const navigate = useNavigate();
-    const sigCanvas = useRef({});
-    const [signature, setSignature] = useState(null);
-
-    const [formData, setFormData] = useState({
-        landlordName: "",
-        tenantName: "",
-        propertyAddress: "",
-        rentAmount: "",
-        depositAmount: "",
-        leaseStart: ""
-    });
-    const [generatedDoc, setGeneratedDoc] = useState(null);
+    const { user } = useAuth();
+    const [step, setStep] = useState(1); // 1: Type, 2: Details, 3: Preview
+    const [docType, setDocType] = useState("Rent Agreement");
     const [loading, setLoading] = useState(false);
+    const [contract, setContract] = useState("");
+    const [showPaywall, setShowPaywall] = useState(false);
 
-    const clearSignature = () => sigCanvas.current.clear();
-    const saveSignature = () => {
-        setSignature(sigCanvas.current.getTrimmedCanvas().toDataURL("image/png"));
+    // Form Data
+    const [formData, setFormData] = useState({
+        partyA: "", // Landlord / Employer
+        partyB: "", // Tenant / Employee
+        amount: "",
+        duration: "",
+        location: "",
+        extraTerms: ""
+    });
+
+    const handleDraft = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.post("/api/ai/draft-contract", {
+                type: docType,
+                parties: {
+                    Party_1: formData.partyA,
+                    Party_2: formData.partyB
+                },
+                terms: {
+                    Amount: formData.amount,
+                    Duration: formData.duration,
+                    Location: formData.location,
+                    Extra_Terms: formData.extraTerms
+                }
+            });
+            setContract(res.data.contract);
+            setStep(3);
+        } catch (err) {
+            if (err.response?.status === 403) {
+                setShowPaywall(true);
+            } else {
+                alert("Drafting Failed: " + (err.response?.data?.error || "Unknown"));
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const generateAgreement = async () => {
-        setLoading(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        const doc = `RENTAL AGREEMENT
-
-This Rental Agreement is made on this ${new Date().toLocaleDateString()} between:
-
-LANDLORD: ${formData.landlordName}
-AND
-TENANT: ${formData.tenantName}
-
-The Landlord agrees to let the property located at:
-${formData.propertyAddress}
-
-1. RENT: The Tenant shall pay a monthly rent of ₹${formData.rentAmount}.
-2. DEPOSIT: A refundable security deposit of ₹${formData.depositAmount} has been paid.
-3. TERM: This lease commences on ${formData.leaseStart} and shall remain in force for 11 months.
-
-The Tenant agrees to maintain the premises in good condition and pay all utility bills on time.
-
------------------------------
-Landlord Signature`;
-
-        setGeneratedDoc(doc);
-        setLoading(false);
+    const handleDownload = () => {
+        window.print(); // Simple PDF export via browser for now
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 text-gray-900 pb-20">
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
             <Navbar />
-            <div className="max-w-3xl mx-auto pt-24 px-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    Rental Agreement Generator
-                </h1>
-                <p className="text-gray-500 mb-8">Fill the details below to auto-generate a legally binding rental agreement.</p>
+            <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
-                {!generatedDoc ? (
-                    <div className="bg-white border border-gray-200 rounded-xl p-8 space-y-6 shadow-sm">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Landlord Name</label>
-                                <input
-                                    className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-gray-900"
-                                    value={formData.landlordName}
-                                    onChange={e => setFormData({ ...formData, landlordName: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Tenant Name</label>
-                                <input
-                                    className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-gray-900"
-                                    value={formData.tenantName}
-                                    onChange={e => setFormData({ ...formData, tenantName: e.target.value })}
-                                />
+            <div className="pt-24 pb-12 px-4 max-w-4xl mx-auto">
+                <header className="text-center mb-10">
+                    <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 inline-block">
+                        TurboAgreements
+                    </span>
+                    <h1 className="text-4xl font-bold text-[#0B1120] mb-2 font-display">
+                        AI Contract <span className="text-blue-600">Drafter</span>
+                    </h1>
+                    <p className="text-slate-500">Create waterproof legal documents in seconds.</p>
+                </header>
+
+                {/* PROGRESS BAR */}
+                <div className="flex items-center justify-center mb-10 gap-4">
+                    {[1, 2, 3].map(chk => (
+                        <div key={chk} className={`w-3 h-3 rounded-full ${step >= chk ? "bg-blue-600" : "bg-slate-200"}`} />
+                    ))}
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8 min-h-[400px]">
+
+                    {/* STEP 1: SELECT TYPE */}
+                    {step === 1 && (
+                        <div className="animate-in fade-in slide-in-from-bottom-4">
+                            <h2 className="text-2xl font-bold mb-6">Select Document Type</h2>
+                            <div className="grid md:grid-cols-3 gap-4">
+                                {["Rent Agreement", "NDA (Non-Disclosure)", "Employment Contract", "Sale Deed", "Freelance Agreement"].map(type => (
+                                    <button
+                                        key={type}
+                                        onClick={() => { setDocType(type); setStep(2); }}
+                                        className={`p-6 rounded-xl border-2 text-left transition-all hover:scale-[1.02]
+                                            ${docType === type
+                                                ? "border-blue-600 bg-blue-50 ring-2 ring-blue-200"
+                                                : "border-slate-100 hover:border-blue-300"}`}
+                                    >
+                                        <div className="text-2xl mb-2">📄</div>
+                                        <div className="font-bold text-slate-800">{type}</div>
+                                    </button>
+                                ))}
                             </div>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Property Address</label>
-                            <textarea
-                                className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-gray-900"
-                                rows={3}
-                                value={formData.propertyAddress}
-                                onChange={e => setFormData({ ...formData, propertyAddress: e.target.value })}
-                            />
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Monthly Rent (₹)</label>
-                                <input
-                                    type="number"
-                                    className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-gray-900"
-                                    value={formData.rentAmount}
-                                    onChange={e => setFormData({ ...formData, rentAmount: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Deposit (₹)</label>
-                                <input
-                                    type="number"
-                                    className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-gray-900"
-                                    value={formData.depositAmount}
-                                    onChange={e => setFormData({ ...formData, depositAmount: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
-                                <input
-                                    type="date"
-                                    className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-gray-900"
-                                    value={formData.leaseStart}
-                                    onChange={e => setFormData({ ...formData, leaseStart: e.target.value })}
-                                />
-                            </div>
-                        </div>
-                        <button
-                            onClick={generateAgreement}
-                            disabled={loading}
-                            className="w-full py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold text-lg text-white transition flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
-                        >
-                            {loading ? "Generating..." : "Generate Agreement Draft 📄"}
-                        </button>
-                    </div>
-                ) : (
-                    <div className="bg-white border border-gray-200 rounded-xl p-8 animate-in fade-in slide-in-from-bottom-4 shadow-lg">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold text-gray-900">Generated Draft</h2>
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setGeneratedDoc(null)}
-                                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 font-medium"
-                                >
-                                    Edit Details
-                                </button>
-                                <button
-                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold shadow-sm"
-                                    onClick={() => alert("Sent to Home Delivery Partner (Dunzo/Porter) - Mock")}
-                                >
-                                    Print & Deliver 🚚
-                                </button>
-                            </div>
-                        </div>
+                    )}
 
-                        {/* DOCUMENT VIEW */}
-                        <div className="bg-gray-50 border border-gray-200 text-gray-900 p-10 rounded-lg shadow-inner min-h-[500px] font-serif whitespace-pre-wrap leading-relaxed mb-6">
-                            {generatedDoc}
-
-                            {/* APPENDED SIGNATURE */}
-                            {signature && (
-                                <div className="mt-12 border-t border-gray-400 pt-4 w-64">
-                                    <img src={signature} alt="Digital Signature" className="h-24 object-contain" />
-                                    <p className="font-bold text-sm mt-2">Signed Digitally</p>
-                                    <p className="text-xs text-gray-500">IP: 203.0.113.42 | {new Date().toLocaleDateString()}</p>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* E-SIGNATURE PAD */}
-                        {!signature && (
-                            <div className="bg-blue-50 border border-blue-100 p-6 rounded-xl">
-                                <h3 className="font-bold text-blue-900 mb-2">✍️ E-Sign Document</h3>
-                                <p className="text-sm text-blue-700 mb-4">Draw your signature below to legally validate this document.</p>
-
-                                <div className="border border-gray-300 bg-white rounded-lg overflow-hidden shadow-sm">
-                                    <SignatureCanvas
-                                        ref={sigCanvas}
-                                        penColor="black"
-                                        canvasProps={{ width: 600, height: 200, className: 'sigCanvas w-full' }}
+                    {/* STEP 2: FILL DETAILS */}
+                    {step === 2 && (
+                        <div className="animate-in fade-in slide-in-from-right-8">
+                            <h2 className="text-2xl font-bold mb-6">Enter Details for {docType}</h2>
+                            <div className="grid md:grid-cols-2 gap-6 mb-8">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">First Party (e.g. Landlord)</label>
+                                    <input
+                                        className="w-full p-3 bg-slate-50 border rounded-lg"
+                                        value={formData.partyA}
+                                        onChange={e => setFormData({ ...formData, partyA: e.target.value })}
+                                        placeholder="Full Name / Company"
                                     />
                                 </div>
-
-                                <div className="flex gap-3 mt-4">
-                                    <button onClick={clearSignature} className="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-white">Clear</button>
-                                    <button onClick={saveSignature} className="px-6 py-2 text-sm bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700">Attach Signature</button>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Second Party (e.g. Tenant)</label>
+                                    <input
+                                        className="w-full p-3 bg-slate-50 border rounded-lg"
+                                        value={formData.partyB}
+                                        onChange={e => setFormData({ ...formData, partyB: e.target.value })}
+                                        placeholder="Full Name / Company"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Value / Amount (₹)</label>
+                                    <input
+                                        className="w-full p-3 bg-slate-50 border rounded-lg"
+                                        value={formData.amount}
+                                        onChange={e => setFormData({ ...formData, amount: e.target.value })}
+                                        placeholder="e.g. 15,000"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Duration / Date</label>
+                                    <input
+                                        className="w-full p-3 bg-slate-50 border rounded-lg"
+                                        value={formData.duration}
+                                        onChange={e => setFormData({ ...formData, duration: e.target.value })}
+                                        placeholder="e.g. 11 Months"
+                                    />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Location / Property Address</label>
+                                    <input
+                                        className="w-full p-3 bg-slate-50 border rounded-lg"
+                                        value={formData.location}
+                                        onChange={e => setFormData({ ...formData, location: e.target.value })}
+                                        placeholder="Full Address"
+                                    />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Extra Terms / Specific Clauses</label>
+                                    <textarea
+                                        className="w-full p-3 bg-slate-50 border rounded-lg h-24 resize-none"
+                                        value={formData.extraTerms}
+                                        onChange={e => setFormData({ ...formData, extraTerms: e.target.value })}
+                                        placeholder="e.g. No pets allowed, 2 months notice period..."
+                                    />
                                 </div>
                             </div>
-                        )}
-                    </div>
-                )}
+
+                            <div className="flex justify-between">
+                                <button onClick={() => setStep(1)} className="text-slate-500 font-bold px-4">Back</button>
+                                <button
+                                    onClick={handleDraft}
+                                    disabled={loading}
+                                    className="bg-[#0B1120] hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg transition flex items-center gap-2"
+                                >
+                                    {loading ? "Drafting with AI..." : "Generate Contract ✨"}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* STEP 3: PREVIEW & DOWNLOAD */}
+                    {step === 3 && (
+                        <div className="animate-in fade-in slide-in-from-right-8">
+                            <div className="flex justify-between items-center mb-6 no-print">
+                                <h2 className="text-2xl font-bold text-green-700 flex items-center gap-2">
+                                    <span>✓</span> Draft Ready
+                                </h2>
+                                <div className="flex gap-2">
+                                    <button onClick={() => setStep(2)} className="text-slate-500 font-bold px-4">Edit</button>
+                                    <button
+                                        onClick={handleDownload}
+                                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold shadow-md transition"
+                                    >
+                                        Print / Save PDF 📥
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="bg-white p-8 border border-slate-200 shadow-sm rounded-none min-h-[600px] prose max-w-none print:shadow-none print:border-0">
+                                <ReactMarkdown>{contract}</ReactMarkdown>
+                            </div>
+                        </div>
+                    )}
+
+                </div>
             </div>
         </div>
     );

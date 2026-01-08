@@ -262,4 +262,47 @@ router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
   }
 });
 
+  } catch (err) {
+  console.error("Gemini Case Analysis Error:", err.message);
+  res.status(500).json({ error: "Failed to analyze case" });
+}
+});
+
+/* ---------------- CONTRACT DRAFTING (TurboAgreements) ---------------- */
+router.post("/draft-contract", verifyToken, checkAiLimit, async (req, res) => {
+  try {
+    const { type, parties, terms } = req.body;
+
+    // Construct Prompt
+    const prompt = `
+      You are an expert indian legal drafter.
+      Draft a legally binding **${type}** under Indian Law.
+      
+      **PARTIES**:
+      ${JSON.stringify(parties, null, 2)}
+      
+      **TERMS/DETAILS**:
+      ${JSON.stringify(terms, null, 2)}
+      
+      **INSTRUCTIONS**:
+      1. Use professional legal language (Whereas, Therefore, In Witness Whereof).
+      2. Include standard jurisdiction clauses (India).
+      3. Format as clean Markdown (use ## for headers, ** for bold).
+      4. Do NOT include any intro/outro text. Start directly with the title.
+      
+      Output ONLY the Markdown contract.
+    `;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const contractText = response.text();
+
+    res.json({ contract: contractText });
+
+  } catch (err) {
+    console.error("Gemini Drafting Error:", err.message);
+    res.status(500).json({ error: "Failed to draft contract" });
+  }
+});
+
 module.exports = router;
