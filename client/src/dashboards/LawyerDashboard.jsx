@@ -218,35 +218,39 @@ export default function LawyerDashboard() {
     } catch (err) { console.error(err); }
   };
 
-  const createInvoice = async () => {
-    const amount = prompt("Enter Amount (INR):");
-    const desc = prompt("Description:");
-    const clientName = prompt("Client Name:");
-    if (!amount || !desc || !clientName) return;
+  // Modal States
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [showClientModal, setShowClientModal] = useState(false);
+  const [invoiceForm, setInvoiceForm] = useState({ clientName: "", amount: "", description: "" });
+  const [clientForm, setClientForm] = useState({ name: "", phone: "", notes: "" });
 
+  const handleCreateInvoice = async () => {
+    if (!invoiceForm.amount || !invoiceForm.clientName) return;
     try {
       await axios.post("/api/invoices", {
         lawyerId: user._id || user.id,
-        clientName, amount, description: desc, status: "pending"
+        ...invoiceForm,
+        status: "pending"
       });
-      alert("Invoice Created!");
+      alert("Invoice Created Successfully!");
+      setShowInvoiceModal(false);
+      setInvoiceForm({ clientName: "", amount: "", description: "" });
       fetchInvoices();
-    } catch (err) { alert("Failed"); }
+    } catch (err) { alert("Failed to create invoice"); }
   };
 
-  const addClient = async () => {
-    const name = prompt("Client Name:");
-    const phone = prompt("Phone:");
-    if (!name) return;
-
+  const handleCreateClient = async () => {
+    if (!clientForm.name) return;
     try {
       await axios.post("/api/crm", {
         lawyerId: user._id || user.id,
-        name, phone, notes: "Added from Dashboard"
+        ...clientForm
       });
-      alert("Client Added!");
+      alert("Client Added Successfully!");
+      setShowClientModal(false);
+      setClientForm({ name: "", phone: "", notes: "" });
       fetchClients();
-    } catch (err) { alert("Failed"); }
+    } catch (err) { alert("Failed to add client"); }
   };
 
   if (!user) return <div className="text-white p-10">Loading...</div>;
@@ -414,8 +418,8 @@ export default function LawyerDashboard() {
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${lead.tier === 'diamond' ? 'bg-purple-100 text-purple-700 border border-purple-200' :
-                                lead.tier === 'gold' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
-                                  'bg-gray-100 text-gray-600 border border-gray-200'
+                              lead.tier === 'gold' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
+                                'bg-gray-100 text-gray-600 border border-gray-200'
                               }`}>
                               {lead.tier || "Standard"} Lead
                             </span>
@@ -455,8 +459,10 @@ export default function LawyerDashboard() {
             {activeTab === 'invoices' && (
               <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="font-bold text-xl text-gray-900">Invoices</h3>
-                  <button onClick={createInvoice} className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-green-700">+ Create Invoice</button>
+                  <h3 className="text-xl font-bold text-slate-800">Invoices & Billing</h3>
+                  <button onClick={() => setShowInvoiceModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg hover:bg-blue-700 transition">
+                    + Create Invoice
+                  </button>
                 </div>
                 {invoices.length === 0 ? <p className="text-gray-500 text-center">No invoices yet.</p> : (
                   <div className="space-y-3">
@@ -480,8 +486,10 @@ export default function LawyerDashboard() {
             {activeTab === 'clients' && (
               <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="font-bold text-xl text-gray-900">My Clients</h3>
-                  <button onClick={addClient} className="bg-purple-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-purple-700">+ Add Client</button>
+                  <h3 className="text-xl font-bold text-slate-800">My Clients (CRM)</h3>
+                  <button onClick={() => setShowClientModal(true)} className="bg-[#0B1120] text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg hover:bg-slate-800 transition">
+                    + Add Client
+                  </button>
                 </div>
                 {clients.length === 0 ? <p className="text-gray-500 text-center">No clients added.</p> : (
                   <div className="grid grid-cols-2 gap-4">
