@@ -310,6 +310,22 @@ export default function LawyerDashboard() {
         /* LEFT SIDEBAR - LAWYER PROFILE */
         leftSidebar={
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            {/* PROFILE COMPLETION WIDGET */}
+            <div className={`p-4 ${completionPercentage === 100 ? "bg-green-50" : "bg-blue-50"} border-b border-gray-100`}>
+              <div className="flex justify-between items-end mb-1">
+                <h4 className="font-bold text-xs text-user-700 uppercase tracking-wider">Profile Strength</h4>
+                <span className={`font-bold text-lg ${completionPercentage === 100 ? "text-green-600" : "text-blue-600"}`}>{completionPercentage}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                <div className={`h-2 rounded-full transition-all duration-1000 ${completionPercentage === 100 ? "bg-green-500" : "bg-blue-600"}`} style={{ width: `${completionPercentage}%` }}></div>
+              </div>
+              {completionPercentage < 100 && (
+                <Link to="/lawyer/profile/edit" className="text-[10px] text-blue-600 font-bold hover:underline block text-center">
+                  Complete Now (+{missingFields.length} items)
+                </Link>
+              )}
+            </div>
+
             <div className="h-20 bg-blue-600"></div>
             <div className="px-5 pb-5 -mt-10">
               <div className="w-20 h-20 rounded-full bg-white border-4 border-white flex items-center justify-center text-2xl font-bold text-blue-600 shadow-sm mb-3">
@@ -704,6 +720,38 @@ export default function LawyerDashboard() {
           </>
         }
       />
+
+      {/* INVOICE MODAL */}
+      {showInvoiceModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl animate-in fade-in zoom-in">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold">Create Invoice</h3>
+              <button onClick={() => setShowInvoiceModal(false)}>✕</button>
+            </div>
+            <input className="w-full border p-2 mb-3 rounded" placeholder="Client Name" value={invoiceForm.clientName} onChange={e => setInvoiceForm({ ...invoiceForm, clientName: e.target.value })} />
+            <input className="w-full border p-2 mb-3 rounded" placeholder="Description" value={invoiceForm.description} onChange={e => setInvoiceForm({ ...invoiceForm, description: e.target.value })} />
+            <input className="w-full border p-2 mb-3 rounded" placeholder="Amount (INR)" type="number" value={invoiceForm.amount} onChange={e => setInvoiceForm({ ...invoiceForm, amount: e.target.value })} />
+            <button onClick={handleCreateInvoice} className="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700">Send Invoice</button>
+          </div>
+        </div>
+      )}
+
+      {/* CLIENT MODAL */}
+      {showClientModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl animate-in fade-in zoom-in">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold">Add New Client</h3>
+              <button onClick={() => setShowClientModal(false)}>✕</button>
+            </div>
+            <input className="w-full border p-2 mb-3 rounded" placeholder="Full Name" value={clientForm.name} onChange={e => setClientForm({ ...clientForm, name: e.target.value })} />
+            <input className="w-full border p-2 mb-3 rounded" placeholder="Phone Number" value={clientForm.phone} onChange={e => setClientForm({ ...clientForm, phone: e.target.value })} />
+            <textarea className="w-full border p-2 mb-3 rounded" placeholder="Notes / Case Details" rows={3} value={clientForm.notes} onChange={e => setClientForm({ ...clientForm, notes: e.target.value })} />
+            <button onClick={handleCreateClient} className="w-full bg-[#0B1120] text-white py-2 rounded font-bold hover:bg-slate-800">Save Client</button>
+          </div>
+        </div>
+      )}
 
       {/* INSTANT CALL MODAL */}
       {instantCall && (
