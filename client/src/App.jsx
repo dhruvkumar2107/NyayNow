@@ -10,7 +10,7 @@ import { Toaster } from "react-hot-toast";
 const Home = lazy(() => import("./pages/Home"));
 const Assistant = lazy(() => import("./pages/Assistant"));
 const Analyze = lazy(() => import("./pages/Analyze"));
-const JudgeAI = lazy(() => import("./pages/JudgeAI")); // FIXED: Added Import
+const JudgeAI = lazy(() => import("./pages/JudgeAI"));
 const Agreements = lazy(() => import("./pages/Agreements"));
 const Marketplace = lazy(() => import("./pages/Marketplace"));
 const Nearby = lazy(() => import("./pages/Nearby"));
@@ -21,39 +21,18 @@ const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Analytics = lazy(() => import("./pages/Analytics"));
+const VideoCall = lazy(() => import("./pages/VideoCall"));
 
 /* Lazy Load Auth */
 const Login = lazy(() => import("./auth/Login"));
 const Register = lazy(() => import("./auth/Register"));
-const VideoCall = lazy(() => import("./pages/VideoCall"));
 
 /* Lazy Load Dashboards */
 const ClientDashboard = lazy(() => import("./dashboards/ClientDashboard"));
 const LawyerDashboard = lazy(() => import("./dashboards/LawyerDashboard"));
-const EditProfile = lazy(() => import("./dashboards/EditProfile")); // NEW
-const LawyerProfile = lazy(() => import("./pages/LawyerProfile")); // NEW
+const EditProfile = lazy(() => import("./dashboards/EditProfile"));
+const LawyerProfile = lazy(() => import("./pages/LawyerProfile"));
 const AdminDashboard = lazy(() => import("./dashboards/AdminDashboard"));
-
-// ... inside Routes
-<Route path="/lawyer/:id" element={<LawyerProfile />} /> {/* Public Profile */ }
-
-{/* LAWYER ROUTES */ }
-          <Route
-            path="/lawyer/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={["lawyer"]}>
-                <LawyerDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lawyer/profile/edit"
-            element={
-              <ProtectedRoute allowedRoles={["lawyer"]}>
-                <EditProfile />
-              </ProtectedRoute>
-            }
-          />
 
 /* Loading Component */
 const LoadingFallback = () => (
@@ -85,6 +64,9 @@ export default function App() {
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/video-call/:id" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
 
+              {/* PUBLIC LAWYER PROFILE */}
+              <Route path="/lawyer/:id" element={<LawyerProfile />} />
+
               {/* CLIENT DASHBOARD */}
               <Route
                 path="/client/dashboard"
@@ -98,18 +80,26 @@ export default function App() {
               <Route
                 path="/lawyer/dashboard"
                 element={
-                  <ProtectedRoute role="lawyer">
+                  <ProtectedRoute allowedRoles={["lawyer"]}>
                     <LawyerDashboard />
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/lawyer/profile/edit"
+                element={
+                  <ProtectedRoute allowedRoles={["lawyer"]}>
+                    <EditProfile />
+                  </ProtectedRoute>
+                }
+              />
 
-              {/* ADMIN DASHBOARD (Hidden/Protected - for now simplified access) */}
+              {/* ADMIN DASHBOARD */}
               <Route path="/admin" element={<AdminDashboard />} />
 
               {/* SHARED FEATURES (PUBLIC ACCESS) */}
               <Route path="/assistant" element={<Assistant />} />
-              <Route path="/judge-ai" element={<JudgeAI />} /> {/* FIXED: Added Route */}
+              <Route path="/judge-ai" element={<JudgeAI />} />
               <Route path="/analyze" element={<Analyze />} />
               <Route path="/agreements" element={<Agreements />} />
               <Route path="/marketplace" element={<Marketplace />} />
