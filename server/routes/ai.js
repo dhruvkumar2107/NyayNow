@@ -1,6 +1,9 @@
 ﻿const express = require("express");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const router = express.Router();
+const multer = require("multer"); // NEW
+const pdf = require("pdf-parse"); // NEW
+const upload = multer({ storage: multer.memoryStorage() }); // NEW: Memory Storage for AI processing
 const verifyToken = require("../middleware/authMiddleware");
 const verifyTokenOptional = require("../middleware/verifyTokenOptional");
 const checkAiLimit = require("../middleware/checkAiLimit");
@@ -50,7 +53,25 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       Format the output as JSON with keys: "answer" (markdown string), "related_questions" (array of strings), "intent" (string).
     `;
 
-    const result = await model.generateContent(prompt);
+    // Model Fallback Strategy
+    const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
+    let result = null;
+    let lastError = null;
+
+    for (const modelName of modelsToTry) {
+      try {
+        console.log(`Attempting with model: ${modelName}`);
+        const model = genAI.getGenerativeModel({ model: modelName });
+        result = await model.generateContent(prompt);
+        break; // Success!
+      } catch (e) {
+        console.error(`Model ${modelName} failed:`, e.message);
+        lastError = e;
+      }
+    }
+
+    if (!result) throw lastError || new Error("All AI models failed");
+
     const response = await result.response;
     const text = response.text();
 
@@ -313,6 +334,70 @@ router.post("/draft-contract", verifyToken, checkAiLimit, async (req, res) => {
   } catch (err) {
     console.error("Gemini Drafting Error:", err.message);
     res.status(500).json({ error: "Failed to draft contract" });
+  }
+});
+
+/* ---------------- JUDGE AI PRO (PDF ANALYSIS) ---------------- */
+router.post("/analyze-case-file", verifyToken, checkAiLimit, upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "No PDF file uploaded" });
+
+    // 1. Extract Text from PDF
+    const pdfData = await pdf(req.file.buffer);
+    const caseText = pdfData.text;
+
+    if (!caseText || caseText.length < 50) {
+      return res.status(400).json({ error: "PDF seems empty or unreadable." });
+    }
+
+    // 2. Truncate if too huge (Gemini 1.5 Flash has 1M context, but let's be safe/efficient)
+    const truncatedText = caseText.substring(0, 100000); // 100k chars is plenty for a summary
+
+    const prompt = `
+      ACT AS A SENIOR HIGH COURT JUDGE & FORENSIC EXPERT.
+      Analyze the provided Case File (Extracted Text).
+      
+      CASE TEXT:
+      """
+      ${truncatedText}
+      """
+      
+      TASK:
+      1. **Timeline**: Reconstruct a chronological timeline of events.
+      2. **Contradictions**: Find logic gaps or contradictions in statements (e.g., "Page 2 says X, Page 10 says Y").
+      3. **Legal Risks**: Identify the biggest weaknesses in this case.
+      4. **Relevant Case Law**: Cite 2-3 specific Indian Supreme Court/High Court precedents that apply.
+      5. **Win Probability**: Estimate percentage chance of winning.
+      
+      OUTPUT JSON STRICTLY:
+      {
+        "timeline": [{"date": "YYYY-MM-DD", "event": "Event description"}],
+        "contradictions": ["Contradiction 1", "Contradiction 2"],
+        "risks": ["Risk 1", "Risk 2"],
+        "citations": ["Case Link/Name 1", "Case Link/Name 2"],
+        "winProbability": 75,
+        "summary": "Brief executive summary..."
+      }
+    `;
+
+    // 3. AI Analysis
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    let text = response.text();
+
+    // Clean JSON
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      text = text.substring(jsonStart, jsonEnd + 1);
+    }
+
+    res.json(JSON.parse(text));
+
+  } catch (err) {
+    console.error("Judge AI Pro Error:", err.message);
+    res.status(500).json({ error: "Failed to analyze case file. Ensure it is a valid PDF." });
   }
 });
 

@@ -67,8 +67,10 @@ const VoiceAssistant = () => {
             speak(aiText);
 
         } catch (err) {
-            toast.error("AI Brain Freeze! Try again.");
             console.error(err);
+            const errorMessage = err.response?.data?.answer || err.response?.data?.error || "AI Connection Failed";
+            toast.error(errorMessage);
+            speak("Sorry, I encountered an error. Please try again.");
         } finally {
             setLoading(false);
         }
