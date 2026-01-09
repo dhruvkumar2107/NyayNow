@@ -11,7 +11,9 @@ const MessageSchema = new mongoose.Schema(
     lawyerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 
     // Legacy support (optional, can keep for backward compat for a bit)
-    lawyerName: { type: String }
+    lawyerName: { type: String },
+
+    read: { type: Boolean, default: false } // New for Notifications
   },
   { timestamps: true }
 );

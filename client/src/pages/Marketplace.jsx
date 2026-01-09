@@ -153,12 +153,19 @@ function LawyerCard({ lawyer }) {
       {/* ACTION */}
       <button
         onClick={() => {
-          // 🔒 CLIENT PLAN ENFORCEMENT
-          const userPlan = JSON.parse(localStorage.getItem("user"))?.plan?.toLowerCase() || "silver";
+          // 🔒 PLAN ENFORCEMENT
+          const currentUser = JSON.parse(localStorage.getItem("user"));
+          const userPlan = currentUser?.plan?.toLowerCase() || "silver";
+          const userRole = currentUser?.role;
 
-          if (lawyer.plan === "diamond" && userPlan === "silver") {
-            alert("UPGRADE REQUIRED 💎\n\nTop 1% Elite Partners (Diamond) are only accessible to Gold/Diamond clients.\n\nPlease upgrade your plan to connect.");
-            return;
+          // If looking at a Diamond Lawyer
+          if (lawyer.plan === "diamond") {
+            // If I am a client and only Silver -> Block
+            if (userRole === 'client' && userPlan === 'silver') {
+              alert("UPGRADE REQUIRED 💎\n\nTop 1% Elite Partners (Diamond) are only accessible to Gold/Diamond clients.\n\nPlease upgrade your plan to connect.");
+              return;
+            }
+            // Lawyers can view other lawyers freely for networking (or maybe restrict silver lawyers from seeing diamond lawyers? No, networking should be open)
           }
 
           navigate(`/lawyer/${lawyer._id}`);

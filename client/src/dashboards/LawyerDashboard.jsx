@@ -19,6 +19,7 @@ export default function LawyerDashboard() {
   const [invoices, setInvoices] = useState([]); // NEW
   const [clients, setClients] = useState([]); // NEW
   const [instantCall, setInstantCall] = useState(null); // { clientId, clientName, category }
+  const [unreadCount, setUnreadCount] = useState(0); // NEW
 
   // Social Feed State
   const [posts, setPosts] = useState([]);
@@ -41,9 +42,19 @@ export default function LawyerDashboard() {
       fetchRequests();
       fetchInvoices(); // NEW
       fetchClients(); // NEW
+      fetchUnread(); // NEW
 
       // JOIN INSTANT POOL
       socket.emit("join_lawyer_pool");
+
+      // Listen for messages
+      socket.on("receive_message", (data) => {
+        // If I am NOT in the messages tab, or if I am not in that specific chat (logic handled by page usually, but for global badge:)
+        // Simply increment unread count if it's for me
+        if (data.lawyerId === user._id || data.clientId === user._id) {
+          setUnreadCount(prev => prev + 1);
+        }
+      });
 
       // Listen for leads
       socket.on("incoming_lead", (data) => {
@@ -216,6 +227,15 @@ export default function LawyerDashboard() {
       const res = await axios.get(`/api/crm?lawyerId=${user._id || user.id}`);
       setClients(res.data);
     } catch (err) { console.error(err); }
+  };
+
+  const fetchUnread = async () => {
+    try {
+      const res = await axios.get(`/api/notifications/unread?userId=${user._id}`);
+      setUnreadCount(res.data.count || 0);
+    } catch (err) {
+      console.error("Failed to fetch unread", err);
+    }
   };
 
   // Modal States
@@ -702,7 +722,15 @@ function SidebarItem({ icon, label, count, to }) {
       <Link to={to}>
         <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 cursor-pointer transition group">
           <div className="flex items-center gap-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">
-            <span className="text-gray-400 group-hover:text-blue-600">{icon}</span>
+            <span className="text-gray-400 group-hover:text-blue-600 relative">
+              {icon}
+              {count > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                </span>
+              )}
+            </span>
             {label}
           </div>
           {count !== undefined && <span className="text-xs font-semibold text-gray-500">{count}</span>}
