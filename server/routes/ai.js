@@ -262,11 +262,7 @@ router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
   }
 });
 
-  } catch (err) {
-  console.error("Gemini Case Analysis Error:", err.message);
-  res.status(500).json({ error: "Failed to analyze case" });
-}
-});
+
 
 /* ---------------- CONTRACT DRAFTING (TurboAgreements) ---------------- */
 router.post("/draft-contract", verifyToken, checkAiLimit, async (req, res) => {
