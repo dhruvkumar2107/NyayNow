@@ -106,9 +106,6 @@ export default function Marketplace() {
    LAWYER CARD COMPONENT
 ---------------------------------------- */
 function LawyerCard({ lawyer }) {
-  const navigate = __useNavigateHook(); // We will inject the hook usage in the parent or pass it down, but easier to use hook here if we move component inside or just import hook if it's outside. 
-  // Wait, LawyerCard is defined outside the default export. It cannot use hooks if it's not a component proper.
-  // Actually, LawyerCard IS a functional component, so it CAN use hooks.
   const navigate = useNavigate();
 
   return (
