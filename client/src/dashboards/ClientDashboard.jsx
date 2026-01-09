@@ -21,6 +21,7 @@ export default function ClientDashboard() {
   const [suggestedLawyers, setSuggestedLawyers] = useState([]);
   const [connectionsMap, setConnectionsMap] = useState({}); // Stores { userId: status }
   const [selectedLawyerForBooking, setSelectedLawyerForBooking] = useState(null);
+  const [activeTab, setActiveTab] = useState('feed'); // NEW: Tab State
 
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState("");
