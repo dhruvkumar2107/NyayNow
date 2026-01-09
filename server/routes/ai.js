@@ -11,17 +11,14 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
 // Apply Auth & Limit Check
-// This tool call involves multiple non-contiguous edits. I will switch to multi_replace_file_content for efficiency in the next step or use regex logic if I can. 
-// Actually, `replace_file_content` is single contiguous. I should use `multi_replace_file_content` or just do it one by one.
-// There are ~6 routes. I'll use multi_replace.
+router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) => {
+  try {
+    const { question, history, language, location } = req.body;
 
-try {
-  const { question, history, language, location } = req.body;
+    // Construct History Context
+    const conversationHistory = history ? history.map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join("\n") : "";
 
-  // Construct History Context
-  const conversationHistory = history ? history.map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join("\n") : "";
-
-  const prompt = `
+    const prompt = `
       You are Nyay Sathi, an expert Indian legal assistant.
       User Location: ${location || "India"}
       Language: ${language || "English"}
@@ -39,28 +36,28 @@ try {
       Format the output as JSON with keys: "answer" (markdown string), "related_questions" (array of strings), "intent" (string).
     `;
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  const text = response.text();
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
 
-  let cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
-  const firstBrace = cleaned.indexOf('{');
-  const lastBrace = cleaned.lastIndexOf('}');
+    let cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const firstBrace = cleaned.indexOf('{');
+    const lastBrace = cleaned.lastIndexOf('}');
 
-  if (firstBrace !== -1 && lastBrace !== -1) {
-    cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+    if (firstBrace !== -1 && lastBrace !== -1) {
+      cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+    }
+
+    const jsonResponse = JSON.parse(cleaned);
+    res.json(jsonResponse);
+  } catch (err) {
+    console.error("Gemini Assistant Error:", err.message);
+    res.status(500).json({
+      answer: `AI Error: ${err.message}`,
+      related_questions: [],
+      intent: "error"
+    });
   }
-
-  const jsonResponse = JSON.parse(cleaned);
-  res.json(jsonResponse);
-} catch (err) {
-  console.error("Gemini Assistant Error:", err.message);
-  res.status(500).json({
-    answer: `AI Error: ${err.message}`,
-    related_questions: [],
-    intent: "error"
-  });
-}
 });
 
 /* ---------------- AGREEMENT ANALYSIS ---------------- */
