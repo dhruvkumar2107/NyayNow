@@ -22,6 +22,7 @@ export default function ClientDashboard() {
   const [connectionsMap, setConnectionsMap] = useState({}); // Stores { userId: status }
   const [selectedLawyerForBooking, setSelectedLawyerForBooking] = useState(null);
   const [activeTab, setActiveTab] = useState('feed'); // NEW: Tab State
+  const [agreements, setAgreements] = useState([]); // NEW: Saved Agreements
 
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState("");
@@ -37,8 +38,9 @@ export default function ClientDashboard() {
       fetchMyCases();
       fetchPosts();
       fetchConnections();
-      fetchInvoices(); // NEW
-      fetchAppointments(); // NEW
+      fetchInvoices();
+      fetchAppointments();
+      fetchAgreements(); // NEW
       socket.emit("join_room", user._id || user.id); // JOIN PERSONAL ROOM
 
       // Listen for Consult Start
@@ -193,6 +195,15 @@ export default function ClientDashboard() {
     }
   };
 
+  const fetchAgreements = async () => {
+    try {
+      const res = await axios.get("/api/agreements");
+      setAgreements(res.data);
+    } catch (err) {
+      console.error("Fetch Agreements Error:", err);
+    }
+  };
+
   const handlePostCase = async () => {
     if (!newCase.title || !newCase.desc) return alert("Please fill title and description");
 
@@ -336,6 +347,31 @@ export default function ClientDashboard() {
               </div>
             )}
 
+            {/* AGREEMENTS TAB */}
+            {activeTab === 'agreements' && (
+              <div className="space-y-4">
+                {agreements.length === 0 ? (
+                  <div className="text-center py-10 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                    <p className="text-gray-500 mb-2">No saved agreements.</p>
+                    <Link to="/rent-agreement" className="text-blue-600 font-bold hover:underline">Draft your first agreement</Link>
+                  </div>
+                ) : (
+                  agreements.map(agr => (
+                    <div key={agr._id} className="bg-white border border-gray-200 p-4 rounded-lg shadow-sm flex justify-between items-center group cursor-pointer hover:border-blue-300 transition" onClick={() => navigate(`/agreements/view/${agr._id}`)}>
+                      <div>
+                        <h4 className="font-bold text-slate-900 flex items-center gap-2">📄 {agr.type}</h4>
+                        <p className="text-xs text-gray-500 mt-1">Parties: {agr.parties?.partyA} & {agr.parties?.partyB}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs text-gray-400 block mb-1">{new Date(agr.createdAt).toLocaleDateString()}</span>
+                        <button className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold group-hover:bg-blue-600 group-hover:text-white transition">View</button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+
             {/* ONLY SHOW POST WIDGET & FEED IF TAB IS FEED */}
             {activeTab === 'feed' && (
               <>
@@ -453,25 +489,9 @@ export default function ClientDashboard() {
         /* RIGHT SIDEBAR */
         rightSidebar={
           <>
-            {/* Active Cases Widget */}
-            < div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm" >
-              <h3 className="font-bold text-sm text-gray-900 mb-4">Your Active Cases</h3>
-              <ul className="space-y-3">
-                {activeCases.length === 0 && <li className="text-xs text-gray-500">No active cases. Post one above!</li>}
-                {activeCases.map((c) => (
-                  <li key={c._id} className="text-sm border-b border-gray-50 last:border-0 pb-2 last:pb-0">
-                    <p className="text-gray-800 font-medium truncate">{c.title}</p>
-                    <p className="text-xs text-orange-500 mt-1">• {c.acceptedBy ? `Accepted by ${c.acceptedBy}` : "Open / Review Pending"}</p>
-                  </li>
-                ))}
-              </ul>
-              <Link to="/agreements" className="block mt-4 text-xs text-blue-600 hover:underline pb-1 font-medium">
-                View all cases →
-              </Link>
-            </div >
-
+            {/* Active Cases Widget - REMOVED (Moved to My Cases Tab) */}
             {/* Suggested Lawyers */}
-            < div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm" >
+            <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
               <h3 className="font-bold text-sm text-gray-900 mb-4">Suggested for you</h3>
               <ul className="space-y-4">
                 {suggestedLawyers.length === 0 && <p className="text-xs text-center text-gray-500 py-4">No lawyers found nearby.</p>}

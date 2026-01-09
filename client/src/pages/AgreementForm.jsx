@@ -24,6 +24,15 @@ export default function AgreementForm() {
     });
 
     const handleDraft = async () => {
+        // 🔒 GUEST LIMIT CHECK
+        if (!user) {
+            const usage = parseInt(localStorage.getItem("ai_usage_agreement") || "0");
+            if (usage >= 1) {
+                setShowPaywall(true);
+                return;
+            }
+        }
+
         setLoading(true);
         try {
             const res = await axios.post("/api/ai/draft-contract", {
@@ -40,6 +49,12 @@ export default function AgreementForm() {
                 }
             });
             setContract(res.data.contract);
+
+            // Increment Usage for Guest
+            if (!user) {
+                localStorage.setItem("ai_usage_agreement", "1");
+            }
+
             setStep(3);
         } catch (err) {
             if (err.response?.status === 403) {
@@ -186,11 +201,22 @@ export default function AgreementForm() {
                                 </h2>
                                 <div className="flex gap-2">
                                     <button onClick={() => setStep(2)} className="text-slate-500 font-bold px-4">Edit</button>
+
+                                    {user && (
+                                        <button
+                                            onClick={handleSave}
+                                            disabled={saving}
+                                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow-md transition disabled:opacity-50"
+                                        >
+                                            {saving ? "Saving..." : "Save to Dashboard 💾"}
+                                        </button>
+                                    )}
+
                                     <button
                                         onClick={handleDownload}
                                         className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold shadow-md transition"
                                     >
-                                        Print / Save PDF 📥
+                                        Print / PDF 📥
                                     </button>
                                 </div>
                             </div>

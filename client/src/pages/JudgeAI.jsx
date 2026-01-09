@@ -18,10 +18,28 @@ export default function JudgeAI() {
     const handleSubmit = async () => {
         if (!formData.caseDescription) return alert("Please describe the case facts.");
 
+        // 🔒 GUEST LIMIT CHECK
+        // We assume 'user' comes from useAuth, but this file doesn't use useAuth yet. 
+        // I need to import useAuth or just check token. 
+        // Actually, let's use localStorage check primarily.
+        const token = localStorage.getItem("token");
+        if (!token) {
+            const usage = parseInt(localStorage.getItem("ai_usage_judge") || "0");
+            if (usage >= 1) {
+                setShowPaywall(true); // Reuse Paywall Modal for "Login Required" or similar
+                return;
+            }
+        }
+
         setLoading(true);
         try {
             const res = await axios.post("/api/ai/predict-outcome", formData);
             setResult(res.data);
+
+            // Increment Usage for Guest
+            if (!token) {
+                localStorage.setItem("ai_usage_judge", "1");
+            }
         } catch (err) {
             if (err.response?.status === 403) {
                 setShowPaywall(true);

@@ -176,6 +176,7 @@ loadRoute("/api/connections", "./routes/connections"); // FIXED: Missing Route
 loadRoute("/api/invoices", "./routes/invoices"); // NEW
 loadRoute("/api/crm", "./routes/crm"); // NEW
 loadRoute("/api/notifications", "./routes/notifications"); // NEW
+loadRoute("/api/agreements", "./routes/agreements"); // NEW
 
 // Custom Sentry Error Handler (Compatible with all versions)
 app.use((err, req, res, next) => {

@@ -2,13 +2,15 @@ const User = require("../models/User");
 
 const checkAiLimit = async (req, res, next) => {
     try {
-        // Assuming auth middleware has already populated req.user and req.userId
+        // Allow Guests (Limit handled by Frontend/RateLimiter)
         if (!req.userId) {
-            return res.status(401).json({ error: "Unauthorized" });
+            return next();
         }
 
         const user = await User.findById(req.userId);
         if (!user) {
+            // If token was valid but user deleted? Treat as guest or error. 
+            // Erroring is safer for now to avoid confusion.
             return res.status(404).json({ error: "User not found" });
         }
 
