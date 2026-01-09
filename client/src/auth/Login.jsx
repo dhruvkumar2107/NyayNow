@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -72,11 +73,6 @@ export default function Login() {
       setLoading(false);
     }
   };
-
-  return (
-import { GoogleLogin } from '@react-oauth/google';
-
-  // ... (inside component)
 
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true);
