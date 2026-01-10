@@ -20,7 +20,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key"
 // Helper for Model Fallback
 // Helper for Model Fallback
 async function generateWithFallback(prompt) {
-  // USER REQUEST: STRICTLY GEMINI 2.5 FLASH
+  // USER REQUEST: STRICTLY GEMINI 2.5 FLASH ONLY
   const modelsToTry = [
     "gemini-2.5-flash"
   ];
