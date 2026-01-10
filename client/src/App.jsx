@@ -56,7 +56,7 @@ export default function App() {
         <Navbar />
 
         {/* PAGE CONTENT */}
-        <main className="pt-20">
+        <main className="pt-[72px]">
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               {/* PUBLIC ROUTES */}

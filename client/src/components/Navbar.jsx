@@ -21,8 +21,8 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 font-sans ${scrolled ? "bg-white/95 backdrop-blur-md border-b border-slate-200/60 shadow-sm py-2" : "bg-white border-transparent py-4"}`}>
-      <div className="max-w-[1280px] mx-auto px-6 h-16 flex items-center justify-between">
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 font-sans h-[72px] flex items-center ${scrolled ? "bg-white/95 backdrop-blur-md border-b border-slate-200/60 shadow-sm" : "bg-white border-b border-transparent"}`}>
+      <div className="max-w-[1280px] w-full mx-auto px-6 h-full flex items-center justify-between">
 
         {/* LEFT: LOGO */}
         <Link to="/" className="flex items-center gap-2.5 group shrink-0">
