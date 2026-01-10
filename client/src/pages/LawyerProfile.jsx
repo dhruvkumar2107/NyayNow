@@ -48,6 +48,36 @@ export default function LawyerProfile() {
         if (user) fetchData(); // Only fetch if user exists
     }, [id, user, navigate, loading]);
 
+    const handleConnect = async () => {
+        if (!user) {
+            toast.error("Please login to connect");
+            navigate("/login");
+            return;
+        }
+        try {
+            setConnecting(true);
+            // Assuming standard Client -> Lawyer connection
+            // If User is lawyer connecting to lawyer, this might need adjustment in backend Schema
+            // For now, we assume user is Client
+            await axios.post("/api/connections", {
+                clientId: user._id || user.id,
+                lawyerId: id,
+                initiatedBy: user.role
+            });
+            toast.success("Request sent successfully!");
+            setConnection({ status: 'pending' });
+        } catch (err) {
+            console.error(err);
+            toast.error(err.response?.data?.error || "Failed to send request");
+        } finally {
+            setConnecting(false);
+        }
+    };
+
+    const handleMessage = () => {
+        navigate(`/messages?chatId=${id}`);
+    };
+
     if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
     if (!lawyer) return <div className="min-h-screen flex items-center justify-center">Lawyer not found</div>;
 
