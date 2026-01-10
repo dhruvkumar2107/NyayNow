@@ -19,6 +19,23 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
+/* -----------------------------------------
+   MOCK FALLBACK DATA (In case of API Failure)
+----------------------------------------- */
+const MOCK_NEARBY = {
+  police: [
+    { id: 'm-p1', name: "Andheri Police Station (Mock)", address: "Andheri East, Mumbai", rating: "4.5", lat: 19.1197, lon: 72.8464 },
+    { id: 'm-p2', name: "Bandra Police Station (Mock)", address: "Bandra West, Mumbai", rating: "4.2", lat: 19.0544, lon: 72.8402 },
+  ],
+  courts: [
+    { id: 'm-c1', name: "Mumbai District Court (Mock)", address: "Fort, Mumbai", rating: "4.8", lat: 18.9290, lon: 72.8310 },
+  ],
+  lawyers: [
+    { id: 'm-l1', name: "Adv. Rahul Sharma", specialization: "Criminal Law", plan: "diamond", address: "Mumbai", lat: 19.0760, lon: 72.8777, rating: 5.0, image: "https://randomuser.me/api/portraits/men/32.jpg" },
+    { id: 'm-l2', name: "Adv. Neha Verma", specialization: "Corporate Law", plan: "gold", address: "Delhi", lat: 28.6139, lon: 77.2090, rating: 4.9, image: "https://randomuser.me/api/portraits/women/44.jpg" },
+  ],
+};
+
 // Custom Icons
 const policeIcon = L.divIcon({
   html: '<div class="text-3xl filter drop-shadow-md">🚓</div>',
@@ -105,77 +122,99 @@ export default function Nearby() {
   }, []);
 
   const fetchRealData = async (lat, lon) => {
-    try {
-      // 1. Fetch Real Lawyers from Backend
-      const lawyersRes = await axios.get("/api/users?role=lawyer");
-      const realLawyers = lawyersRes.data.map(l => {
-        const coords = getRandomLocation(lat, lon, 5); // Approximate location
-        return {
-          id: l._id,
-          name: l.name,
-          specialization: l.specialization || "Legal Consultant",
-          plan: l.plan,
-          address: l.location?.city || "Nearby",
-          lat: coords.lat,
-          lon: coords.lon,
-          rating: l.stats?.rating || 4.5,
-          image: l.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(l.name)}&background=0D8ABC&color=fff`
-        };
-      });
+    // Prepare promises for parallel execution
+    const lawyersPromise = axios.get("/api/users?role=lawyer");
+    const policePromise = axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=police+station&lat=${lat}&lon=${lon}&addressdetails=1&limit=10`);
+    const courtsPromise = axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=court&lat=${lat}&lon=${lon}&addressdetails=1&limit=10`);
 
-      // 2. Fetch Real Police Stations (OpenStreetMap Nominatim)
-      // Using a bounding box context or just a specialized query
-      const policeRes = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=police+station&lat=${lat}&lon=${lon}&addressdetails=1&limit=10`);
+    // Wait for all to settle (success or fail independent)
+    const [lawyersResult, policeResult, courtsResult] = await Promise.allSettled([
+      lawyersPromise, policePromise, courtsPromise
+    ]);
 
-      const realPolice = policeRes.data
-        .filter(p => p.class === 'amenity' && p.type === 'police') // Strict filter
-        .map(p => {
-          // Smart Name Extraction
-          let placeName = p.name;
-          const parts = p.display_name.split(', ');
+    const newData = { police: [], courts: [], lawyers: [] };
 
-          // If name is generic "Police", try to find a better one from address components
-          if (!placeName || placeName.toLowerCase() === 'police' || placeName.toLowerCase() === 'police station') {
-            placeName = parts[0]; // Usually "Andheri Police Station" is the first part of display_name
-          }
-
-          // Address Construction (skipping the name part)
-          const address = parts.slice(1, 4).join(', ');
-
+    // 1. PROCESS LAWYERS
+    if (lawyersResult.status === "fulfilled") {
+      try {
+        newData.lawyers = lawyersResult.value.data.map(l => {
+          const coords = getRandomLocation(lat, lon, 5);
           return {
-            id: p.place_id,
-            name: placeName,
-            address: address || p.display_name,
-            lat: parseFloat(p.lat),
-            lon: parseFloat(p.lon),
-            rating: (3.8 + Math.random()).toFixed(1) // Mock rating for now
+            id: l._id,
+            name: l.name,
+            specialization: l.specialization || "Legal Consultant",
+            plan: l.plan,
+            address: l.location?.city || "Nearby",
+            lat: coords.lat,
+            lon: coords.lon,
+            rating: l.stats?.rating || 4.5,
+            image: l.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(l.name)}&background=0D8ABC&color=fff`
           };
         });
-
-      // 3. Fetch Real Courts
-      const courtsRes = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=court&lat=${lat}&lon=${lon}&addressdetails=1&limit=10`);
-      const realCourts = courtsRes.data.map(c => {
-        const parts = c.display_name.split(', ');
-        return {
-          id: c.place_id,
-          name: c.name || parts[0],
-          address: parts.slice(1, 4).join(', '),
-          lat: parseFloat(c.lat),
-          lon: parseFloat(c.lon),
-          rating: (4.0 + Math.random()).toFixed(1)
-        };
-      });
-
-      setData({
-        police: realPolice,
-        courts: realCourts,
-        lawyers: realLawyers
-      });
-
-    } catch (error) {
-      console.error("Failed to fetch nearby data", error);
-      toast.error("Network error: Could not fetch nearby places.");
+      } catch (err) { console.error("Error parsing lawyers", err); }
+    } else {
+      console.warn("Lawyer API failed, using Mock");
+      // Generate mock lawyers around user location
+      newData.lawyers = MOCK_NEARBY.lawyers.map(l => ({
+        ...l, ...getRandomLocation(lat, lon, 2)
+      }));
     }
+
+    // 2. PROCESS POLICE
+    if (policeResult.status === "fulfilled") {
+      try {
+        newData.police = policeResult.value.data
+          .filter(p => p.class === 'amenity' && p.type === 'police')
+          .map(p => {
+            let placeName = p.name;
+            const parts = p.display_name.split(', ');
+            if (!placeName || placeName.toLowerCase().includes('police')) {
+              placeName = parts[0];
+            }
+            return {
+              id: p.place_id,
+              name: placeName,
+              address: parts.slice(1, 4).join(', '),
+              lat: parseFloat(p.lat),
+              lon: parseFloat(p.lon),
+              rating: (3.8 + Math.random()).toFixed(1)
+            };
+          });
+      } catch (err) { console.error("Error parsing police", err); }
+    }
+
+    // Mock fallback if empty or failed
+    if (newData.police.length === 0) {
+      newData.police = MOCK_NEARBY.police.map(p => ({
+        ...p, ...getRandomLocation(lat, lon, 3)
+      }));
+    }
+
+    // 3. PROCESS COURTS
+    if (courtsResult.status === "fulfilled") {
+      try {
+        newData.courts = courtsResult.value.data.map(c => {
+          const parts = c.display_name.split(', ');
+          return {
+            id: c.place_id,
+            name: c.name || parts[0],
+            address: parts.slice(1, 4).join(', '),
+            lat: parseFloat(c.lat),
+            lon: parseFloat(c.lon),
+            rating: (4.0 + Math.random()).toFixed(1)
+          };
+        });
+      } catch (err) { console.error("Error parsing courts", err); }
+    }
+
+    // Mock fallback if empty or failed
+    if (newData.courts.length === 0) {
+      newData.courts = MOCK_NEARBY.courts.map(c => ({
+        ...c, ...getRandomLocation(lat, lon, 4)
+      }));
+    }
+
+    setData(newData);
   };
 
   const categories = [
