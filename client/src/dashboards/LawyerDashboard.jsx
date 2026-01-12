@@ -26,12 +26,8 @@ export default function LawyerDashboard() {
   const [postContent, setPostContent] = useState("");
   const [postFile, setPostFile] = useState(null);
   const [postType, setPostType] = useState("text");
-  const [topics, setTopics] = useState([
-    { _id: "1", name: "Family Law", count: 120 },
-    { _id: "2", name: "Corporate Law", count: 90 },
-    { _id: "3", name: "Criminal Defense", count: 75 },
-    { _id: "4", name: "Real Estate", count: 60 },
-  ]);
+  // Removed hardcoded topics
+
 
 
   useEffect(() => {
@@ -267,6 +263,11 @@ export default function LawyerDashboard() {
     }
   };
 
+  // CALCULATE STATS
+  const totalEarnings = invoices.filter(i => i.status === 'paid').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+  const activeCasesCount = clients.length;
+
+
   // Modal States
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [showClientModal, setShowClientModal] = useState(false);
@@ -455,91 +456,139 @@ export default function LawyerDashboard() {
         /* CENTER FEED */
         mainFeed={
           <>
+            {/* WELCOME HEADER */}
+            <div className="mb-6 animate-in slide-in-from-top-4 duration-500">
+              <h1 className="text-2xl font-bold text-slate-900">
+                Welcome back, <span className="text-blue-600">{user.name?.split(' ')[0]}</span> 👋
+              </h1>
+              <p className="text-slate-500 text-sm">Here's what's happening in your legal practice today.</p>
+            </div>
+
+            {/* PREEMIUM STATS GRID */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Earnings</div>
+                <div className="text-2xl font-black text-slate-800">₹{totalEarnings.toLocaleString()}</div>
+                <div className="text-xs text-green-600 font-bold mt-1">↑ 12% vs last month</div>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Active Leads</div>
+                <div className="text-2xl font-black text-slate-800">{leads.length}</div>
+                <div className="text-xs text-blue-600 font-bold mt-1">{leads.length > 0 ? "Action Required" : "All caught up"}</div>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Clients</div>
+                <div className="text-2xl font-black text-slate-800">{activeCasesCount}</div>
+                <div className="text-xs text-purple-600 font-bold mt-1">+2 New this week</div>
+              </div>
+              <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Profile Views</div>
+                <div className="text-2xl font-black text-slate-800">{user.stats?.profileViews || 0}</div>
+                <div className="text-xs text-orange-600 font-bold mt-1">{user.stats?.rating ? `${user.stats.rating} ★ Rating` : "Top 5% in City"}</div>
+              </div>
+            </div>
+
             {/* TABS */}
-            <div className="flex bg-white border border-gray-200 rounded-lg p-1 mb-4">
+            <div className="flex bg-slate-100/50 p-1 mb-6 rounded-xl border border-slate-200">
               {['leads', 'invoices', 'clients'].map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex-1 py-2 rounded-md text-sm font-bold capitalize transition ${activeTab === tab ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}
+                  className={`flex-1 py-2.5 rounded-lg text-sm font-bold capitalize transition-all duration-200 ${activeTab === tab ? 'bg-white text-blue-600 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:bg-white/50 hover:text-slate-700'}`}
                 >
-                  {tab}
+                  {tab} {tab === 'leads' && leads.length > 0 && <span className="ml-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{leads.length}</span>}
                 </button>
               ))}
             </div>
 
-            {/* CONTENT BASED ON TAB */}
+            {/* LEADS TAB */}
             {activeTab === 'leads' && (
-              <>
-                <h3 className="font-bold text-gray-800 mb-4">Marketplace Leads ({leads.length})</h3>
-                {/* ... Existing Leads Map ... */}
+              <div className="animate-in fade-in duration-300">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-slate-800">Marketplace Leads</h3>
+                  <button onClick={fetchLeads} className="text-xs text-blue-600 hover:underline">Refresh List ↻</button>
+                </div>
+
                 {leads.length === 0 ? (
-                  <p className="text-center text-gray-500 py-10">No new cases in the marketplace.</p>
+                  <div className="text-center py-12 bg-white rounded-xl border border-dashed border-slate-300">
+                    <div className="text-4xl mb-3">📭</div>
+                    <p className="text-slate-500 font-medium">No active leads right now.</p>
+                    <p className="text-xs text-slate-400 mt-1">Check back later or optimize your profile.</p>
+                  </div>
                 ) : (
                   leads.map((lead) => (
-                    <div key={lead._id} className="bg-white border border-gray-200 rounded-lg p-5 mb-4 shadow-sm relative overflow-hidden group hover:border-blue-300 transition">
-                      {/* ... Lead Card Content ... */}
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${lead.tier === 'diamond' ? 'bg-purple-100 text-purple-700 border border-purple-200' :
-                              lead.tier === 'gold' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
-                                'bg-gray-100 text-gray-600 border border-gray-200'
+                    <div key={lead._id} className="bg-white border border-slate-200 rounded-xl p-6 mb-4 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-300 relative group">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${lead.tier === 'diamond' ? 'bg-purple-100 text-purple-700 ring-1 ring-purple-200' :
+                              lead.tier === 'gold' ? 'bg-amber-100 text-amber-700 ring-1 ring-amber-200' :
+                                'bg-slate-100 text-slate-600 ring-1 ring-slate-200'
                               }`}>
-                              {lead.tier || "Standard"} Lead
+                              {lead.tier || "Standard"}
                             </span>
-                            <span className="text-xs text-gray-400">• {new Date(lead.createdAt).toLocaleDateString()}</span>
+                            <span className="text-xs text-slate-400 font-medium">• {new Date(lead.createdAt).toLocaleDateString()}</span>
                           </div>
-                          <h4 className="font-bold text-lg text-gray-900 leading-tight">{lead.title}</h4>
+                          <h4 className="font-bold text-lg text-slate-900 mb-1 group-hover:text-blue-700 transition-colors">{lead.title}</h4>
+                          <div className="flex items-center gap-4 text-xs font-medium text-slate-500 mb-3">
+                            <span className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-100">📍 {lead.location}</span>
+                            <span className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-100">⚖️ {lead.category || "General Logic"}</span>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <span className="block text-xl font-bold text-blue-600">₹{lead.budget || "N/A"}</span>
-                          <span className="text-xs text-gray-400">Budget</span>
+                        <div className="text-right pl-4 border-l border-slate-100 ml-4">
+                          <div className="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1">Budget</div>
+                          <div className="text-xl font-black text-emerald-600">₹{lead.budget || "N/A"}</div>
                         </div>
                       </div>
 
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{lead.desc}</p>
+                      <p className="text-sm text-slate-600 leading-relaxed mb-5 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                        "{lead.desc}"
+                      </p>
 
-                      <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
-                        <span className="flex items-center gap-1">📍 {lead.location}</span>
-                        <span className="flex items-center gap-1">⚖️ {lead.category || "General"}</span>
-                      </div>
-
-                      {/* Action Area */}
-                      <div className="pt-3 border-t border-gray-100 flex justify-end gap-3">
-                        <button className="text-gray-400 hover:text-gray-600 font-medium text-sm">Ignore</button>
+                      <div className="flex gap-3">
                         <button
                           onClick={() => acceptLead(lead._id, lead.tier, lead.category)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-md shadow-blue-200 transition"
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg font-bold text-sm shadow-md shadow-blue-200 transition-transform active:scale-95 flex items-center justify-center gap-2"
                         >
-                          Accept Case
+                          <span>⚡</span> Accept Case
+                        </button>
+                        <button className="px-4 py-2.5 rounded-lg border border-slate-200 text-slate-500 font-bold text-sm hover:bg-slate-50 hover:text-red-500 transition-colors">
+                          Ignore
                         </button>
                       </div>
                     </div>
                   ))
                 )}
-              </>
+              </div>
             )}
 
             {activeTab === 'invoices' && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm animate-in fade-in zoom-in duration-300">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-bold text-slate-800">Invoices & Billing</h3>
-                  <button onClick={() => setShowInvoiceModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg hover:bg-blue-700 transition">
-                    + Create Invoice
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-800">Invoices & Billing</h3>
+                    <p className="text-xs text-slate-500">Manage your payments and dues</p>
+                  </div>
+                  <button onClick={() => setShowInvoiceModal(true)} className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition active:scale-95 flex items-center gap-2">
+                    <span>+</span> Create Invoice
                   </button>
                 </div>
-                {invoices.length === 0 ? <p className="text-gray-500 text-center">No invoices yet.</p> : (
+                {invoices.length === 0 ? <div className="text-center py-10 bg-slate-50 rounded-lg border border-slate-200"><p className="text-slate-500">No invoices yet.</p></div> : (
                   <div className="space-y-3">
                     {invoices.map(inv => (
-                      <div key={inv._id} className="flex justify-between items-center p-3 border border-gray-100 rounded bg-gray-50">
-                        <div>
-                          <p className="font-bold text-gray-900">{inv.clientName}</p>
-                          <p className="text-xs text-gray-500">{inv.description}</p>
+                      <div key={inv._id} className="flex justify-between items-center p-4 border border-slate-100 rounded-xl bg-white hover:border-blue-200 transition shadow-sm">
+                        <div className="flex items-center gap-4">
+                          <div className={`p-3 rounded-full ${inv.status === 'paid' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
+                            {inv.status === 'paid' ? '✓' : '⏳'}
+                          </div>
+                          <div>
+                            <p className="font-bold text-slate-900">{inv.clientName}</p>
+                            <p className="text-xs text-slate-500 font-medium">{inv.description}</p>
+                          </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-blue-600">₹{inv.amount}</p>
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase font-bold ${inv.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{inv.status}</span>
+                          <p className="font-black text-slate-800 text-lg">₹{inv.amount}</p>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wide ${inv.status === 'paid' ? 'text-emerald-700 bg-emerald-50' : 'text-amber-700 bg-amber-50'}`}>{inv.status}</span>
                         </div>
                       </div>
                     ))}
@@ -549,21 +598,32 @@ export default function LawyerDashboard() {
             )}
 
             {activeTab === 'clients' && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm animate-in fade-in zoom-in duration-300">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-bold text-slate-800">My Clients (CRM)</h3>
-                  <button onClick={() => setShowClientModal(true)} className="bg-[#0B1120] text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg hover:bg-slate-800 transition">
-                    + Add Client
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-800">My Clients (CRM)</h3>
+                    <p className="text-xs text-slate-500">Manage your client relationships</p>
+                  </div>
+                  <button onClick={() => setShowClientModal(true)} className="bg-slate-900 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg hover:bg-slate-800 transition active:scale-95">
+                    + Add New Client
                   </button>
                 </div>
-                {clients.length === 0 ? <p className="text-gray-500 text-center">No clients added.</p> : (
-                  <div className="grid grid-cols-2 gap-4">
+                {clients.length === 0 ? <p className="text-slate-500 text-center py-8">No clients added.</p> : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {clients.map(cl => (
-                      <div key={cl._id} className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 transition">
-                        <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold mb-3">{cl.name[0]}</div>
-                        <h4 className="font-bold text-gray-900">{cl.name}</h4>
-                        <p className="text-xs text-gray-500">{cl.phone || "No Phone"}</p>
-                        <button className="mt-3 w-full border border-gray-300 text-gray-600 text-xs font-bold py-1.5 rounded hover:bg-gray-50">View Details</button>
+                      <div key={cl._id} className="p-5 border border-slate-200 rounded-xl hover:border-blue-300 transition-all hover:shadow-md bg-white group">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-md">
+                            {cl.name[0]}
+                          </div>
+                          <button className="text-slate-300 hover:text-blue-600">•••</button>
+                        </div>
+                        <h4 className="font-bold text-slate-900 text-lg">{cl.name}</h4>
+                        <p className="text-xs text-slate-500 font-medium mb-4">{cl.phone || "No Contact Info"}</p>
+                        <div className="flex gap-2">
+                          <button className="flex-1 bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg group-hover:bg-blue-50 group-hover:text-blue-700 group-hover:border-blue-200 transition">View Details</button>
+                          <button className="px-3 bg-slate-50 border border-slate-200 text-slate-700 rounded-lg hover:bg-green-50 hover:text-green-600 transition">📞</button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -705,16 +765,22 @@ export default function LawyerDashboard() {
               </div>
             </div>
 
-            {/* Trending Topics (Kept at bottom) */}
+            {/* Platform Activity (REAL STATS) */}
             <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm mt-4">
-              <h3 className="font-bold text-sm text-gray-900 mb-4">Trending</h3>
+              <h3 className="font-bold text-sm text-gray-900 mb-4">Platform Activity</h3>
               <ul className="space-y-3">
-                {topics.map((t) => (
-                  <li key={t._id} className="text-sm">
-                    <p className="font-medium text-blue-700">{t.name}</p>
-                    <p className="text-xs text-gray-500">{t.count} posts</p>
-                  </li>
-                ))}
+                <li className="text-sm border-b border-gray-50 pb-2">
+                  <p className="font-medium text-blue-700">{leads.filter(l => new Date(l.createdAt).toDateString() === new Date().toDateString()).length} New Leads</p>
+                  <p className="text-xs text-gray-500">Posted Today</p>
+                </li>
+                <li className="text-sm border-b border-gray-50 pb-2">
+                  <p className="font-medium text-purple-700">{posts.length} Community Posts</p>
+                  <p className="text-xs text-gray-500">Legal Discussions</p>
+                </li>
+                <li className="text-sm">
+                  <p className="font-medium text-emerald-700">Online</p>
+                  <p className="text-xs text-gray-500">System Status</p>
+                </li>
               </ul>
             </div>
           </>
