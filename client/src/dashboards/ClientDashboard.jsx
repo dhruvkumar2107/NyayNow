@@ -53,6 +53,15 @@ export default function ClientDashboard() {
           }
         }
       });
+
+      // Listen for Scheduled Meeting Start (NEW)
+      socket.on("scheduled_meeting_start", (data) => {
+        const confirmed = window.confirm(`📞 INCOMING CALL\n\nLawyer ${data.lawyerName} has started the scheduled meeting.\n\nJoin now?`);
+        if (confirmed) {
+          const link = `${window.location.origin}/meet/${data.meetingId}`;
+          window.open(link, "_blank");
+        }
+      });
     }
     return () => {
       socket.off("consult_start");
@@ -448,7 +457,10 @@ export default function ClientDashboard() {
                     </div>
                     <div>
                       {apt.status === 'confirmed' ? (
-                        <button className="bg-purple-100 text-purple-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-purple-200 transition flex items-center gap-2">
+                        <button
+                          onClick={() => window.open(`${window.location.origin}/meet/${apt._id}`, "_blank")}
+                          className="bg-purple-100 text-purple-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-purple-200 transition flex items-center gap-2"
+                        >
                           <span>🎥</span> Join Call
                         </button>
                       ) : (

@@ -136,6 +136,19 @@ io.on("connection", (socket) => {
     });
 
     console.log(`Consult started: ${meetingId}`);
+    console.log(`Consult started: ${meetingId}`);
+  });
+
+  // ---------------- SCHEDULED CALLS (NEW) ----------------
+  // Lawyer starts a pre-booked appointment
+  // payload: { appointmentId, clientId, lawyerName }
+  socket.on("start_scheduled_meeting", (payload) => {
+    console.log(`Scheduled meeting started for client: ${payload.clientId}`);
+    // Notify Client
+    io.to(payload.clientId).emit("scheduled_meeting_start", {
+      meetingId: payload.appointmentId, // Use Appointment ID as room
+      lawyerName: payload.lawyerName
+    });
   });
 
   socket.on("disconnect", () => {

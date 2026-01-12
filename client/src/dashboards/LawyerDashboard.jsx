@@ -714,6 +714,13 @@ export default function LawyerDashboard() {
                     {apt.status === 'confirmed' && (
                       <button
                         onClick={() => {
+                          // Notify Client
+                          socket.emit("start_scheduled_meeting", {
+                            appointmentId: apt._id,
+                            clientId: apt.clientId?._id || apt.clientId, // Check population
+                            lawyerName: user.name
+                          });
+
                           const link = `${window.location.origin}/meet/${apt._id}`;
                           window.open(link, "_blank");
                         }}
