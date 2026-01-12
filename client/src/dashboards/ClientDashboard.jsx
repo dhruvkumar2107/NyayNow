@@ -423,7 +423,7 @@ export default function ClientDashboard() {
                     </div>
                     <p className="text-sm text-slate-600 mb-4">{c.desc}</p>
                     <div className="flex items-center gap-4 text-xs font-medium text-slate-400">
-                      <span>📍 {c.location}</span>
+                      <span>📍 {typeof c.location === 'object' ? c.location?.city || "Remote" : c.location}</span>
                       <span>💰 {c.budget || "No Budget"}</span>
                     </div>
                   </div>
@@ -518,8 +518,11 @@ export default function ClientDashboard() {
                       <button
                         onClick={async () => {
                           // PLAN-BASED ACCESS CONTROL
-                          if (user.plan === 'silver' && l.location !== user.location) {
-                            alert(`UPGRADE REQUIRED 💎\n\nSilver Plan only allows access to lawyers in your district (${user.location}).\n\nTo contact ${l.name} in ${l.location}, please upgrade to Gold or Diamond.`);
+                          const userCity = typeof user.location === 'object' ? user.location?.city : user.location;
+                          const lawyerCity = typeof l.location === 'object' ? l.location?.city : l.location;
+
+                          if (user.plan === 'silver' && lawyerCity !== userCity) {
+                            alert(`UPGRADE REQUIRED 💎\n\nSilver Plan only allows access to lawyers in your district (${userCity}).\n\nTo contact ${l.name} in ${lawyerCity}, please upgrade to Gold or Diamond.`);
                             return;
                           }
 
