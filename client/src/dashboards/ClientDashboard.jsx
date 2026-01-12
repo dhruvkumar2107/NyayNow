@@ -87,6 +87,9 @@ export default function ClientDashboard() {
     }, 30000); // 30s timeout
   };
 
+  // DERIVED STATE
+  const activeCase = activeCases.find(c => c.stage !== 'Closed') || activeCases[0];
+
   const fetchConnections = async () => {
     try {
       const uId = user._id || user.id;
