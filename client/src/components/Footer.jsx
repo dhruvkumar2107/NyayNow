@@ -28,7 +28,7 @@ const Footer = () => {
                             <li><Link to="/marketplace" className="hover:text-blue-400 transition-colors duration-200">Find Lawyers</Link></li>
                             <li><Link to="/agreement-analyzer" className="hover:text-blue-400 transition-colors duration-200">Agreement Analyzer</Link></li>
                             <li><Link to="/judge-ai" className="hover:text-blue-400 transition-colors duration-200">Judge AI</Link></li>
-                            <li><Link to="/pricing" className="hover:text-blue-400 transition-colors duration-200">Pricing</Link></li>
+                            <li><span className="text-slate-500 cursor-not-allowed">Pricing</span></li>
                         </ul>
                     </div>
 
@@ -36,10 +36,10 @@ const Footer = () => {
                     <div>
                         <h3 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Company</h3>
                         <ul className="space-y-4">
-                            <li><Link to="/about" className="hover:text-blue-400 transition-colors duration-200">About Us</Link></li>
-                            <li><Link to="/careers" className="hover:text-blue-400 transition-colors duration-200">Careers</Link></li>
-                            <li><Link to="/blog" className="hover:text-blue-400 transition-colors duration-200">Blog</Link></li>
-                            <li><Link to="/contact" className="hover:text-blue-400 transition-colors duration-200">Contact</Link></li>
+                            <li><span className="text-slate-500 cursor-not-allowed">About Us</span></li>
+                            <li><span className="text-slate-500 cursor-not-allowed">Careers</span></li>
+                            <li><span className="text-slate-500 cursor-not-allowed">Blog</span></li>
+                            <li><span className="text-slate-500 cursor-not-allowed">Contact</span></li>
                         </ul>
                     </div>
 
@@ -49,7 +49,7 @@ const Footer = () => {
                         <ul className="space-y-4">
                             <li><Link to="/terms" className="hover:text-blue-400 transition-colors duration-200">Terms of Service</Link></li>
                             <li><Link to="/privacy" className="hover:text-blue-400 transition-colors duration-200">Privacy Policy</Link></li>
-                            <li><Link to="/help" className="hover:text-blue-400 transition-colors duration-200">Help Center</Link></li>
+                            <li><span className="text-slate-500 cursor-not-allowed">Help Center</span></li>
                             <li><span className="text-yellow-500 text-xs font-bold border border-yellow-500 px-2 py-1 rounded-full uppercase">Startup</span></li>
                         </ul>
                     </div>
@@ -61,8 +61,8 @@ const Footer = () => {
                         © {new Date().getFullYear()} NyaySathi Legal Tech. Made with <span className="text-red-500 mx-1">♥</span> in India.
                     </p>
                     <div className="flex gap-8 text-sm font-medium">
-                        <Link to="/status" className="hover:text-white transition-colors">System Status</Link>
-                        <Link to="/security" className="hover:text-white transition-colors">Security</Link>
+                        <span className="text-slate-600 cursor-not-allowed">System Status</span>
+                        <span className="text-slate-600 cursor-not-allowed">Security</span>
                     </div>
                 </div>
             </div>
