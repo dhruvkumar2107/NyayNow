@@ -184,7 +184,7 @@ export default function ClientDashboard() {
       // But we should standardize on ID if possible. For now, let's keep using what works but ensuring fallback.
       const idVal = user.phone || user.email || user._id; // Fallback
       const res = await axios.get(`/api/cases?postedBy=${idVal}`);
-      setActiveCases(res.data);
+      setActiveCases(res.data || []);
     } catch (err) {
       console.error("Failed to fetch cases");
     }
@@ -514,7 +514,9 @@ export default function ClientDashboard() {
                     </div>
                     <div className="flex-1 overflow-hidden">
                       <p className="text-sm font-semibold text-gray-900 truncate">{l.name}</p>
-                      <p className="text-xs text-gray-500 truncate">{l.specialization || "Lawyer"} • {l.location?.city || l.location || "India"}</p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {l.specialization || "Lawyer"} • {typeof l.location === 'object' ? l.location?.city || "India" : l.location}
+                      </p>
                       <button
                         onClick={async () => {
                           // PLAN-BASED ACCESS CONTROL
