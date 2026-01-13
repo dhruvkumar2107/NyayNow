@@ -59,6 +59,9 @@ export default function App() {
         <main className="pt-[72px]">
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
+              {/* LEGAL */}
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
               {/* PUBLIC ROUTES */}
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
