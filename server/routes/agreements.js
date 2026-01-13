@@ -33,5 +33,26 @@ router.get("/", verifyToken, async (req, res) => {
         res.status(500).json({ error: "Failed to fetch agreements" });
     }
 });
+// MOCK AADHAAR ESIGN
+router.post("/sign/:id", verifyToken, async (req, res) => {
+    try {
+        const agreement = await Agreement.findOne({ _id: req.params.id, userId: req.userId });
+        if (!agreement) return res.status(404).json({ error: "Agreement not found" });
+
+        // Simulate Aadhaar API Latency
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        agreement.isSigned = true;
+        agreement.signatureDate = new Date();
+        agreement.signerName = req.body.signerName || "Authorized User";
+        agreement.aadhaarTxId = "UIDAI-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+        await agreement.save();
+        res.json(agreement);
+    } catch (err) {
+        console.error("eSign Error:", err);
+        res.status(500).json({ error: "Failed to sign agreement" });
+    }
+});
 
 module.exports = router;

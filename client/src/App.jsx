@@ -38,6 +38,8 @@ const LawyerProfile = lazy(() => import("./pages/LawyerProfile"));
 const AdminDashboard = lazy(() => import("./dashboards/AdminDashboard"));
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
+const CourtStatus = lazy(() => import("./pages/CourtStatus"));
+const MootCourt = lazy(() => import("./pages/MootCourt"));
 
 /* Loading Component */
 const LoadingFallback = () => (
@@ -120,6 +122,8 @@ export default function App() {
               <Route path="/payment/success" element={<PaymentSuccess />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/calendar" element={<Calendar />} />
+              <Route path="/ecourts" element={<CourtStatus />} />
+              <Route path="/moot-court" element={<MootCourt />} />
               <Route path="/analytics" element={<Analytics />} />
             </Routes>
           </Suspense>

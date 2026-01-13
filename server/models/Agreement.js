@@ -22,6 +22,12 @@ const AgreementSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+
+    // eSign Fields
+    isSigned: { type: Boolean, default: false },
+    signatureDate: { type: Date },
+    signerName: { type: String },
+    aadhaarTxId: { type: String },
 });
 
 module.exports = mongoose.model("Agreement", AgreementSchema);

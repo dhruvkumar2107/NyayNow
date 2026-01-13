@@ -47,7 +47,8 @@ export default function Pricing() {
           "All cases (Criminal & Cybercrime included)",
           "Priority AI Processing",
           "Comparative Agreement Analysis",
-          "Priority Chat Support"
+          "Priority Chat Support",
+          "Moot VR (Virtual Courtroom Practice) 🏛️"
         ],
         benefit: "Complete Protection",
         highlight: true
@@ -60,7 +61,9 @@ export default function Pricing() {
           "Supreme Court + All Tribunals",
           "Concierge Legal Review",
           "Drafting + Human Verification",
-          "24/7 Priority Manager"
+          "24/7 Priority Manager",
+          "eCourt Sync (Real-time Status) ⚡",
+          "Aadhaar eSign Integration 🖊️"
         ],
         benefit: "Elite Family Coverage",
         highlight: false
