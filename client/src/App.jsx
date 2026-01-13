@@ -35,6 +35,8 @@ const LawyerDashboard = lazy(() => import("./dashboards/LawyerDashboard"));
 const EditProfile = lazy(() => import("./dashboards/EditProfile"));
 const LawyerProfile = lazy(() => import("./pages/LawyerProfile"));
 const AdminDashboard = lazy(() => import("./dashboards/AdminDashboard"));
+const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
+const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 
 /* Loading Component */
 const LoadingFallback = () => (
