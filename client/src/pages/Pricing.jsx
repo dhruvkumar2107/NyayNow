@@ -48,7 +48,8 @@ export default function Pricing() {
           "Priority AI Processing",
           "Comparative Agreement Analysis",
           "Priority Chat Support",
-          "Moot VR (Virtual Courtroom Practice) 🏛️"
+          "Moot VR (Virtual Courtroom Practice) 🏛️",
+          "The Devil's Advocate (AI Rebuttal) 😈"
         ],
         benefit: "Complete Protection",
         highlight: true
@@ -63,7 +64,8 @@ export default function Pricing() {
           "Drafting + Human Verification",
           "24/7 Priority Manager",
           "eCourt Sync (Real-time Status) ⚡",
-          "Aadhaar eSign Integration 🖊️"
+          "Aadhaar eSign Integration 🖊️",
+          "Judge Psychology Profiler ⚖️"
         ],
         benefit: "Elite Family Coverage",
         highlight: false

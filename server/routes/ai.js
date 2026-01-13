@@ -397,4 +397,48 @@ router.post("/analyze-case-file", verifyToken, checkAiLimit, upload.single("file
   }
 });
 
+/* ---------------- DEVIL'S ADVOCATE (AI REBUTTAL) ---------------- */
+router.post("/devils-advocate", verifyToken, checkAiLimit, async (req, res) => {
+  try {
+    const { argument } = req.body;
+    if (!argument) return res.status(400).json({ error: "Argument required" });
+
+    const prompt = `
+      ACT AS A RUTHLESS SENIOR OPPOSING COUNSEL. 
+      The user is the defense lawyer. They have just made this argument:
+      "${argument}"
+
+      YOUR GOAL: DESTROY THIS ARGUMENT.
+      1. Find logical fallacies.
+      2. Point out lack of evidence.
+      3. Cite specific Indian Law sections that contradict them.
+      4. Be sarcastic but professional (like a confident lawyer).
+
+      OUTPUT JSON STRICTLY:
+      {
+        "weaknesses": ["Weakness 1", "Weakness 2", "Weakness 3"],
+        "counter_arguments": ["Counter 1", "Counter 2"],
+        "sarcastic_rebuttal": "Your entire premise relies on..."
+      }
+    `;
+
+    const result = await generateWithFallback(prompt);
+    const response = await result.response;
+    let text = response.text();
+
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      text = text.substring(jsonStart, jsonEnd + 1);
+    }
+
+    res.json(JSON.parse(text));
+
+  } catch (err) {
+    console.error("Devil's Advocate Error:", err.message);
+    res.status(500).json({ error: "The Devil is busy. Try again." });
+  }
+});
+
 module.exports = router;

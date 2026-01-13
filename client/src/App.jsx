@@ -40,6 +40,8 @@ const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const CourtStatus = lazy(() => import("./pages/CourtStatus"));
 const MootCourt = lazy(() => import("./pages/MootCourt"));
+const DevilsAdvocate = lazy(() => import("./pages/DevilsAdvocate"));
+const JudgeProfile = lazy(() => import("./pages/JudgeProfile"));
 
 /* Loading Component */
 const LoadingFallback = () => (
@@ -124,6 +126,8 @@ export default function App() {
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/ecourts" element={<CourtStatus />} />
               <Route path="/moot-court" element={<MootCourt />} />
+              <Route path="/devils-advocate" element={<DevilsAdvocate />} />
+              <Route path="/judge-profile" element={<JudgeProfile />} />
               <Route path="/analytics" element={<Analytics />} />
             </Routes>
           </Suspense>
