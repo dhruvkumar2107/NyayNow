@@ -58,7 +58,7 @@ const Footer = () => {
                 {/* BOTTOM BAR */}
                 <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-slate-500 text-sm">
-                        © {new Date().getFullYear()} NyaySathi Legal Tech. Made with <span className="text-red-500 mx-1">♥</span> in India.
+                        © {new Date().getFullYear()} NyaySathi Legal Tech. All rights reserved.
                     </p>
                     <div className="flex gap-8 text-sm font-medium">
                         <span className="text-slate-600 cursor-not-allowed">System Status</span>
