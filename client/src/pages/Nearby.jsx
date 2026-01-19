@@ -138,25 +138,44 @@ export default function Nearby() {
     return deg * (Math.PI / 180);
   };
 
-  const fetchRealData = async (lat, lon) => {
-    // Prepare promises for parallel execution
-    const lawyersPromise = axios.get("/api/users?role=lawyer");
-    // Using 'viewbox' could handle bounding, but post-filtering is more reliable for "nearby"
-    const policePromise = axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=police+station&lat=${lat}&lon=${lon}&addressdetails=1&limit=20`);
-    const courtsPromise = axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=court&lat=${lat}&lon=${lon}&addressdetails=1&limit=20`);
+  // Fetch using Overpass API (More reliable for "nearby" than Nominatim)
+  const fetchOverpass = async (lat, lon, amenities) => {
+    const radius = 10000; // 10km
+    const query = `
+      [out:json][timeout:25];
+      (
+        node["amenity"~"${amenities}"](around:${radius},${lat},${lon});
+        way["amenity"~"${amenities}"](around:${radius},${lat},${lon});
+        relation["amenity"~"${amenities}"](around:${radius},${lat},${lon});
+      );
+      out center;
+    `;
+    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+    return axios.get(url);
+  };
 
-    // Wait for all to settle (success or fail independent)
+  const fetchRealData = async (lat, lon) => {
+    // Prepare promises
+    const lawyersPromise = axios.get("/api/users?role=lawyer");
+    const policePromise = fetchOverpass(lat, lon, "police");
+    const courtsPromise = fetchOverpass(lat, lon, "courthouse");
+
+    // Wait for all
     const [lawyersResult, policeResult, courtsResult] = await Promise.allSettled([
       lawyersPromise, policePromise, courtsPromise
     ]);
 
     const newData = { police: [], courts: [], lawyers: [] };
 
-    // 1. PROCESS LAWYERS
+    // 1. PROCESS LAWYERS (Existing logic)
     if (lawyersResult.status === "fulfilled") {
       try {
         newData.lawyers = lawyersResult.value.data.map(l => {
-          const coords = getRandomLocation(lat, lon, 5);
+          // Use real location if available, else vary slightly
+          const coords = (l.location && l.location.lat)
+            ? { lat: l.location.lat, lon: l.location.long }
+            : getRandomLocation(lat, lon, 5);
+
           return {
             id: l._id,
             name: l.name,
@@ -171,78 +190,48 @@ export default function Nearby() {
         });
       } catch (err) { console.error("Error parsing lawyers", err); }
     } else {
-      // Mock fallback
+      // Fallback lawyers if API fails
       newData.lawyers = MOCK_NEARBY.lawyers.map(l => ({ ...l, ...getRandomLocation(lat, lon, 2) }));
     }
 
-    // 2. PROCESS POLICE
+    // 2. PROCESS POLICE (Overpass)
     if (policeResult.status === "fulfilled") {
       try {
-        newData.police = policeResult.value.data
-          .filter(p => {
-            // Filter: Must be amenity/police and WITHIN 20km
-            const dist = getDistance(lat, lon, parseFloat(p.lat), parseFloat(p.lon));
-            return p.class === 'amenity' && p.type === 'police' && dist < 20;
-          })
-          .map(p => {
-            let placeName = p.name;
-            const parts = p.display_name.split(', ');
-            // Smart Name: If generic "Police", use first part of address
-            if (!placeName || placeName.toLowerCase().trim() === 'police' || placeName.toLowerCase().trim() === 'police station') {
-              placeName = parts[0];
-            }
-            return {
-              id: p.place_id,
-              name: placeName,
-              address: parts.slice(1, 4).join(', '),
-              lat: parseFloat(p.lat),
-              lon: parseFloat(p.lon),
-              rating: (3.8 + Math.random()).toFixed(1)
-            };
-          }).slice(0, 5); // Take top 5 nearest
+        newData.police = policeResult.value.data.elements.map(p => ({
+          id: p.id,
+          name: p.tags?.name || p.tags?.name_en || "Police Station",
+          address: p.tags?.['addr:street'] || p.tags?.['addr:city'] || "Local Station",
+          lat: p.lat || p.center?.lat,
+          lon: p.lon || p.center?.lon,
+          rating: 4.0
+        })).filter(p => p.name !== "Police Station"); // remove generic ones if possible
+
+        // If empty, keep empty (better than mock usually, or use fallback if purely critical)
       } catch (err) { console.error("Error parsing police", err); }
     }
 
-    // Mock fallback if empty or failed
+    // Fallback?
     if (newData.police.length === 0) {
-      newData.police = MOCK_NEARBY.police.map(p => ({
-        ...p, ...getRandomLocation(lat, lon, 3)
-      }));
+      // Only use generic fallback if absolutely nothing found
+      newData.police = [{ id: 'fallback-p', name: "Nearby Police Station", address: "Locating...", lat: lat + 0.002, lon: lon + 0.002, rating: 4.0 }];
     }
 
-    // 3. PROCESS COURTS
+    // 3. PROCESS COURTS (Overpass)
     if (courtsResult.status === "fulfilled") {
       try {
-        newData.courts = courtsResult.value.data
-          .filter(c => {
-            // Filter: Must be court system and WITHIN 20km
-            const dist = getDistance(lat, lon, parseFloat(c.lat), parseFloat(c.lon));
-            return dist < 20;
-          })
-          .map(c => {
-            let placeName = c.name;
-            const parts = c.display_name.split(', ');
-            // Smart Name: If generic "Court", use first part of address
-            if (!placeName || placeName.toLowerCase().trim() === 'court' || placeName.toLowerCase().trim() === 'courthouse') {
-              placeName = parts[0];
-            }
-            return {
-              id: c.place_id,
-              name: c.name || parts[0],
-              address: parts.slice(1, 4).join(', '),
-              lat: parseFloat(c.lat),
-              lon: parseFloat(c.lon),
-              rating: (4.0 + Math.random()).toFixed(1)
-            };
-          }).slice(0, 5);
+        newData.courts = courtsResult.value.data.elements.map(c => ({
+          id: c.id,
+          name: c.tags?.name || c.tags?.name_en || "District Court",
+          address: c.tags?.['addr:street'] || c.tags?.['addr:city'] || "Local Court",
+          lat: c.lat || c.center?.lat,
+          lon: c.lon || c.center?.lon,
+          rating: 4.5
+        })).slice(0, 10);
       } catch (err) { console.error("Error parsing courts", err); }
     }
 
-    // Mock fallback if empty or failed
     if (newData.courts.length === 0) {
-      newData.courts = MOCK_NEARBY.courts.map(c => ({
-        ...c, ...getRandomLocation(lat, lon, 4)
-      }));
+      newData.courts = [{ id: 'fallback-c', name: "District Court", address: "Locating...", lat: lat - 0.002, lon: lon - 0.002, rating: 4.5 }];
     }
 
     setData(newData);
