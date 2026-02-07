@@ -19,6 +19,7 @@ export default function Marketplace() {
   const [selectedCategory, setSelectedCategory] = useState(""); // NEW
   const [selectedCity, setSelectedCity] = useState(""); // NEW
 
+  const [searchParams] = useSearchParams();
   const query = searchParams.get("search") || "";
 
   useEffect(() => {
