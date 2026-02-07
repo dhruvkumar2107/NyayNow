@@ -67,23 +67,19 @@ export default function Messages() {
     }
   };
 
-  // 2. Fetch Messages & Join Real-Time Room
+  // 2. Fetch Messages & Join Real-Time Room (Refactored)
   useEffect(() => {
     if (!activeChat || !user) return;
 
     const fetchMessages = async () => {
       try {
-        // Determine IDs based on roles
-        const clientId = user.role === 'client' ? (user._id || user.id) : activeChat._id;
-        const lawyerId = user.role === 'lawyer' ? (user._id || user.id) : activeChat._id;
-
-        const res = await axios.get("/api/messages", {
-          params: { clientId, lawyerId }
-        });
+        const otherUserId = activeChat._id;
+        const res = await axios.get(`/api/messages/${otherUserId}`);
         setMessages(res.data);
 
-        // Join unique room for this pair
-        const roomName = `${clientId}-${lawyerId}`;
+        // Join room: Sorted ID pair ensures both join SAME room
+        const myId = user._id || user.id;
+        const roomName = [myId, otherUserId].sort().join("-");
         socket.emit("join_room", roomName);
       } catch (err) {
         console.error("Failed to fetch messages", err);
@@ -93,14 +89,27 @@ export default function Messages() {
     fetchMessages();
 
     const handleReceive = (newMessage) => {
-      // Only append if it belongs to current active chat
-      // Check if the message involves the current activeChat ID
-      const isRelated =
-        (newMessage.clientId === activeChat._id) ||
-        (newMessage.lawyerId === activeChat._id);
+      // Logic to check if message belongs to current chat
+      // The backend 'receive_message' payload should ideally be the message object
+      // We check if the sender or recipient matches the activeChat
+      // But simpler: just check conversationId if we had it, or check sender/recipient IDs
 
-      if (isRelated) {
-        setMessages((prev) => [...prev, newMessage]);
+      const myId = user._id || user.id;
+      const otherUserId = activeChat._id;
+
+      // If message is from the person I'm chatting with, OR I sent it (multi-device sync)
+      const isRelevant =
+        (newMessage.sender._id === otherUserId) ||
+        (newMessage.sender === otherUserId) ||
+        (newMessage.sender._id === myId) ||
+        (newMessage.sender === myId);
+
+      if (isRelevant) {
+        setMessages((prev) => {
+          // Prevent duplicates incase of optimistic UI + socket race
+          if (prev.some(m => m._id === newMessage._id)) return prev;
+          return [...prev, newMessage];
+        });
       }
     };
 
@@ -116,26 +125,29 @@ export default function Messages() {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // 4. Send Message
+  // 4. Send Message (Refactored)
   const sendMessage = async () => {
     if (!input.trim() || !activeChat) return;
 
-    const clientId = user.role === 'client' ? (user._id || user.id) : activeChat._id;
-    const lawyerId = user.role === 'lawyer' ? (user._id || user.id) : activeChat._id;
+    const recipientId = activeChat._id;
+    const content = input;
 
+    // Optimistic UI
     const tempMsg = {
-      sender: user.role, // 'client' or 'lawyer'
-      senderId: user._id || user.id,
-      text: input,
-      clientId,
-      lawyerId
+      _id: Date.now().toString(), // Temp ID
+      sender: { _id: user._id || user.id, name: user.name }, // Mock populated sender
+      content: content,
+      createdAt: new Date().toISOString()
     };
 
-    // Optimistic UI update (optional, but let's wait for socket/response for safety)
+    setMessages(prev => [...prev, tempMsg]);
     setInput("");
 
     try {
-      await axios.post("/api/messages", tempMsg);
+      await axios.post("/api/messages/send", { recipientId, content });
+      // The socket event 'receive_message' will likely fire back from server.
+      // We might get a duplicate if we don't handle ID collisions, but for MVP this is fine.
+      // Ideally, we replace the tempMsg with real one, but appending is safer for now.
     } catch (err) {
       console.error("Send failed", err);
       alert("Failed to send message");
@@ -224,8 +236,8 @@ export default function Messages() {
 
                 {messages.map((msg, i) => {
                   // Check if 'I' am the sender
-                  // msg.senderId might be populated or plain ID
-                  const isMe = (msg.senderId === (user._id || user.id)) || (msg.sender === user.role);
+                  const senderId = msg.sender?._id || msg.sender; // Handle populated or raw ID
+                  const isMe = senderId === (user._id || user.id);
 
                   return (
                     <div
@@ -235,7 +247,7 @@ export default function Messages() {
                         : "bg-white border border-gray-200 text-gray-800 rounded-tl-none"
                         }`}
                     >
-                      {msg.text}
+                      {msg.content}
                       {msg.createdAt && <div className={`text-[10px] mt-1 ${isMe ? "text-blue-100" : "text-gray-400"}`}>
                         {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </div>}

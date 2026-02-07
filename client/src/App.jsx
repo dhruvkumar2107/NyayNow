@@ -25,6 +25,7 @@ const Settings = lazy(() => import("./pages/Settings"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Analytics = lazy(() => import("./pages/Analytics"));
 const VideoCall = lazy(() => import("./pages/VideoCall"));
+const SetupProfile = lazy(() => import("./pages/SetupProfile")); // NEW
 
 /* Lazy Load Auth */
 const Login = lazy(() => import("./auth/Login"));
@@ -136,6 +137,7 @@ export default function App() {
               <Route path="/devils-advocate" element={<DevilsAdvocate />} />
               <Route path="/judge-profile" element={<JudgeProfile />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/setup-profile" element={<ProtectedRoute><SetupProfile /></ProtectedRoute>} /> {/* NEW */}
             </Routes>
           </Suspense>
         </main>

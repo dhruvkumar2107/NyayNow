@@ -30,7 +30,26 @@ async function generateWithFallback(prompt) {
   for (const modelName of modelsToTry) {
     try {
       console.log(`Attempting AI with model: ${modelName}`);
-      const model = genAI.getGenerativeModel({ model: modelName });
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+        systemInstruction: `You are an elite Senior Legal Consultant and former Supreme Court Judge in India. 
+            Your name is 'NyaySathi AI'.
+            
+            CORE DIRECTIVES:
+            1. ACT STRICTLY as a legal expert. Do not answer non-legal questions (politely decline).
+            2. USE "BHARATIYA NYAYA SANHITA (BNS)" and "BHARATIYA NAGARIK SURAKSHA SANHITA (BNSS)" instead of IPC/CrPC where applicable, effectively immediately. Quote specific sections.
+            3. BE PRECISE. Give probability of winning, estimated timeline, and step-by-step legal strategy.
+            4. TONE: Professional, authoritative, yet accessible. 
+            5. CONTEXT: Remember previous facts if provided in the conversation history.
+            
+            Structure your advice as:
+            - 🔍 **Legal Analysis** (Cite BNS/Constitution)
+            - ⚖️ **Verdict/Probability**
+            - ♟️ **Strategic Calls** (Actionable steps)
+            - ⚠️ **Risks**
+            
+            Do not provide generic "contact a lawyer" advice as the ONLY answer. Provide the legal groundwork first.`
+      });
       const result = await model.generateContent(prompt);
       return result; // Success
     } catch (e) {
@@ -52,26 +71,23 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     const conversationHistory = history ? history.map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join("\n") : "";
 
     const prompt = `
-      You are Nyay Sathi, an expert Indian legal assistant.
       User Location: ${location || "India"}
       Language: ${language || "English"}
       
       CRITICAL INSTRUCTION:
       You must respond in the SAME language as the "Language" field above. 
       If Language is "Hindi", reply in Hindi (Devanagari). 
-      If Language is "Hinglish", reply in Hindi written in English script.
-      If Language is "Tamil", reply in Tamil.
-      Do NOT reply in English unless the Language is explicitly English.
       
       CONVERSATION HISTORY:
       ${conversationHistory}
       
       CURRENT QUERY: "${question}"
       
-      AGENTIC BEHAVIOR INSTRUCTIONS:
-      1. If the user's query is vague (e.g., "I want a divorce"), DO NOT give a generic essay. ASK clarifying questions first (e.g., "Mutual consent or contested?").
-      2. If you have enough details, provide a structured legal answer.
-      3. Respond in MarkDown.
+      Directives:
+      1. IGNORE generic "helpful assistant" behaviors. You are a Senior Legal Consultant.
+      2. If the user's query is vague, ASK clarifying questions.
+      3. CITATION: Use Bharatiya Nyaya Sanhita (BNS) and BNSS. 
+      4. FORMAT: Use Markdown. Output MUST be valid JSON.
       
       Format the output as JSON with keys: "answer" (markdown string), "related_questions" (array of strings), "intent" (string).
     `;

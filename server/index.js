@@ -151,6 +151,26 @@ io.on("connection", (socket) => {
     });
   });
 
+  /* ---------------- SECURE CHAT (NEW) ---------------- */
+  socket.on("send_message", async (payload) => {
+    try {
+      // Saving to DB is handled normally via API for reliability, 
+      // but for strict socket-only apps we'd do it here. 
+      // We'll trust the API route does the saving and emission, 
+      // OR we can double-emit here if using pure sockets.
+      // Current Plan: Use API for Save+Emit to ensure Auth.
+      // So this socket event might be redundant if API handles it, 
+      // BUT let's keep a 'typing' event which is ephemeral.
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  socket.on("typing", (payload) => {
+    // payload: { toUserId }
+    socket.to(payload.toUserId).emit("user_typing", { fromUserId: socket.id }); // Simplified
+  });
+
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });

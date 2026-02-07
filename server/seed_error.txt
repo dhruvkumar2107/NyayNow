@@ -1,0 +1,2 @@
+URI: [mongodb://mongo:27017/nyaysathi]
+Error: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://"

@@ -13,5 +13,14 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: false,
     target: 'esnext',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['framer-motion', 'react-hot-toast'],
+          utils: ['axios', 'socket.io-client']
+        }
+      }
+    }
   }
 });

@@ -59,7 +59,7 @@ export default function Register() {
 
     if (res.success) {
       toast.success("Registration Successful! Please login.");
-      navigate("/login");
+      navigate("/login"); // For manual register, they login first. Login should handle redirection.
     } else {
       toast.error("Registration Failed: " + res.message);
     }
@@ -84,7 +84,7 @@ export default function Register() {
                 const { user, token } = res.data;
                 loginWithToken(user, token);
                 toast.success("Signup Successful!");
-                navigate(user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+                navigate("/setup-profile"); // Force profile setup
               } catch (err) {
                 toast.error("Google Signup Failed");
               } finally {

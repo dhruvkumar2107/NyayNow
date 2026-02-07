@@ -88,4 +88,39 @@ router.post("/:id/like", async (req, res) => {
     }
 });
 
+/* -------------------- COMMENT ON POST -------------------- */
+// POST /api/posts/:id/comment
+router.post("/:id/comment", async (req, res) => {
+    try {
+        const { email, text } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json({ error: "Post not found" });
+
+        const comment = {
+            user: user._id,
+            text,
+            createdAt: new Date()
+        };
+
+        post.comments.push(comment);
+        await post.save();
+
+        // Populate the new comment's user details for immediate UI return
+        // We can't populate just one, so we have to return the user info manually or re-fetch
+        // For efficiency, let's just return the comment with manual user info attached for the frontend
+        const returnedComment = {
+            ...comment,
+            user: { _id: user._id, name: user.name, role: user.role, name: user.name }
+        };
+
+        res.json(returnedComment);
+    } catch (err) {
+        console.error("Comment err:", err);
+        res.status(500).json({ error: "Comment failed" });
+    }
+});
+
 module.exports = router;

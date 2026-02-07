@@ -1,8 +1,14 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const { user } = useAuth();
+
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  };
 
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-blue-100">
@@ -10,13 +16,27 @@ export default function Home() {
       <section className="bg-white pb-20 pt-16 relative overflow-hidden">
 
         {/* Abstract Background Blobs */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-50 rounded-full blur-[100px] opacity-60 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-50 rounded-full blur-[80px] opacity-60 -translate-x-1/2 translate-y-1/3 pointer-events-none"></div>
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-50 rounded-full blur-[100px] opacity-60 -translate-y-1/2 translate-x-1/2 pointer-events-none"
+        ></motion.div>
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], rotate: [0, -5, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-50 rounded-full blur-[80px] opacity-60 -translate-x-1/2 translate-y-1/3 pointer-events-none"
+        ></motion.div>
 
         <div className="max-w-[1128px] mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
 
           {/* LEFT: TEXT */}
-          <div className="space-y-8 animate-in slide-in-from-bottom-8 duration-700">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="space-y-8"
+          >
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[#0B1120] leading-[1.1]">
               Legal Intelligence
               <br />
@@ -59,15 +79,23 @@ export default function Home() {
             )}
 
             <p className="text-sm text-slate-400 font-medium uppercase tracking-wider pt-4">Trusted by 10,000+ Individual & Corporate Users</p>
-          </div>
+          </motion.div>
 
           {/* RIGHT: ILLUSTRATION / HERO IMAGE */}
-          <div className="relative animate-in slide-in-from-right duration-1000 delay-200">
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative"
+          >
             <div className="aspect-square bg-white rounded-3xl p-8 relative overflow-hidden flex items-center justify-center border border-slate-100 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)]">
               {/* Abstract UI Representation */}
               <div className="absolute inset-0 bg-slate-50/50"></div>
 
-              <div className="relative z-10 w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-100 p-8 space-y-6 transform rotate-[-2deg] hover:rotate-0 transition duration-500">
+              <motion.div
+                whileHover={{ scale: 1.02, rotate: 0 }}
+                className="relative z-10 w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-100 p-8 space-y-6 transform rotate-[-2deg] transition duration-500"
+              >
                 <div className="flex items-center gap-4 border-b border-slate-100 pb-6">
                   <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-200">
                     📄
@@ -86,17 +114,25 @@ export default function Home() {
                   <div className="h-10 w-full bg-slate-900 rounded-lg"></div>
                   <div className="h-10 w-full bg-blue-50 rounded-lg border border-blue-100"></div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Floating Elements */}
-              <div className="absolute top-12 right-12 p-4 bg-white rounded-2xl shadow-xl border border-slate-100 animate-bounce delay-700 z-20">
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-12 right-12 p-4 bg-white rounded-2xl shadow-xl border border-slate-100 z-20"
+              >
                 <span className="text-3xl">⚖️</span>
-              </div>
-              <div className="absolute bottom-16 left-8 p-5 bg-[#0B1120] rounded-2xl shadow-xl animate-bounce z-20">
+              </motion.div>
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute bottom-16 left-8 p-5 bg-[#0B1120] rounded-2xl shadow-xl z-20"
+              >
                 <span className="text-3xl text-white">🛡️</span>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </section>

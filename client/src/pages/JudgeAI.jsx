@@ -126,6 +126,7 @@ export default function JudgeAI() {
                             </div>
 
                             <button
+                                type="button" // Prevent form submission
                                 onClick={handleSubmit}
                                 disabled={loading}
                                 className="w-full bg-[#0B1120] hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg shadow-slate-900/10 transition-all active:scale-95 disabled:opacity-70 flex items-center justify-center gap-2"

@@ -1,21 +1,30 @@
 const mongoose = require("mongoose");
 
-const MessageSchema = new mongoose.Schema(
-  {
-    sender: { type: String, required: true },   // client / lawyer (legacy role) or senderId
-    senderId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Precise Sender
-    text: { type: String, required: true },
-
-    // Relationship Mapping
-    clientId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    lawyerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-
-    // Legacy support (optional, can keep for backward compat for a bit)
-    lawyerName: { type: String },
-
-    read: { type: Boolean, default: false } // New for Notifications
+const messageSchema = new mongoose.Schema({
+  conversationId: {
+    type: String,
+    required: true,
+    index: true // e.g., "smallID-largeID" to ensure uniqueness for a pair
   },
-  { timestamps: true }
-);
+  sender: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
+  readBy: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
 
-module.exports = mongoose.model("Message", MessageSchema);
+module.exports = mongoose.model("Message", messageSchema);

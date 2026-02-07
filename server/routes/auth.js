@@ -40,9 +40,11 @@ router.post("/google", async (req, res) => {
     // 1. Verify Google Token
     const ticket = await googleClient.verifyIdToken({
       idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: process.env.GOOGLE_CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
     });
     const payload = ticket.getPayload();
+    // console.log("Google Payload:", payload); // Debugging
+
     const { email, name, sub: googleId, picture } = payload;
 
     // 2. Check if user exists

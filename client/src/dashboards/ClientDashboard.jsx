@@ -15,9 +15,12 @@ import { useNavigate } from "react-router-dom"; // NEW
 
 const socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"); // Initialize Socket
 
+import Skeleton from "../components/Skeleton"; // NEW
+
 export default function ClientDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true); // NEW
   const [activeCases, setActiveCases] = useState([]);
   const [invoices, setInvoices] = useState([]); // NEW: Invoices State
   const [appointments, setAppointments] = useState([]); // NEW: Appointments State
@@ -32,19 +35,28 @@ export default function ClientDashboard() {
   const [postFile, setPostFile] = useState(null);
   const [postType, setPostType] = useState("text");
 
+  // Comment System State
+  const [activeCommentBox, setActiveCommentBox] = useState(null); // ID of post to show comment box for
+  const [commentText, setCommentText] = useState("");
+
+
   // Case Creation Modal State
   const [showPostModal, setShowPostModal] = useState(false);
   const [newCase, setNewCase] = useState({ title: "", desc: "", location: "", budget: "" });
 
   useEffect(() => {
     if (user) {
-      fetchMyCases();
-      fetchPosts();
-      fetchConnections();
-      fetchInvoices();
-      fetchAppointments();
-      fetchAgreements(); // NEW
+      Promise.all([
+        fetchMyCases(),
+        fetchPosts(),
+        fetchConnections(),
+        fetchInvoices(),
+        fetchAppointments(),
+        fetchAgreements()
+      ]).finally(() => setLoading(false));
+
       socket.emit("join_room", user._id || user.id); // JOIN PERSONAL ROOM
+
 
       // Listen for Consult Start
       socket.on("consult_start", (data) => {
@@ -86,6 +98,29 @@ export default function ClientDashboard() {
       }
     }, 30000); // 30s timeout
   };
+
+  if (loading) {
+    return (
+      <DashboardLayout title="Dashboard">
+        <div className="space-y-6">
+          <div className="grid md:grid-cols-3 gap-6">
+            <Skeleton className="h-32" />
+            <Skeleton className="h-32" />
+            <Skeleton className="h-32" />
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="md:col-span-2 space-y-4">
+              <Skeleton className="h-64" />
+              <Skeleton className="h-64" />
+            </div>
+            <div className="space-y-4">
+              <Skeleton className="h-96" />
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   // DERIVED STATE
   const activeCase = activeCases.find(c => c.stage !== 'Closed') || activeCases[0];
@@ -173,6 +208,23 @@ export default function ClientDashboard() {
       fetchPosts(); // Refresh to show new like count
     } catch (err) {
       console.error("Like failed");
+    }
+  };
+
+  const handleComment = async (postId) => {
+    if (!commentText) return;
+    try {
+      await axios.post(`/api/posts/${postId}/comment`, {
+        email: user.email,
+        text: commentText
+      });
+      setCommentText("");
+      setActiveCommentBox(null);
+      fetchPosts(); // Refresh
+      // Optional: Add toast success
+    } catch (err) {
+      console.error("Comment failed", err);
+      alert("Failed to post comment");
     }
   };
 
@@ -394,8 +446,35 @@ export default function ClientDashboard() {
 
                       <div className="pt-3 border-t border-slate-100 flex gap-6 text-xs font-bold text-slate-500">
                         <button onClick={() => handleLike(post._id)} className="hover:text-blue-600 transition flex items-center gap-1">👍 {post.likes?.length || 0} Likes</button>
-                        <button className="hover:text-slate-800 transition">💬 Comment</button>
+                        <button onClick={() => setActiveCommentBox(activeCommentBox === post._id ? null : post._id)} className="hover:text-slate-800 transition">💬 {post.comments?.length || 0} Comments</button>
                       </div>
+
+                      {/* COMMENT SECTION */}
+                      {activeCommentBox === post._id && (
+                        <div className="mt-4 animate-in fade-in duration-200">
+                          <div className="flex gap-2">
+                            <input
+                              className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
+                              placeholder="Write a comment..."
+                              value={commentText}
+                              onChange={(e) => setCommentText(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && handleComment(post._id)}
+                            />
+                            <button onClick={() => handleComment(post._id)} className="text-blue-600 font-bold text-sm hover:text-blue-700">Post</button>
+                          </div>
+                          {/* SHOW COMMENTS */}
+                          {post.comments && post.comments.length > 0 && (
+                            <div className="mt-4 space-y-3 pl-2 border-l-2 border-slate-100">
+                              {post.comments.map((c, i) => (
+                                <div key={i} className="text-xs">
+                                  <span className="font-bold text-slate-800">{c.user?.name || "User"}</span>
+                                  <span className="text-slate-600 ml-2">{c.text}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))
                 )}

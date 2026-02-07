@@ -1,58 +1,59 @@
 const express = require("express");
-const Message = require("../models/Message");
-
 const router = express.Router();
+const Message = require("../models/Message");
+const verifyToken = require("../middleware/authMiddleware");
 
-/**
- * GET /api/messages
- * Fetch messages between specific client and lawyer
- */
-router.get("/", async (req, res) => {
+// GET /api/messages/:userId -> Get conversation with specific user
+router.get("/:otherUserId", verifyToken, async (req, res) => {
   try {
-    const { clientId, lawyerId } = req.query;
+    const myId = req.user.id;
+    const otherId = req.params.otherUserId;
 
-    if (!clientId || !lawyerId) {
-      return res.status(400).json({ error: "Missing clientId or lawyerId" });
-    }
+    // Generate conversation ID (sorted to ensure uniqueness per pair)
+    const conversationId = [myId, otherId].sort().join("-");
 
-    const messages = await Message.find({ clientId, lawyerId })
-      .sort({ createdAt: 1 });
+    const messages = await Message.find({ conversationId })
+      .sort({ createdAt: 1 }) // Oldest first
+      .populate("sender", "name role");
 
     res.json(messages);
   } catch (err) {
-    console.error(err);
+    console.error("Fetch Messages Error:", err);
     res.status(500).json({ error: "Failed to fetch messages" });
   }
 });
 
-/**
- * POST /api/messages
- * Send a message
- */
-router.post("/", async (req, res) => {
+// POST /api/messages/send -> Save message
+router.post("/send", verifyToken, async (req, res) => {
   try {
-    const { text, sender, clientId, lawyerId, senderId } = req.body;
+    const { recipientId, content } = req.body;
+    const myId = req.user.id;
 
-    const message = new Message({
-      text,
-      sender,
-      senderId,
-      clientId,
-      lawyerId
+    const conversationId = [myId, recipientId].sort().join("-");
+
+    const newMessage = await Message.create({
+      conversationId,
+      sender: myId,
+      content,
+      readBy: [myId]
     });
 
-    await message.save();
+    // Populate sender for frontend
+    await newMessage.populate("sender", "name role");
 
-    // Real-time emit to unique room for this pair
-    const roomName = `${clientId}-${lawyerId}`; // Unique room for this pair
+    // Real-time emission handled by Socket.io in index.js, 
+    // BUT we can also emit here if we pass 'io' instance to routes (req.io)
     if (req.io) {
-      req.io.to(roomName).emit("receive_message", message);
+      // Emit to recipient's room
+      req.io.to(recipientId).emit("receive_message", newMessage);
+      // Emit to sender's room (optional, for multi-device sync)
+      req.io.to(myId).emit("receive_message", newMessage); // Or let frontend handle optimistic UI
     }
 
-    res.json(message);
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: "Failed to send message" });
+    res.json(newMessage);
+  } catch (err) {
+    console.error("Send Message Error:", err);
+    res.status(500).json({ error: "Failed to send message" });
   }
 });
 

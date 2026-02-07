@@ -190,9 +190,16 @@ export default function Assistant() {
     setLoading(true);
 
     try {
+      // Filter out internal/system messages if any, or just send strict user/assistant pairs
+      const historyPayload = messages.map(m => ({
+        role: m.role,
+        content: m.content
+      }));
+
       const res = await axios.post("/api/ai/assistant", {
         question: input,
-        language: "English", // Could be dynamic
+        history: historyPayload, // NEW: Context retention
+        language: "English",
         location: "India",
       });
 

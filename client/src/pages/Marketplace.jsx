@@ -16,7 +16,8 @@ export default function Marketplace() {
   const { user } = useAuth();
   const [lawyers, setLawyers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchParams] = useSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState(""); // NEW
+  const [selectedCity, setSelectedCity] = useState(""); // NEW
 
   const query = searchParams.get("search") || "";
 
@@ -39,27 +40,64 @@ export default function Marketplace() {
     }
   };
 
-  // Filter based on search query
+  // Filter based on search query AND dropdowns
   const filteredLawyers = lawyers.filter(lawyer => {
-    if (!query) return true;
     const lowerQ = query.toLowerCase();
-    return (
+    const matchQuery = !query ||
       lawyer.name?.toLowerCase().includes(lowerQ) ||
       lawyer.specialization?.toLowerCase().includes(lowerQ) ||
-      lawyer.location?.city?.toLowerCase().includes(lowerQ)
-    );
+      lawyer.location?.city?.toLowerCase().includes(lowerQ);
+
+    const matchCategory = !selectedCategory || lawyer.specialization === selectedCategory;
+    const matchCity = !selectedCity || (typeof lawyer.location === 'object' ? lawyer.location.city === selectedCity : lawyer.location === selectedCity);
+
+    return matchQuery && matchCategory && matchCity;
   });
 
   return (
-    <main className="min-h-screen bg-white text-gray-900 px-6 py-6">
+    <main className="min-h-screen bg-white text-gray-900 px-6 py-6 font-sans">
       {/* HEADER */}
-      <header className="mb-10 text-center md:text-left max-w-[1128px] mx-auto">
+      <header className="mb-8 text-center md:text-left max-w-[1128px] mx-auto">
         <h1 className="text-3xl font-bold text-gray-900">
           Lawyer Marketplace
         </h1>
         <p className="text-gray-500 mt-2 text-lg">
           Find verified lawyers based on expertise and location
         </p>
+
+        {/* FILTERS */}
+        <div className="mt-6 flex flex-wrap gap-4">
+          <select
+            className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="">All Specializations</option>
+            <option value="Criminal Law">Criminal Law</option>
+            <option value="Family Law">Family Law</option>
+            <option value="Corporate Law">Corporate Law</option>
+            <option value="Civil Law">Civil Law</option>
+            <option value="Property Law">Property Law</option>
+            <option value="Cyber Law">Cyber Law</option>
+          </select>
+
+          <select
+            className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+          >
+            <option value="">All Cities</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Bengaluru">Bengaluru</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Chennai">Chennai</option>
+            <option value="Kolkata">Kolkata</option>
+            <option value="Ahmedabad">Ahmedabad</option>
+            <option value="Pune">Pune</option>
+            <option value="Jaipur">Jaipur</option>
+          </select>
+        </div>
       </header>
 
       {/* LAWYER GRID */}
@@ -102,6 +140,8 @@ export default function Marketplace() {
   );
 }
 
+import VerifiedBadge from "../components/VerifiedBadge"; // NEW
+
 /* ----------------------------------------
    LAWYER CARD COMPONENT
 ---------------------------------------- */
@@ -117,9 +157,12 @@ function LawyerCard({ lawyer }) {
             <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border border-blue-50">
               {lawyer.name?.[0]}
             </div>
-            <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition">
-              {lawyer.name}
-            </h3>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition">
+                {lawyer.name}
+              </h3>
+              <VerifiedBadge plan={lawyer.plan} />
+            </div>
           </div>
           <span
             className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${lawyer.plan === "diamond"

@@ -35,17 +35,26 @@ export default function Navbar() {
         </Link>
 
         {/* CENTER: NAV LINKS (Simple Text, No Icons) */}
-        <div className="hidden lg:flex items-center gap-6">
-          <NavLink to="/marketplace" active={location.pathname === "/marketplace"}>Find Lawyers</NavLink>
-          <NavLink to="/nearby" active={location.pathname === "/nearby"}>Nearby</NavLink>
-          <NavLink to="/messages" active={location.pathname === "/messages"}>Messaging</NavLink>
-          <NavLink to="/agreements" active={location.pathname === "/agreements"}>Agreements</NavLink>
-          <NavLink to="/judge-ai" active={location.pathname === "/judge-ai"}>Judge AI</NavLink>
-          <NavLink to="/judge-pro" active={location.pathname === "/judge-pro"}>Judge Pro</NavLink>
-          <NavLink to="/voice-assistant" active={location.pathname === "/voice-assistant"}>NyayVoice</NavLink>
-          <NavLink to="/assistant" active={location.pathname === "/assistant"}>AI Assistant</NavLink>
-          <NavLink to="/pricing" active={location.pathname === "/pricing"}>Pricing</NavLink>
+        <NavLink to="/marketplace" active={location.pathname === "/marketplace"}>Find Lawyers</NavLink>
+        <NavLink to="/messages" active={location.pathname === "/messages"}>Messages</NavLink>
+
+        {/* AI TOOLS DROPDOWN */}
+        <div className="relative group h-full flex items-center">
+          <button className="flex items-center gap-1 font-semibold text-[14px] text-slate-500 hover:text-blue-600 transition-colors">
+            AI Tools
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div className="absolute top-full left-0 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col p-2 z-50 transform origin-top-left">
+            <Link to="/judge-ai" className="px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-600 rounded-lg text-sm font-medium transition">Judge AI</Link>
+            <Link to="/judge-pro" className="px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-600 rounded-lg text-sm font-medium transition">Judge Pro</Link>
+            <Link to="/voice-assistant" className="px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-600 rounded-lg text-sm font-medium transition">NyayVoice</Link>
+            <Link to="/assistant" className="px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-600 rounded-lg text-sm font-medium transition">AI Assistant</Link>
+          </div>
         </div>
+
+        <NavLink to="/agreements" active={location.pathname === "/agreements"}>Agreements</NavLink>
+        <NavLink to="/nearby" active={location.pathname === "/nearby"}>Nearby</NavLink>
+        <NavLink to="/pricing" active={location.pathname === "/pricing"}>Pricing</NavLink>
 
         {/* RIGHT: AUTH BUTTONS */}
         <div className="flex items-center gap-3 shrink-0">
@@ -114,11 +123,16 @@ export default function Navbar() {
         <div className="lg:hidden fixed inset-0 top-16 bg-white/95 backdrop-blur-xl z-40 flex flex-col p-6 overflow-y-auto animate-in slide-in-from-top-4 duration-300 border-t border-slate-100">
           <div className="flex flex-col gap-2 text-center">
             <Link to="/marketplace" onClick={() => setMobileMenuOpen(false)} className="w-full py-3 rounded-lg hover:bg-slate-50 text-slate-700 font-bold text-base transition">Find Lawyers</Link>
+            <Link to="/messages" onClick={() => setMobileMenuOpen(false)} className="w-full py-3 rounded-lg hover:bg-slate-50 text-slate-700 font-bold text-base transition">Messages</Link>
+            <div className="w-full py-2 bg-slate-50 rounded-lg px-4 space-y-2">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">AI Tools</p>
+              <Link to="/judge-ai" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 font-semibold text-sm">Judge AI</Link>
+              <Link to="/judge-pro" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 font-semibold text-sm">Judge Pro</Link>
+              <Link to="/voice-assistant" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 font-semibold text-sm">NyayVoice</Link>
+              <Link to="/assistant" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 font-semibold text-sm">AI Assistant</Link>
+            </div>
             <Link to="/nearby" onClick={() => setMobileMenuOpen(false)} className="w-full py-3 rounded-lg hover:bg-slate-50 text-slate-700 font-bold text-base transition">Nearby</Link>
-            <Link to="/messages" onClick={() => setMobileMenuOpen(false)} className="w-full py-3 rounded-lg hover:bg-slate-50 text-slate-700 font-bold text-base transition">Messaging</Link>
             <Link to="/agreements" onClick={() => setMobileMenuOpen(false)} className="w-full py-3 rounded-lg hover:bg-slate-50 text-slate-700 font-bold text-base transition">Agreements</Link>
-            <Link to="/judge-ai" onClick={() => setMobileMenuOpen(false)} className="w-full py-3 rounded-lg hover:bg-slate-50 text-slate-700 font-bold text-base transition">Judge AI</Link>
-            <Link to="/assistant" onClick={() => setMobileMenuOpen(false)} className="w-full py-3 rounded-lg hover:bg-slate-50 text-slate-700 font-bold text-base transition">AI Assistant</Link>
             <Link to="/pricing" onClick={() => setMobileMenuOpen(false)} className="w-full py-3 rounded-lg hover:bg-slate-50 text-slate-700 font-bold text-base transition">Pricing</Link>
           </div>
 
