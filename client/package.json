@@ -34,7 +34,15 @@
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.6.1"
   },
-  "update-browserslist-db": "1.0.14",
-  "vite": "^5.4.8"
-}
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.2",
+    "autoprefixer": "^10.4.19",
+    "browserslist": "4.23.0",
+    "caniuse-lite": "1.0.30001614",
+    "node-releases": "2.0.14",
+    "postcss": "^8.4.47",
+    "tailwindcss": "3.4.3",
+    "update-browserslist-db": "1.0.14",
+    "vite": "^5.4.8"
+  }
 }
