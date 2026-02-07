@@ -11,7 +11,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "postinstall": "chmod +x node_modules/.bin/vite"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.4",
