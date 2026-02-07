@@ -42,15 +42,27 @@ export default function Marketplace() {
   };
 
   // Filter based on search query AND dropdowns
+  // Filter based on search query AND dropdowns
   const filteredLawyers = lawyers.filter(lawyer => {
+    // 1. Safe Accessors
+    const lawyerCity = !lawyer.location ? "" : (typeof lawyer.location === 'string' ? lawyer.location : lawyer.location.city || "");
+    const lawyerSpec = lawyer.specialization || "";
+
+    // 2. Normalization
     const lowerQ = query.toLowerCase();
+    const cityMatchVal = lawyerCity.toLowerCase();
+    const specMatchVal = lawyerSpec.toLowerCase();
+    const selectedCityLower = selectedCity.toLowerCase();
+    const selectedCategoryLower = selectedCategory.toLowerCase();
+
+    // 3. Matching Logic
     const matchQuery = !query ||
       lawyer.name?.toLowerCase().includes(lowerQ) ||
-      lawyer.specialization?.toLowerCase().includes(lowerQ) ||
-      lawyer.location?.city?.toLowerCase().includes(lowerQ);
+      specMatchVal.includes(lowerQ) ||
+      cityMatchVal.includes(lowerQ);
 
-    const matchCategory = !selectedCategory || lawyer.specialization === selectedCategory;
-    const matchCity = !selectedCity || (typeof lawyer.location === 'object' ? lawyer.location.city === selectedCity : lawyer.location === selectedCity);
+    const matchCategory = !selectedCategory || specMatchVal.includes(selectedCategoryLower);
+    const matchCity = !selectedCity || cityMatchVal === selectedCityLower;
 
     return matchQuery && matchCategory && matchCity;
   });
