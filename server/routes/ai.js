@@ -20,13 +20,12 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key"
 // Helper for Model Fallback
 // Helper for Model Fallback
 async function generateWithFallback(prompt) {
-  // USER REQUESTED 2.5 PRO, BUT IT IS HITTING QUOTA LIMITS (429).
-  // 404 errors on 1.5-flash indicate alias issues. Using standard stable versions.
+  // USER REQUESTED 2.5 PRO.
+  // API DEBUG CONFIRMED: Key only has access to 2.x models. 1.5/1.0 are 404.
   const modelsToTry = [
-    "gemini-2.5-pro",      // Primary (User Request)
-    "gemini-1.5-pro",      // Standard Stable Alias
-    "gemini-1.5-flash-001", // Explicit Version
-    "gemini-pro"           // Legacy Stable (1.0) - Ultimate Fallback
+    "gemini-2.5-pro",      // Primary
+    "gemini-2.5-flash",    // High-speed Fallback
+    "gemini-2.0-flash-001" // Stable Fallback
   ];
 
   const SYSTEM_PROMPT = `You are 'NyaySathi', an elite Senior Suprereme Court Lawyer and Legal Consultant in India.
