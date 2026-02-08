@@ -54,8 +54,23 @@ async function generateWithFallback(prompt) {
       const result = await model.generateContent(prompt);
       return result; // Success
     } catch (e) {
-      console.error(`Model ${modelName} failed:`, e.message);
+      console.error(`❌ Model ${modelName} failed:`, e.message);
       errors.push(`${modelName}: ${e.message}`);
+
+      // Safety Fallback: If 2.5 Pro fails (likely due to API key access or region), try 1.5 Pro immediately
+      if (modelName === "gemini-2.5-pro") {
+        console.log("⚠️ Fallback: Switching to Gemini 1.5 Pro to ensure service continuity.");
+        try {
+          const fallbackModel = genAI.getGenerativeModel({
+            model: "gemini-1.5-pro",
+            systemInstruction: model.systemInstruction // Reuse the same strict persona
+          });
+          const result = await fallbackModel.generateContent(prompt);
+          return result;
+        } catch (fallbackErr) {
+          console.error("❌ Fallback Gemini 1.5 Pro also failed:", fallbackErr.message);
+        }
+      }
     }
   }
 
