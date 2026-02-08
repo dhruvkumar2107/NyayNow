@@ -20,12 +20,9 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key"
 // Helper for Model Fallback
 // Helper for Model Fallback
 async function generateWithFallback(prompt) {
-  // USER REQUEST: STRICTLY BEST MODEL (Gemini 2.5 Pro)
-  // Confirmed Release: June 2025
+  // USER REQUEST: STRICTLY GEMINI 2.5 PRO ONLY (NO FALLBACKS)
   const modelsToTry = [
-    "gemini-2.5-pro",
-    "gemini-1.5-pro",
-    "gemini-1.5-flash"
+    "gemini-2.5-pro"
   ];
 
   const errors = [];
