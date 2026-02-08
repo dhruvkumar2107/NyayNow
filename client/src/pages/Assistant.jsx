@@ -240,13 +240,6 @@ export default function Assistant() {
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20 ring-1 ring-white/10">⚖️</div>
           <div>
             <h1 className="font-bold text-lg tracking-tight text-white/90">NyayNow AI</h1>
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span className="text-xs text-slate-400 font-medium tracking-wide">Connected • v3.0 Pro</span>
-            </div>
           </div>
         </div>
         <button className="hidden md:flex bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition border border-white/5 hover:border-white/10">
@@ -362,8 +355,16 @@ export default function Assistant() {
               <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
             </button>
           </div>
-          <p className="text-center text-[10px] text-slate-600 mt-3 font-medium tracking-wide">
-            NyayNow AI uses the Bharatiya Nyaya Sanhita (BNS). Verify critical details.
+          <p className="text-center text-[10px] text-slate-600 mt-3 font-medium tracking-wide flex items-center justify-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+            <span className="flex items-center gap-1.5">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+              </span>
+              NyayNow AI v3.0 Pro
+            </span>
+            <span>•</span>
+            <span>Trained on BNS & Constitution</span>
           </p>
         </div>
       </div>
