@@ -109,6 +109,8 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     const response = await result.response;
     const text = response.text();
 
+    console.log("🔍 Raw AI Response:", text); // Debug log
+
     let cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
     const firstBrace = cleaned.indexOf('{');
     const lastBrace = cleaned.lastIndexOf('}');
@@ -117,7 +119,40 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       cleaned = cleaned.substring(firstBrace, lastBrace + 1);
     }
 
-    const jsonResponse = JSON.parse(cleaned);
+    // Sanitize: Escape unescaped newlines inside strings might be hard regex-wise, 
+    // but often simply removing non-printable/control chars helps if they aren't critical.
+    // Better: Helper to sanitize common JSON breaking chars.
+    // cleaned = cleaned.replace(/[\u0000-\u001F]+/g, ""); // Too aggressive, removes legitimate newlines if not escaped.
+
+    // Attempt parse
+    let jsonResponse;
+    try {
+      jsonResponse = JSON.parse(cleaned);
+    } catch (parseError) {
+      console.error("⚠️ JSON Parse Failed. Attempting sanitization...", parseError.message);
+      // Fallback: Try to fix common issues like unescaped newlines
+      try {
+        // Simple fix for "Bad control character" often caused by newlines in strings
+        // regex to replace newlines that are NOT followed by a quote or brace? Hard.
+        // Let's rely on a simpler 'replace' for common markdown debris if any. 
+        // Actually, sometimes Gemini adds comments.
+        const sanitized = cleaned.replace(/\n/g, "\\n").replace(/\r/g, "");
+        // This is risky if it escapes actual JSON structure newlines. 
+        // Let's return a safe failure object if parsing fails completely.
+        jsonResponse = {
+          answer: text, // Fallback to raw text if JSON fails
+          related_questions: [],
+          intent: "legal_advice"
+        };
+      } catch (e) {
+        jsonResponse = {
+          answer: "**Error processing AI response.**\n\nRaw Output:\n" + text,
+          related_questions: [],
+          intent: "error"
+        };
+      }
+    }
+
     res.json(jsonResponse);
   } catch (err) {
     console.error("Gemini Assistant Error:", err.message);
