@@ -1,48 +1,40 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios"; // Import axios
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
-import { clientFeed } from "../components/dashboard/FeedMetadata";
 import LegalReels from "../components/dashboard/LegalReels";
 import CaseTimeline from "../components/dashboard/CaseTimeline";
 import CalendarWidget from "../components/dashboard/CalendarWidget";
-import TrustTimeline from "../components/dashboard/client/TrustTimeline"; // NEW
-import FeeTransparency from "../components/dashboard/client/FeeTransparency"; // NEW
+import TrustTimeline from "../components/dashboard/client/TrustTimeline";
+import FeeTransparency from "../components/dashboard/client/FeeTransparency";
 import BookingModal from "../components/dashboard/BookingModal";
-import io from "socket.io-client"; // NEW
-import { useNavigate } from "react-router-dom"; // NEW
+import io from "socket.io-client";
+import Skeleton from "../components/Skeleton";
+import { motion, AnimatePresence } from "framer-motion";
 
-const socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"); // Initialize Socket
-
-import Skeleton from "../components/Skeleton"; // NEW
+const socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
 
 export default function ClientDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true); // NEW
+  const [loading, setLoading] = useState(true);
   const [activeCases, setActiveCases] = useState([]);
-  const [invoices, setInvoices] = useState([]); // NEW: Invoices State
-  const [appointments, setAppointments] = useState([]); // NEW: Appointments State
+  const [invoices, setInvoices] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [suggestedLawyers, setSuggestedLawyers] = useState([]);
-  const [connectionsMap, setConnectionsMap] = useState({}); // Stores { userId: status }
+  const [connectionsMap, setConnectionsMap] = useState({});
   const [selectedLawyerForBooking, setSelectedLawyerForBooking] = useState(null);
-  const [activeTab, setActiveTab] = useState('feed'); // NEW: Tab State
-  const [agreements, setAgreements] = useState([]); // NEW: Saved Agreements
-
+  const [activeTab, setActiveTab] = useState('feed');
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState("");
   const [postFile, setPostFile] = useState(null);
   const [postType, setPostType] = useState("text");
-
-  // Comment System State
-  const [activeCommentBox, setActiveCommentBox] = useState(null); // ID of post to show comment box for
+  const [activeCommentBox, setActiveCommentBox] = useState(null);
   const [commentText, setCommentText] = useState("");
-
-
-  // Case Creation Modal State
   const [showPostModal, setShowPostModal] = useState(false);
   const [newCase, setNewCase] = useState({ title: "", desc: "", location: "", budget: "" });
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -51,38 +43,29 @@ export default function ClientDashboard() {
         fetchPosts(),
         fetchConnections(),
         fetchInvoices(),
-        fetchAppointments(),
-        fetchAgreements()
+        fetchAppointments()
       ]).finally(() => setLoading(false));
 
-      socket.emit("join_room", user._id || user.id); // JOIN PERSONAL ROOM
+      socket.emit("join_room", user._id || user.id);
 
-
-      // Listen for Consult Start
       socket.on("consult_start", (data) => {
-        if (data.role === 'client') {
-          const confirmed = window.confirm(`Lawyer ${data.lawyerName} accepted! Start video call?`);
-          if (confirmed) {
-            navigate(`/video-call/${data.meetingId}`);
-          }
+        if (data.role === 'client' && window.confirm(`Lawyer ${data.lawyerName} accepted! Start video call?`)) {
+          navigate(`/video-call/${data.meetingId}`);
         }
       });
 
-      // Listen for Scheduled Meeting Start (NEW)
       socket.on("scheduled_meeting_start", (data) => {
-        const confirmed = window.confirm(`📞 INCOMING CALL\n\nLawyer ${data.lawyerName} has started the scheduled meeting.\n\nJoin now?`);
-        if (confirmed) {
-          const link = `${window.location.origin}/meet/${data.meetingId}`;
-          window.open(link, "_blank");
+        if (window.confirm(`📞 INCOMING CALL\n\nLawyer ${data.lawyerName} has started the scheduled meeting.\n\nJoin now?`)) {
+          window.open(`${window.location.origin}/meet/${data.meetingId}`, "_blank");
         }
       });
     }
     return () => {
       socket.off("consult_start");
+      socket.off("scheduled_meeting_start");
     }
   }, [user]);
 
-  const [isSearching, setIsSearching] = useState(false);
   const requestInstantConsult = () => {
     setIsSearching(true);
     socket.emit("request_instant_consult", {
@@ -90,692 +73,383 @@ export default function ClientDashboard() {
       clientName: user.name,
       category: "General"
     });
-    // Timeout simulation
     setTimeout(() => {
       if (isSearching) {
         setIsSearching(false);
         alert("No lawyers available right now. Please try again or book an appointment.");
       }
-    }, 30000); // 30s timeout
+    }, 30000);
   };
-
-  if (loading) {
-    return (
-      <DashboardLayout title="Dashboard">
-        <div className="space-y-6">
-          <div className="grid md:grid-cols-3 gap-6">
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 space-y-4">
-              <Skeleton className="h-64" />
-              <Skeleton className="h-64" />
-            </div>
-            <div className="space-y-4">
-              <Skeleton className="h-96" />
-            </div>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  // DERIVED STATE
-  const activeCase = activeCases.find(c => c.stage !== 'Closed') || activeCases[0];
 
   const fetchConnections = async () => {
     try {
       const uId = user._id || user.id;
-      if (!uId) {
-        fetchSuggestedLawyers({});
-        return;
-      }
-
-      // Fetch ALL connections to check status
+      if (!uId) return fetchSuggestedLawyers({});
       const res = await axios.get(`/api/connections?userId=${uId}&status=all`);
-
-      // Create a map: { otherUserId: status }
       const map = {};
-      res.data.forEach(p => {
-        map[p._id] = p.connectionStatus;
-      });
-
+      res.data.forEach(p => map[p._id] = p.connectionStatus);
       setConnectionsMap(map);
       fetchSuggestedLawyers(map);
-    } catch (err) {
-      console.error("Failed to fetch connections", err);
-      fetchSuggestedLawyers({});
-    }
+    } catch (err) { fetchSuggestedLawyers({}); }
   };
 
   const fetchSuggestedLawyers = async (connMap = {}) => {
     try {
       const res = await axios.get("/api/users?role=lawyer");
       const uId = user._id || user.id;
-
       let filtered = res.data;
-
       if (Array.isArray(res.data)) {
-        filtered = res.data.filter(u =>
-          u._id !== uId &&
-          connMap[u._id] !== 'active' // Only hide if ALREADY connected. Show if pending.
-        );
+        filtered = res.data.filter(u => u._id !== uId && connMap[u._id] !== 'active');
       }
-
       setSuggestedLawyers(filtered.slice(0, 5));
-    } catch (err) {
-      console.error("Failed to fetch lawyers", err);
-    }
+    } catch (err) { console.error(err); }
   };
 
-  const fetchPosts = async () => {
-    try {
-      const res = await axios.get("/api/posts");
-      setPosts(res.data);
-    } catch (err) {
-      console.error("Failed to fetch posts");
-    }
-  };
+  const fetchPosts = async () => axios.get("/api/posts").then(res => setPosts(res.data)).catch(console.error);
+  const fetchMyCases = async () => axios.get(`/api/cases?postedBy=${user.phone || user.email || user._id}`).then(res => setActiveCases(res.data || [])).catch(console.error);
+  const fetchInvoices = async () => axios.get(`/api/invoices?clientId=${user._id || user.id}`).then(res => setInvoices(res.data)).catch(console.error);
+  const fetchAppointments = async () => axios.get(`/api/appointments?clientId=${user._id || user.id}`).then(res => setAppointments(res.data)).catch(console.error);
 
   const handleCreatePost = async () => {
     if (!postContent && !postFile) return;
-
     try {
       const formData = new FormData();
       formData.append("content", postContent);
       formData.append("email", user.email);
       formData.append("type", postType);
       if (postFile) formData.append("file", postFile);
-
-      const res = await axios.post("/api/posts", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
+      const res = await axios.post("/api/posts", formData, { headers: { "Content-Type": "multipart/form-data" } });
       setPosts([res.data, ...posts]);
       setPostContent("");
       setPostFile(null);
-      setPostType("text");
-    } catch (err) {
-      alert("Failed to post");
-    }
+    } catch (err) { alert("Failed to post"); }
   };
 
   const handleLike = async (id) => {
-    try {
-      await axios.post(`/api/posts/${id}/like`, { email: user.email });
-      fetchPosts(); // Refresh to show new like count
-    } catch (err) {
-      console.error("Like failed");
-    }
+    try { await axios.post(`/api/posts/${id}/like`, { email: user.email }); fetchPosts(); } catch (err) { console.error("Like failed"); }
   };
 
   const handleComment = async (postId) => {
     if (!commentText) return;
     try {
-      await axios.post(`/api/posts/${postId}/comment`, {
-        email: user.email,
-        text: commentText
-      });
+      await axios.post(`/api/posts/${postId}/comment`, { email: user.email, text: commentText });
       setCommentText("");
       setActiveCommentBox(null);
-      fetchPosts(); // Refresh
-      // Optional: Add toast success
-    } catch (err) {
-      console.error("Comment failed", err);
-      alert("Failed to post comment");
-    }
-  };
-
-  const fetchMyCases = async () => {
-    try {
-      const uId = user._id || user.id;
-      // If we used phone before, switch to ID to match backend expectation or update backend
-      // Backend cases.js uses 'postedBy' which matches what we send.
-      // But we should standardize on ID if possible. For now, let's keep using what works but ensuring fallback.
-      const idVal = user.phone || user.email || user._id; // Fallback
-      const res = await axios.get(`/api/cases?postedBy=${idVal}`);
-      setActiveCases(res.data || []);
-    } catch (err) {
-      console.error("Failed to fetch cases");
-    }
-  };
-
-  const fetchInvoices = async () => {
-    try {
-      const uId = user._id || user.id;
-      const res = await axios.get(`/api/invoices?clientId=${uId}`);
-      setInvoices(res.data);
-    } catch (err) {
-      console.error("Fetch Invoices Error:", err);
-    }
-  };
-
-  const fetchAppointments = async () => {
-    try {
-      const uId = user._id || user.id;
-      const res = await axios.get(`/api/appointments?clientId=${uId}`);
-      setAppointments(res.data);
-    } catch (err) {
-      console.error("Fetch Appointments Error:", err);
-    }
-  };
-
-  const fetchAgreements = async () => {
-    try {
-      const res = await axios.get("/api/agreements");
-      setAgreements(res.data);
-    } catch (err) {
-      console.error("Fetch Agreements Error:", err);
-    }
+      fetchPosts();
+    } catch (err) { alert("Failed to post comment"); }
   };
 
   const handlePostCase = async () => {
     if (!newCase.title || !newCase.desc) return alert("Please fill title and description");
-
     try {
-      await axios.post("/api/cases", {
-        ...newCase,
-        postedBy: user.phone || user.email,
-        postedAt: new Date()
-      });
-      alert("Case Posted Successfully! Lawyers will reach out soon.");
+      await axios.post("/api/cases", { ...newCase, postedBy: user.phone || user.email, postedAt: new Date() });
+      alert("Case Posted Successfully!");
       setShowPostModal(false);
       setNewCase({ title: "", desc: "", location: "", budget: "" });
       fetchMyCases();
-    } catch (err) {
-      alert("Failed to post case");
-    }
+    } catch (err) { alert("Failed to post case"); }
   };
 
-  if (!user) return <div className="text-white p-10">Loading...</div>;
+  if (loading || !user) return (
+    <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-slate-500 font-medium animate-pulse">Loading Workspace...</p>
+      </div>
+    </div>
+  );
 
-
+  const activeCase = activeCases.find(c => c.stage !== 'Closed') || activeCases[0];
 
   return (
-    <>
-      {/* EXISING LAYOUT ... */}
-      <DashboardLayout
-        /* LEFT SIDEBAR */
-        leftSidebar={
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-            <div className="h-20 bg-blue-600"></div>
-            <div className="px-5 pb-5 -mt-10">
-              <div className="w-20 h-20 rounded-full bg-white border-4 border-white flex items-center justify-center text-2xl font-bold text-blue-600 shadow-sm mb-3">
-                {user.name && user.name.length > 0 ? user.name[0] : ""}
-              </div>
-              <h2 className="text-lg font-bold text-gray-900">{user.name}</h2>
-              <p className="text-sm text-gray-500">Client Account</p>
-              <div className="my-4 border-t border-gray-100"></div>
-              <div className="text-sm space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Plan</span>
-                  <span className="text-blue-600 font-semibold uppercase">{user.plan}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Cases</span>
-                  <span className="text-gray-900 font-medium">{activeCases.length} Active</span>
-                </div>
+    <DashboardLayout
+      leftSidebar={
+        <div className="bg-white/80 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none"></div>
+          <div className="h-24 bg-[#0B1120] relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/30 rounded-full blur-2xl translate-x-1/2 -translate-y-1/2"></div>
+          </div>
+          <div className="px-6 pb-6 -mt-12 relative z-10">
+            <div className="w-24 h-24 rounded-2xl bg-white p-1 shadow-xl mb-4">
+              <div className="w-full h-full rounded-xl bg-slate-100 flex items-center justify-center text-3xl font-bold text-slate-400 uppercase">
+                {user.name?.[0]}
               </div>
             </div>
-            <div className="p-4 bg-white border-t border-gray-100">
-              <div className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">My Navigation</div>
-              <ul className="space-y-1">
-                <SidebarItem icon="📌" label="My Active Cases" count={activeCases.length} to="/agreements" />
-                <SidebarItem icon="💾" label="Saved Agreements" to="/agreements" />
-                <SidebarItem icon="⚙️" label="Settings" to="/settings" />
-              </ul>
+            <h2 className="text-xl font-bold text-slate-900">{user.name}</h2>
+            <p className="text-sm font-medium text-slate-500">Premium Client</p>
+
+            <div className="mt-6 space-y-3">
+              <div className="flex justify-between text-sm p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500">Plan</span>
+                <span className="font-bold text-indigo-600 uppercase tracking-wider text-xs bg-indigo-50 px-2 py-0.5 rounded-md">{user.plan}</span>
+              </div>
+              <div className="flex justify-between text-sm p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500">Active Cases</span>
+                <span className="font-bold text-slate-900">{activeCases.length}</span>
+              </div>
             </div>
 
-            <Link to="/settings" className="block">
-              <div
-                className="p-4 border-t border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition text-sm font-semibold text-gray-600 text-center"
-              >
-                View My Profile
-              </div>
-            </Link>
-            <button
-              onClick={logout}
-              className="w-full p-4 border-t border-gray-100 bg-red-50 hover:bg-red-100 cursor-pointer transition text-sm font-semibold text-red-600 text-center"
-            >
-              Logout
+            <div className="mt-6 border-t border-slate-100 pt-6">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 ml-1">Menu</p>
+              <nav className="space-y-1">
+                <SidebarItem icon="⚡" label="Active Cases" count={activeCases.length} />
+                <SidebarItem icon="📂" label="Documents" to="/agreements" />
+                <SidebarItem icon="⚙️" label="Settings" to="/settings" />
+              </nav>
+            </div>
+
+            <button onClick={logout} className="w-full mt-6 py-3 rounded-xl bg-red-50 text-red-600 font-bold text-sm hover:bg-red-100 transition flex items-center justify-center gap-2">
+              <span>🚪</span> Logout
             </button>
           </div>
-        }
-        /* CENTER FEED */
-        /* CENTER FEED */
-        mainFeed={
-          <>
-            {/* WELCOME HEADER */}
-            <div className="mb-6 animate-in slide-in-from-top-4 duration-500">
-              <h1 className="text-2xl font-bold text-slate-900">
-                Hello, <span className="text-blue-600">{user.name?.split(' ')[0]}</span> 👋
-              </h1>
-              <p className="text-slate-500 text-sm">Track your cases and connect with experts.</p>
-            </div>
+        </div>
+      }
 
-            {/* QUICK ACTIONS GRID */}
-            <div className="grid grid-cols-3 gap-4 mb-8">
-              <button onClick={() => setShowPostModal(true)} className="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-4 rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:scale-[1.02] transition-all text-left relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-3 opacity-20 text-4xl transform group-hover:scale-110 transition">⚖️</div>
-                <div className="text-2xl mb-1">📝</div>
-                <div className="font-bold text-sm">Post a New Case</div>
-                <div className="text-[10px] opacity-80 mt-1">Get quotes from lawyers</div>
+      mainFeed={
+        <>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+              Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{user.name?.split(' ')[0]}</span> 👋
+            </h1>
+            <p className="text-slate-500 mt-1">Here is what's happening with your legal matters.</p>
+          </motion.div>
+
+          {/* QUICK ACTIONS */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+            <motion.button whileHover={{ y: -4, scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => setShowPostModal(true)}
+              className="group relative overflow-hidden bg-gradient-to-br from-indigo-600 to-blue-700 p-6 rounded-2xl text-white shadow-xl shadow-blue-900/20 text-left">
+              <div className="absolute top-0 right-0 p-4 opacity-10 text-6xl group-hover:scale-110 transition duration-500">📝</div>
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-xl mb-4">⚖️</div>
+                <h3 className="font-bold text-lg">Post New Case</h3>
+                <p className="text-blue-100 text-xs mt-1">Get quotes from top lawyers</p>
+              </div>
+            </motion.button>
+
+            <motion.button whileHover={{ y: -4, scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={requestInstantConsult}
+              className="group relative overflow-hidden bg-white border border-slate-200 p-6 rounded-2xl text-left hover:border-blue-300 transition shadow-sm hover:shadow-lg">
+              <div className="absolute top-0 right-0 p-4 opacity-5 text-6xl rotate-12 group-hover:rotate-0 transition duration-500 text-slate-900">⚡</div>
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-xl mb-4">📞</div>
+                <h3 className="font-bold text-slate-900 text-lg">Instant Consult</h3>
+                <p className="text-slate-500 text-xs mt-1">Video call immediately</p>
+              </div>
+            </motion.button>
+
+            <motion.Link to="/rent-agreement" whileHover={{ y: -4, scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              className="group relative overflow-hidden bg-white border border-slate-200 p-6 rounded-2xl text-left hover:border-emerald-300 transition shadow-sm hover:shadow-lg block">
+              <div className="relative z-10">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-4">📄</div>
+                <h3 className="font-bold text-slate-900 text-lg">Draft Agreement</h3>
+                <p className="text-slate-500 text-xs mt-1">Rent, Lease, Affidavits</p>
+              </div>
+            </motion.Link>
+          </div>
+
+          {/* TABS */}
+          <div className="flex bg-slate-100/80 backdrop-blur-sm p-1.5 rounded-xl border border-slate-200/50 mb-6 w-fit">
+            {['feed', 'cases', 'invoices', 'appointments'].map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)}
+                className={`px-6 py-2 rounded-lg text-sm font-bold capitalize transition-all duration-300 ${activeTab === tab ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                {tab === 'feed' ? 'Legal Feed' : tab}
               </button>
+            ))}
+          </div>
 
-              <button onClick={requestInstantConsult} className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm hover:shadow-md hover:border-blue-300 transition-all text-left group">
-                <div className="text-2xl mb-1 group-hover:scale-110 transition origin-left">⚡</div>
-                <div className="font-bold text-slate-800 text-sm">Talk to Lawyer</div>
-                <div className="text-[10px] text-slate-500 mt-1">Instant video consult</div>
-              </button>
-
-              <Link to="/rent-agreement" className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm hover:shadow-md hover:border-emerald-300 transition-all text-left group block">
-                <div className="text-2xl mb-1 group-hover:scale-110 transition origin-left">📄</div>
-                <div className="font-bold text-slate-800 text-sm">Create Agreement</div>
-                <div className="text-[10px] text-slate-500 mt-1">Rent, Lease, etc.</div>
-              </Link>
-            </div>
-
-            {/* TABS */}
-            <div className="flex bg-slate-100/50 p-1 mb-6 rounded-xl border border-slate-200">
-              {['feed', 'cases', 'invoices', 'appointments'].map(tab => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`flex-1 py-2.5 rounded-lg text-sm font-bold capitalize transition-all duration-200 ${activeTab === tab ? 'bg-white text-blue-600 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:bg-white/50 hover:text-slate-700'}`}
-                >
-                  {tab === 'feed' ? 'Legal Feed' : tab}
-                </button>
-              ))}
-            </div>
-
-            {/* FEED TAB */}
+          {/* FEED CONTENT */}
+          <AnimatePresence mode="wait">
             {activeTab === 'feed' && (
-              <div className="animate-in fade-in duration-300">
-                {/* CREATE POST WIDGET */}
-                <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6 shadow-sm">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+                {/* Create Post */}
+                <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                   <div className="flex gap-4">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 flex-shrink-0 flex items-center justify-center font-bold text-slate-500">
-                      {user.name ? user.name[0] : "U"}
-                    </div>
+                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold shrink-0">{user.name?.[0]}</div>
                     <div className="flex-1">
                       <textarea
-                        placeholder="Ask a legal question or share an update..."
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none transition"
+                        value={postContent} onChange={e => setPostContent(e.target.value)}
+                        placeholder="Share a legal question or update..."
+                        className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none resize-none placeholder-slate-400 transition"
                         rows={2}
-                        value={postContent}
-                        onChange={(e) => setPostContent(e.target.value)}
                       />
-                      {/* ... (Existing media upload logic kept implicitly or needs re-adding if simple replacement) ... */}
-                      {/* SIMPLIFIED POST ACTION AREA FOR BREVITY IN REPLACEMENT */}
                       <div className="flex justify-between items-center mt-3">
-                        <div className="flex gap-2">
-                          <button className="text-slate-400 hover:text-blue-600 text-xs font-bold flex items-center gap-1">📷 Photo</button>
-                          <button className="text-slate-400 hover:text-purple-600 text-xs font-bold flex items-center gap-1">🎥 Video</button>
+                        <div className="flex gap-4 text-slate-400 text-sm font-bold">
+                          <button className="hover:text-blue-600 flex items-center gap-1 transition">📷 Photo</button>
+                          <button className="hover:text-purple-600 flex items-center gap-1 transition">🎥 Video</button>
                         </div>
-                        <button onClick={handleCreatePost} disabled={!postContent} className="bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs font-bold hover:bg-blue-700 disabled:opacity-50 transition">Post</button>
+                        <button onClick={handleCreatePost} disabled={!postContent} className="px-5 py-2 bg-slate-900 text-white rounded-full text-xs font-bold hover:bg-slate-800 disabled:opacity-50 transition shadow-lg shadow-slate-200">Post</button>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* FEED CONTENT */}
-                {/* ... We just render posts ... */}
-                {posts.length === 0 ? (
-                  <p className="text-center text-slate-500 py-10">No posts yet.</p>
-                ) : (
-                  posts.map((post) => (
-                    <div key={post._id} className="bg-white border border-slate-200 rounded-xl p-5 mb-5 shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="flex gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-600 font-bold uppercase text-sm">
-                            {post.author?.name ? post.author.name[0] : "U"}
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-sm text-slate-900">{post.author?.name || "User"}</h4>
-                            <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
-                              {post.author?.role} • {new Date(post.createdAt).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
+                {posts.map(post => (
+                  <div key={post._id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition duration-300">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-600 font-bold text-sm">
+                        {post.author?.name?.[0] || "U"}
                       </div>
-                      <p className="text-sm text-slate-800 mb-3 whitespace-pre-wrap leading-relaxed">{post.content}</p>
-                      {/* Media rendering (Simplified for update) */}
-                      {post.mediaUrl && <div className="mb-3 rounded-lg bg-slate-100 h-48 w-full object-cover overflow-hidden bg-cover" style={{ backgroundImage: `url(${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl})` }}></div>}
-
-                      <div className="pt-3 border-t border-slate-100 flex gap-6 text-xs font-bold text-slate-500">
-                        <button onClick={() => handleLike(post._id)} className="hover:text-blue-600 transition flex items-center gap-1">👍 {post.likes?.length || 0} Likes</button>
-                        <button onClick={() => setActiveCommentBox(activeCommentBox === post._id ? null : post._id)} className="hover:text-slate-800 transition">💬 {post.comments?.length || 0} Comments</button>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-sm">{post.author?.name}</h4>
+                        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wide">{post.author?.role} • {new Date(post.createdAt).toLocaleDateString()}</p>
                       </div>
-
-                      {/* COMMENT SECTION */}
-                      {activeCommentBox === post._id && (
-                        <div className="mt-4 animate-in fade-in duration-200">
-                          <div className="flex gap-2">
-                            <input
-                              className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
-                              placeholder="Write a comment..."
-                              value={commentText}
-                              onChange={(e) => setCommentText(e.target.value)}
-                              onKeyDown={(e) => e.key === 'Enter' && handleComment(post._id)}
-                            />
-                            <button onClick={() => handleComment(post._id)} className="text-blue-600 font-bold text-sm hover:text-blue-700">Post</button>
-                          </div>
-                          {/* SHOW COMMENTS */}
-                          {post.comments && post.comments.length > 0 && (
-                            <div className="mt-4 space-y-3 pl-2 border-l-2 border-slate-100">
-                              {post.comments.map((c, i) => (
-                                <div key={i} className="text-xs">
-                                  <span className="font-bold text-slate-800">{c.user?.name || "User"}</span>
-                                  <span className="text-slate-600 ml-2">{c.text}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
                     </div>
-                  ))
-                )}
-              </div>
+                    <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
+                    {post.mediaUrl && <div className="mt-3 rounded-xl bg-slate-100 h-64 w-full bg-cover bg-center" style={{ backgroundImage: `url(${import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl})` }}></div>}
+
+                    <div className="mt-4 pt-4 border-t border-slate-50 flex gap-6 text-xs font-bold text-slate-500">
+                      <button onClick={() => handleLike(post._id)} className="hover:text-blue-600 flex items-center gap-1.5 transition">
+                        <span className="text-lg">👍</span> {post.likes?.length || 0} Likes
+                      </button>
+                      <button onClick={() => setActiveCommentBox(activeCommentBox === post._id ? null : post._id)} className="hover:text-slate-900 flex items-center gap-1.5 transition">
+                        <span className="text-lg">💬</span> {post.comments?.length || 0} Comments
+                      </button>
+                    </div>
+
+                    {activeCommentBox === post._id && (
+                      <div className="mt-4 pt-4 border-t border-slate-50 animate-in fade-in">
+                        {post.comments?.map((c, i) => (
+                          <div key={i} className="mb-2 text-xs flex gap-2">
+                            <span className="font-bold text-slate-900">{c.user?.name}</span>
+                            <span className="text-slate-600">{c.text}</span>
+                          </div>
+                        ))}
+                        <div className="flex gap-2 mt-3">
+                          <input className="flex-1 bg-slate-50 rounded-lg px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-blue-200" placeholder="Write a comment..." value={commentText} onChange={e => setCommentText(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleComment(post._id)} />
+                          <button onClick={() => handleComment(post._id)} className="text-blue-600 font-bold text-xs">Post</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {posts.length === 0 && <p className="text-center text-slate-400 py-10">No posts yet.</p>}
+              </motion.div>
             )}
 
-            {/* MY CASES TAB */}
             {activeTab === 'cases' && (
-              <div className="space-y-4 animate-in fade-in duration-300">
-                {activeCases.length === 0 ? (
-                  <div className="text-center py-12 bg-white rounded-xl border border-dashed border-slate-300">
-                    <div className="text-4xl mb-3">⚖️</div>
-                    <p className="text-slate-500 font-medium">No active cases.</p>
-                    <button onClick={() => setShowPostModal(true)} className="text-blue-600 font-bold hover:underline mt-2 text-sm">Post your first case</button>
-                  </div>
-                ) : activeCases.map(c => (
-                  <div key={c._id} className="bg-white border border-slate-200 p-5 rounded-xl shadow-sm hover:border-blue-300 transition relative">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-bold text-lg text-slate-900">{c.title}</h4>
-                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${c.acceptedBy ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{c.acceptedBy ? "In Progress" : "Open"}</span>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
+                {activeCases.map(c => (
+                  <div key={c._id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-blue-300 transition group relative overflow-hidden">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${c.acceptedBy ? 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100' : 'bg-amber-50 text-amber-600 ring-1 ring-amber-100'}`}>{c.acceptedBy ? "Active" : "Open"}</span>
+                          <span className="text-xs font-semibold text-slate-400">{new Date(c.createdAt || Date.now()).toLocaleDateString()}</span>
+                        </div>
+                        <h3 className="font-bold text-lg text-slate-900 group-hover:text-blue-600 transition">{c.title}</h3>
+                      </div>
+                      <span className="text-2xl font-black text-slate-200">₹{c.budget || "0"}</span>
                     </div>
-                    {/* VISUAL TIMELINE (NEW) */}
-                    <div className="mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-4">
                       <CaseTimeline stage={c.stage || 'New Lead'} />
                     </div>
-                    <p className="text-sm text-slate-600 mb-4">{c.desc}</p>
-                    <div className="flex items-center gap-4 text-xs font-medium text-slate-400">
-                      <span>📍 {typeof c.location === 'object' ? c.location?.city || "Remote" : c.location}</span>
-                      <span>💰 {c.budget || "No Budget"}</span>
-                    </div>
+                    <p className="text-sm text-slate-600">{c.desc}</p>
                   </div>
                 ))}
-              </div>
+                {activeCases.length === 0 && (
+                  <div className="text-center py-16 bg-white border border-dashed border-slate-300 rounded-2xl">
+                    <div className="text-4xl opacity-20 mb-3">⚖️</div>
+                    <p className="text-slate-500 font-bold">No active cases</p>
+                    <button onClick={() => setShowPostModal(true)} className="text-blue-600 text-sm font-bold hover:underline mt-2">Post your first case</button>
+                  </div>
+                )}
+              </motion.div>
             )}
 
-            {/* INVOICES TAB */}
             {activeTab === 'invoices' && (
-              <div className="space-y-3 animate-in fade-in duration-300">
-                {invoices.length === 0 ? <p className="text-slate-500 text-center py-10">No invoices received.</p> : invoices.map(inv => (
-                  <div key={inv._id} className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm flex justify-between items-center hover:shadow-md transition">
-                    <div>
-                      <p className="font-bold text-slate-900">{inv.description || "Legal Fee"}</p>
-                      <p className="text-xs text-slate-500 font-medium uppercase mt-1">Ref: {inv._id.slice(-6)}</p>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-3">
+                {invoices.map(inv => (
+                  <div key={inv._id} className="bg-white border border-slate-200 p-5 rounded-2xl flex justify-between items-center shadow-sm">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-full ${inv.status === 'paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>{inv.status === 'paid' ? '✓' : '⏳'}</div>
+                      <div>
+                        <h4 className="font-bold text-slate-900">{inv.description || "Legal Fee"}</h4>
+                        <p className="text-xs text-slate-500 uppercase tracking-wide">Ref: {inv._id.slice(-6)}</p>
+                      </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-black text-slate-800 text-lg">₹{inv.amount}</p>
-                      <button className={`mt-1 text-[10px] px-3 py-1 rounded-full font-bold uppercase transition ${inv.status === 'paid' ? 'bg-emerald-100 text-emerald-700 cursor-default' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-200'}`}>
-                        {inv.status === 'paid' ? 'Paid ✓' : 'Pay Now →'}
-                      </button>
+                      <div className="text-lg font-black text-slate-900">₹{inv.amount}</div>
+                      <span className={`text-[10px] font-bold uppercase ${inv.status === 'paid' ? 'text-emerald-600' : 'text-blue-600 underline cursor-pointer'}`}>{inv.status === 'paid' ? 'Paid' : 'Pay Now'}</span>
                     </div>
                   </div>
                 ))}
-              </div>
+                {invoices.length === 0 && <p className="text-center text-slate-400 py-10">No invoices found.</p>}
+              </motion.div>
             )}
 
-            {/* APPOINTMENTS TAB */}
             {activeTab === 'appointments' && (
-              <div className="space-y-3 animate-in fade-in duration-300">
-                {appointments.length === 0 ? <p className="text-slate-500 text-center py-10">No upcoming appointments.</p> : appointments.map(apt => (
-                  <div key={apt._id} className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm flex justify-between items-center border-l-4 border-l-blue-500">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-3">
+                {appointments.map(apt => (
+                  <div key={apt._id} className="bg-white border border-slate-200 p-5 rounded-2xl flex justify-between items-center shadow-sm border-l-4 border-l-blue-500">
                     <div>
-                      <p className="font-bold text-slate-900 text-lg">{new Date(apt.date).toLocaleDateString()}</p>
-                      <p className="text-sm text-slate-600 font-medium">@ {apt.slot} with {apt.lawyerName || "Lawyer"}</p>
+                      <p className="font-bold text-lg text-slate-900">{new Date(apt.date).toLocaleDateString()}</p>
+                      <p className="text-sm text-slate-600 font-medium">{apt.slot} • {apt.lawyerName}</p>
                     </div>
-                    <div>
-                      {apt.status === 'confirmed' ? (
-                        <button
-                          onClick={() => window.open(`${window.location.origin}/meet/${apt._id}`, "_blank")}
-                          className="bg-purple-100 text-purple-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-purple-200 transition flex items-center gap-2"
-                        >
-                          <span>🎥</span> Join Call
-                        </button>
-                      ) : (
-                        <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">Pending</span>
-                      )}
-                    </div>
+                    {apt.status === 'confirmed' ? (
+                      <button onClick={() => window.open(`${window.location.origin}/meet/${apt._id}`, "_blank")} className="bg-purple-50 text-purple-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-purple-100 transition flex items-center gap-2">🎥 Join</button>
+                    ) : <span className="bg-amber-50 text-amber-700 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">Pending</span>}
                   </div>
                 ))}
-              </div>
+                {appointments.length === 0 && <p className="text-center text-slate-400 py-10">No upcoming appointments.</p>}
+              </motion.div>
             )}
-
-            {/* OTHER CONTENT REMOVED (Agreements etc handled in separate tab/link) */}
-          </>
-        }
-        /* RIGHT SIDEBAR */
-        rightSidebar={
-          <>
-            {/* CALENDAR WIDGET (NEW) */}
-            <div className="mb-6 h-[400px]">
-              <CalendarWidget user={user} />
-            </div>
-
-            {/* TRUST FEATURES (NEW) */}
-            {activeCase && (
-              <div className="animate-in slide-in-from-right duration-500">
-                <TrustTimeline stage={activeCase.stage || 'New Lead'} />
-              </div>
-            )}
-
-            {invoices.length > 0 && (
-              <div className="animate-in slide-in-from-right duration-700">
-                <FeeTransparency invoices={invoices} />
-              </div>
-            )}
-
-            {/* Active Cases Widget - REMOVED (Moved to My Cases Tab) */}
-            {/* Suggested Lawyers */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-              <h3 className="font-bold text-sm text-gray-900 mb-4">Suggested for you</h3>
-              <ul className="space-y-4">
-                {suggestedLawyers.length === 0 && <p className="text-xs text-center text-gray-500 py-4">No lawyers found nearby.</p>}
-                {suggestedLawyers.map((l) => (
-                  <li key={l._id} className="flex gap-3 items-center">
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-500">
-                      {l.name ? l.name[0] : "L"}
-                    </div>
-                    <div className="flex-1 overflow-hidden">
-                      <p className="text-sm font-semibold text-gray-900 truncate">{l.name}</p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {l.specialization || "Lawyer"} • {typeof l.location === 'object' ? l.location?.city || "India" : l.location}
-                      </p>
-                      <button
-                        onClick={async () => {
-                          // PLAN-BASED ACCESS CONTROL
-                          const userCity = typeof user.location === 'object' ? user.location?.city : user.location;
-                          const lawyerCity = typeof l.location === 'object' ? l.location?.city : l.location;
-
-                          if (user.plan === 'silver' && lawyerCity !== userCity) {
-                            alert(`UPGRADE REQUIRED 💎\n\nSilver Plan only allows access to lawyers in your district (${userCity}).\n\nTo contact ${l.name} in ${lawyerCity}, please upgrade to Gold or Diamond.`);
-                            return;
-                          }
-
-                          try {
-                            await axios.post("/api/connections", {
-                              clientId: user._id || user.id,
-                              lawyerId: l._id,
-                              initiatedBy: user._id || user.id
-                            });
-                            alert(`Request sent to ${l.name}!`);
-                            // Refresh list
-                            fetchConnections();
-                          } catch (err) {
-                            alert(err.response?.data?.error || "Failed to connect");
-                          }
-                        }}
-                        disabled={connectionsMap[l._id] === 'pending'}
-                        className={`mt-2 text-xs border border-blue-200 px-3 py-1 rounded-full font-medium mr-2 transition ${connectionsMap[l._id] === 'pending' ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-100' : 'text-blue-600 hover:bg-blue-50'}`}
-                      >
-                        {connectionsMap[l._id] === 'pending' ? '🕒 Request Sent' : '+ Connect'}
-                      </button>
-                      <button
-                        onClick={() => setSelectedLawyerForBooking(l)}
-                        className="mt-2 text-xs bg-blue-600 text-white px-3 py-1 rounded-full hover:bg-blue-700 transition font-medium"
-                      >
-                        Book 📅
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <Link to="/marketplace" className="block mt-4 text-xs text-blue-600 hover:text-blue-700 text-center font-medium">
-                View all suggestions
-              </Link>
-            </div >
-
-            <Link to="/rent-agreement" className="block mt-6">
-              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-4 flex items-center justify-between hover:border-emerald-300 transition group shadow-sm">
-                <div>
-                  <h3 className="font-bold text-emerald-700">Rent Agreement 📄</h3>
-                  <p className="text-xs text-emerald-600 mt-1">Create in 2 mins</p>
-                </div>
-                <span className="text-2xl group-hover:translate-x-1 transition text-emerald-600">→</span>
-              </div>
-            </Link>
-
-            <LegalReels />
-          </>
-        }
-      />
-
-      {/* INSTANT CONSULT FLOATING BUTTON */}
-      <div className="fixed bottom-6 right-6 z-50">
-        {isSearching ? (
-          <div className="bg-[#0B1120] text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-3 animate-pulse border-2 border-blue-500">
-            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            <div>
-              <p className="font-bold text-sm">Searching for Lawyer...</p>
-              <p className="text-[10px] text-gray-400">Please wait</p>
-            </div>
-            <button
-              onClick={() => setIsSearching(false)}
-              className="ml-2 text-gray-400 hover:text-white"
-            >✕</button>
-          </div>
-        ) : (
-          <button
-            onClick={requestInstantConsult}
-            className="group relative flex items-center gap-3 bg-[#0B1120] hover:bg-blue-900 text-white px-6 py-4 rounded-full shadow-2xl shadow-blue-900/40 transition-all hover:scale-105 active:scale-95"
-          >
-            <span className="absolute -top-1 -right-1 flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-            </span>
-            <span className="text-2xl">⚡</span>
-            <div className="text-left">
-              <p className="font-bold text-sm leading-tight">Talk to Lawyer</p>
-              <p className="text-[10px] text-blue-200 uppercase tracking-wider font-bold">Instant Connect</p>
-            </div>
-          </button>
-        )}
-      </div>
-
-      {/* POST CASE MODAL */}
-      {
-        showPostModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 w-full max-w-lg shadow-2xl relative animate-in fade-in zoom-in duration-200">
-              <button onClick={() => setShowPostModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">✕</button>
-
-              <h2 className="text-xl font-bold text-gray-900 mb-1">Post a Legal Requirement</h2>
-              <p className="text-sm text-gray-500 mb-6">Lawyers will review this and reach out.</p>
-
-              <div className="space-y-4">
-                <input
-                  placeholder="Title (e.g. Property Dispute in Pune)"
-                  className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
-                  value={newCase.title}
-                  onChange={e => setNewCase({ ...newCase, title: e.target.value })}
-                />
-                <textarea
-                  placeholder="Describe your issue in detail..."
-                  rows={4}
-                  className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none resize-none"
-                  value={newCase.desc}
-                  onChange={e => setNewCase({ ...newCase, desc: e.target.value })}
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <input
-                    placeholder="Location (City)"
-                    className="bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
-                    value={newCase.location}
-                    onChange={e => setNewCase({ ...newCase, location: e.target.value })}
-                  />
-                  <input
-                    placeholder="Budget (Optional)"
-                    className="bg-gray-50 border border-gray-300 rounded-lg p-3 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none"
-                    value={newCase.budget}
-                    onChange={e => setNewCase({ ...newCase, budget: e.target.value })}
-                  />
-                </div>
-
-                <button
-                  onClick={handlePostCase}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition mt-2 shadow-md shadow-blue-200"
-                >
-                  Post Requirement
-                </button>
-              </div>
-            </div>
-          </div>
-        )
+          </AnimatePresence>
+        </>
       }
 
-      {/* BOOKING MODAL */}
-      {
-        selectedLawyerForBooking && (
-          <BookingModal
-            lawyer={selectedLawyerForBooking}
-            client={user}
-            onClose={() => setSelectedLawyerForBooking(null)}
-          />
-        )
+      rightSidebar={
+        <div className="space-y-6">
+          {/* CALENDAR */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-1 shadow-sm overflow-hidden h-[380px]">
+            <CalendarWidget user={user} />
+          </div>
+
+          {/* TRUST TIMELINE */}
+          {activeCase && (
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+              <h3 className="font-bold text-sm text-slate-900 mb-4">Case Progress</h3>
+              <TrustTimeline stage={activeCase.stage || 'New Lead'} />
+            </div>
+          )}
+
+          {/* SUGGESTED LAWYERS */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <h3 className="font-bold text-sm text-slate-900 mb-4">Recommended Experts</h3>
+            <div className="space-y-4">
+              {suggestedLawyers.map(l => (
+                <div key={l._id} className="flex gap-3 items-center">
+                  <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-400">{l.name?.[0]}</div>
+                  <div className="flex-1 overflow-hidden">
+                    <h4 className="font-bold text-sm text-slate-900 truncate">{l.name}</h4>
+                    <p className="text-[10px] text-slate-500 truncate">{l.specialization || "Lawyer"} • {typeof l.location === 'object' ? l.location?.city : l.location}</p>
+                  </div>
+                  <button onClick={async () => {
+                    const userCity = typeof user.location === 'object' ? user.location?.city : user.location;
+                    const lawyerCity = typeof l.location === 'object' ? l.location?.city : l.location;
+                    if (user.plan === 'silver' && lawyerCity !== userCity) return alert(`Upgrade for ${lawyerCity} lawyers.`);
+                    try { await axios.post("/api/connections", { clientId: user._id || user.id, lawyerId: l._id, initiatedBy: user._id || user.id }); alert("Request sent!"); fetchConnections(); } catch (err) { alert("Failed"); }
+                  }} disabled={connectionsMap[l._id] === 'pending'} className={`text-[10px] px-3 py-1.5 rounded-full font-bold transition border ${connectionsMap[l._id] === 'pending' ? 'bg-slate-50 text-slate-400 border-slate-100' : 'bg-white text-blue-600 border-blue-200 hover:bg-blue-50'}`}>
+                    {connectionsMap[l._id] === 'pending' ? 'Sent' : 'Connect'}
+                  </button>
+                </div>
+              ))}
+              {suggestedLawyers.length === 0 && <p className="text-xs text-slate-400 text-center">No nearby lawyers found.</p>}
+            </div>
+          </div>
+        </div>
       }
-    </>
+    />
   );
 }
 
-// UPDATE SIDEBAR ITEM
 function SidebarItem({ icon, label, count, to }) {
-  if (to) {
-    return (
-      <Link to={to}>
-        <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 cursor-pointer transition group">
-          <div className="flex items-center gap-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">
-            <span className="text-gray-400 group-hover:text-blue-600">{icon}</span>
-            {label}
-          </div>
-          {count !== undefined && <span className="text-xs font-semibold text-gray-500">{count}</span>}
-        </li>
-      </Link>
-    );
-  }
+  const navigate = useNavigate();
   return (
-    <li
-      className="flex items-center justify-between p-2 rounded hover:bg-gray-100 cursor-pointer transition group"
-    >
-      <div className="flex items-center gap-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">
-        <span className="text-gray-400 group-hover:text-blue-600">{icon}</span>
+    <div onClick={() => to && navigate(to)} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition group">
+      <div className="flex items-center gap-3 text-sm font-medium text-slate-600 group-hover:text-slate-900">
+        <span className="opacity-60 group-hover:opacity-100 group-hover:scale-110 transition">{icon}</span>
         {label}
       </div>
-      {count !== undefined && <span className="text-xs font-semibold text-gray-500">{count}</span>}
-    </li>
-  )
+      {count !== undefined && <span className="text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md group-hover:bg-slate-200 transition">{count}</span>}
+    </div>
+  );
 }
