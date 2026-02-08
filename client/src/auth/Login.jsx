@@ -4,288 +4,163 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { GoogleLogin } from '@react-oauth/google';
+import { motion } from "framer-motion";
 
 export default function Login() {
   const navigate = useNavigate();
   const { login, loginWithToken } = useAuth();
-
-  const [method, setMethod] = useState("email"); // 'email' or 'mobile'
+  const [method, setMethod] = useState("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-
-  // OTP State
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState(""); // Removing local error state for toasts
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [googleData, setGoogleData] = useState(null);
 
   const handleEmailLogin = async () => {
-    if (!email || !password) return toast.error("Please enter email and password");
+    if (!email || !password) return toast.error("Please enter credentials");
     setLoading(true);
-
     const res = await login(email, password);
     setLoading(false);
-
     if (res.success) {
-      toast.success("Login Successful!");
-      // Smart Redirect based on Role
-      // Smart Redirect based on Role
-      if (res.user.role === "admin") {
-        navigate("/admin");
-      } else if (res.user.role === "lawyer") {
-        navigate("/lawyer/dashboard");
-      } else {
-        navigate("/client/dashboard");
-      }
+      toast.success("Welcome back!");
+      navigate(res.user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard");
     } else {
       toast.error(res.message);
     }
   };
 
-  const handleSendOtp = async () => {
-    if (!phone || phone.length < 10) return toast.error("Enter valid phone number");
-    setLoading(true);
-
-    try {
-      await axios.post("/api/auth/send-otp", { phone });
-      setOtpSent(true);
-      toast.success("OTP Sent!");
-      // Mock OTP alert for demo
-      // alert("OTP Sent: Check console");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to send OTP");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    if (!otp) return toast.error("Enter OTP");
-    setLoading(true);
-
-    try {
-      const res = await axios.post("/api/auth/verify-otp", { phone, otp });
-      const { user, token } = res.data;
-      loginWithToken(user, token);
-      toast.success("Login Successful!");
-      navigate(user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Invalid OTP");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /* GOOGLE SIGNUP FLOW */
-  const [showRoleModal, setShowRoleModal] = useState(false);
-  const [googleData, setGoogleData] = useState(null); // To store token temporarily
-
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true);
     try {
-      // 1. Try to Login
-      const res = await axios.post("/api/auth/google", {
-        token: credentialResponse.credential
-      });
-
-      // 2. Check if New User (Requires Role Selection)
+      const res = await axios.post("/api/auth/google", { token: credentialResponse.credential });
       if (res.status === 202 && res.data.requiresSignup) {
-        setGoogleData(credentialResponse.credential); // Save token
-        setShowRoleModal(true); // Open Modal
+        setGoogleData(credentialResponse.credential);
+        setShowRoleModal(true);
         setLoading(false);
-        return;
+      } else {
+        loginWithToken(res.data.user, res.data.token);
+        toast.success("Login Successful!");
+        navigate(res.data.user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
       }
-
-      // 3. Success (Existing User)
-      const { user, token } = res.data;
-      loginWithToken(user, token);
-      toast.success("Login Successful!");
-      navigate(user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
-
     } catch (err) {
-      console.error(err);
       toast.error("Google Login Failed");
-    } finally {
-      if (!showRoleModal) setLoading(false);
+      setLoading(false);
     }
   };
 
   const traverseWithRole = async (selectedRole) => {
     setLoading(true);
     try {
-      // Re-call API with Role
-      const res = await axios.post("/api/auth/google", {
-        token: googleData,
-        role: selectedRole
-      });
-      const { user, token } = res.data;
-      loginWithToken(user, token);
-      toast.success(`Welcome, ${user.name}!`);
-      navigate(user.role === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
-    } catch (err) {
-      toast.error("Registration Failed");
-    } finally {
-      setLoading(false);
-      setShowRoleModal(false);
-    }
+      const res = await axios.post("/api/auth/google", { token: googleData, role: selectedRole });
+      loginWithToken(res.data.user, res.data.token);
+      toast.success(`Welcome!`);
+      navigate(selectedRole === 'lawyer' ? "/lawyer/dashboard" : "/client/dashboard");
+    } catch (err) { toast.error("Reg Failed"); }
+    finally { setLoading(false); setShowRoleModal(false); }
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10 relative">
+    <main className="min-h-screen grid lg:grid-cols-2 bg-white font-sans">
 
-      {/* ROLE SELECTION MODAL */}
-      {showRoleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="animate-fade-in bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Finish Account Setup</h2>
-            <p className="text-gray-500 mb-8">Are you joining us as a Client or a Lawyer?</p>
+      {/* LEFT: BRANDING (Hidden on Mobile) */}
+      <div className="hidden lg:flex flex-col justify-between bg-[#0B1120] text-white p-12 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600 rounded-full blur-[120px] opacity-20 -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600 rounded-full blur-[100px] opacity-20 translate-y-1/2 -translate-x-1/2" />
 
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                onClick={() => traverseWithRole("client")}
-                className="flex flex-col items-center justify-center p-6 border-2 border-gray-100 rounded-2xl hover:border-blue-600 hover:bg-blue-50 transition group"
-              >
-                <span className="text-4xl mb-3">👤</span>
-                <span className="font-bold text-gray-700 group-hover:text-blue-700">Client</span>
-              </button>
+        <div className="relative z-10">
+          <Link to="/" className="flex items-center gap-3 w-fit">
+            <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-xl">⚖️</div>
+            <span className="font-bold text-xl tracking-tight">NyaySathi</span>
+          </Link>
+        </div>
 
-              <button
-                onClick={() => traverseWithRole("lawyer")}
-                className="flex flex-col items-center justify-center p-6 border-2 border-gray-100 rounded-2xl hover:border-blue-600 hover:bg-blue-50 transition group"
-              >
-                <span className="text-4xl mb-3">⚖️</span>
-                <span className="font-bold text-gray-700 group-hover:text-blue-700">Lawyer</span>
-              </button>
-            </div>
+        <div className="relative z-10 space-y-6 max-w-lg">
+          <h1 className="text-5xl font-extrabold leading-tight">Justice,<br />Simplified.</h1>
+          <p className="text-slate-400 text-lg">Join 10,000+ lawyers and citizens using India's most advanced AI legal assistant.</p>
+
+          <div className="flex -space-x-4 pt-4">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="w-10 h-10 rounded-full bg-slate-800 border-2 border-[#0B1120] flex items-center justify-center text-xs">👤</div>
+            ))}
           </div>
         </div>
-      )}
 
-      <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-8 shadow-xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h1>
-          <p className="text-sm text-gray-500 mb-6">Login to continue to Nyay-Sathi</p>
+        <div className="relative z-10 text-xs text-slate-500">
+          © 2024 LegalTech India Pvt Ltd.
         </div>
-
-        {/* GOOGLE LOGIN */}
-        <div className="mb-6 flex justify-center">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => toast.error("Google Login Error")}
-            useOneTap
-            theme="filled_blue"
-            shape="pill"
-            text="continue_with"
-          />
-        </div>
-
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-          <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">Or continue with</span></div>
-        </div>
-
-        {/* TABS */}
-        <div className="flex bg-gray-100 p-1 rounded-xl mb-6 border border-gray-200">
-          <button
-            onClick={() => { setMethod("email"); }}
-            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${method === "email" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-900"}`}
-          >
-            Email
-          </button>
-          <button
-            onClick={() => { setMethod("mobile"); }}
-            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${method === "mobile" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-900"}`}
-          >
-            Mobile OTP
-          </button>
-        </div>
-
-        {/* ... Rest of form ... */}
-        {method === "email" ? (
-          <>
-            <label className="text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              className="w-full mt-1 mb-4 p-3 rounded-xl bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <label className="text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              className="w-full mt-1 mb-6 p-3 rounded-xl bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button
-              onClick={handleEmailLogin}
-              disabled={loading}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition disabled:opacity-50 shadow-md shadow-blue-200"
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </>
-        ) : (
-          <>
-            <label className="text-sm font-medium text-gray-700">Mobile Number</label>
-            <input
-              type="tel"
-              disabled={otpSent}
-              placeholder="+91 98765 43210"
-              className="w-full mt-1 mb-4 p-3 rounded-xl bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 disabled:opacity-50"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-
-            {otpSent && (
-              <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <label className="text-sm font-medium text-gray-700">One Time Password (OTP)</label>
-                <input
-                  type="text"
-                  placeholder="XXXX"
-                  className="w-full mt-1 mb-6 p-3 rounded-xl bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 tracking-widest text-center text-xl"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                />
-              </div>
-            )}
-
-            {!otpSent ? (
-              <button
-                onClick={handleSendOtp}
-                disabled={loading}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition disabled:opacity-50 shadow-md shadow-blue-200"
-              >
-                {loading ? "Sending OTP..." : "Get OTP"}
-              </button>
-            ) : (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setOtpSent(false)}
-                  className="px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl font-medium transition"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={handleVerifyOtp}
-                  disabled={loading}
-                  className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition disabled:opacity-50 shadow-md shadow-green-200"
-                >
-                  {loading ? "Verifying..." : "Verify & Login"}
-                </button>
-              </div>
-            )}
-          </>
-        )}
-
-        <p className="text-sm text-gray-500 mt-6 text-center">
-          Don’t have an account?{" "}
-          <Link to="/register" className="text-blue-600 hover:underline font-medium">Create one</Link>
-        </p>
       </div>
+
+      {/* RIGHT: FORM */}
+      <div className="flex items-center justify-center p-6 lg:p-12">
+        <div className="w-full max-w-md space-y-8">
+
+          <div className="text-center lg:text-left">
+            <h2 className="text-3xl font-bold text-slate-900">Welcome Back</h2>
+            <p className="text-slate-500 mt-2">Enter your details to access your account.</p>
+          </div>
+
+          <div className="flex gap-2 p-1 bg-slate-50 rounded-xl border border-slate-200">
+            <button onClick={() => setMethod("email")} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${method === "email" ? "bg-white text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}>Email</button>
+            <button onClick={() => setMethod("mobile")} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${method === "mobile" ? "bg-white text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}>Mobile OTP</button>
+          </div>
+
+          {method === "email" ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">Email Address</label>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition font-medium text-slate-800" placeholder="name@company.com" />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">Password</label>
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition font-medium text-slate-800" placeholder="••••••••" />
+              </div>
+              <button onClick={handleEmailLogin} disabled={loading} className="w-full py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition shadow-lg shadow-slate-900/20 active:scale-95 disabled:opacity-70">
+                {loading ? "Signing in..." : "Sign In"}
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4 text-center text-slate-400 py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+              <span className="block text-2xl mb-2">🚧</span>
+              Mobile Login is under maintenance.
+            </div>
+          )}
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
+            <div className="relative flex justify-center text-xs uppercase font-bold text-slate-400 bg-white px-4">Or continue with</div>
+          </div>
+
+          <div className="flex justify-center">
+            <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} shape="circle" size="large" />
+          </div>
+
+          <p className="text-center text-slate-500 text-sm">
+            Don't have an account? <Link to="/register" className="text-indigo-600 font-bold hover:underline">Create Account</Link>
+          </p>
+
+        </div>
+      </div>
+
+      {/* ROLE MODAL */}
+      {showRoleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-6">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">Finish Setup</h2>
+            <p className="text-slate-500 mb-8 text-sm">Select your primary role to continue.</p>
+            <div className="space-y-3">
+              <button onClick={() => traverseWithRole("client")} className="w-full p-4 border rounded-xl hover:border-indigo-600 hover:bg-indigo-50 transition font-bold text-left flex items-center gap-3 group">
+                <span className="text-2xl bg-slate-100 p-2 rounded-lg group-hover:bg-white">👤</span> Client
+              </button>
+              <button onClick={() => traverseWithRole("lawyer")} className="w-full p-4 border rounded-xl hover:border-indigo-600 hover:bg-indigo-50 transition font-bold text-left flex items-center gap-3 group">
+                <span className="text-2xl bg-slate-100 p-2 rounded-lg group-hover:bg-white">⚖️</span> Lawyer
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </main>
   );
 }
