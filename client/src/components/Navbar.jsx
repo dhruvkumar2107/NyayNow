@@ -145,113 +145,116 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 h-[72px] flex items-center ${scrolled ? "bg-white/80 backdrop-blur-md shadow-sm border-b border-white/20" : "bg-white/50 backdrop-blur-sm border-b border-transparent"}`}>
-      <div className="max-w-7xl w-full mx-auto px-6 h-full flex items-center justify-between">
+    <>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 h-[72px] flex items-center ${scrolled ? "bg-white/80 backdrop-blur-md shadow-sm border-b border-white/20" : "bg-white/50 backdrop-blur-sm border-b border-transparent"}`}>
+        <div className="max-w-7xl w-full mx-auto px-6 h-full flex items-center justify-between">
 
-        {/* LOGO */}
-        <Link to="/" className="flex items-center gap-2 relative z-50">
-          <img src="/logo.png" alt="NyayNow" className="h-10 w-auto object-contain transition-transform hover:scale-105" />
-        </Link>
+          {/* LOGO */}
+          <Link to="/" className="flex items-center gap-2 relative z-50">
+            <img src="/logo.png" alt="NyayNow" className="h-10 w-auto object-contain transition-transform hover:scale-105" />
+          </Link>
 
-        {/* DESKTOP MEGA MENU */}
-        <div className="hidden lg:flex items-center gap-8 h-full">
-          {NAVIGATION_ITEMS.map((item, index) => (
-            <div
-              key={index}
-              className="relative h-full flex items-center"
-              onMouseEnter={() => handleMouseEnter(index)}
-              onMouseLeave={handleMouseLeave}
-            >
-              <button className={`flex items-center gap-1.5 text-sm font-semibold transition-colors ${hoveredIndex === index ? "text-blue-600" : "text-slate-600 hover:text-slate-900"}`}>
-                {item.label}
-                <svg className={`w-4 h-4 transition-transform duration-200 ${hoveredIndex === index ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {/* DROPDOWN FLYOUT */}
+          {/* DESKTOP MEGA MENU */}
+          <div className="hidden lg:flex items-center gap-8 h-full">
+            {NAVIGATION_ITEMS.map((item, index) => (
               <div
-                className={`absolute top-full left-1/2 -translate-x-1/2 pt-4 transition-all duration-300 transform origin-top ${hoveredIndex === index ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2 pointer-events-none"}`}
+                key={index}
+                className="relative h-full flex items-center"
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
               >
-                <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-4 w-[320px] grid gap-2 relative z-50">
-                  {/* Little Arrow */}
-                  <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-slate-100"></div>
-
-                  {item.dropdown.map((subItem, idx) => (
-                    <Link
-                      key={idx}
-                      to={subItem.href}
-                      className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors group relative z-10"
-                    >
-                      <div className="mt-1 p-2 bg-slate-50 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all text-slate-600 group-hover:text-blue-600">
-                        {subItem.icon}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-900 group-hover:text-blue-700">{subItem.name}</p>
-                        <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{subItem.desc}</p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* RIGHT: AUTH & ACTIONS */}
-        <div className="flex items-center gap-4 relative z-50">
-          {!user ? (
-            <>
-              <Link to="/login" className="hidden sm:block text-slate-600 font-bold hover:text-slate-900 text-sm transition-colors">Log in</Link>
-              <Link to="/register" className="px-5 py-2.5 bg-[#0B1120] text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl active:scale-95">
-                Get Started
-              </Link>
-            </>
-          ) : (
-            <div className="flex items-center gap-4">
-              <Link to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"} className="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-blue-600 transition-colors">
-                <span>Dashboard</span>
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-              </Link>
-
-              <div className="relative group">
-                <button className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 font-bold border border-blue-100 flex items-center justify-center text-sm shadow-sm hover:ring-2 hover:ring-blue-100 transition-all">
-                  {user.name?.[0]?.toUpperCase() || "U"}
+                <button className={`flex items-center gap-1.5 text-sm font-semibold transition-colors ${hoveredIndex === index ? "text-blue-600" : "text-slate-600 hover:text-slate-900"}`}>
+                  {item.label}
+                  <svg className={`w-4 h-4 transition-transform duration-200 ${hoveredIndex === index ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
-                {/* User Dropdown */}
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col p-1.5 z-50 origin-top-right transform">
-                  <div className="px-3 py-2 border-b border-slate-50 mb-1">
-                    <p className="text-xs font-bold text-slate-900 truncate">Hi, {user.name}</p>
+
+                {/* DROPDOWN FLYOUT */}
+                <div
+                  className={`absolute top-full left-1/2 -translate-x-1/2 pt-4 transition-all duration-300 transform origin-top ${hoveredIndex === index ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2 pointer-events-none"}`}
+                >
+                  <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-4 w-[320px] grid gap-2 relative z-50">
+                    {/* Little Arrow */}
+                    <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-t border-l border-slate-100"></div>
+
+                    {item.dropdown.map((subItem, idx) => (
+                      <Link
+                        key={idx}
+                        to={subItem.href}
+                        className="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors group relative z-10"
+                      >
+                        <div className="mt-1 p-2 bg-slate-50 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all text-slate-600 group-hover:text-blue-600">
+                          {subItem.icon}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-900 group-hover:text-blue-700">{subItem.name}</p>
+                          <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{subItem.desc}</p>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
-                  <Link to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"} className="px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-700 text-sm font-medium rounded-lg flex items-center gap-2 transition">
-                    📊 Dashboard
-                  </Link>
-                  <button onClick={handleLogout} className="px-3 py-2 text-red-600 hover:bg-red-50 text-sm font-medium rounded-lg text-left flex items-center gap-2 transition">
-                    🚪 Sign Out
-                  </button>
                 </div>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
 
-          {/* MOBILE TOGGLE */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition"
-          >
-            {mobileMenuOpen ? (
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          {/* RIGHT: AUTH & ACTIONS */}
+          <div className="flex items-center gap-4 relative z-50">
+            {!user ? (
+              <>
+                <Link to="/login" className="hidden sm:block text-slate-600 font-bold hover:text-slate-900 text-sm transition-colors">Log in</Link>
+                <Link to="/register" className="px-5 py-2.5 bg-[#0B1120] text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl active:scale-95">
+                  Get Started
+                </Link>
+              </>
             ) : (
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-            )}
-          </button>
-        </div>
-      </div>
+              <div className="flex items-center gap-4">
+                <Link to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"} className="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-blue-600 transition-colors">
+                  <span>Dashboard</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                </Link>
 
-      {/* MOBILE MENU (Full Screen Overlay) */}
+                <div className="relative group">
+                  <button className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 font-bold border border-blue-100 flex items-center justify-center text-sm shadow-sm hover:ring-2 hover:ring-blue-100 transition-all">
+                    {user.name?.[0]?.toUpperCase() || "U"}
+                  </button>
+                  {/* User Dropdown */}
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 flex flex-col p-1.5 z-50 origin-top-right transform">
+                    <div className="px-3 py-2 border-b border-slate-50 mb-1">
+                      <p className="text-xs font-bold text-slate-900 truncate">Hi, {user.name}</p>
+                    </div>
+                    <Link to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"} className="px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-blue-700 text-sm font-medium rounded-lg flex items-center gap-2 transition">
+                      📊 Dashboard
+                    </Link>
+                    <button onClick={handleLogout} className="px-3 py-2 text-red-600 hover:bg-red-50 text-sm font-medium rounded-lg text-left flex items-center gap-2 transition">
+                      🚪 Sign Out
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* MOBILE TOGGLE */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition"
+            >
+              {mobileMenuOpen ? (
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+      </nav>
+
+      {/* MOBILE MENU (Portal/Sibling) */}
       <div
         data-lenis-prevent
-        className={`lg:hidden fixed inset-0 top-[72px] bg-white z-40 transition-all duration-300 overflow-y-auto ${mobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
+        className={`lg:hidden fixed inset-x-0 top-[72px] bottom-0 bg-white z-40 transition-all duration-300 overflow-y-auto ${mobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
       >
         <div className="p-6 space-y-2 pb-20">
           {NAVIGATION_ITEMS.map((item, index) => (
@@ -270,7 +273,7 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-    </nav>
+    </>
   );
 }
 
