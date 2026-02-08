@@ -434,9 +434,9 @@ return (
           )}
         </div>
       </div>
-    )}
-  </nav>
-);
+      </div>
+    </nav >
+  );
 }
 
 function NavLink({ to, children, active }) {
