@@ -146,278 +146,157 @@ import ReactMarkdown from 'react-markdown';
 import { useNavigate } from "react-router-dom";
 import PaywallModal from "../components/PaywallModal";
 import { useAuth } from "../context/AuthContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Assistant() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [messages, setMessages] = useState([
-    {
-      role: "assistant",
-      content: `Hello ${user?.name?.split(' ')[0] || ''}! 👋 I’m NyaySathi AI.  \nI can analyze cases, draft legal notices, or explain laws in simple terms.  \n**Try asking:** "Draft a notice for a bounced cheque" or "Is implied consent valid in India?"`,
-    },
-  ]);
+  const messagesEndRef = useRef(null);
+
+  const [messages, setMessages] = useState([{
+    role: "assistant", // System greeting
+    content: `## Hello, I'm NyaySathi. ⚖️\n\nI am India's most advanced legal AI, trained on the **Bharatiya Nyaya Sanhita (BNS)** and **Constitution of India**.\n\n### How can I assist you today?\n- **Draft a Legal Notice** for property dispute\n- **Analyze a Contract** for risks\n- **Explain Section 420** of IPC/BNS`,
+  }]);
+
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
-
-  // Notice Generation State
   const [showNoticeForm, setShowNoticeForm] = useState(false);
-  const [noticeData, setNoticeData] = useState({
-    type: "Cheque Bounce",
-    recipientName: "",
-    recipientAddress: "",
-    amount: "",
-    dateOfIncident: "",
-    details: ""
-  });
 
-  const messagesEndRef = useRef(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, loading]);
+  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  useEffect(scrollToBottom, [messages, loading]);
 
   const sendMessage = async (textOverride) => {
     const userText = textOverride || input;
     if (!userText.trim()) return;
 
-    const userMsg = { role: "user", content: userText };
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages(prev => [...prev, { role: "user", content: userText }]);
     setInput("");
     setLoading(true);
 
     try {
-      const historyPayload = messages.map(m => ({
-        role: m.role,
-        content: m.content
-      }));
-
+      const historyPayload = messages.map(m => ({ role: m.role, content: m.content }));
       const res = await axios.post("/api/ai/assistant", {
-        question: userText,
-        history: historyPayload,
-        language: "English",
-        location: "India",
+        question: userText, history: historyPayload, language: "English", location: "India"
       });
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: res.data.answer,
-          relatedQuestions: res.data.related_questions || [],
-          intent: res.data.intent
-        },
-      ]);
+      setMessages(prev => [...prev, {
+        role: "assistant",
+        content: res.data.answer,
+        relatedQuestions: res.data.related_questions || [],
+      }]);
     } catch (err) {
-      if (err.response?.status === 403) {
-        setShowPaywall(true);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: "⚠️ **System Error**: I am unable to connect to the legal database right now. Please try again later." },
-        ]);
-      }
+      if (err.response?.status === 403) setShowPaywall(true);
+      else setMessages(prev => [...prev, { role: "assistant", content: "⚠️ **Connection Error**: I couldn't reach the legal database." }]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 font-sans text-slate-900 flex flex-col">
+    <main className="h-screen bg-[#0f172a] text-white flex flex-col font-sans overflow-hidden relative">
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
-      {/* HEADER */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white text-xl shadow-lg shadow-indigo-200">
-            ⚖️
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-slate-900">NyaySathi AI</h1>
-            <p className="text-xs font-semibold text-indigo-600 tracking-wide uppercase">Senior Legal Consultant</p>
-          </div>
-        </div>
-        <button
-          onClick={() => setShowNoticeForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 rounded-lg font-medium text-sm transition"
-        >
-          <span>📝</span> Draft Notice
-        </button>
+      {/* BACKGROUND EFFECTS */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px]" />
       </div>
 
-      <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+      {/* HEADER */}
+      <header className="flex items-center justify-between px-6 py-4 bg-[#0f172a]/80 backdrop-blur-md border-b border-white/5 z-20">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/30">⚖️</div>
+          <div>
+            <h1 className="font-bold text-lg tracking-tight">NyaySathi AI</h1>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              <span className="text-xs text-slate-400 font-medium">Online • v2.5-Pro</span>
+            </div>
+          </div>
+        </div>
+        <button className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium transition border border-white/5">
+          📜 New Draft
+        </button>
+      </header>
 
-        {/* CHAT AREA */}
-        <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar pb-4 scroll-smooth">
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
-            >
-              {/* Avatar for Assistant */}
-              {msg.role === "assistant" && (
-                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 mr-3 flex-shrink-0 mt-1 border border-indigo-200">
-                  ⚖️
+      {/* CHAT AREA */}
+      <div className="flex-1 overflow-y-auto px-4 md:px-20 py-8 space-y-8 z-10 custom-scrollbar">
+        {messages.map((msg, i) => (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            key={i}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+          >
+            {msg.role === "assistant" && (
+              <div className="w-8 h-8 rounded-full bg-indigo-900/50 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mr-4 mt-1 shrink-0">
+                🤖
+              </div>
+            )}
+
+            <div className={`max-w-[85%] md:max-w-[70%] space-y-2`}>
+              <div className={`p-5 rounded-2xl text-[15px] leading-relaxed shadow-lg backdrop-blur-sm border
+                 ${msg.role === "user"
+                  ? "bg-indigo-600 text-white rounded-br-sm border-indigo-500"
+                  : "bg-[#1e293b]/60 text-slate-200 rounded-tl-sm border-white/5"
+                }`}>
+                <div className="prose prose-invert prose-sm max-w-none prose-p:leading-7 prose-headings:text-indigo-300 prose-strong:text-indigo-200">
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                </div>
+              </div>
+
+              {/* RELATED QUESTIONS */}
+              {msg.relatedQuestions?.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-1 pl-1">
+                  {msg.relatedQuestions.map((q, idx) => (
+                    <button key={idx} onClick={() => sendMessage(q)} className="text-xs bg-indigo-900/30 text-indigo-300 border border-indigo-500/20 px-3 py-1.5 rounded-full hover:bg-indigo-900/50 transition">
+                      {q} →
+                    </button>
+                  ))}
                 </div>
               )}
-
-              <div className={`max-w-[85%] md:max-w-[75%] flex flex-col gap-2`}>
-                <div
-                  className={`p-5 rounded-2xl text-[15px] leading-7 shadow-sm
-                    ${msg.role === "user"
-                      ? "bg-slate-900 text-white rounded-br-none"
-                      : "bg-white text-slate-800 border border-slate-200 rounded-tl-none shadow-md shadow-slate-200/40"
-                    }`}
-                >
-                  <div className={`prose prose-sm max-w-none ${msg.role === 'user' ? 'prose-invert' : 'prose-headings:text-indigo-900 prose-strong:text-indigo-800'}`}>
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
-                  </div>
-                </div>
-
-                {/* Related Questions Chips */}
-                {msg.role === "assistant" && msg.relatedQuestions?.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-1 ml-1">
-                    {msg.relatedQuestions.map((q, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => sendMessage(q)}
-                        className="text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-full hover:bg-indigo-100 transition flex items-center gap-1 group"
-                      >
-                        <span>Query:</span>
-                        {q}
-                        <span className="group-hover:translate-x-0.5 transition-transform">→</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Disclaimer Footer */}
-                {msg.role === "assistant" && (
-                  <div className="text-[10px] text-slate-400 ml-2 mt-1 flex items-center gap-1">
-                    <span>ℹ️</span>
-                    <span>AI-generated legal information. Not a substitute for professional legal counsel.</span>
-                  </div>
-                )}
-              </div>
             </div>
-          ))}
+          </motion.div>
+        ))}
 
-          {loading && (
-            <div className="flex justify-start animate-pulse">
-              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 mr-3 flex-shrink-0 border border-indigo-200">
-                ⚖️
-              </div>
-              <div className="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none shadow-sm flex gap-2 items-center">
-                <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                <span className="text-xs text-slate-500 font-medium ml-2">Analyzing Indian Laws...</span>
-              </div>
+        {loading && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-indigo-900/50 border border-indigo-500/30 flex items-center justify-center text-indigo-400">⚡</div>
+            <div className="bg-[#1e293b]/60 px-4 py-3 rounded-2xl rounded-tl-sm border border-white/5 flex gap-2 items-center">
+              <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></span>
+              <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+              <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
             </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* INPUT AREA */}
-        <div className="mt-4 bg-white border border-slate-200 rounded-2xl p-2 shadow-xl shadow-indigo-100/50 flex items-center gap-2">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-              }
-            }}
-            placeholder="Describe your legal situation..."
-            className="flex-1 bg-transparent border-none focus:ring-0 p-3 max-h-32 resize-none text-slate-800 placeholder-slate-400 font-medium text-base"
-            rows={1}
-          />
-          <button
-            onClick={() => sendMessage()}
-            disabled={loading || !input.trim()}
-            className="p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95 shadow-lg shadow-indigo-200"
-          >
-            <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-          </button>
-        </div>
+          </motion.div>
+        )}
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* NOTICE DRAFTING MODAL */}
-      {showNoticeForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl p-8 animate-in zoom-in-95">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-[#0B1120]">Draft Legal Notice</h2>
-              <button
-                onClick={() => setShowNoticeForm(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition"
-              >✕</button>
-            </div>
-
-            <div className="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Notice Type</label>
-                <select
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 outline-none"
-                  value={noticeData.type}
-                  onChange={e => setNoticeData({ ...noticeData, type: e.target.value })}
-                >
-                  <option>Cheque Bounce</option>
-                  <option>Divorce Notice</option>
-                  <option>Property Dispute</option>
-                  <option>Consumer Complaint</option>
-                  <option>Employment Dispute</option>
-                  <option>Defamation Notice</option>
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-1">Recipient Name</label>
-                  <input
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 outline-none"
-                    value={noticeData.recipientName}
-                    onChange={e => setNoticeData({ ...noticeData, recipientName: e.target.value })}
-                    placeholder="John Doe"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-1">Date of Incident</label>
-                  <input
-                    type="date"
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 outline-none"
-                    value={noticeData.dateOfIncident}
-                    onChange={e => setNoticeData({ ...noticeData, dateOfIncident: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Key Details</label>
-                <textarea
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 outline-none h-24 resize-none"
-                  placeholder="Describe what happened..."
-                  value={noticeData.details}
-                  onChange={e => setNoticeData({ ...noticeData, details: e.target.value })}
-                />
-              </div>
-            </div>
-
+      {/* INPUT AREA */}
+      <div className="p-6 bg-[#0f172a]/90 backdrop-blur-xl border-t border-white/5 z-20">
+        <div className="max-w-4xl mx-auto relative cursor-text group">
+          <div className="absolute inset-0 bg-indigo-500/20 blur-xl rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
+          <div className="relative flex items-center gap-2 bg-[#1e293b] border border-white/10 rounded-2xl p-2 shadow-2xl focus-within:ring-2 focus-within:ring-indigo-500/50 transition">
+            <button className="p-3 text-slate-400 hover:text-white rounded-xl hover:bg-white/5 transition"><span className="text-xl">📎</span></button>
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+              placeholder="Ask anything about Indian Law..."
+              className="flex-1 bg-transparent border-none outline-none text-white placeholder-slate-500 h-10"
+            />
             <button
-              onClick={handleNoticeDraft}
-              className="w-full mt-8 py-3.5 bg-[#0B1120] text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-900/10"
+              onClick={() => sendMessage()}
+              disabled={!input.trim() || loading}
+              className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:shadow-none"
             >
-              Generate Notice
+              <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
             </button>
           </div>
+          <p className="text-center text-[10px] text-slate-600 mt-3">NyaySathi AI can make mistakes. Verify with a lawyer.</p>
         </div>
-      )}
-
+      </div>
     </main>
   );
 }
