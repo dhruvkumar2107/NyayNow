@@ -9,7 +9,7 @@ const Footer = () => {
                     {/* BRAND COLUMN (2 Spans) */}
                     <div className="lg:col-span-2">
                         <Link to="/" className="inline-block mb-6 group">
-                            <span className="text-3xl font-black text-white tracking-tight">Nyay<span className="text-blue-500">Sathi</span></span>
+                            <span className="text-3xl font-black text-white tracking-tight">Nyay<span className="text-blue-500">Now</span></span>
                         </Link>
                         <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-sm">
                             Democratizing justice with AI intelligence. The modern operating system for legal professionals and everyday citizens.
@@ -58,7 +58,7 @@ const Footer = () => {
                 {/* BOTTOM BAR */}
                 <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-slate-500 text-sm">
-                        © {new Date().getFullYear()} NyaySathi Legal Tech. All rights reserved.
+                        © {new Date().getFullYear()} NyayNow Legal Tech. All rights reserved.
                     </p>
                     <div className="flex gap-8 text-sm font-medium">
                         <span className="text-slate-600 cursor-not-allowed">System Status</span>

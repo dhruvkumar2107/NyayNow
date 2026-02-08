@@ -63,7 +63,7 @@ export default function Pricing() {
     try {
       const { data } = await axios.post("/api/payments/create-order", { amount_rupees: Number(price), plan, email: user.email });
       const options = {
-        key: data.key, amount: data.amount, currency: "INR", name: "NyaySathi", description: `${plan} Plan`, order_id: data.orderId,
+        key: data.key, amount: data.amount, currency: "INR", name: "NyayNow", description: `${plan} Plan`, order_id: data.orderId,
         handler: async function (response) {
           const verifyRes = await axios.post("/api/payments/verify", {
             razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature,
@@ -140,8 +140,8 @@ export default function Pricing() {
                 onClick={() => handleBuy(p.title, p.price)}
                 disabled={loading || p.price === "0" || user?.plan?.toLowerCase() === p.title.toLowerCase()}
                 className={`w-full py-4 rounded-xl font-bold text-sm transition-transform active:scale-95 ${p.highlight
-                    ? "bg-white text-slate-900 hover:bg-slate-100"
-                    : "bg-slate-900 text-white hover:bg-slate-800"
+                  ? "bg-white text-slate-900 hover:bg-slate-100"
+                  : "bg-slate-900 text-white hover:bg-slate-800"
                   } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {loading ? "Processing..." : user?.plan?.toLowerCase() === p.title.toLowerCase() ? "Current Plan" : "Get Started"}
@@ -155,7 +155,7 @@ export default function Pricing() {
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="text-left">
                 <h2 className="text-3xl font-bold mb-2">💎 Elite Membership Active</h2>
-                <p className="text-blue-100">You have unlocked the full potential of NyaySathi. Enjoy!</p>
+                <p className="text-blue-100">You have unlocked the full potential of NyayNow. Enjoy!</p>
               </div>
               <button onClick={() => navigate('/dashboard')} className="bg-white text-blue-700 px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-blue-50 transition">Go to Dashboard</button>
             </div>

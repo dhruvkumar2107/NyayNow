@@ -107,7 +107,7 @@ const VoiceAssistant = () => {
                     animate={{ y: 0, opacity: 1 }}
                     className="absolute top-24 uppercase tracking-[0.3em] text-xs font-bold text-blue-300/50"
                 >
-                    NyaySathi Voice Intelligence
+                    NyayNow Voice Intelligence
                 </motion.div>
 
                 {/* THE ORB */}

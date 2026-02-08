@@ -17,7 +17,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://nyaysathi-8new.vercel.app",
-  "https://nyaysathi.com",
+  "https://nyaynow.com",
   "https://ubiquitous-creponne-ef2464.netlify.app", // User's Netlify site
   process.env.CLIENT_URL,
 ].filter(Boolean);
@@ -81,7 +81,7 @@ app.use(express.urlencoded({ extended: true }));
 /* ================= ENV ================= */
 const PORT = process.env.PORT || 4000;
 const MONGO_URI =
-  process.env.MONGO_URI || "mongodb://localhost:27017/nyaysathi";
+  process.env.MONGO_URI || "mongodb://localhost:27017/nyaynow";
 
 /* ================= DB ================= */
 async function connectDB() {
@@ -233,7 +233,7 @@ if (fs.existsSync(clientDist)) {
       const User = require("./models/User");
       const lawyers = await User.find({ role: "lawyer" });
 
-      const baseUrl = "https://nyaysathi.com"; // Replace with actual domain
+      const baseUrl = "https://nyaynow.com"; // Replace with actual domain
 
       let xml = `<?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

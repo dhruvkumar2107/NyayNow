@@ -13,7 +13,7 @@ const topics = [
 const seedTopics = async () => {
     try {
         if (!process.env.MONGO_URI) {
-            process.env.MONGO_URI = "mongodb://localhost:27017/nyaysathi";
+            process.env.MONGO_URI = "mongodb://localhost:27017/nyaynow";
         }
 
         await mongoose.connect(process.env.MONGO_URI);

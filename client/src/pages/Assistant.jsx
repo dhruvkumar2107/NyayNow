@@ -155,7 +155,7 @@ export default function Assistant() {
 
   const [messages, setMessages] = useState([{
     role: "assistant", // System greeting
-    content: `## Hello, I'm NyaySathi. ⚖️\n\nI am India's most advanced legal AI, trained on the **Bharatiya Nyaya Sanhita (BNS)** and **Constitution of India**.\n\n### How can I assist you today?\n- **Draft a Legal Notice** for property dispute\n- **Analyze a Contract** for risks\n- **Explain Section 420** of IPC/BNS`,
+    content: `## Hello, I'm NyayNow. ⚖️\n\nI am India's most advanced legal AI, trained on the **Bharatiya Nyaya Sanhita (BNS)** and **Constitution of India**.\n\n### How can I assist you today?\n- **Draft a Legal Notice** for property dispute\n- **Analyze a Contract** for risks\n- **Explain Section 420** of IPC/BNS`,
   }]);
 
   const [input, setInput] = useState("");
@@ -208,7 +208,7 @@ export default function Assistant() {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/30">⚖️</div>
           <div>
-            <h1 className="font-bold text-lg tracking-tight">NyaySathi AI</h1>
+            <h1 className="font-bold text-lg tracking-tight">NyayNow AI</h1>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
               <span className="text-xs text-slate-400 font-medium">Online • v2.5-Pro</span>
@@ -294,7 +294,7 @@ export default function Assistant() {
               <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
             </button>
           </div>
-          <p className="text-center text-[10px] text-slate-600 mt-3">NyaySathi AI can make mistakes. Verify with a lawyer.</p>
+          <p className="text-center text-[10px] text-slate-600 mt-3">NyayNow AI can make mistakes. Verify with a lawyer.</p>
         </div>
       </div>
     </main>

@@ -20,7 +20,7 @@ const mockLawyers = [
   // --- MUMBAI (Criminal & Corporate) ---
   {
     name: "Satish Maneshinde",
-    email: "satish.m@nyaysathi.com",
+    email: "satish.m@nyaynow.com",
     password: "password123", // Use hash in real app or middleware handles it
     role: "lawyer",
     specialization: "Criminal",
@@ -48,7 +48,7 @@ const mockLawyers = [
   },
   {
     name: "Amit Desai",
-    email: "amit.desai@nyaysathi.com",
+    email: "amit.desai@nyaynow.com",
     password: "password123",
     role: "lawyer",
     specialization: "Criminal",
@@ -76,7 +76,7 @@ const mockLawyers = [
   },
   {
     name: "Tripti Shetty",
-    email: "tripti.s@nyaysathi.com",
+    email: "tripti.s@nyaynow.com",
     password: "password123",
     role: "lawyer",
     specialization: "Corporate",
@@ -106,7 +106,7 @@ const mockLawyers = [
   // --- DELHI (Civil & Constitutional) ---
   {
     name: "Harish Salve",
-    email: "harish.s@nyaysathi.com",
+    email: "harish.s@nyaynow.com",
     password: "password123",
     role: "lawyer",
     specialization: "Constitutional",
@@ -134,7 +134,7 @@ const mockLawyers = [
   },
   {
     name: "Neha Mehta",
-    email: "neha.m@nyaysathi.com",
+    email: "neha.m@nyaynow.com",
     password: "password123",
     role: "lawyer",
     specialization: "Civil",
@@ -162,7 +162,7 @@ const mockLawyers = [
   },
   {
     name: "Siddharth Luthra",
-    email: "siddharth.l@nyaysathi.com",
+    email: "siddharth.l@nyaynow.com",
     password: "password123",
     role: "lawyer",
     specialization: "Criminal",
@@ -192,7 +192,7 @@ const mockLawyers = [
   // --- BANGALORE (IT/Corporate & Family) ---
   {
     name: "Srinivas Katta",
-    email: "srinivas.k@nyaysathi.com",
+    email: "srinivas.k@nyaynow.com",
     password: "password123",
     role: "lawyer",
     specialization: "Corporate",
@@ -220,7 +220,7 @@ const mockLawyers = [
   },
   {
     name: "Ayantika Mondal",
-    email: "ayantika.m@nyaysathi.com",
+    email: "ayantika.m@nyaynow.com",
     password: "password123",
     role: "lawyer",
     specialization: "Corporate",
@@ -248,7 +248,7 @@ const mockLawyers = [
   },
   {
     name: "Rajesh K.S.",
-    email: "rajesh.ks@nyaysathi.com",
+    email: "rajesh.ks@nyaynow.com",
     password: "password123",
     role: "lawyer",
     specialization: "Family",
@@ -278,7 +278,7 @@ const mockLawyers = [
   // --- HYDERABAD & CHENNAI (Mock Additions for Variety) ---
   {
     name: "Dr. Abhishek Singhvi",
-    email: "abhishek.s@nyaysathi.com",
+    email: "abhishek.s@nyaynow.com",
     password: "password123",
     role: "lawyer",
     specialization: "Constitutional",
@@ -306,7 +306,7 @@ const mockLawyers = [
   },
   {
     name: "Ruchi Kapoor",
-    email: "ruchi.k@nyaysathi.com",
+    email: "ruchi.k@nyaynow.com",
     password: "password123",
     role: "lawyer",
     specialization: "Family",

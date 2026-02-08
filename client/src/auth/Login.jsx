@@ -73,7 +73,7 @@ export default function Login() {
         <div className="relative z-10">
           <Link to="/" className="flex items-center gap-3 w-fit">
             <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-xl">⚖️</div>
-            <span className="font-bold text-xl tracking-tight">NyaySathi</span>
+            <span className="font-bold text-xl tracking-tight">NyayNow</span>
           </Link>
         </div>
 

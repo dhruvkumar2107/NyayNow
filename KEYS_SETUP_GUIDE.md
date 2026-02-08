@@ -7,7 +7,7 @@ This guide explains how to get the free API keys for the startup features (Sentr
 
 1.  Go to [us.posthog.com/signup](https://us.posthog.com/signup).
 2.  Sign up (Free tier is generous).
-3.  Create a new "Project" (name it `NyaySathi`).
+3.  Create a new "Project" (name it `NyayNow`).
 4.  Select "Web / React" if asked (or just skip).
 5.  Go to **Project Settings** (gear icon on the left sidebar).
 6.  Scroll down to **"Project API Key"**.
@@ -21,7 +21,7 @@ This guide explains how to get the free API keys for the startup features (Sentr
 2.  Create an account (Free Developer plan).
 3.  Click **"Create Project"**.
 4.  Choose **"React"** (for Frontend) or **"Node.js"** (for Backend). **Create one for each if used in both.**
-5.  Give it a name (e.g., `nyaysathi-client`).
+5.  Give it a name (e.g., `nyaynow-client`).
 6.  Skip the setup wizard and go to **Settings** -> **Client Keys (DSN)**.
 7.  Copy the **DSN** URL (looks like `https://example@o123.ingest.sentry.io/456`).
 8.  **This is your `VITE_SENTRY_DSN` (for client) or `SENTRY_DSN` (for server).**

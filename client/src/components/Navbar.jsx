@@ -30,7 +30,7 @@ export default function Navbar() {
             ⚖️
           </div>
           <span className="text-xl font-bold text-slate-900 tracking-tight font-display">
-            Nyay<span className="text-indigo-600">Sathi</span>
+            Nyay<span className="text-indigo-600">Now</span>
           </span>
         </Link>
 

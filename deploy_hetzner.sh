@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 🚀 NyaySathi Auto-Deploy Script for Hetzner (Ubuntu 22/24)
+# 🚀 NyayNow Auto-Deploy Script for Hetzner (Ubuntu 22/24)
 # Run this as root.
 
 echo "🔵 [1/6] Updating System..."
@@ -13,11 +13,11 @@ apt install -y nodejs
 npm install -g pm2
 
 echo "🔵 [3/6] Setting up Directory..."
-mkdir -p /var/www/nyaysathi
-cd /var/www/nyaysathi
+mkdir -p /var/www/nyaynow
+cd /var/www/nyaynow
 
 # NOTE: Replace with your actual repo
-REPO_URL="https://github.com/dhruvkumar2107/nyaysathi.git" 
+REPO_URL="https://github.com/dhruvkumar2107/nyaynow.git" 
 
 if [ -d ".git" ]; then
     echo "🟡 Repo exists. Pulling latest..."
@@ -41,12 +41,12 @@ cd ..
 
 echo "🔵 [5/6] Configuring Nginx..."
 # Create Nginx Config
-cat > /etc/nginx/sites-available/nyaysathi <<EOF
+cat > /etc/nginx/sites-available/nyaynow <<EOF
 server {
     listen 80;
-    server_name nyaysathi.com www.nyaysathi.com;
+    server_name nyaynow.com www.nyaynow.com;
 
-    root /var/www/nyaysathi/client/dist;
+    root /var/www/nyaynow/client/dist;
     index index.html;
 
     location / {
@@ -64,7 +64,7 @@ server {
 }
 EOF
 
-ln -s /etc/nginx/sites-available/nyaysathi /etc/nginx/sites-enabled/
+ln -s /etc/nginx/sites-available/nyaynow /etc/nginx/sites-enabled/
 rm /etc/nginx/sites-enabled/default
 nginx -t
 systemctl restart nginx
@@ -76,10 +76,10 @@ if [ ! -f .env ]; then
     echo "PORT=5000" > .env
     echo "MONGO_URI=YOUR_MONGO_URI_HERE" >> .env
 fi
-pm2 start index.js --name "nyaysathi-api"
+pm2 start index.js --name "nyaynow-api"
 pm2 save
 pm2 startup
 
 echo "✅ DEPLOYMENT COMPLETE!"
-echo "👉 1. Edit /var/www/nyaysathi/server/.env with real keys."
+echo "👉 1. Edit /var/www/nyaynow/server/.env with real keys."
 echo "👉 2. Run 'certbot --nginx' to enable HTTPS."

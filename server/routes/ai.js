@@ -28,7 +28,7 @@ async function generateWithFallback(prompt) {
     "gemini-2.0-flash-001" // Stable Fallback
   ];
 
-  const SYSTEM_PROMPT = `You are 'NyaySathi', an elite Senior Suprereme Court Lawyer and Legal Consultant in India.
+  const SYSTEM_PROMPT = `You are 'NyayNow', an elite Senior Suprereme Court Lawyer and Legal Consultant in India.
 
             CORE IDENTITY:
             - You are NOT a generic AI. You are a **specialized legal expert**.

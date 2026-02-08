@@ -9,7 +9,7 @@ const seedAdmin = async () => {
 
         console.log("🚀 Starting Seed Script...");
         if (!process.env.MONGO_URI && !process.env.MONGO_URI?.startsWith("mongodb")) {
-            process.env.MONGO_URI = "mongodb://localhost:27017/nyaysathi";
+            process.env.MONGO_URI = "mongodb://localhost:27017/nyaynow";
             console.log("⚠️ Fallback to localhost");
         }
         let uri = process.env.MONGO_URI;
@@ -24,7 +24,7 @@ const seedAdmin = async () => {
         await mongoose.connect(uri);
         console.log("Connected to MongoDB");
 
-        const email = "admin@nyaysathi.com";
+        const email = "admin@nyaynow.com";
         const password = "admin123";
         const hashedPassword = await bcrypt.hash(password, 10);
 

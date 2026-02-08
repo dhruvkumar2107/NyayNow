@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 // Configure axios base URL
-const apiUrl = import.meta.env.VITE_API_URL || "https://nyaysathi-main.onrender.com/api";
+const apiUrl = import.meta.env.VITE_API_URL || "https://nyaynow-main.onrender.com/api";
 // We need the root URL for axios because calls include /api
 axios.defaults.baseURL = apiUrl.replace(/\/api$/, "");
 

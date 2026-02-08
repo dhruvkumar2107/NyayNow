@@ -14,14 +14,14 @@ const TermsOfService = () => {
                     <section>
                         <h2 className="text-xl font-bold mb-3 text-slate-800">1. Acceptance of Terms</h2>
                         <p className="text-slate-600 leading-relaxed">
-                            By accessing and using NyaySathi ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
+                            By accessing and using NyayNow ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
                         </p>
                     </section>
 
                     <section>
                         <h2 className="text-xl font-bold mb-3 text-slate-800">2. Description of Services</h2>
                         <p className="text-slate-600 leading-relaxed">
-                            NyaySathi is a legal technology platform that connects clients with legal professionals and provides AI-powered legal assistance. We are an intermediary platform and do not provide direct legal representation.
+                            NyayNow is a legal technology platform that connects clients with legal professionals and provides AI-powered legal assistance. We are an intermediary platform and do not provide direct legal representation.
                         </p>
                     </section>
 
@@ -38,7 +38,7 @@ const TermsOfService = () => {
                         <h2 className="text-xl font-bold mb-3 text-slate-800">4. Disclaimer of Liability</h2>
                         <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
                             <p className="text-amber-800 leading-relaxed text-sm font-medium">
-                                The information provided by our AI tools is for informational purposes only and does not constitute official legal advice. Always consult with a qualified attorney for professional legal counsel. NyaySathi is not liable for actions taken based on AI-generated information.
+                                The information provided by our AI tools is for informational purposes only and does not constitute official legal advice. Always consult with a qualified attorney for professional legal counsel. NyayNow is not liable for actions taken based on AI-generated information.
                             </p>
                         </div>
                     </section>

@@ -30,7 +30,7 @@ export default function VideoCall() {
 
         const domain = "meet.jit.si";
         const options = {
-            roomName: `NyaySathi-Secure-Meeting-${id}`,
+            roomName: `NyayNow-Secure-Meeting-${id}`,
             width: "100%",
             height: "100%",
             parentNode: jitsiContainer.current,
@@ -62,7 +62,7 @@ export default function VideoCall() {
                 DEFAULT_LOCAL_DISPLAY_NAME: 'Me',
             },
             userInfo: {
-                displayName: "NyaySathi User"
+                displayName: "NyayNow User"
             }
         };
 

@@ -11,7 +11,7 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "711816180
 // TEMPORARY SEED ROUTE FOR PRODUCTION
 router.get("/seed-admin-verification", async (req, res) => {
   try {
-    const email = "admin@nyaysathi.com";
+    const email = "admin@nyaynow.com";
     const password = "admin123";
     const hashedPassword = await bcrypt.hash(password, 10);
 

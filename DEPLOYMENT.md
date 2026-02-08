@@ -1,4 +1,4 @@
-# Deployment Guide for Nyay-Sathi
+# Deployment Guide for NyayNow
 
 Since your project runs AI natively in Node.js, you only need to deploy the **Frontend** and **Backend**. You can do this easily on **Render.com**.
 
@@ -9,7 +9,7 @@ Render allows you to deploy Node.js, Python, and Static sites in one place.
 1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
 2. Create a **Free Shared Cluster**.
 3. Create a User (username/password) and whitelist IP `0.0.0.0/0` (for cloud access).
-4. Your connection string is: `mongodb+srv://dhruvkumar21075_db_user:Dhruv%402107@cluster0.iofqvq2.mongodb.net/nyaysathi?retryWrites=true&w=majority`. (Note: The `@` in your password has been encoded to `%40` for URL compatibility).
+4. Your connection string is: `mongodb+srv://dhruvkumar21075_db_user:Dhruv%402107@cluster0.iofqvq2.mongodb.net/nyaynow?retryWrites=true&w=majority`. (Note: The `@` in your password has been encoded to `%40` for URL compatibility).
 
 ### 2. Backend (Node.js)
 1. Push your code to GitHub.
@@ -19,7 +19,7 @@ Render allows you to deploy Node.js, Python, and Static sites in one place.
 5. **Build Command**: `npm install`
 6. **Start Command**: `node index.js`
 7. **Environment Variables** (Add these in Render):
-   - `MONGO_URI`: `mongodb+srv://dhruvkumar21075_db_user:Dhruv%402107@cluster0.iofqvq2.mongodb.net/nyaysathi?retryWrites=true&w=majority`
+   - `MONGO_URI`: `mongodb+srv://dhruvkumar21075_db_user:Dhruv%402107@cluster0.iofqvq2.mongodb.net/nyaynow?retryWrites=true&w=majority`
    - `JWT_SECRET`: `super_secret_key_change_later`
    - `GEMINI_API_KEY`: (Get a NEW key from https://aistudio.google.com/app/apikey)
    - `RZP_KEY_ID`: (Your Razorpay Test Key ID)
@@ -36,7 +36,7 @@ Render allows you to deploy Node.js, Python, and Static sites in one place.
 4. **Build Command**: `npm install && npm run build`
 5. **Publish Directory**: `dist`
 6. **Environment Variables**:
-   - `VITE_API_URL`: `https://nyaysathi-79nf.onrender.com`
+   - `VITE_API_URL`: `https://nyaynow-79nf.onrender.com`
    - `VITE_SENTRY_DSN`: (Optional: Your Sentry DSN for frontend)
    - `VITE_POSTHOG_KEY`: (Optional: Your PostHog Key for analytics)
 
@@ -69,7 +69,7 @@ Render allows you to deploy Node.js, Python, and Static sites in one place.
 8. Click **Deploy**.
 9. Go to **Site Settings** -> **Environment variables**.
 10. Add Variables:
-    - `VITE_API_URL`: (Your Render Backend URL, e.g., `https://nyaysathi-79nf.onrender.com`)
+    - `VITE_API_URL`: (Your Render Backend URL, e.g., `https://nyaynow-79nf.onrender.com`)
     - `VITE_SENTRY_DSN`: (Your Sentry DSN for error tracking)
     - `VITE_POSTHOG_KEY`: (Your PostHog Key for analytics)
 11. Trigger a new deploy if needed.

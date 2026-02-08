@@ -99,7 +99,7 @@ export default function Settings() {
                 </div>
 
                 <p className="text-center text-slate-400 text-sm mt-8">
-                    NyaySathi ID • Secure & Encrypted
+                    NyayNow ID • Secure & Encrypted
                 </p>
             </div>
         </div>
