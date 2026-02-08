@@ -249,33 +249,16 @@ export default function Navbar() {
       </div>
 
       {/* MOBILE MENU (Full Screen Overlay) */}
-      <div className={`lg:hidden fixed inset-0 top-[72px] bg-white z-40 transition-all duration-300 overflow-y-auto ${mobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}>
-        <div className="p-6 space-y-8 pb-20">
+      <div
+        data-lenis-prevent
+        className={`lg:hidden fixed inset-0 top-[72px] bg-white z-40 transition-all duration-300 overflow-y-auto ${mobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
+      >
+        <div className="p-6 space-y-2 pb-20">
           {NAVIGATION_ITEMS.map((item, index) => (
-            <div key={index} className="space-y-4">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">{item.label}</h3>
-              <div className="grid gap-3">
-                {item.dropdown.map((subItem, idx) => (
-                  <Link
-                    key={idx}
-                    to={subItem.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-4 p-3 rounded-xl bg-slate-50 hover:bg-blue-50 transition-colors border border-transparent hover:border-blue-100"
-                  >
-                    <div className="p-2 bg-white rounded-lg shadow-sm text-slate-600">
-                      {subItem.icon}
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-slate-900">{subItem.name}</p>
-                      <p className="text-xs text-slate-500">{subItem.desc}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
+            <MobileMenuItem key={index} item={item} closeMenu={() => setMobileMenuOpen(false)} />
           ))}
 
-          <div className="h-px bg-slate-100"></div>
+          <div className="h-px bg-slate-100 my-4"></div>
 
           <div className="flex flex-col gap-3">
             {!user && (
@@ -288,6 +271,50 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
+  );
+}
+
+function MobileMenuItem({ item, closeMenu }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border border-slate-100 rounded-xl overflow-hidden active:scale-[0.99] transition-transform">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-4 bg-slate-50/50 hover:bg-slate-50 transition"
+      >
+        <span className="font-bold text-slate-900">{item.label}</span>
+        <svg
+          className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <div className={`grid transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+        <div className="overflow-hidden">
+          <div className="p-2 space-y-1 bg-white border-t border-slate-100">
+            {item.dropdown.map((subItem, idx) => (
+              <Link
+                key={idx}
+                to={subItem.href}
+                onClick={closeMenu}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors group"
+              >
+                <div className="p-1.5 bg-slate-50 rounded-md text-slate-500 group-hover:text-blue-600 group-hover:bg-blue-50 transition">
+                  {subItem.icon}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-700 group-hover:text-blue-700">{subItem.name}</p>
+                  <p className="text-[10px] text-slate-400 leading-tight">{subItem.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
