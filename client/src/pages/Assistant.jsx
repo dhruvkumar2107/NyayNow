@@ -181,59 +181,36 @@ export default function Assistant() {
     scrollToBottom();
   }, [messages, loading]);
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
+  const sendMessage = async (textOverride) => {
+    const userText = textOverride || input;
+    if (!userText.trim()) return;
 
-    const userMsg = { role: "user", content: input };
+    const userMsg = { role: "user", content: userText };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
 
     try {
-      // Filter out internal/system messages if any, or just send strict user/assistant pairs
       const historyPayload = messages.map(m => ({
         role: m.role,
         content: m.content
       }));
 
       const res = await axios.post("/api/ai/assistant", {
-        question: input,
-        history: historyPayload, // NEW: Context retention
+        question: userText,
+        history: historyPayload,
         language: "English",
         location: "India",
       });
 
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: res.data.answer },
-      ]);
-    } catch (err) {
-      if (err.response?.status === 403) {
-        setShowPaywall(true);
-        // Remove the user message if it failed or add an error message? 
-        // Better to just show paywall.
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: "⚠️ Sorry, I encountered an error. Please try again." },
-        ]);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleNoticeDraft = async () => {
-    setShowNoticeForm(false);
-    setLoading(true);
-    const userMsg = { role: "user", content: `Draft a Legal Notice for ${noticeData.type}` };
-    setMessages((prev) => [...prev, userMsg]);
-
-    try {
-      const res = await axios.post("/api/ai/draft-notice", noticeData);
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: res.data.notice },
+        {
+          role: "assistant",
+          content: res.data.answer,
+          relatedQuestions: res.data.related_questions || [],
+          intent: res.data.intent
+        },
       ]);
     } catch (err) {
       if (err.response?.status === 403) {
@@ -241,7 +218,7 @@ export default function Assistant() {
       } else {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: "⚠️ Failed to draft notice. Please try again." },
+          { role: "assistant", content: "⚠️ **System Error**: I am unable to connect to the legal database right now. Please try again later." },
         ]);
       }
     } finally {
@@ -250,51 +227,95 @@ export default function Assistant() {
   };
 
   return (
-    <main className="min-h-screen bg-white font-sans text-slate-900 py-6">
+    <main className="min-h-screen bg-slate-50 font-sans text-slate-900 flex flex-col">
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
-      <div className="max-w-4xl mx-auto h-[calc(100vh-80px)] flex flex-col p-4 md:p-6">
-
-        {/* HEADER */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-          <div>
-            <h1 className="text-2xl font-extrabold text-[#0B1120]">AI Legal Companion</h1>
-            <p className="text-slate-500 text-sm font-medium">Powered by Gemini Pro • India Jurisdiction</p>
+      {/* HEADER */}
+      <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white text-xl shadow-lg shadow-indigo-200">
+            ⚖️
           </div>
-          <button
-            onClick={() => setShowNoticeForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl font-bold text-sm transition"
-          >
-            <span>📝</span> Draft Notice
-          </button>
+          <div>
+            <h1 className="text-xl font-bold text-slate-900">NyaySathi AI</h1>
+            <p className="text-xs font-semibold text-indigo-600 tracking-wide uppercase">Senior Legal Consultant</p>
+          </div>
         </div>
+        <button
+          onClick={() => setShowNoticeForm(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 rounded-lg font-medium text-sm transition"
+        >
+          <span>📝</span> Draft Notice
+        </button>
+      </div>
+
+      <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
 
         {/* CHAT AREA */}
-        <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar pb-4">
+        <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar pb-4 scroll-smooth">
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
             >
-              <div
-                className={`max-w-[85%] md:max-w-[75%] p-5 rounded-2xl text-base leading-relaxed shadow-sm
-                  ${msg.role === "user"
-                    ? "bg-[#0B1120] text-white rounded-br-none"
-                    : "bg-slate-50 text-slate-800 border border-slate-200 rounded-bl-none"
-                  }`}
-              >
-                <div className="prose prose-sm max-w-none dark:prose-invert">
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+              {/* Avatar for Assistant */}
+              {msg.role === "assistant" && (
+                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 mr-3 flex-shrink-0 mt-1 border border-indigo-200">
+                  ⚖️
                 </div>
+              )}
+
+              <div className={`max-w-[85%] md:max-w-[75%] flex flex-col gap-2`}>
+                <div
+                  className={`p-5 rounded-2xl text-[15px] leading-7 shadow-sm
+                    ${msg.role === "user"
+                      ? "bg-slate-900 text-white rounded-br-none"
+                      : "bg-white text-slate-800 border border-slate-200 rounded-tl-none shadow-md shadow-slate-200/40"
+                    }`}
+                >
+                  <div className={`prose prose-sm max-w-none ${msg.role === 'user' ? 'prose-invert' : 'prose-headings:text-indigo-900 prose-strong:text-indigo-800'}`}>
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  </div>
+                </div>
+
+                {/* Related Questions Chips */}
+                {msg.role === "assistant" && msg.relatedQuestions?.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-1 ml-1">
+                    {msg.relatedQuestions.map((q, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => sendMessage(q)}
+                        className="text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-full hover:bg-indigo-100 transition flex items-center gap-1 group"
+                      >
+                        <span>Query:</span>
+                        {q}
+                        <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Disclaimer Footer */}
+                {msg.role === "assistant" && (
+                  <div className="text-[10px] text-slate-400 ml-2 mt-1 flex items-center gap-1">
+                    <span>ℹ️</span>
+                    <span>AI-generated legal information. Not a substitute for professional legal counsel.</span>
+                  </div>
+                )}
               </div>
             </div>
           ))}
+
           {loading && (
-            <div className="flex justify-start">
-              <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl rounded-bl-none flex gap-2 items-center">
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            <div className="flex justify-start animate-pulse">
+              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 mr-3 flex-shrink-0 border border-indigo-200">
+                ⚖️
+              </div>
+              <div className="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none shadow-sm flex gap-2 items-center">
+                <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                <span className="text-xs text-slate-500 font-medium ml-2">Analyzing Indian Laws...</span>
               </div>
             </div>
           )}
@@ -302,7 +323,7 @@ export default function Assistant() {
         </div>
 
         {/* INPUT AREA */}
-        <div className="mt-4 bg-white border border-slate-200 rounded-2xl p-2 shadow-lg shadow-slate-200/50 flex items-center gap-2">
+        <div className="mt-4 bg-white border border-slate-200 rounded-2xl p-2 shadow-xl shadow-indigo-100/50 flex items-center gap-2">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -312,16 +333,16 @@ export default function Assistant() {
                 sendMessage();
               }
             }}
-            placeholder="Ask anything about Indian Law..."
-            className="flex-1 bg-transparent border-none focus:ring-0 p-3 max-h-32 resize-none text-slate-800 placeholder-slate-400 font-medium"
+            placeholder="Describe your legal situation..."
+            className="flex-1 bg-transparent border-none focus:ring-0 p-3 max-h-32 resize-none text-slate-800 placeholder-slate-400 font-medium text-base"
             rows={1}
           />
           <button
-            onClick={sendMessage}
+            onClick={() => sendMessage()}
             disabled={loading || !input.trim()}
-            className="p-3 bg-[#0B1120] text-white rounded-xl hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95"
+            className="p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95 shadow-lg shadow-indigo-200"
           >
-            <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+            <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
           </button>
         </div>
       </div>
