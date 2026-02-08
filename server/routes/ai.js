@@ -91,67 +91,46 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       ${conversationHistory}
       
       INSTRUCTIONS:
-      1. ANALYZE the query for legal keywords (Divorce, Property, Criminal, Contract).
-      2. IDENTIFY the relevant Indian Acts (e.g., Hindu Marriage Act, Transfer of Property Act, BNS).
+      1. ANALYZE the query for legal keywords.
+      2. IDENTIFY relevant Indian Acts (BNS, BNSS, etc).
       3. PROVIDE a structured legal opinion.
-      4. IF QUERY IS NON-LEGAL (e.g., "How to bake a cake"), politely refuse and steer back to law.
-      5. FORMAT: Markdown inside JSON.
+      4. IF QUERY IS NON-LEGAL, politely refuse.
       
-      OUTPUT FORMAT (JSON):
-      {
-        "answer": "**Legal Analysis**: ... \n\n **Relevant Sections**: ... \n\n **Advice**: ...", 
-        "related_questions": ["Question 1", "Question 2"], 
-        "intent": "legal_advice" 
-      }
+      OUTPUT FORMAT (STRICTLY USE DELIMITERS):
+      
+      [ANSWER]
+      **Legal Analysis**: ...
+      **Relevant Sections**: ...
+      **Advice**: ...
+      [/ANSWER]
+      
+      [QUESTIONS]
+      Question 1
+      Question 2
+      [/QUESTIONS]
+
+      (Do NOT use markdown code blocks or JSON)
     `;
 
     const result = await generateWithFallback(prompt);
     const response = await result.response;
     const text = response.text();
 
-    console.log("🔍 Raw AI Response:", text); // Debug log
+    console.log("🔍 Raw AI Response:", text);
 
-    let cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    const firstBrace = cleaned.indexOf('{');
-    const lastBrace = cleaned.lastIndexOf('}');
+    // ROBUST PARSING (REGEX)
+    const answerMatch = text.match(/\[ANSWER\]([\s\S]*?)\[\/ANSWER\]/);
+    const answer = answerMatch ? answerMatch[1].trim() : text; // Fallback to full text if tags missing
 
-    if (firstBrace !== -1 && lastBrace !== -1) {
-      cleaned = cleaned.substring(firstBrace, lastBrace + 1);
-    }
+    const questionsMatch = text.match(/\[QUESTIONS\]([\s\S]*?)\[\/QUESTIONS\]/);
+    const questionsRaw = questionsMatch ? questionsMatch[1].trim() : "";
+    const related_questions = questionsRaw.split('\n').map(q => q.trim()).filter(q => q.length > 5);
 
-    // Sanitize: Escape unescaped newlines inside strings might be hard regex-wise, 
-    // but often simply removing non-printable/control chars helps if they aren't critical.
-    // Better: Helper to sanitize common JSON breaking chars.
-    // cleaned = cleaned.replace(/[\u0000-\u001F]+/g, ""); // Too aggressive, removes legitimate newlines if not escaped.
-
-    // Attempt parse
-    let jsonResponse;
-    try {
-      jsonResponse = JSON.parse(cleaned);
-    } catch (parseError) {
-      console.error("⚠️ JSON Parse Failed. Attempting sanitization...", parseError.message);
-      // Fallback: Try to fix common issues like unescaped newlines
-      try {
-        // Simple fix for "Bad control character" often caused by newlines in strings
-        // regex to replace newlines that are NOT followed by a quote or brace? Hard.
-        // Let's rely on a simpler 'replace' for common markdown debris if any. 
-        // Actually, sometimes Gemini adds comments.
-        const sanitized = cleaned.replace(/\n/g, "\\n").replace(/\r/g, "");
-        // This is risky if it escapes actual JSON structure newlines. 
-        // Let's return a safe failure object if parsing fails completely.
-        jsonResponse = {
-          answer: text, // Fallback to raw text if JSON fails
-          related_questions: [],
-          intent: "legal_advice"
-        };
-      } catch (e) {
-        jsonResponse = {
-          answer: "**Error processing AI response.**\n\nRaw Output:\n" + text,
-          related_questions: [],
-          intent: "error"
-        };
-      }
-    }
+    const jsonResponse = {
+      answer: answer,
+      related_questions: related_questions,
+      intent: "legal_advice"
+    };
 
     res.json(jsonResponse);
   } catch (err) {
