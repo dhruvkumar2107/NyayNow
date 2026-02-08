@@ -3,16 +3,59 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-/* ---------------- GET ALL LAWYERS ---------------- */
+/* ---------------- GET LAWYERS (PAGINATED & FILTERED) ---------------- */
 router.get("/", async (req, res) => {
     try {
-        // 1. Fetch only lawyers
-        // 2. Ideally, we should add pagination, but for now fetch all
-        const lawyers = await User.find({ role: "lawyer" })
-            .select("-password") // Exclude password from results
-            .limit(50); // Safety limit
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const search = req.query.search || "";
+        const city = req.query.city || "";
+        const category = req.query.category || "";
 
-        res.json(lawyers);
+        const query = { role: "lawyer" };
+
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: "i" } },
+                { specialization: { $regex: search, $options: "i" } }
+            ];
+        }
+
+        if (city) {
+            query["location.city"] = { $regex: city, $options: "i" };
+        }
+
+        if (category) {
+            query.specialization = { $regex: category, $options: "i" };
+        }
+
+        const planPriority = { diamond: 3, gold: 2, silver: 1 };
+
+        // 1. Fetch filtered count
+        const total = await User.countDocuments(query);
+
+        // 2. Fetch paginated data
+        // Note: Sorting by plan priority requires a different approach in MongoDB if 'plan' is a string. 
+        // For simplicity/performance in MVP, we sort by creation date or generic sort, 
+        // OR we can implement a custom sort if the dataset is small enough after filter.
+        // Ideally, we'd add a numeric 'planLevel' field to the schema for efficient sorting.
+        // For now, let's just sort by verification status and then date.
+
+        let lawyers = await User.find(query)
+            .select("-password")
+            .sort({ verified: -1, createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        // Client-side sort for the specific page (Sorting 10 items is cheap)
+        lawyers = lawyers.sort((a, b) => (planPriority[b.plan] || 0) - (planPriority[a.plan] || 0));
+
+        res.json({
+            lawyers,
+            currentPage: page,
+            totalPages: Math.ceil(total / limit),
+            totalLawyers: total
+        });
     } catch (err) {
         console.error("Error fetching lawyers:", err.message);
         res.status(500).json({ error: "Failed to fetch lawyers" });

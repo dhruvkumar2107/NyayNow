@@ -19,6 +19,7 @@
     "axios": "1.6.0",
     "framer-motion": "^12.33.0",
     "leaflet": "1.9.4",
+    "lodash.debounce": "^4.0.8",
     "posthog-js": "1.131.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
