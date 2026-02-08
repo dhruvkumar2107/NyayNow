@@ -24,22 +24,48 @@
 }
 
 /* Global resets */
+/* Global resets */
+:root {
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+}
+
 html,
 body,
 #root {
   height: 100%;
-  background-color: #0A1F44;
-  color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  background-color: #ffffff;
+  /* Clean White Base */
+  color: #0f172a;
+  /* Slate 900 */
+  font-family: var(--font-sans);
   overflow-x: hidden;
-  /* Prevent horizontal scroll */
+  scroll-behavior: smooth;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  /* Tight tracking for modern feel */
 }
 
 /* Glassmorphism Utilities */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .glass-input {
