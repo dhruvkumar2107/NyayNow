@@ -191,6 +191,14 @@ export default function Assistant() {
   const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   useEffect(scrollToBottom, [messages, loading]);
 
+  // FIX: Prevent background scrolling when chat is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
   const sendMessage = async (textOverride) => {
     const userText = textOverride || input;
     if (!userText.trim()) return;
@@ -225,7 +233,7 @@ export default function Assistant() {
   };
 
   return (
-    <main className="h-screen bg-[#050505] text-slate-100 flex flex-col font-sans overflow-hidden relative selection:bg-indigo-500/30">
+    <main className="h-[100dvh] bg-[#050505] text-slate-100 flex flex-col font-sans overflow-hidden relative selection:bg-indigo-500/30">
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
       {/* --- AMBIENT BACKGROUND --- */}
@@ -248,7 +256,10 @@ export default function Assistant() {
       </header>
 
       {/* --- CHAT AREA --- */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-32 py-8 space-y-8 z-10 custom-scrollbar scroll-smooth">
+      <div
+        className="flex-1 overflow-y-auto px-4 md:px-32 py-8 space-y-8 z-10 custom-scrollbar scroll-smooth"
+        data-lenis-prevent="true" // FIX: Prevent Lenis from hijacking scroll
+      >
         <AnimatePresence initial={false}>
           {messages.map((msg, i) => (
             <motion.div

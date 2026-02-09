@@ -95,6 +95,7 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       2. IDENTIFY relevant Indian Acts (BNS, BNSS, etc).
       3. PROVIDE a structured legal opinion.
       4. IF QUERY IS NON-LEGAL, politely refuse.
+      5. **IMPORTANT**: Answer ONLY the specific USER QUERY. Do NOT repeat or summarize the chat history.
       
       OUTPUT FORMAT (STRICTLY USE DELIMITERS):
       
