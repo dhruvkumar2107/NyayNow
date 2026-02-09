@@ -143,9 +143,10 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import ReactMarkdown from 'react-markdown';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import PaywallModal from "../components/PaywallModal";
 import { useAuth } from "../context/AuthContext";
+import { toast } from "react-hot-toast"; // NEW
 import { motion, AnimatePresence } from "framer-motion";
 
 // --- TYPEWRITER EFFECT COMPONENT ---
@@ -202,6 +203,28 @@ export default function Assistant() {
   const sendMessage = async (textOverride) => {
     const userText = textOverride || input;
     if (!userText.trim()) return;
+
+    // GUEST LIMIT CHECK
+    if (!user) {
+      const usage = parseInt(localStorage.getItem("guest_ai_usage") || "0");
+      if (usage >= 1) {
+        toast((t) => (
+          <div className="flex flex-col gap-2">
+            <span className="font-bold">Login to continue using AI 🔒</span>
+            <span className="text-xs">Guest limit reached (1 free chat)</span>
+            <Link
+              to="/login"
+              onClick={() => toast.dismiss(t.id)}
+              className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold text-center mt-1"
+            >
+              Login Now
+            </Link>
+          </div>
+        ), { duration: 5000, icon: '🛑' });
+        return;
+      }
+      localStorage.setItem("guest_ai_usage", (usage + 1).toString());
+    }
 
     // Add User Message immediately
     setMessages(prev => [...prev, { role: "user", content: userText, isTyping: false }]);
