@@ -1,13 +1,40 @@
 import { useState } from "react";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext"; // NEW
+import { toast } from "react-hot-toast"; // NEW
+import { Link } from "react-router-dom"; // NEW
 
 export default function Analyze() {
+  const { user } = useAuth(); // NEW
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const analyze = async () => {
     if (!text.trim()) return;
+
+    // GUEST LIMIT CHECK
+    if (!user) {
+      const usage = parseInt(localStorage.getItem("guest_ai_usage") || "0");
+      if (usage >= 1) {
+        toast((t) => (
+          <div className="flex flex-col gap-2">
+            <span className="font-bold">Login to continue using AI 🔒</span>
+            <span className="text-xs">Guest limit reached (1 free chat)</span>
+            <Link
+              to="/login"
+              onClick={() => toast.dismiss(t.id)}
+              className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold text-center mt-1"
+            >
+              Login Now
+            </Link>
+          </div>
+        ), { duration: 5000, icon: '🛑' });
+        return;
+      }
+      localStorage.setItem("guest_ai_usage", (usage + 1).toString());
+    }
+
     setLoading(true);
     setResult(null);
 
