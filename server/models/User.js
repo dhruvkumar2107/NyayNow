@@ -57,6 +57,7 @@ const userSchema = new mongoose.Schema(
 
     location: {
       city: String,
+      state: String, // Added for State Filtering
       lat: Number,
       lng: Number,
     },

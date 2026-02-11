@@ -131,7 +131,7 @@ export default function App() {
               <Route path="/nearby" element={<Nearby />} />
               <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
               <Route path="/meet/:id" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
-              <Route path="/rent-agreement" element={<AgreementForm />} />
+              <Route path="/rent-agreement" element={<ProtectedRoute><AgreementForm /></ProtectedRoute>} />
               <Route path="/payment/success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
               <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />

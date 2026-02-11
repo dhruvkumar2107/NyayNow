@@ -101,14 +101,14 @@ io.on("connection", (socket) => {
   // Join a personal room based on User ID/Email (sent from client)
   socket.on("join_room", (room) => {
     socket.join(room);
-    console.log(`User joined room: ${room}`);
+    // console.log(`User joined room: ${room}`);
   });
 
   // ---------------- LEGAL UBER (INSTANT CONSULT) ----------------
   // Lawyers join this pool to receive instant calls
   socket.on("join_lawyer_pool", () => {
     socket.join("lawyer_pool");
-    console.log(`Lawyer ${socket.id} joined instant pool`);
+    // console.log(`Lawyer ${socket.id} joined instant pool`);
   });
 
   // Client requests a lawyer
@@ -211,6 +211,7 @@ loadRoute("/api/crm", "./routes/crm"); // NEW
 loadRoute("/api/notifications", "./routes/notifications"); // NEW
 loadRoute("/api/agreements", "./routes/agreements"); // NEW
 loadRoute("/api/events", "./routes/events"); // NEW CALENDAR ROUTE
+loadRoute("/api/admin", "./routes/admin"); // NEW ADMIN ANALYTICS
 
 // Custom Sentry Error Handler (Compatible with all versions)
 app.use((err, req, res, next) => {

@@ -15,6 +15,7 @@ export default function Marketplace() {
   // Filter States
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
+  const [selectedState, setSelectedState] = useState(""); // NEW
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
 
@@ -40,7 +41,7 @@ export default function Marketplace() {
   };
 
   // Fetch Lawyers
-  const fetchLawyers = async (pageNum = 1, append = false) => {
+  const fetchLawyers = async (pageNum = 1, append = false, searchOverride = null) => {
     try {
       if (pageNum === 1) setLoading(true);
       else setLoadingMore(true);
@@ -48,8 +49,9 @@ export default function Marketplace() {
       const params = new URLSearchParams({
         page: pageNum,
         limit: 10,
-        search: searchQuery,
+        search: searchOverride !== null ? searchOverride : searchQuery,
         city: selectedCity,
+        state: selectedState, // NEW
         category: selectedCategory
       });
 
@@ -76,7 +78,7 @@ export default function Marketplace() {
     setPage(1);
     fetchLawyers(1, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory, selectedCity, debouncedSearch]);
+  }, [selectedCategory, selectedCity, selectedState]); // Added selectedState
   // Note: debouncedSearch dependency might trigger too often if not careful, 
   // but here we are triggering via custom debouncing in handleSearchChange which updates the URL/searchQuery.
   // Actually, let's just watch searchQuery changes if valid.
@@ -107,17 +109,13 @@ export default function Marketplace() {
                   placeholder="Search by name..."
                   value={searchQuery}
                   onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    // Debounce manually here or use useEffect. 
-                    // For simplicity, let's just let the user hit enter or wait.
-                    // The useEffect below will catch it if we add searchQuery to dep, 
-                    // but we want debounce.
+                    const val = e.target.value;
+                    setSearchQuery(val);
 
-                    // Let's implement simple debounce:
                     if (window.searchTimeout) clearTimeout(window.searchTimeout);
                     window.searchTimeout = setTimeout(() => {
                       setPage(1);
-                      fetchLawyers(1, false);
+                      fetchLawyers(1, false, val); // Pass explicit value to avoid stale state
                     }, 600);
                   }}
                   className="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block p-3 outline-none transition"
@@ -142,7 +140,19 @@ export default function Marketplace() {
             </div>
 
             <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Location</p>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">State</p>
+              <select
+                className="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block p-3 outline-none transition"
+                value={selectedState}
+                onChange={(e) => setSelectedState(e.target.value)}
+              >
+                <option value="">All States</option>
+                {["Maharashtra", "Delhi", "Karnataka", "Telangana", "Tamil Nadu", "West Bengal", "Gujarat", "Rajasthan"].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">City</p>
               <select
                 className="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block p-3 outline-none transition"
                 value={selectedCity}

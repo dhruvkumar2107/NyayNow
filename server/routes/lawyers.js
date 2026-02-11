@@ -4,51 +4,74 @@ const User = require("../models/User");
 const router = express.Router();
 
 /* ---------------- GET LAWYERS (PAGINATED & FILTERED) ---------------- */
+/* ---------------- GET LAWYERS (PAGINATED & FILTERED) ---------------- */
 router.get("/", async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const search = req.query.search || "";
         const city = req.query.city || "";
+        const state = req.query.state || ""; // NEW
         const category = req.query.category || "";
+
+        // Debug Log
+        console.log(`🔎 SEARCH: "${search}", CITY: "${city}", STATE: "${state}", CAT: "${category}"`);
 
         const query = { role: "lawyer" };
 
+        // SEARCH: Name or Specialization
         if (search) {
             query.$or = [
-                { name: { $regex: search, $options: "i" } },
-                { specialization: { $regex: search, $options: "i" } }
+                { name: { $regex: search.trim(), $options: "i" } },
+                { specialization: { $regex: search.trim(), $options: "i" } }
             ];
         }
 
+        // FILTER: City
         if (city) {
-            query["location.city"] = { $regex: city, $options: "i" };
+            query["location.city"] = { $regex: city.trim(), $options: "i" };
         }
 
+        // FILTER: State
+        if (state) {
+            query["location.state"] = { $regex: state.trim(), $options: "i" };
+        }
+
+        // FILTER: Category (Specialization)
         if (category) {
             query.specialization = { $regex: category, $options: "i" };
         }
 
-        const planPriority = { diamond: 3, gold: 2, silver: 1 };
+        // PLAN PRIORITY (Diamond > Gold > Silver > Free)
+        // Since 'plan' is a string, we can't sort by it directly in Mongo without an aggregate or helper field.
+        // For MVP Excellence: We will fetch slightly more records and sort in memory, 
+        // OR better: use aggregate to add a sort weight.
 
-        // 1. Fetch filtered count
+        // Let's use Aggregate for "Excellent" Sorting
+        const pipeline = [
+            { $match: query },
+            {
+                $addFields: {
+                    planWeight: {
+                        $switch: {
+                            branches: [
+                                { case: { $eq: [{ $toLower: "$plan" }, "diamond"] }, then: 3 },
+                                { case: { $eq: [{ $toLower: "$plan" }, "gold"] }, then: 2 },
+                                { case: { $eq: [{ $toLower: "$plan" }, "silver"] }, then: 1 }
+                            ],
+                            default: 0
+                        }
+                    }
+                }
+            },
+            { $sort: { planWeight: -1, verified: -1, createdAt: -1 } },
+            { $skip: (page - 1) * limit },
+            { $limit: limit },
+            { $project: { password: 0, planWeight: 0, otp: 0 } } // Clean up
+        ];
+
+        const lawyers = await User.aggregate(pipeline);
         const total = await User.countDocuments(query);
-
-        // 2. Fetch paginated data
-        // Note: Sorting by plan priority requires a different approach in MongoDB if 'plan' is a string. 
-        // For simplicity/performance in MVP, we sort by creation date or generic sort, 
-        // OR we can implement a custom sort if the dataset is small enough after filter.
-        // Ideally, we'd add a numeric 'planLevel' field to the schema for efficient sorting.
-        // For now, let's just sort by verification status and then date.
-
-        let lawyers = await User.find(query)
-            .select("-password")
-            .sort({ verified: -1, createdAt: -1 })
-            .skip((page - 1) * limit)
-            .limit(limit);
-
-        // Client-side sort for the specific page (Sorting 10 items is cheap)
-        lawyers = lawyers.sort((a, b) => (planPriority[b.plan] || 0) - (planPriority[a.plan] || 0));
 
         res.json({
             lawyers,

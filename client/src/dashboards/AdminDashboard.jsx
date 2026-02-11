@@ -17,25 +17,35 @@ export default function AdminDashboard() {
 
     const fetchData = async () => {
         try {
-            // In a real app, these should be /api/admin/users?role=lawyer
-            const resLawyers = await axios.get("/api/lawyers");
-            // Mocking client fetch as we don't have a public client route, 
-            // but normally: const resClients = await axios.get("/api/admin/clients");
+            const [params] = await Promise.all([
+                axios.get("/api/lawyers"),
+                axios.get("/api/admin/stats")
+            ]);
+
+            const resLawyers = params;
+            // For now, clients are still mock until we have a proper client list endpoint for admins
+            // But we can get the COUNT from the stats endpoint
+
+            const statsRes = await axios.get("/api/admin/stats");
+
+            setLawyers(resLawyers.data.lawyers || resLawyers.data); // Handle pagination response structure if needed
+
+            // Mock clients list for display purposes (since we don't have a specific route for listing all clients detail yet)
+            // In a real app, you'd add GET /api/admin/users?role=client
             const mockClients = [
                 { _id: "1", name: "Rahul S.", email: "rahul@gmail.com", plan: "gold" },
                 { _id: "2", name: "Priya M.", email: "priya@yahoo.com", plan: "free" },
             ];
-
-            setLawyers(resLawyers.data);
             setClients(mockClients);
 
             setStats({
-                users: resLawyers.data.length + mockClients.length,
-                pending: resLawyers.data.filter(u => !u.verified).length,
-                revenue: 45000 // Mock revenue
+                users: statsRes.data.users,
+                pending: statsRes.data.pending,
+                revenue: statsRes.data.revenue
             });
         } catch (err) {
             console.error(err);
+            toast.error("Failed to load admin data");
         }
     };
 

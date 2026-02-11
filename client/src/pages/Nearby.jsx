@@ -182,7 +182,7 @@ export default function Nearby() {
 
   return (
     <div className="h-screen w-full relative overflow-hidden font-sans">
-      <div className="absolute top-0 left-0 w-full z-50">
+      <div className="absolute top-0 left-0 w-full z-[1000]">
         <Navbar />
       </div>
 

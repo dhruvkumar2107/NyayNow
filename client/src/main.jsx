@@ -30,7 +30,8 @@ posthog.init(import.meta.env.VITE_POSTHOG_KEY || 'phc_TEST_KEY_JUST_A_PLACEHOLDE
 });
 
 console.log("Rendering Main entry point");
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "711816180386-dm293kd6bkvbstbs65ev2v2n2nbrjlmk.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+if (!GOOGLE_CLIENT_ID) console.warn("⚠️ VITE_GOOGLE_CLIENT_ID is missing in .env");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

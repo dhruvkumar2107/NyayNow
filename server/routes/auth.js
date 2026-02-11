@@ -5,7 +5,8 @@ const { OAuth2Client } = require("google-auth-library"); // NEW
 const User = require("../models/User");
 
 const router = express.Router();
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "711816180386-dm293kd6bkvbstbs65ev2v2n2nbrjlmk.apps.googleusercontent.com");
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+if (!process.env.GOOGLE_CLIENT_ID) console.warn("⚠️ GOOGLE_CLIENT_ID is missing in .env");
 
 /* ================= GOOGLE LOGIN ================= */
 // TEMPORARY SEED ROUTE FOR PRODUCTION
@@ -246,6 +247,67 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     res.status(500).json({ message: err.message });
+  }
+});
+
+/* ================= PASSWORD RESET ================= */
+// Simple Nodemailer Setup (Mock for now if creds missing)
+const nodemailer = require("nodemailer");
+
+const sendResetEmail = async (email, token) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER || "support@nyaynow.com", // Add to .env
+      pass: process.env.EMAIL_PASS || "your_app_password"
+    }
+  });
+
+  const link = `${process.env.CLIENT_URL || "http://localhost:5173"}/reset-password/${token}`;
+
+  await transporter.sendMail({
+    from: "NyayNow Support <support@nyaynow.com>",
+    to: email,
+    subject: "Reset Your Password",
+    html: `<p>Click <a href="${link}">here</a> to reset your password. Link expires in 15 mins.</p>`
+  });
+};
+
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
+
+    // In production, use real email service.
+    // console.log("Reset Link:", `http://localhost:5173/reset-password/${token}`);
+
+    try {
+      await sendResetEmail(email, token);
+      res.json({ message: "Reset link sent to email" });
+    } catch (e) {
+      console.log("Email failed, sending mock link for dev:", `http://localhost:5173/reset-password/${token}`);
+      res.json({ message: "Mock Reset Link Sent (Check Console)", mockToken: token });
+    }
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await User.findByIdAndUpdate(decoded.id, { password: hashedPassword });
+
+    res.json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.status(400).json({ message: "Invalid or expired token" });
   }
 });
 
