@@ -3,7 +3,7 @@
  * Single source of truth for all backend calls
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || "https://nyaynow-main.onrender.com/api";
+const API_BASE = import.meta.env.VITE_API_URL || "https://nyaysathi-main.onrender.com/api";
 
 /* =====================================================
    AI FEATURES

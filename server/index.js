@@ -18,7 +18,9 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://nyaysathi-8new.vercel.app",
   "https://nyaynow.com",
-  "https://ubiquitous-creponne-ef2464.netlify.app", // User's Netlify site
+  "https://nyaynow.in", // NEW
+  "https://www.nyaynow.in", // NEW
+  "https://ubiquitous-creponne-ef2464.netlify.app",
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
