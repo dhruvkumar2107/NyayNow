@@ -32,11 +32,11 @@ const JudgeAI = () => {
 
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-                        <span className="px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-bold uppercase tracking-[0.2em] mb-6 inline-block shadow-[0_0_15px_rgba(99,102,241,0.3)]">
+                        <span className="px-4 py-1.5 rounded-full border border-indigo-200 bg-white text-indigo-600 text-xs font-bold uppercase tracking-[0.2em] mb-6 inline-block shadow-sm">
                             Predictive Justice Engine
                         </span>
-                        <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 tracking-tight">
-                            Judge <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">AI</span>
+                        <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 tracking-tight text-slate-900">
+                            Judge <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">AI</span>
                         </h1>
                         <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
                             Upload your case files. Our transformer models analyze 10M+ High Court & Supreme Court judgments to predict your case outcome with 94% accuracy.

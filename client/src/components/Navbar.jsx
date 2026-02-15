@@ -76,9 +76,7 @@ export default function Navbar() {
 
           {/* LOGO */}
           <Link to="/" className="flex items-center gap-3 group relative z-50">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition duration-300">
-              N
-            </div>
+            <img src="/logo.png" alt="NyayNow" className="w-10 h-10 object-contain hover:scale-105 transition duration-300" />
             <span className={`text-xl font-bold tracking-tight transition-colors duration-300 ${scrolled ? "text-slate-900 group-hover:text-indigo-600" : "text-white group-hover:text-indigo-400"}`}>NyayNow</span>
           </Link>
 

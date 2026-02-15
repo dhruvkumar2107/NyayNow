@@ -99,11 +99,11 @@ const DraftingLab = () => {
             <div className="max-w-[1400px] mx-auto">
                 {/* HEADER */}
                 <header className="mb-12 text-center relative">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none"></div>
-                    <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 text-white tracking-tight relative z-10">
-                        Smart <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Drafting Lab</span>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-200/50 rounded-full blur-[100px] pointer-events-none mix-blend-multiply"></div>
+                    <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 text-slate-900 tracking-tight relative z-10">
+                        Smart <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-cyan-600">Drafting Lab</span>
                     </h1>
-                    <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed relative z-10">
+                    <p className="text-slate-600 max-w-2xl mx-auto text-lg leading-relaxed relative z-10">
                         The ultimate tool for legal precision. Draft ironclad contracts or dissect agreements for hidden risks with military-grade AI.
                     </p>
                 </header>

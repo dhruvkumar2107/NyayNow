@@ -64,10 +64,10 @@ const LegalResearch = () => {
 
                     {!searched && (
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
-                            <div className="w-20 h-20 bg-cyan-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-cyan-500/20 shadow-[0_0_40px_rgba(6,182,212,0.1)]">
-                                <Scale size={40} className="text-cyan-400" />
+                            <div className="w-20 h-20 bg-cyan-50 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-cyan-100 shadow-sm">
+                                <Scale size={40} className="text-cyan-600" />
                             </div>
-                            <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-6 tracking-tight">
+                            <h1 className="text-5xl md:text-6xl font-serif font-bold text-slate-900 mb-6 tracking-tight">
                                 Deep Legal Research
                             </h1>
                             <p className="text-xl text-slate-400 max-w-2xl mx-auto">
