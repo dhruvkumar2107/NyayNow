@@ -43,7 +43,11 @@ const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const CourtStatus = lazy(() => import("./pages/CourtStatus"));
 const MootCourt = lazy(() => import("./pages/MootCourt"));
 const DevilsAdvocate = lazy(() => import("./pages/DevilsAdvocate"));
+const DevilsAdvocate = lazy(() => import("./pages/DevilsAdvocate"));
 const JudgeProfile = lazy(() => import("./pages/JudgeProfile"));
+const LegalResearch = lazy(() => import("./pages/LegalResearch")); // NEW
+const DraftingLab = lazy(() => import("./pages/DraftingLab")); // NEW
+const CareerHub = lazy(() => import("./pages/CareerHub")); // NEW
 
 /* Loading Component */
 const LoadingFallback = () => (
@@ -141,6 +145,9 @@ export default function App() {
               <Route path="/judge-profile" element={<JudgeProfile />} />
               <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
               <Route path="/setup-profile" element={<ProtectedRoute><SetupProfile /></ProtectedRoute>} /> {/* NEW */}
+              <Route path="/research" element={<ProtectedRoute><LegalResearch /></ProtectedRoute>} /> {/* NEW */}
+              <Route path="/drafting" element={<ProtectedRoute><DraftingLab /></ProtectedRoute>} /> {/* NEW */}
+              <Route path="/career" element={<ProtectedRoute><CareerHub /></ProtectedRoute>} /> {/* NEW */}
             </Routes>
           </Suspense>
         </main>

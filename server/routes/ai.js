@@ -496,4 +496,179 @@ router.post("/devils-advocate", verifyToken, checkAiLimit, async (req, res) => {
   }
 });
 
+/* ---------------- MOOT COURT (AI JUDGE) ---------------- */
+router.post("/moot-court", verifyTokenOptional, checkAiLimit, async (req, res) => {
+  try {
+    const { transcript, caseContext } = req.body;
+    if (!transcript) return res.status(400).json({ error: "Transcript required." });
+
+    const prompt = `
+      ACT AS A SUPREME COURT JUDGE AND LEGAL MENTOR.
+      
+      CONTEXT:
+      The user is a law student arguing a case in a Moot Court.
+      Case Context: "${caseContext || "General Legal Argument"}"
+      
+      STUDENT ARGUMENT:
+      "${transcript}"
+      
+      TASK:
+      Analyze the argument for:
+      1. **Legal Accuracy**: Are they citing real laws correctly?
+      2. **Logic & Flow**: Is the argument coherent?
+      3. **Persuasion**: How convincing is it?
+      
+      OUTPUT JSON STRICTLY:
+      {
+        "score": 85, (0-100)
+        "feedback": ["Point 1: Good citation of Article 21.", "Point 2: Weak connection between facts and law."],
+        "judge_remarks": "Counsel, your point on Article 21 is noted, but you failed to address the exception in...",
+        "emotional_tone": "Confident/Nervous/Aggressive"
+      }
+    `;
+
+    const result = await generateWithFallback(prompt);
+    const response = await result.response;
+    let text = response.text();
+
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      text = text.substring(jsonStart, jsonEnd + 1);
+    }
+
+    res.json(JSON.parse(text));
+
+  } catch (err) {
+    console.error("Moot Court Error:", err.message);
+    res.status(500).json({ error: "The Court is adjourned. Try again." });
+  }
+});
+
+/* ---------------- LEGAL RESEARCH (SEMANTIC SEARCH) ---------------- */
+router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, res) => {
+  try {
+    const { query } = req.body;
+    if (!query) return res.status(400).json({ error: "Query required." });
+
+    const prompt = `
+      ACT AS A LEGAL RESEARCHER FOR THE SUPREME COURT OF INDIA.
+      
+      USER QUERY: "${query}"
+      
+      TASK:
+      1. Identify the core legal issues.
+      2. Find 3-5 RELEVANT Indian Supreme Court/High Court judgments.
+      3. For each case, provide:
+         - Case Name & Citation
+         - Ratio Decidendi (The core legal principle)
+         - Relevance to the user's query.
+      
+      OUTPUT JSON STRICTLY:
+      {
+        "summary": "The query involves...",
+        "cases": [
+          {
+            "name": "Kesavananda Bharati v. State of Kerala",
+            "citation": "(1973) 4 SCC 225",
+            "ratio": "The Basic Structure of the Constitution cannot be amended.",
+            "relevance": "Directly applies to your constitutional question."
+          }
+        ]
+      }
+    `;
+
+    const result = await generateWithFallback(prompt);
+    const response = await result.response;
+    let text = response.text();
+
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      text = text.substring(jsonStart, jsonEnd + 1);
+    }
+
+    res.json(JSON.parse(text));
+
+  } catch (err) {
+    console.error("Legal Research Error:", err.message);
+    res.status(500).json({ error: "Research failed. Try again." });
+  }
+});
+
+/* ---------------- CAREER MENTOR (VIRTUAL INTERNSHIP) ---------------- */
+router.post("/career-mentor", verifyTokenOptional, checkAiLimit, async (req, res) => {
+  try {
+    const { taskType, userSubmission } = req.body;
+    if (!userSubmission) return res.status(400).json({ error: "Submission required." });
+
+    const prompt = `
+      ACT AS A SENIOR PARTNER AT A TOP LAW FIRM.
+      You are grading a virtual internship task submitted by a law student.
+      
+      Task: "${taskType}"
+      Student Submission: "${userSubmission}"
+      
+      Provide a strict Grading JSON:
+      {
+        "grade": "A/B/C/D",
+        "score": 85,
+        "feedback": ["Constructive point 1", "Constructive point 2"],
+        "correction": "How a pro would have done it..."
+      }
+    `;
+
+    const result = await generateWithFallback(prompt);
+    const response = await result.response;
+    let text = response.text();
+
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      text = text.substring(jsonStart, jsonEnd + 1);
+    }
+
+    res.json(JSON.parse(text));
+
+  } catch (err) {
+    console.error("Career Mentor Error:", err.message);
+    res.status(500).json({ error: "Grading failed. Try again." });
+  }
+});
+
+/* ---------------- SMART DRAFTING (CONTRACT GENERATOR) ---------------- */
+router.post("/draft-contract", verifyTokenOptional, checkAiLimit, async (req, res) => {
+  try {
+    const { type, parties, terms } = req.body;
+    if (!type || !parties) return res.status(400).json({ error: "Type and Parties required." });
+
+    const prompt = `
+      ACT AS A SENIOR LEGAL DRAFTER.
+      Draft a professiona, legally binding contract.
+      
+      Type: ${type}
+      Parties: ${parties}
+      Key Terms/Context: ${terms || "Standard terms apply"}
+      
+      OUTPUT FORMAT:
+      Return ONLY the Markdown formatted contract. 
+      Use ## for Cloud Headings.
+      Include a "Definitions" section and "Dispute Resolution" clause.
+    `;
+
+    const result = await generateWithFallback(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    res.json({ contract: text });
+
+  } catch (err) {
+    console.error("Drafting Error:", err.message);
+    res.status(500).json({ error: "Drafting failed. Try again." });
+  }
+});
+
 module.exports = router;
