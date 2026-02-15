@@ -16,7 +16,7 @@ const JudgeProfile = () => {
     // 🔒 GATING CHECK (Diamond Plan)
     if (user && user.plan !== 'diamond') {
         return (
-            <div className="min-h-screen bg-midnight-950 flex items-center justify-center relative overflow-hidden font-sans selection:bg-amber-500/30">
+            <div className="min-h-screen bg-[#020617] flex items-center justify-center relative overflow-hidden font-sans selection:bg-amber-500/30">
                 <Navbar />
                 {/* Background FX */}
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 hidden"></div>
@@ -82,7 +82,7 @@ const JudgeProfile = () => {
     };
 
     return (
-        <div className="min-h-screen bg-midnight-950 font-sans text-slate-200">
+        <div className="min-h-screen bg-[#020617] font-sans text-slate-400">
             <Navbar />
 
             {/* HEADER */}

@@ -115,13 +115,13 @@ const VoiceAssistant = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-100 text-slate-900 font-sans overflow-hidden relative selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans overflow-hidden relative selection:bg-indigo-500/30">
             <Navbar />
 
             {/* Background Ambience */}
             <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-indigo-200/40 rounded-full blur-[120px] animate-pulse-slow mix-blend-multiply"></div>
-                <div className="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-purple-200/40 rounded-full blur-[120px] animate-pulse-slow delay-1000 mix-blend-multiply"></div>
+                <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-indigo-500/20 rounded-full blur-[120px] animate-pulse-slow mix-blend-screen"></div>
+                <div className="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-purple-500/20 rounded-full blur-[120px] animate-pulse-slow delay-1000 mix-blend-screen"></div>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
             </div>
 
@@ -145,7 +145,7 @@ const VoiceAssistant = () => {
                             filter: listening ? "brightness(1.1) blur(2px)" : "brightness(1) blur(0px)"
                         }}
                         transition={{ repeat: Infinity, duration: 2 }}
-                        className="w-48 h-48 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 shadow-2xl relative z-20 flex items-center justify-center border-4 border-white group-hover:scale-105 transition-transform duration-500"
+                        className="w-48 h-48 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 shadow-2xl relative z-20 flex items-center justify-center border-4 border-white/20 group-hover:scale-105 transition-transform duration-500"
                     >
                         <span className="text-6xl drop-shadow-sm filter grayscale brightness-200">
                             {listening ? '🎙️' : '🤖'}
@@ -176,13 +176,13 @@ const VoiceAssistant = () => {
                     <select
                         value={language}
                         onChange={(e) => setLanguage(e.target.value)}
-                        className="bg-white border border-slate-200 rounded-full px-6 py-3 text-sm text-indigo-900 outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer appearance-none text-center font-bold tracking-wide hover:bg-slate-50 transition shadow-lg shadow-indigo-100"
+                        className="bg-[#0f172a] border border-white/10 rounded-full px-6 py-3 text-sm text-indigo-300 outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer appearance-none text-center font-bold tracking-wide hover:bg-white/5 transition shadow-lg shadow-indigo-900/20"
                     >
-                        <option className="bg-white text-slate-900" value="en-IN">English (India)</option>
-                        <option className="bg-white text-slate-900" value="hi-IN">Hindi (हिंदी)</option>
-                        <option className="bg-white text-slate-900" value="ta-IN">Tamil (தமிழ்)</option>
-                        <option className="bg-white text-slate-900" value="te-IN">Telugu (తెలుగు)</option>
-                        <option className="bg-white text-slate-900" value="mr-IN">Marathi (मराठी)</option>
+                        <option className="bg-[#0f172a] text-slate-200" value="en-IN">English (India)</option>
+                        <option className="bg-[#0f172a] text-slate-200" value="hi-IN">Hindi (हिंदी)</option>
+                        <option className="bg-[#0f172a] text-slate-200" value="ta-IN">Tamil (தமிழ்)</option>
+                        <option className="bg-[#0f172a] text-slate-200" value="te-IN">Telugu (తెలుగు)</option>
+                        <option className="bg-[#0f172a] text-slate-200" value="mr-IN">Marathi (मराठी)</option>
                     </select>
                 </motion.div>
 
@@ -194,7 +194,7 @@ const VoiceAssistant = () => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="text-2xl text-slate-400 font-light font-serif italic"
+                                className="text-2xl text-slate-500 font-light font-serif italic"
                             >
                                 "Tap the orb and ask me anything regarding law..."
                             </motion.p>
@@ -204,7 +204,7 @@ const VoiceAssistant = () => {
                             <motion.div
                                 initial={{ y: 20, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
-                                className="inline-block px-8 py-4 rounded-3xl bg-white border border-slate-200 text-xl text-slate-800 font-medium shadow-xl"
+                                className="inline-block px-8 py-4 rounded-3xl bg-[#0f172a] border border-white/10 text-xl text-slate-200 font-medium shadow-xl"
                             >
                                 "{transcript}"
                             </motion.div>
@@ -222,13 +222,13 @@ const VoiceAssistant = () => {
                             <motion.div
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                className="mt-8 text-left bg-white/80 p-8 rounded-[2rem] border border-white shadow-2xl backdrop-blur-xl max-h-[40vh] overflow-y-auto custom-scrollbar"
+                                className="mt-8 text-left bg-[#0f172a]/90 p-8 rounded-[2rem] border border-white/10 shadow-2xl backdrop-blur-xl max-h-[40vh] overflow-y-auto custom-scrollbar"
                             >
-                                <div className="flex gap-4 mb-4 items-center border-b border-slate-100 pb-4">
+                                <div className="flex gap-4 mb-4 items-center border-b border-white/5 pb-4">
                                     <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-sm shadow-lg shadow-indigo-600/30 text-white">🧠</div>
-                                    <span className="font-bold text-sm text-indigo-900 uppercase tracking-wider">AI Legal Analysis</span>
+                                    <span className="font-bold text-sm text-indigo-300 uppercase tracking-wider">AI Legal Analysis</span>
                                 </div>
-                                <p className="text-slate-700 leading-relaxed whitespace-pre-wrap text-lg font-light">
+                                <p className="text-slate-300 leading-relaxed whitespace-pre-wrap text-lg font-light">
                                     {response}
                                 </p>
                             </motion.div>

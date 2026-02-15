@@ -46,7 +46,7 @@ export default function Calendar() {
     };
 
     return (
-        <div className="min-h-screen bg-midnight-900 px-6 py-12 font-sans text-slate-200">
+        <div className="min-h-screen bg-[#020617] px-6 py-12 font-sans text-slate-400">
             <div className="max-w-6xl mx-auto">
                 <header className="mb-10 flex justify-between items-end">
                     <div>

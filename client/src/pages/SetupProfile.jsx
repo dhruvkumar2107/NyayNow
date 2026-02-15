@@ -57,67 +57,73 @@ export default function SetupProfile() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-xl w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl">
+        <div className="min-h-screen bg-[#020617] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-indigo-500/30">
+            {/* Background Effects */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px]" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px]" />
+            </div>
+
+            <div className="max-w-xl w-full space-y-8 bg-[#0f172a]/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/10 relative z-10">
                 <div className="text-center">
-                    <h2 className="text-3xl font-extrabold text-gray-900">Complete Your Profile</h2>
-                    <p className="mt-2 text-sm text-gray-600">
+                    <h2 className="text-3xl font-extrabold text-white">Complete Your Profile</h2>
+                    <p className="mt-2 text-sm text-slate-400">
                         Tell us a bit more about yourself to get the best experience.
                     </p>
                 </div>
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    <div className="rounded-md shadow-sm -space-y-px">
+                    <div className="rounded-md -space-y-px">
 
                         {/* COMMON FIELDS */}
                         <div className="grid gap-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Headline / Job Title</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Headline / Job Title</label>
                                 <input
                                     name="headline"
                                     type="text"
                                     required
                                     value={formData.headline}
                                     onChange={handleChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    className="block w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                                     placeholder="e.g. Senior Family Lawyer"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Bio / About Me</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bio / About Me</label>
                                 <textarea
                                     name="bio"
                                     required
                                     rows={3}
                                     value={formData.bio}
                                     onChange={handleChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    className="block w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                                     placeholder="Briefly describe your experience..."
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">City</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">City</label>
                                 <input
                                     name="city"
                                     type="text"
                                     required
                                     value={formData.city}
                                     onChange={handleChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    className="block w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                                     placeholder="e.g. Mumbai"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Phone Number</label>
                                 <input
                                     name="phone"
                                     type="tel"
                                     value={formData.phone}
                                     onChange={handleChange}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    className="block w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                                     placeholder="+91 98765 43210"
                                 />
                             </div>
@@ -125,40 +131,40 @@ export default function SetupProfile() {
 
                         {/* LAWYER SPECIFIC */}
                         {user?.role === "lawyer" && (
-                            <div className="mt-6 grid gap-6 border-t border-gray-100 pt-6">
-                                <h3 className="text-lg font-medium text-gray-900">Legal Details</h3>
+                            <div className="mt-6 grid gap-6 border-t border-white/10 pt-6">
+                                <h3 className="text-lg font-bold text-white">Legal Details</h3>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Years of Experience</label>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Years of Experience</label>
                                     <input
                                         name="experience"
                                         type="number"
                                         value={formData.experience}
                                         onChange={handleChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        className="block w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Specialization</label>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Specialization</label>
                                     <input
                                         name="specialization"
                                         type="text"
                                         value={formData.specialization}
                                         onChange={handleChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        className="block w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                                         placeholder="Criminal, Civil, Corporate..."
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Courts Practicing In (Comma separated)</label>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Courts Practicing In (Comma separated)</label>
                                     <input
                                         name="courts"
                                         type="text"
                                         value={formData.courts}
                                         onChange={handleChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        className="block w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                                         placeholder="Supreme Court, Delhi High Court..."
                                     />
                                 </div>
@@ -166,13 +172,13 @@ export default function SetupProfile() {
                         )}
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mt-4">Languages Spoken (Comma separated)</label>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mt-4 mb-2">Languages Spoken (Comma separated)</label>
                             <input
                                 name="languages"
                                 type="text"
                                 value={formData.languages}
                                 onChange={handleChange}
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                className="block w-full px-4 py-3 bg-black/20 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                                 placeholder="English, Hindi, Marathi..."
                             />
                         </div>
@@ -183,7 +189,7 @@ export default function SetupProfile() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all shadow-lg shadow-blue-500/30"
+                            className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all shadow-lg shadow-indigo-500/30 uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? "Saving..." : "Complete Profile"}
                         </button>

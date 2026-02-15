@@ -59,7 +59,7 @@ export default function ClientDashboard() {
   };
 
   if (loading || !user) return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-50 font-serif text-midnight-900">
+    <div className="flex items-center justify-center min-h-screen bg-[#020617] font-serif text-slate-400">
       <div className="animate-pulse">Loading Workspace...</div>
     </div>
   );
@@ -67,34 +67,34 @@ export default function ClientDashboard() {
   const activeCase = activeCases.find(c => c.stage !== 'Closed') || activeCases[0];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900">
+    <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
 
       {/* SIDEBAR NAVIGATION (Fixed Left) */}
-      <aside className="fixed left-0 top-0 h-screen w-72 bg-midnight-900 text-slate-300 flex flex-col z-50">
+      <aside className="fixed left-0 top-0 h-screen w-72 bg-[#0f172a] border-r border-white/10 flex flex-col z-50">
         <div className="p-8 pb-4">
-          <div className="flex items-center gap-3 text-white mb-10">
-            <div className="w-8 h-8 bg-gradient-to-br from-gold-500 to-amber-600 rounded-lg flex items-center justify-center font-serif font-bold text-midnight-900 text-lg">N</div>
-            <span className="font-serif text-2xl tracking-tight">NyayNow</span>
-          </div>
+          <Link to="/" className="flex items-center gap-3 mb-10 group">
+            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20 ring-1 ring-white/10 group-hover:scale-110 transition duration-300">⚖️</div>
+            <span className="font-bold text-2xl tracking-tight text-white/90">NyayNow</span>
+          </Link>
 
           <div className="space-y-1">
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
             <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
             <NavItem icon="📄" label="Documents" to="/agreements" />
-            <NavItem icon="💳" label="Payments" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
+            <NavItem icon="card" label="Payments" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
             <NavItem icon="📡" label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
           </div>
         </div>
 
         <div className="mt-auto p-8 pt-0">
-          <div className="bg-midnight-800 rounded-xl p-4 border border-white/5 mb-6">
+          <div className="bg-[#1e293b]/50 rounded-xl p-4 border border-white/10 mb-6 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-midnight-700 border border-white/10 flex items-center justify-center text-gold-500 font-serif font-bold text-lg">
+              <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-lg">
                 {user.name?.[0]}
               </div>
               <div>
-                <p className="text-white font-serif text-sm leading-none mb-1">{user.name}</p>
-                <p className="text-xs text-gold-500 font-bold uppercase tracking-wider">{user.plan || "Premium"}</p>
+                <p className="text-white font-medium text-sm leading-none mb-1">{user.name}</p>
+                <p className="text-xs text-indigo-400 font-bold uppercase tracking-wider">{user.plan || "Premium"}</p>
               </div>
             </div>
             <div className="flex justify-between items-center text-xs text-slate-500 mt-2">
@@ -112,13 +112,13 @@ export default function ClientDashboard() {
         <header className="flex justify-between items-end mb-10 px-4">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
             <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-2">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-            <h1 className="text-4xl font-serif text-midnight-900 leading-tight">
-              Good Morning, {user.name?.split(' ')[0]}.
+            <h1 className="text-4xl font-bold text-white leading-tight">
+              Good Morning, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">{user.name?.split(' ')[0]}</span>.
             </h1>
           </motion.div>
           <button
             onClick={() => setShowPostModal(true)}
-            className="bg-midnight-900 text-white px-6 py-3 rounded-lg font-medium text-sm hover:bg-midnight-800 transition flex items-center gap-2 shadow-xl shadow-midnight-900/10"
+            className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-indigo-500 transition flex items-center gap-2 shadow-lg shadow-indigo-500/20 border border-indigo-500/50"
           >
             <span>+</span> New Legal Matter
           </button>
@@ -131,45 +131,45 @@ export default function ClientDashboard() {
           <div className="col-span-8 space-y-6">
 
             {/* HERO CARD: ACTIVE CASE */}
-            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full -translate-y-1/2 translate-x-1/2 mix-blend-multiply filter blur-3xl opacity-50 pointer-events-none group-hover:bg-blue-50 transition duration-1000"></div>
+            <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl opacity-50 pointer-events-none group-hover:bg-indigo-500/20 transition duration-1000"></div>
 
               <div className="relative z-10 flex justify-between items-start mb-8">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Active Matter</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Active Matter</span>
                   </div>
-                  <h2 className="text-2xl font-serif text-midnight-900 mb-2">
+                  <h2 className="text-2xl font-bold text-white mb-2">
                     {activeCase ? activeCase.title : "No Active Legal Matters"}
                   </h2>
-                  <p className="text-slate-500 max-w-lg leading-relaxed">
+                  <p className="text-slate-400 max-w-lg leading-relaxed">
                     {activeCase ? activeCase.desc : "Post a new case to get started with our AI legal assistance and connect with top lawyers."}
                   </p>
                 </div>
                 {activeCase && <div className="text-right">
-                  <p className="text-xs text-slate-400 uppercase font-bold tracking-widest mb-1">Budget</p>
-                  <p className="text-3xl font-serif text-midnight-900">₹{activeCase.budget}</p>
+                  <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mb-1">Budget</p>
+                  <p className="text-3xl font-bold text-white">₹{activeCase.budget}</p>
                 </div>}
               </div>
 
               {activeCase ? (
-                <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                <div className="bg-[#1e293b]/50 rounded-2xl p-6 border border-white/5">
                   <TrustTimeline stage={activeCase.stage || 'New Lead'} />
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-center hover:bg-white hover:shadow-md transition cursor-pointer" onClick={() => setShowPostModal(true)}>
-                    <div className="text-2xl mb-2">📝</div>
-                    <div className="font-bold text-sm text-midnight-900">Draft Contract</div>
+                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => setShowPostModal(true)}>
+                    <div className="text-2xl mb-2 group-hover:scale-110 transition">📝</div>
+                    <div className="font-bold text-sm text-white">Draft Contract</div>
                   </div>
-                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-center hover:bg-white hover:shadow-md transition cursor-pointer" onClick={() => navigate('/assistant')}>
-                    <div className="text-2xl mb-2">🤖</div>
-                    <div className="font-bold text-sm text-midnight-900">Ask AI Assistant</div>
+                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => navigate('/assistant')}>
+                    <div className="text-2xl mb-2 group-hover:scale-110 transition">🤖</div>
+                    <div className="font-bold text-sm text-white">Ask AI Assistant</div>
                   </div>
-                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-center hover:bg-white hover:shadow-md transition cursor-pointer" onClick={() => navigate('/marketplace')}>
-                    <div className="text-2xl mb-2">🔍</div>
-                    <div className="font-bold text-sm text-midnight-900">Find Lawyer</div>
+                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => navigate('/marketplace')}>
+                    <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>
+                    <div className="font-bold text-sm text-white">Find Lawyer</div>
                   </div>
                 </div>
               )}
@@ -178,17 +178,17 @@ export default function ClientDashboard() {
             {/* SECONDARY ROW: FEED & STATS */}
             <div className="grid grid-cols-2 gap-6">
               {/* FEED SUMMARY */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm h-[400px] overflow-y-auto custom-scrollbar">
-                <h3 className="font-serif text-lg text-midnight-900 mb-4 sticky top-0 bg-white pb-2 border-b border-slate-100">Legal Pulse</h3>
+              <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg h-[400px] overflow-y-auto custom-scrollbar">
+                <h3 className="font-bold text-lg text-white mb-4 sticky top-0 bg-[#0f172a] pb-2 border-b border-white/10 z-10">Legal Pulse</h3>
                 <div className="space-y-4">
                   {posts.slice(0, 5).map(post => (
-                    <div key={post._id} className="pb-4 border-b border-slate-50 last:border-0 hover:bg-slate-50 p-2 -mx-2 rounded-lg transition">
+                    <div key={post._id} className="pb-4 border-b border-white/5 last:border-0 hover:bg-white/5 p-3 -mx-3 rounded-xl transition cursor-pointer">
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600">{post.author?.name?.[0]}</div>
-                        <span className="text-xs font-bold text-midnight-900">{post.author?.name}</span>
-                        <span className="text-[10px] text-slate-400">{new Date(post.createdAt).toLocaleDateString()}</span>
+                        <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-[10px] font-bold text-indigo-300">{post.author?.name?.[0]}</div>
+                        <span className="text-xs font-bold text-white">{post.author?.name}</span>
+                        <span className="text-[10px] text-slate-500">{new Date(post.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <p className="text-sm text-slate-600 line-clamp-2">{post.content}</p>
+                      <p className="text-sm text-slate-400 line-clamp-2">{post.content}</p>
                     </div>
                   ))}
                 </div>
@@ -196,34 +196,34 @@ export default function ClientDashboard() {
 
               {/* QUICK STATS & BOOKINGS */}
               <div className="space-y-6">
-                <div className="bg-midnight-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                <div className="bg-gradient-to-br from-indigo-900 to-[#0f172a] rounded-3xl p-6 text-white shadow-xl relative overflow-hidden border border-white/10">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500 rounded-full blur-[60px] opacity-20"></div>
-                  <h3 className="font-serif text-lg mb-4 relative z-10">Financial Overview</h3>
+                  <h3 className="font-bold text-lg mb-4 relative z-10">Financial Overview</h3>
                   <div className="flex justify-between items-end relative z-10">
                     <div>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Total Spent</p>
-                      <p className="text-3xl font-serif">₹{invoices.reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+                      <p className="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Total Spent</p>
+                      <p className="text-3xl font-bold">₹{invoices.reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Pending</p>
-                      <p className="text-xl font-serif text-gold-400">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+                      <p className="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Pending</p>
+                      <p className="text-xl font-bold text-amber-400">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex-1">
-                  <h3 className="font-serif text-lg text-midnight-900 mb-4">Upcoming Meetings</h3>
+                <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg flex-1">
+                  <h3 className="font-bold text-lg text-white mb-4">Upcoming Meetings</h3>
                   {appointments.length === 0 ? (
-                    <p className="text-sm text-slate-400 text-center py-6">No meetings scheduled.</p>
+                    <p className="text-sm text-slate-500 text-center py-6">No meetings scheduled.</p>
                   ) : (
                     appointments.slice(0, 2).map(apt => (
-                      <div key={apt._id} className="flex items-center gap-3 mb-3 pb-3 border-b border-slate-50 last:border-0 last:pb-0 last:mb-0">
-                        <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex flex-col items-center justify-center text-xs font-bold">
+                      <div key={apt._id} className="flex items-center gap-3 mb-3 pb-3 border-b border-white/5 last:border-0 last:pb-0 last:mb-0">
+                        <div className="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex flex-col items-center justify-center text-xs font-bold border border-indigo-500/20">
                           <span>{new Date(apt.date).getDate()}</span>
                           <span className="uppercase text-[8px]">{new Date(apt.date).toLocaleDateString('en-US', { month: 'short' })}</span>
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-midnight-900">{apt.lawyerName}</p>
+                          <p className="text-sm font-bold text-white">{apt.lawyerName}</p>
                           <p className="text-xs text-slate-500">{apt.slot}</p>
                         </div>
                       </div>
@@ -238,30 +238,30 @@ export default function ClientDashboard() {
           {/* RIGHT SIDEBAR (4 COLS) */}
           <div className="col-span-4 space-y-6">
             {/* CALENDAR */}
-            <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+            <div className="bg-[#0f172a] rounded-3xl p-4 border border-white/10 shadow-lg">
               <CalendarWidget user={user} />
             </div>
 
             {/* SUGGESTED LAWYERS */}
-            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-              <h3 className="font-serif text-lg text-midnight-900 mb-4">Recommended Counsel</h3>
+            <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
+              <h3 className="font-bold text-lg text-white mb-4">Recommended Counsel</h3>
               <div className="space-y-4">
                 {suggestedLawyers.map(l => (
-                  <div key={l._id} className="flex items-center gap-3 group cursor-pointer hover:bg-slate-50 p-2 -mx-2 rounded-lg transition">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-serif font-bold text-sm group-hover:bg-midhight-900 group-hover:text-midnight-900 transition">
+                  <div key={l._id} className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -mx-2 rounded-xl transition">
+                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition">
                       {l.name?.[0]}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-bold text-sm text-midnight-900 group-hover:text-gold-600 transition">{l.name}</h4>
+                      <h4 className="font-bold text-sm text-white group-hover:text-indigo-400 transition">{l.name}</h4>
                       <p className="text-xs text-slate-500">{l.specialization || "Legal Expert"}</p>
                     </div>
-                    <button className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:border-gold-500 hover:text-gold-500 transition">
+                    <button className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-indigo-500 hover:text-indigo-400 transition">
                       +
                     </button>
                   </div>
                 ))}
               </div>
-              <button className="w-full mt-6 py-3 border border-slate-200 rounded-lg text-xs font-bold uppercase tracking-wider text-slate-500 hover:bg-slate-50 transition">
+              <button onClick={() => navigate('/marketplace')} className="w-full mt-6 py-3 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-white/5 hover:text-white transition">
                 View Marketplace
               </button>
             </div>
@@ -273,23 +273,23 @@ export default function ClientDashboard() {
       {/* MODAL FOR NEW CASE - Simple Glassmorphism */}
       {showPostModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-midnight-900/60 backdrop-blur-sm" onClick={() => setShowPostModal(false)}></div>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-2xl p-8 max-w-lg w-full relative z-10 shadow-2xl">
-            <h3 className="font-serif text-2xl text-midnight-900 mb-6">Brief Your Legal Matter</h3>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPostModal(false)}></div>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#0f172a] border border-white/10 rounded-3xl p-8 max-w-lg w-full relative z-10 shadow-2xl">
+            <h3 className="font-bold text-2xl text-white mb-6">Brief Your Legal Matter</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Case Title</label>
-                <input type="text" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-midnight-900 transition font-serif" placeholder="e.g. Property Dispute in Delhi" value={newCase.title} onChange={e => setNewCase({ ...newCase, title: e.target.value })} />
+                <input type="text" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="e.g. Property Dispute in Delhi" value={newCase.title} onChange={e => setNewCase({ ...newCase, title: e.target.value })} />
               </div>
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Details</label>
-                <textarea rows="4" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-midnight-900 transition" placeholder="Describe your situation..." value={newCase.desc} onChange={e => setNewCase({ ...newCase, desc: e.target.value })}></textarea>
+                <textarea rows="4" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="Describe your situation..." value={newCase.desc} onChange={e => setNewCase({ ...newCase, desc: e.target.value })}></textarea>
               </div>
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Estimated Budget (INR)</label>
-                <input type="number" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-midnight-900 transition font-serif" placeholder="5000" value={newCase.budget} onChange={e => setNewCase({ ...newCase, budget: e.target.value })} />
+                <input type="number" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="5000" value={newCase.budget} onChange={e => setNewCase({ ...newCase, budget: e.target.value })} />
               </div>
-              <button onClick={handlePostCase} className="w-full py-4 bg-midnight-900 text-white font-bold rounded-lg hover:bg-midnight-800 transition shadow-lg mt-2">
+              <button onClick={handlePostCase} className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/25 mt-2">
                 Post Case
               </button>
             </div>
@@ -311,10 +311,10 @@ function NavItem({ icon, label, to, active, onClick }) {
   return (
     <div
       onClick={handleClick}
-      className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-300 ${active ? 'bg-white/10 text-white shadow-inner font-semibold' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+      className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 ${active ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-inner font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
     >
-      <span className="text-lg opacity-80">{icon}</span>
-      <span className="text-sm tracking-wide">{label}</span>
+      <span className="text-xl opacity-80">{icon}</span>
+      <span className="text-sm tracking-wide font-medium">{label}</span>
     </div>
   )
 }

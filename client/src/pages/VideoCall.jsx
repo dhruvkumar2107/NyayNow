@@ -79,13 +79,13 @@ export default function VideoCall() {
     };
 
     return (
-        <div className="h-screen w-full bg-midnight-950 flex flex-col overflow-hidden font-sans selection:bg-indigo-500/30">
+        <div className="h-screen w-full bg-[#020617] flex flex-col overflow-hidden font-sans selection:bg-indigo-500/30">
             <Navbar />
 
             <div className="flex-1 relative pt-20 px-4 pb-4">
                 {/* LOADING STATE */}
                 {loading && (
-                    <div className="absolute inset-0 flex items-center justify-center z-50 bg-midnight-950 text-white">
+                    <div className="absolute inset-0 flex items-center justify-center z-50 bg-[#020617] text-white">
                         <div className="text-center">
                             <div className="flex justify-center gap-2 mb-6">
                                 <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-3 h-3 bg-indigo-500 rounded-full shadow-[0_0_10px_#6366f1]"></motion.div>

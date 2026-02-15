@@ -61,17 +61,17 @@ export default function Login() {
   };
 
   return (
-    <main className="min-h-screen grid lg:grid-cols-[1fr_500px] xl:grid-cols-[1fr_600px] bg-[#050505] font-sans selection:bg-indigo-500/30">
+    <main className="min-h-screen grid lg:grid-cols-[1fr_500px] xl:grid-cols-[1fr_600px] bg-[#020617] font-sans selection:bg-indigo-500/30">
 
       {/* LEFT: BRANDING / AMBIENCE */}
       <div className="hidden lg:flex flex-col justify-between relative overflow-hidden p-16">
         {/* Ambient Blobs */}
-        <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="relative z-10">
           <Link to="/" className="flex items-center gap-3 w-fit group">
-            <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/20 ring-1 ring-white/10 group-hover:scale-105 transition duration-300">⚖️</div>
+            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-violet-500 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/20 ring-1 ring-white/10 group-hover:scale-105 transition duration-300">⚖️</div>
             <span className="font-bold text-2xl tracking-tight text-white/90">NyayNow</span>
           </Link>
         </div>
@@ -91,7 +91,7 @@ export default function Login() {
       </div>
 
       {/* RIGHT: FORM */}
-      <div className="flex flex-col justify-center p-6 lg:p-12 bg-[#0B1120]/50 backdrop-blur-3xl border-l border-white/5 overflow-y-auto">
+      <div className="flex flex-col justify-center p-6 lg:p-12 bg-[#0f172a]/80 backdrop-blur-xl border-l border-white/10 overflow-y-auto">
         <div className="w-full max-w-md mx-auto space-y-8">
 
           <div className="text-center lg:text-left">
@@ -134,7 +134,7 @@ export default function Login() {
 
           <div className="relative py-2">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
-            <div className="relative flex justify-center text-xs uppercase font-bold text-slate-500 bg-[#0B1120]/0 px-4 backdrop-blur-3xl">Or continue with</div>
+            <div className="relative flex justify-center text-xs uppercase font-bold text-slate-500 bg-[#0f172a] px-4">Or continue with</div>
           </div>
 
           <div className="flex justify-center">

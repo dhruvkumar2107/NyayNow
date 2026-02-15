@@ -54,13 +54,13 @@ const DevilsAdvocate = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#050505] font-sans text-white selection:bg-red-900/50 pb-20">
+        <div className="min-h-screen bg-[#020617] font-sans text-white selection:bg-red-900/50 pb-20">
             <Navbar />
             <Toaster />
 
             <div className="pt-28 pb-12 px-6 max-w-[1600px] mx-auto">
                 <header className="mb-16 text-center relative">
-                    <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="inline-block px-4 py-1 border border-red-900/30 bg-red-900/10 rounded-full text-red-500 text-[10px] font-bold tracking-[0.3em] uppercase mb-4">
+                    <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="inline-block px-4 py-1 border border-red-500/30 bg-red-900/10 rounded-full text-red-500 text-[10px] font-bold tracking-[0.3em] uppercase mb-4 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
                         Adversarial Simulation v9.0
                     </motion.div>
                     <motion.h1 initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-800 tracking-tighter mb-4">
@@ -76,10 +76,10 @@ const DevilsAdvocate = () => {
 
                     {/* DEFENSE COLUMN */}
                     <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="flex flex-col h-full">
-                        <div className="bg-[#0A0A0A] border border-white/10 rounded-3xl p-1 flex-1 flex flex-col relative overflow-hidden group hover:border-blue-900/50 transition-colors">
+                        <div className="bg-[#0f172a] border border-white/10 rounded-3xl p-1 flex-1 flex flex-col relative overflow-hidden group hover:border-blue-500/30 transition-colors shadow-2xl backdrop-blur-xl">
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-600 to-transparent opacity-50"></div>
 
-                            <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
                                 <h3 className="font-bold text-lg text-blue-400 flex items-center gap-2">
                                     <span className="w-2 h-2 bg-blue-500 rounded-full"></span> DEFENSE STRATEGY
                                 </h3>
@@ -107,10 +107,10 @@ const DevilsAdvocate = () => {
 
                     {/* PROSECUTION COLUMN */}
                     <motion.div initial={{ x: 50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="flex flex-col h-full">
-                        <div className={`flex-1 rounded-3xl border relative overflow-hidden transition-all duration-500 flex flex-col ${analysis ? 'bg-red-950/10 border-red-500/30' : 'bg-[#0A0A0A] border-white/10 border-dashed'}`}>
+                        <div className={`flex-1 rounded-3xl border relative overflow-hidden transition-all duration-500 flex flex-col shadow-2xl backdrop-blur-xl ${analysis ? 'bg-[#0f172a] border-red-500/30' : 'bg-[#0f172a] border-white/10 border-dashed'}`}>
 
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-50"></div>
-                            <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
                                 <h3 className="font-bold text-lg text-red-500 flex items-center gap-2">
                                     <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span> OPPOSING COUNSEL
                                 </h3>

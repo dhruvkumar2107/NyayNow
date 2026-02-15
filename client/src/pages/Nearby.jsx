@@ -100,68 +100,29 @@ export default function Nearby() {
     );
   }, []);
 
-  const fetchOverpass = async (lat, lon, amenities) => {
-    const radius = 10000;
-    const query = `
-      [out:json][timeout:25];
-      (
-        node["amenity"~"${amenities}"](around:${radius},${lat},${lon});
-        way["amenity"~"${amenities}"](around:${radius},${lat},${lon});
-        relation["amenity"~"${amenities}"](around:${radius},${lat},${lon});
-      );
-      out center;
-    `;
-    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
-    return axios.get(url);
-  };
-
   const fetchRealData = async (lat, lon) => {
-    const lawyersPromise = axios.get("/api/users?role=lawyer");
-    const policePromise = fetchOverpass(lat, lon, "police");
-    const courtsPromise = fetchOverpass(lat, lon, "courthouse");
+    try {
+      const res = await axios.get(`/api/nearby?lat=${lat}&lon=${lon}`);
+      const rawData = res.data || [];
 
-    const [lawyersResult, policeResult, courtsResult] = await Promise.allSettled([
-      lawyersPromise, policePromise, courtsPromise
-    ]);
+      // Filter Data
+      const police = rawData.filter(i => i.type === 'police');
+      const courts = rawData.filter(i => i.type === 'court');
+      const lawyers = rawData.filter(i => i.type === 'lawyer').map(l => ({
+        ...l,
+        id: l.id || l._id || Math.random().toString(36).substr(2, 9),
+        // Ensure image and plan are present
+        image: l.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(l.name)}&background=0D8ABC&color=fff`,
+        plan: l.plan || 'basic'
+      }));
 
-    const newData = { police: [], courts: [], lawyers: [] };
-
-    if (lawyersResult.status === "fulfilled") {
-      try {
-        newData.lawyers = lawyersResult.value.data.map(l => {
-          const coords = (l.location && l.location.lat) ? { lat: l.location.lat, lon: l.location.long } : getRandomLocation(lat, lon, 5);
-          return {
-            id: l._id, name: l.name, specialization: l.specialization || "Legal Consultant", plan: l.plan,
-            address: l.location?.city || "Nearby", lat: coords.lat, lon: coords.lon, rating: l.stats?.rating || 4.5,
-            image: l.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(l.name)}&background=0D8ABC&color=fff`
-          };
-        });
-      } catch (e) { }
-    } else {
-      newData.lawyers = MOCK_NEARBY.lawyers.map(l => ({ ...l, ...getRandomLocation(lat, lon, 2) }));
+      setData({ police, courts, lawyers });
+    } catch (err) {
+      console.error("Failed to fetch nearby data", err);
+      toast.error("Radar Interference. Using Local Cache.");
+      // Fallback
+      setData(MOCK_NEARBY);
     }
-
-    if (policeResult.status === "fulfilled") {
-      try {
-        newData.police = policeResult.value.data.elements.map(p => ({
-          id: p.id, name: p.tags?.name || "Police Station", address: p.tags?.['addr:street'] || "Local Station",
-          lat: p.lat || p.center?.lat, lon: p.lon || p.center?.lon, rating: 4.0
-        })).filter(p => p.name !== "Police Station");
-      } catch (e) { }
-    }
-    if (newData.police.length === 0) newData.police = [{ id: 'fallback-p', name: "Nearby Police Station", address: "Locating...", lat: lat + 0.002, lon: lon + 0.002, rating: 4.0 }];
-
-    if (courtsResult.status === "fulfilled") {
-      try {
-        newData.courts = courtsResult.value.data.elements.map(c => ({
-          id: c.id, name: c.tags?.name || "District Court", address: c.tags?.['addr:street'] || "Local Court",
-          lat: c.lat || c.center?.lat, lon: c.lon || c.center?.lon, rating: 4.5
-        })).slice(0, 10);
-      } catch (e) { }
-    }
-    if (newData.courts.length === 0) newData.courts = [{ id: 'fallback-c', name: "District Court", address: "Locating...", lat: lat - 0.002, lon: lon - 0.002, rating: 4.5 }];
-
-    setData(newData);
   };
 
   const categories = [
@@ -182,7 +143,7 @@ export default function Nearby() {
   );
 
   return (
-    <div className="h-screen w-full relative overflow-hidden font-sans bg-midnight-900">
+    <div className="h-screen w-full relative overflow-hidden font-sans bg-[#020617]">
       <div className="absolute top-0 left-0 w-full z-[1000]">
         <Navbar />
       </div>

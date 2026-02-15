@@ -77,7 +77,7 @@ export default function Lawyers() {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-gold-500/30">
+    <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-gold-500/30">
       <Navbar />
 
       {/* HERO SECTION */}

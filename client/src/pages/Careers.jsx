@@ -6,17 +6,17 @@ import { Briefcase, MapPin, Clock, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function Careers() {
     return (
-        <div className="min-h-screen bg-slate-100 font-sans text-slate-900 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
             <Navbar />
 
             {/* HERO */}
             <div className="pt-32 pb-20 px-6 text-center relative overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none mix-blend-multiply"></div>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none"></div>
                 <div className="relative z-10 max-w-4xl mx-auto">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-indigo-300 text-xs font-bold uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
                         <Sparkles size={14} /> We Are Hiring
                     </motion.div>
-                    <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-5xl md:text-7xl font-serif font-bold text-white mb-8 leading-tight">
+                    <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
                         Join the <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Legal Revolution.</span>
                     </motion.h1>
                     <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto font-light">
@@ -56,15 +56,15 @@ export default function Careers() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="mt-20 text-center bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-indigo-500/20 rounded-3xl p-12 relative overflow-hidden group"
+                    className="mt-20 text-center bg-gradient-to-br from-[#0f172a] to-[#1e293b] border border-white/10 rounded-3xl p-12 relative overflow-hidden group shadow-2xl"
                 >
                     <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
                     <div className="relative z-10">
-                        <h3 className="text-3xl font-bold text-white mb-4 font-serif">Don't see a fit?</h3>
-                        <p className="text-indigo-200/80 mb-8 max-w-lg mx-auto text-lg">
+                        <h3 className="text-3xl font-bold text-white mb-4">Don't see a fit?</h3>
+                        <p className="text-slate-400 mb-8 max-w-lg mx-auto text-lg">
                             We are always looking for exceptional talent. If you think you can make a difference, send your resume and a short note about why you belong here.
                         </p>
-                        <a href="mailto:nyaynow.in@gmail.com" className="px-8 py-4 bg-white text-indigo-950 font-bold rounded-xl hover:bg-indigo-50 transition shadow-[0_0_20px_rgba(255,255,255,0.2)] inline-flex items-center gap-2">
+                        <a href="mailto:nyaynow.in@gmail.com" className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 transition shadow-[0_0_20px_rgba(255,255,255,0.2)] inline-flex items-center gap-2">
                             Email Us <ArrowRight size={18} />
                         </a>
                     </div>
@@ -83,7 +83,7 @@ function JobCard({ title, type, location, desc, delay }) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay }}
-            className="bg-white/5 border border-white/5 hover:border-indigo-500/30 hover:bg-white/10 p-8 rounded-2xl transition-all duration-300 cursor-pointer group"
+            className="bg-[#0f172a]/80 border border-white/10 hover:border-indigo-500/50 hover:bg-[#1e293b]/80 p-8 rounded-2xl transition-all duration-300 cursor-pointer group backdrop-blur-md"
         >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                 <h3 className="text-2xl font-bold text-white group-hover:text-indigo-400 transition-colors">{title}</h3>

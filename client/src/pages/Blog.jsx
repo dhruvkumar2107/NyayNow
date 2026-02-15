@@ -5,7 +5,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function Blog() {
     return (
-        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
 
             {/* HERO */}
             <section className="relative pt-32 pb-24 px-6 text-center border-b border-white/5 overflow-hidden">

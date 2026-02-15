@@ -124,7 +124,7 @@ export default function Messages() {
   };
 
   if (loading) return (
-    <div className="h-screen flex items-center justify-center bg-midnight-950 text-white">
+    <div className="h-screen flex items-center justify-center bg-[#020617] text-white">
       <div className="flex flex-col items-center">
         <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
         <p className="mt-4 text-indigo-300 font-bold uppercase tracking-widest text-xs">Establishing Secure Uplink...</p>
@@ -133,7 +133,7 @@ export default function Messages() {
   );
 
   return (
-    <div className="h-screen bg-midnight-950 overflow-hidden flex flex-col font-sans text-slate-200 selection:bg-indigo-500/30">
+    <div className="h-screen bg-[#020617] overflow-hidden flex flex-col font-sans text-slate-400 selection:bg-indigo-500/30">
       <Navbar />
 
       <div className="flex-1 flex max-w-[1800px] mx-auto w-full pt-20 px-4 pb-4 gap-6 h-[calc(100vh)]">
@@ -190,7 +190,7 @@ export default function Messages() {
         </aside>
 
         {/* MAIN CHAT AREA */}
-        <section className="flex-1 bg-midnight-900/50 backdrop-blur-xl rounded-[2rem] border border-white/10 flex flex-col overflow-hidden relative shadow-2xl">
+        <section className="flex-1 bg-[#020617]/50 backdrop-blur-xl rounded-[2rem] border border-white/10 flex flex-col overflow-hidden relative shadow-2xl">
 
           {activeChat ? (
             <>

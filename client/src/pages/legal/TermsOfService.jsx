@@ -4,12 +4,12 @@ import Navbar from '../../components/Navbar';
 
 const TermsOfService = () => {
     return (
-        <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-700 selection:bg-amber-500/30">
+        <div className="min-h-screen bg-[#020617] flex flex-col font-sans text-slate-400 selection:bg-amber-500/30">
             <Navbar />
 
             <div className="relative pt-32 pb-20 px-6">
                 {/* Background FX */}
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none mix-blend-multiply"></div>
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
 
                 <div className="container mx-auto max-w-4xl relative z-10">
                     <div className="text-center mb-16">
@@ -17,16 +17,16 @@ const TermsOfService = () => {
                             Legal Compliance
                         </div>
                         <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">Terms of Service</h1>
-                        <p className="text-slate-400">Effective Date: {new Date().toLocaleDateString()}</p>
+                        <p className="text-slate-500">Effective Date: {new Date().toLocaleDateString()}</p>
                     </div>
 
-                    <div className="bg-white/5 backdrop-blur-xl p-10 md:p-16 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-12">
+                    <div className="bg-[#0f172a] backdrop-blur-xl p-10 md:p-16 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-12">
                         <section>
                             <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
                                 <span className="text-amber-500 text-lg">01.</span> Acceptance
                             </h2>
                             <p className="leading-relaxed text-lg font-light">
-                                By accessing <span className="text-white font-medium">NyayNow</span> ("the Platform"), you agree to be legally bound by these Terms. Our services are designed to augment, not replace, professional legal counsel.
+                                By accessing <span className="text-white font-bold">NyayNow</span> ("the Platform"), you agree to be legally bound by these Terms. Our services are designed to augment, not replace, professional legal counsel.
                             </p>
                         </section>
 
@@ -36,7 +36,7 @@ const TermsOfService = () => {
                             <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
                                 <span className="text-amber-500 text-lg">02.</span> AI Disclaimer
                             </h2>
-                            <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-l-4 border-amber-500 p-6 rounded-r-xl">
+                            <div className="bg-amber-500/10 border-l-4 border-amber-500 p-6 rounded-r-xl">
                                 <p className="text-amber-200 leading-relaxed italic">
                                     "Our Artificial Intelligence models provide legal information, not advice. Verification by a qualified attorney is mandatory for all critical legal matters."
                                 </p>

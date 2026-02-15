@@ -54,7 +54,7 @@ const LegalResearch = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-100 text-slate-900 font-sans selection:bg-cyan-500/30">
+        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-cyan-500/30">
             <Navbar />
 
             {/* HERO / SEARCH SECTION */}
@@ -64,11 +64,11 @@ const LegalResearch = () => {
 
                     {!searched && (
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
-                            <div className="w-20 h-20 bg-cyan-50 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-cyan-100 shadow-sm">
-                                <Scale size={40} className="text-cyan-600" />
+                            <div className="w-20 h-20 bg-cyan-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-cyan-500/20 shadow-sm shadow-cyan-500/10">
+                                <Scale size={40} className="text-cyan-400" />
                             </div>
-                            <h1 className="text-5xl md:text-6xl font-serif font-bold text-slate-900 mb-6 tracking-tight">
-                                Deep Legal Research
+                            <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-6 tracking-tight">
+                                Deep Legal <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Research</span>
                             </h1>
                             <p className="text-xl text-slate-400 max-w-2xl mx-auto">
                                 Search across 50+ years of High Court & Supreme Court judgments using natural language.
@@ -78,7 +78,7 @@ const LegalResearch = () => {
 
                     <form onSubmit={handleSearch} className="relative group">
                         <div className={`absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500 ${searched ? 'opacity-10' : ''}`}></div>
-                        <div className="relative flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="relative flex items-center bg-[#0f172a] backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
                             <Search className="ml-6 text-slate-400" size={24} />
                             <input
                                 type="text"
@@ -96,9 +96,9 @@ const LegalResearch = () => {
 
                     {!searched && (
                         <div className="mt-8 flex justify-center gap-4 text-sm text-slate-500">
-                            <span className="px-4 py-2 bg-white/5 rounded-full border border-white/5 hover:border-white/20 cursor-pointer transition">Sec 138 NI Act</span>
-                            <span className="px-4 py-2 bg-white/5 rounded-full border border-white/5 hover:border-white/20 cursor-pointer transition">RERA Guidelines</span>
-                            <span className="px-4 py-2 bg-white/5 rounded-full border border-white/5 hover:border-white/20 cursor-pointer transition">Divorce Alimony</span>
+                            <span className="px-4 py-2 bg-white/5 rounded-full border border-white/5 hover:border-white/20 cursor-pointer transition hover:text-white">Sec 138 NI Act</span>
+                            <span className="px-4 py-2 bg-white/5 rounded-full border border-white/5 hover:border-white/20 cursor-pointer transition hover:text-white">RERA Guidelines</span>
+                            <span className="px-4 py-2 bg-white/5 rounded-full border border-white/5 hover:border-white/20 cursor-pointer transition hover:text-white">Divorce Alimony</span>
                         </div>
                     )}
                 </div>
@@ -153,16 +153,16 @@ const LegalResearch = () => {
                                         className="bg-[#0f172a] rounded-2xl p-6 border border-white/5 hover:border-cyan-500/30 hover:shadow-lg transition group cursor-pointer"
                                     >
                                         <div className="flex justify-between items-start mb-3">
-                                            <span className="text-xs font-bold text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded">{res.citation}</span>
+                                            <span className="text-xs font-bold text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded border border-cyan-400/20">{res.citation}</span>
                                             <span className="text-xs font-bold text-slate-500">{res.relevance} Match</span>
                                         </div>
                                         <h3 className="text-xl font-serif font-bold text-slate-200 mb-2 group-hover:text-white transition">{res.title}</h3>
-                                        <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-3">
+                                        <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-3 group-hover:text-slate-300">
                                             {res.summary}
                                         </p>
                                         <div className="flex gap-2">
                                             {res.tags.map(t => (
-                                                <span key={t} className="text-[10px] font-bold text-slate-500 uppercase tracking-wide bg-white/5 px-2 py-1 rounded">
+                                                <span key={t} className="text-[10px] font-bold text-slate-500 uppercase tracking-wide bg-white/5 px-2 py-1 rounded border border-white/5">
                                                     {t}
                                                 </span>
                                             ))}
@@ -174,14 +174,14 @@ const LegalResearch = () => {
                         {!loading && results.length > 0 && (
                             <div className="text-center py-8">
                                 <p className="text-slate-500 text-sm mb-4">You've viewed all top matches.</p>
-                                <button className="px-6 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-sm font-bold transition">Load More from High Courts</button>
+                                <button className="px-6 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-sm font-bold transition border border-white/5">Load More from High Courts</button>
                             </div>
                         )}
                     </div>
 
                     {/* RIGHT SIDEBAR - AI SUMMARY */}
                     <div className="col-span-3 hidden lg:block">
-                        <div className="bg-gradient-to-b from-indigo-900/20 to-transparent border border-indigo-500/20 rounded-2xl p-6 sticky top-28">
+                        <div className="bg-[#0f172a] border border-indigo-500/20 rounded-2xl p-6 sticky top-28 shadow-xl shadow-indigo-900/10">
                             <h3 className="text-sm font-bold text-indigo-300 mb-4 flex items-center gap-2">
                                 <BookOpen size={16} /> AI Research Summary
                             </h3>

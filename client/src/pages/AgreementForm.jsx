@@ -41,7 +41,7 @@ export default function AgreementForm() {
     };
 
     return (
-        <div className="min-h-screen bg-midnight-950 text-slate-200 font-sans selection:bg-indigo-500/30 pb-20 overflow-hidden relative">
+        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-indigo-500/30 pb-20 overflow-hidden relative">
             <Navbar />
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 

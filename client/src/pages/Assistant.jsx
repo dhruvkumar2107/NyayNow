@@ -52,7 +52,7 @@ export default function Assistant() {
   };
 
   return (
-    <div className="flex h-screen bg-midnight-900 text-slate-200 font-sans overflow-hidden">
+    <div className="flex h-screen bg-[#020617] text-slate-200 font-sans overflow-hidden">
 
       {/* SIDEBAR HISTORY */}
       <aside className="w-80 border-r border-white/5 bg-midnight-950/50 hidden md:flex flex-col">
@@ -113,8 +113,8 @@ export default function Assistant() {
 
               <div className={`flex-1 space-y-2 ${msg.role === "user" ? "text-right" : ""}`}>
                 <div className={`inline-block p-5 rounded-2xl shadow-sm text-sm leading-relaxed ${msg.role === "user"
-                    ? "bg-indigo-600 text-white rounded-tr-none"
-                    : "bg-white/5 border border-white/10 text-slate-200 rounded-tl-none backdrop-blur-sm"
+                  ? "bg-indigo-600 text-white rounded-tr-none"
+                  : "bg-white/5 border border-white/10 text-slate-200 rounded-tl-none backdrop-blur-sm"
                   }`}>
                   {msg.role === "model" ? (
                     <div className="prose prose-invert prose-sm max-w-none">

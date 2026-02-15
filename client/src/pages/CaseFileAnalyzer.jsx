@@ -78,7 +78,7 @@ const CaseFileAnalyzer = () => {
     };
 
     return (
-        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
             <Navbar />
 
             <div className="max-w-[1400px] mx-auto px-6 pt-32 pb-20">

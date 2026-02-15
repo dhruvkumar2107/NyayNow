@@ -71,7 +71,7 @@ export default function App() {
     <BrowserRouter>
       <SmoothScroll />
       {/* ROOT APP WRAPPER */}
-      <div className="min-h-screen bg-slate-100 text-slate-900 font-sans">
+      <div className="min-h-screen bg-[#020617] text-slate-400 font-sans">
         <Toaster position="top-right" reverseOrder={false} />
         {/* FIXED NAVBAR */}
         <Navbar />

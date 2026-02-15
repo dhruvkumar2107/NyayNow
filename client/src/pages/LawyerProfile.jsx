@@ -67,15 +67,15 @@ export default function LawyerProfile() {
     };
 
     if (loading) return (
-        <div className="min-h-screen bg-midnight-950 flex items-center justify-center">
+        <div className="min-h-screen bg-[#020617] flex items-center justify-center">
             <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
         </div>
     );
 
-    if (!lawyer) return <div className="min-h-screen bg-midnight-950 flex items-center justify-center font-bold text-xl text-white">Lawyer not found</div>;
+    if (!lawyer) return <div className="min-h-screen bg-[#020617] flex items-center justify-center font-bold text-xl text-white">Lawyer not found</div>;
 
     return (
-        <main className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+        <main className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
             <Navbar />
 
             {/* HEADER HERO */}

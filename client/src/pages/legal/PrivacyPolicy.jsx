@@ -5,12 +5,12 @@ import { Shield, Lock, Eye, Database } from 'lucide-react';
 
 const PrivacyPolicy = () => {
     return (
-        <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-700 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] flex flex-col font-sans text-slate-400 selection:bg-indigo-500/30">
             <Navbar />
 
             <div className="relative pt-32 pb-20 px-6">
                 {/* Background FX */}
-                <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-indigo-200/40 rounded-full blur-[120px] pointer-events-none mix-blend-multiply"></div>
+                <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-indigo-500/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
 
                 <div className="container mx-auto max-w-4xl relative z-10">
                     <div className="text-center mb-16">
@@ -18,18 +18,18 @@ const PrivacyPolicy = () => {
                             Data Protection
                         </div>
                         <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">Privacy Policy</h1>
-                        <p className="text-slate-400">Compliance Verified: {new Date().toLocaleDateString()}</p>
+                        <p className="text-slate-500">Compliance Verified: {new Date().toLocaleDateString()}</p>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-6 mb-12">
-                        <div className="bg-white/5 border border-white/10 p-6 rounded-2xl flex items-center gap-4">
+                        <div className="bg-[#0f172a] border border-white/10 p-6 rounded-2xl flex items-center gap-4 shadow-lg shadow-black/20">
                             <div className="bg-emerald-500/20 p-3 rounded-xl text-emerald-400"><Lock size={24} /></div>
                             <div>
                                 <h3 className="text-white font-bold">End-to-End Encryption</h3>
                                 <p className="text-xs text-slate-400">AES-256 Standard for all case files.</p>
                             </div>
                         </div>
-                        <div className="bg-white/5 border border-white/10 p-6 rounded-2xl flex items-center gap-4">
+                        <div className="bg-[#0f172a] border border-white/10 p-6 rounded-2xl flex items-center gap-4 shadow-lg shadow-black/20">
                             <div className="bg-indigo-500/20 p-3 rounded-xl text-indigo-400"><Database size={24} /></div>
                             <div>
                                 <h3 className="text-white font-bold">Zero-Training Policy</h3>
@@ -38,7 +38,7 @@ const PrivacyPolicy = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white/5 backdrop-blur-xl p-10 md:p-16 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-12">
+                    <div className="bg-[#0f172a] backdrop-blur-xl p-10 md:p-16 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-12">
                         <section>
                             <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
                                 1. Data Collection
@@ -47,10 +47,10 @@ const PrivacyPolicy = () => {
                                 We utilize minimal data collection protocols required to function:
                             </p>
                             <ul className="space-y-3">
-                                <li className="flex items-center gap-3 text-slate-300 bg-black/20 p-3 rounded-xl border border-white/5">
+                                <li className="flex items-center gap-3 text-slate-300 bg-white/5 p-3 rounded-xl border border-white/5">
                                     <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Identity Verification Documents (Encrypted)
                                 </li>
-                                <li className="flex items-center gap-3 text-slate-300 bg-black/20 p-3 rounded-xl border border-white/5">
+                                <li className="flex items-center gap-3 text-slate-300 bg-white/5 p-3 rounded-xl border border-white/5">
                                     <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Case Metadata for Lawyer Matching
                                 </li>
                             </ul>
@@ -80,7 +80,7 @@ const PrivacyPolicy = () => {
                     </div>
 
                     <div className="mt-12 text-center">
-                        <div className="inline-block p-4 rounded-xl bg-slate-900 border border-slate-800">
+                        <div className="inline-block p-4 rounded-xl bg-[#0f172a] border border-white/10">
                             <p className="text-slate-500 text-xs text-center">
                                 Questions about your data? <br />
                                 <a href="mailto:privacy@nyaynow.com" className="text-indigo-400 font-bold hover:underline">Contact our DPO</a>

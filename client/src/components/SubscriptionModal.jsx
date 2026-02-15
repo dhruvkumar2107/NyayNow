@@ -16,7 +16,7 @@ const SubscriptionModal = ({ isOpen, onClose, featureName }) => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="relative bg-[#050505] border border-white/10 rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl overflow-hidden"
+                className="relative bg-[#0f172a] border border-white/10 rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl overflow-hidden"
             >
                 {/* Background Effects */}
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-indigo-600/30 rounded-full blur-[80px] pointer-events-none mix-blend-screen"></div>

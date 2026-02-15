@@ -20,12 +20,12 @@ export default function Settings() {
     ];
 
     return (
-        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30 pb-20">
+        <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30 pb-20">
             <Navbar />
 
             <div className="max-w-6xl mx-auto pt-28 pb-12 px-6">
                 <header className="mb-10 text-center">
-                    <h1 className="text-3xl font-bold text-white mb-2 font-serif">System Preferences</h1>
+                    <h1 className="text-3xl font-bold text-white mb-2 leading-tight">System Preferences</h1>
                     <p className="text-slate-400">Manage your account security and AI configurations.</p>
                 </header>
 
@@ -165,7 +165,7 @@ export default function Settings() {
                                     </div>
                                     <h3 className="text-xl font-bold text-white mb-2">No Active Subscription</h3>
                                     <p className="text-slate-400 mb-8 max-w-sm mx-auto">Upgrade to the Pro Suite to unlock AI Legal Drafting and the full potential of NyayNow.</p>
-                                    <button className="px-8 py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-black font-bold rounded-xl hover:scale-105 transition shadow-lg shadow-gold-500/20">
+                                    <button className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold rounded-xl hover:scale-105 transition shadow-lg shadow-amber-500/20">
                                         Upgrade Now
                                     </button>
                                 </div>

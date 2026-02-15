@@ -6,18 +6,18 @@ import Navbar from '../components/Navbar';
 
 export default function HelpCenter() {
     return (
-        <div className="min-h-screen bg-slate-100 font-sans text-slate-900 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
             <Navbar />
 
             {/* HERO SEARCH */}
-            <section className="relative pt-32 pb-20 px-6 text-center border-b border-slate-200 bg-white">
+            <section className="relative pt-32 pb-20 px-6 text-center border-b border-white/5 bg-[#0f172a]">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="max-w-3xl mx-auto"
                 >
-                    <span className="text-xs font-bold text-gold-400 uppercase tracking-widest mb-4 block">Support Center</span>
-                    <h1 className="text-5xl font-serif font-bold text-white mb-8">How can we assist you?</h1>
+                    <span className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-4 block">Support Center</span>
+                    <h1 className="text-5xl font-bold text-white mb-8 leading-tight">How can we assist you?</h1>
 
                     <div className="relative group max-w-2xl mx-auto">
                         <div className="absolute inset-0 bg-indigo-500/20 blur-xl rounded-2xl group-hover:bg-indigo-500/30 transition duration-500"></div>
@@ -43,7 +43,7 @@ export default function HelpCenter() {
 
                 <div className="grid lg:grid-cols-2 gap-16">
                     <div>
-                        <h2 className="text-2xl font-bold text-white mb-8 font-serif">Frequently Asked Questions</h2>
+                        <h2 className="text-2xl font-bold text-white mb-8">Frequently Asked Questions</h2>
                         <div className="space-y-4">
                             <FaqItem
                                 question="Is the legal advice provided by AI binding?"
@@ -60,13 +60,13 @@ export default function HelpCenter() {
                         </div>
                     </div>
 
-                    <div className="bg-white/5 rounded-3xl p-8 border border-white/10 text-center flex flex-col justify-center items-center">
+                    <div className="bg-white/5 rounded-3xl p-8 border border-white/10 text-center flex flex-col justify-center items-center backdrop-blur-md">
                         <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-600/30">
                             <MessageCircle size={32} />
                         </div>
                         <h3 className="text-2xl font-bold text-white mb-2">Still need help?</h3>
                         <p className="text-slate-400 mb-8 max-w-xs">Our concierge support team is available 24/7 for Enterprise clients.</p>
-                        <a href="/contact" className="px-8 py-3 bg-white text-midnight-900 font-bold rounded-xl hover:bg-slate-200 transition">Contact Support</a>
+                        <a href="/contact" className="px-8 py-3 bg-white text-black font-bold rounded-xl hover:bg-slate-200 transition">Contact Support</a>
                     </div>
                 </div>
             </section>

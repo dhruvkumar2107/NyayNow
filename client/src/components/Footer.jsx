@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
     return (
-        <footer className="bg-[#0f172a] border-t border-slate-800 text-slate-400 font-sans pt-24 pb-12 relative overflow-hidden">
+        <footer className="bg-[#020617] border-t border-white/5 text-slate-400 font-sans pt-24 pb-12 relative overflow-hidden">
 
             {/* Background Glow */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-indigo-600/5 blur-[120px] rounded-full pointer-events-none"></div>
 
             <div className="container mx-auto px-6 max-w-[1400px] relative z-10">
 
@@ -39,7 +39,7 @@ const Footer = () => {
                             <input
                                 type="email"
                                 placeholder="Enter your email"
-                                className="bg-white/10 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-full"
+                                className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-full"
                             />
                             <button className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-lg text-sm transition shadow-lg shadow-indigo-600/20">
                                 Subscribe
@@ -92,7 +92,7 @@ const Footer = () => {
                 </div>
 
                 {/* BOTTOM BAR */}
-                <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-slate-500 text-sm font-medium">
                         © {new Date().getFullYear()} NyayNow Legal Tech Pvt Ltd. All rights reserved.
                     </p>

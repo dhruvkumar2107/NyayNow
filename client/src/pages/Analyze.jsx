@@ -57,7 +57,7 @@ export default function Analyze() {
   };
 
   return (
-    <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-6 py-32">

@@ -91,7 +91,7 @@ const CareerHub = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-100 text-slate-900 font-sans pt-28 pb-20 px-6 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans pt-28 pb-20 px-6 selection:bg-indigo-500/30">
             <Navbar />
             <SubscriptionModal
                 isOpen={showModal}
@@ -122,9 +122,9 @@ const CareerHub = () => {
                                     key={task.id}
                                     whileHover={{ scale: 1.02 }}
                                     onClick={() => { setActiveTask(task); setGrading(null); setSubmission(''); }}
-                                    className={`group p-5 rounded-2xl border cursor-pointer transition-all relative overflow-hidden ${activeTask?.id === task.id ? 'bg-indigo-600 border-indigo-500 shadow-xl' : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'}`}
+                                    className={`group p-5 rounded-2xl border cursor-pointer transition-all relative overflow-hidden ${activeTask?.id === task.id ? 'bg-indigo-600/20 border-indigo-500 shadow-xl shadow-indigo-500/10' : 'bg-[#0f172a] border-white/5 hover:border-white/10'}`}
                                 >
-                                    {activeTask?.id === task.id && <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-20"></div>}
+                                    {activeTask?.id === task.id && <div className="absolute inset-0 bg-indigo-600/10 opacity-20"></div>}
 
                                     <div className="flex items-center gap-4 relative z-10">
                                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-xl text-white shadow-lg ${task.color}`}>
@@ -145,17 +145,17 @@ const CareerHub = () => {
                         </div>
 
                         {/* MENTORSHIP CTA */}
-                        <div className="mt-8 bg-gradient-to-br from-gold-600 to-amber-700 rounded-3xl p-6 text-white relative overflow-hidden shadow-lg">
+                        <div className="mt-8 bg-gradient-to-br from-amber-600/20 to-amber-700/20 border border-amber-500/30 rounded-3xl p-6 text-white relative overflow-hidden shadow-lg">
                             <div className="relative z-10">
-                                <h3 className="text-lg font-bold mb-2">Unlock Mentorship</h3>
-                                <p className="text-amber-100 text-xs mb-4">Get 1-on-1 guidance from Supreme Court advocates.</p>
-                                <button className="w-full py-2.5 bg-black/20 hover:bg-black/30 rounded-xl font-bold text-xs uppercase tracking-wider transition">Coming Soon</button>
+                                <h3 className="text-lg font-bold mb-2 text-amber-500">Unlock Mentorship</h3>
+                                <p className="text-amber-200 text-xs mb-4">Get 1-on-1 guidance from Supreme Court advocates.</p>
+                                <button className="w-full py-2.5 bg-amber-500 text-midnight-950 rounded-xl font-bold text-xs uppercase tracking-wider transition hover:bg-amber-400">Coming Soon</button>
                             </div>
                         </div>
                     </div>
 
                     {/* RIGHT: WORKSPACE */}
-                    <div className="lg:col-span-8 bg-[#0f172a] rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden flex flex-col">
+                    <div className="lg:col-span-8 bg-[#0f172a]/50 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden flex flex-col">
                         {activeTask ? (
                             <div className="flex-1 flex flex-col h-full">
                                 {/* Task Header */}
@@ -178,7 +178,7 @@ const CareerHub = () => {
                                             <button
                                                 onClick={handleSubmit}
                                                 disabled={loading || grading}
-                                                className="px-8 py-3 bg-white text-midnight-900 font-bold rounded-xl hover:bg-slate-200 disabled:opacity-50 transition-all shadow-lg"
+                                                className="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 disabled:opacity-50 transition-all shadow-lg shadow-indigo-600/20"
                                             >
                                                 {loading ? "AI Grading..." : grading ? "Graded" : "Submit Scope"}
                                             </button>
@@ -191,7 +191,7 @@ const CareerHub = () => {
                                             <motion.div
                                                 initial={{ width: 0, opacity: 0 }}
                                                 animate={{ width: 320, opacity: 1 }}
-                                                className="w-80 bg-black/20 border-l border-white/10 p-6 overflow-y-auto"
+                                                className="w-80 bg-black/40 border-l border-white/10 p-6 overflow-y-auto backdrop-blur-md"
                                             >
                                                 <div className="text-center mb-8">
                                                     <div className={`w-24 h-24 rounded-full flex items-center justify-center text-5xl font-black mx-auto mb-4 border-4 ${grading.grade === 'A' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500' : 'bg-amber-500/10 text-amber-500 border-amber-500'}`}>

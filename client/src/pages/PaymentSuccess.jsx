@@ -42,7 +42,7 @@ export default function PaymentSuccess() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-midnight-950 font-sans selection:bg-amber-500/30 overflow-hidden relative">
+    <div className="min-h-screen flex items-center justify-center bg-[#020617] font-sans selection:bg-amber-500/30 overflow-hidden relative">
       {/* Background Gradients */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>

@@ -10,11 +10,11 @@ export default function TrustTimeline({ stage }) {
     const currentIdx = steps.findIndex(s => s.stage === stage) || 0;
 
     return (
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm mb-6">
-            <h3 className="font-bold text-slate-800 mb-4">Case Progress</h3>
+        <div className="bg-[#0f172a] border border-white/10 rounded-xl p-5 shadow-sm mb-6">
+            <h3 className="font-bold text-white mb-4">Case Progress</h3>
 
             <div className="relative flex justify-between">
-                <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -z-10 rounded-full"></div>
+                <div className="absolute top-1/2 left-0 w-full h-1 bg-white/10 -z-10 rounded-full"></div>
                 <div
                     className="absolute top-1/2 left-0 h-1 bg-blue-600 -z-10 rounded-full transition-all duration-1000"
                     style={{ width: `${(currentIdx / (steps.length - 1)) * 100}%` }}
@@ -27,15 +27,15 @@ export default function TrustTimeline({ stage }) {
                             current={idx === currentIdx}
                             index={idx + 1}
                         />
-                        <span className={`mt-2 text-[10px] font-bold uppercase tracking-wider ${idx <= currentIdx ? 'text-slate-800' : 'text-slate-400'}`}>
+                        <span className={`mt-2 text-[10px] font-bold uppercase tracking-wider ${idx <= currentIdx ? 'text-slate-300' : 'text-slate-600'}`}>
                             {step.label}
                         </span>
                     </div>
                 ))}
             </div>
 
-            <div className="mt-6 bg-blue-50 p-3 rounded-lg border border-blue-100 text-sm text-slate-700">
-                <span className="font-bold text-blue-700">Current Status:</span> {
+            <div className="mt-6 bg-blue-500/10 p-3 rounded-lg border border-blue-500/20 text-sm text-slate-300">
+                <span className="font-bold text-blue-400">Current Status:</span> {
                     stage === 'New Lead' ? "Your lawyer is reviewing the initial details." :
                         stage === 'Discovery' ? "Gathering evidence and facts for the case." :
                             stage === 'Filing' ? "Preparing official documents for the court." :
@@ -50,7 +50,7 @@ export default function TrustTimeline({ stage }) {
 function divItem({ active, current, index }) {
     if (current) {
         return (
-            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs ring-4 ring-blue-100 shadow-md transform scale-110 transition-all">
+            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs ring-4 ring-blue-900/50 shadow-md transform scale-110 transition-all">
                 {index}
             </div>
         );
@@ -63,7 +63,7 @@ function divItem({ active, current, index }) {
         );
     }
     return (
-        <div className="w-8 h-8 rounded-full bg-white border-2 border-slate-200 text-slate-300 flex items-center justify-center font-bold text-xs">
+        <div className="w-8 h-8 rounded-full bg-[#0f172a] border-2 border-white/10 text-slate-600 flex items-center justify-center font-bold text-xs">
             {index}
         </div>
     );

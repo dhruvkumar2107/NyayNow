@@ -18,15 +18,15 @@ const MootCourt = () => {
     const startSession = () => setSessionActive(true);
 
     return (
-        <div className="min-h-screen bg-slate-100 text-slate-900 font-sans selection:bg-indigo-500/30 overflow-hidden relative">
+        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-indigo-500/30 overflow-hidden relative">
             <Navbar />
 
             {/* AMBIENT BACKGROUND */}
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center opacity-5 pointer-events-none mix-blend-multiply"></div>
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center opacity-5 pointer-events-none mix-blend-overlay"></div>
 
             {!sessionActive ? (
                 <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-6">
-                    <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 mb-8 animate-pulse shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                    <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 mb-8 animate-pulse shadow-[0_0_50px_rgba(255,255,255,0.05)]">
                         <Gavel size={40} className="text-slate-300" />
                     </div>
                     <h1 className="text-6xl font-serif font-bold text-white mb-6">Virtual Moot Court</h1>
@@ -42,9 +42,9 @@ const MootCourt = () => {
                     <p className="mt-8 text-xs text-slate-500 uppercase tracking-widest font-bold">VR Headset Compatible • Microphone Required</p>
                 </div>
             ) : (
-                <div className="relative z-10 h-screen flex flex-col">
+                <div className="relative z-10 h-screen flex flex-col pt-16">
                     {/* TOP BAR */}
-                    <div className="h-16 border-b border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-between px-6">
+                    <div className="h-16 border-b border-white/10 bg-[#0f172a]/80 backdrop-blur-md flex items-center justify-between px-6">
                         <div className="flex items-center gap-3">
                             <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
                             <span className="text-xs font-bold uppercase tracking-wider text-red-400">Live Session</span>
@@ -60,7 +60,7 @@ const MootCourt = () => {
 
                         {/* MAIN STAGE (JUDGE & OPPOSING COUNSEL) */}
                         <div className="col-span-9 flex flex-col gap-6">
-                            <div className="flex-1 bg-gradient-to-b from-slate-900 to-black rounded-3xl border border-white/10 relative overflow-hidden flex items-center justify-center group">
+                            <div className="flex-1 bg-[#0f172a] rounded-3xl border border-white/10 relative overflow-hidden flex items-center justify-center group shadow-2xl">
                                 {/* AI AVATAR PLACEHOLDER */}
                                 <div className="text-center opacity-50 group-hover:opacity-100 transition duration-500">
                                     <div className="w-32 h-32 bg-indigo-500/20 rounded-full mx-auto mb-4 flex items-center justify-center border border-indigo-500/30 shadow-[0_0_50px_rgba(99,102,241,0.2)]">
@@ -72,14 +72,14 @@ const MootCourt = () => {
                             </div>
 
                             {/* USER CONTROLS & TRANSCRIPT */}
-                            <div className="h-64 bg-white/5 rounded-3xl border border-white/10 p-6 flex flex-col">
+                            <div className="h-64 bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl border border-white/10 p-6 flex flex-col shadow-lg">
                                 <div className="flex-1 overflow-y-auto mb-4 font-mono text-sm text-slate-400">
                                     <span className="text-indigo-400 font-bold">You:</span> Your Honor, the prosecution's evidence is circumstantial at best...
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <div className="flex-1 bg-black/50 rounded-xl p-2 border border-white/5 flex items-center px-4 md:px-6">
-                                        <input type="text" className="bg-transparent border-none outline-none text-white w-full placeholder-slate-600" placeholder="Type your argument or speak..." value={argument} onChange={e => setArgument(e.target.value)} />
-                                        <Mic className="text-white cursor-pointer hover:text-red-500 transition" />
+                                    <div className="flex-1 bg-black/50 rounded-xl p-2 border border-white/5 flex items-center px-4 md:px-6 focus-within:border-indigo-500/50 transition">
+                                        <input type="text" className="bg-transparent border-none outline-none text-white w-full placeholder-slate-600 font-medium" placeholder="Type your argument or speak..." value={argument} onChange={e => setArgument(e.target.value)} />
+                                        <Mic className="text-slate-400 cursor-pointer hover:text-red-500 transition" />
                                     </div>
                                 </div>
                             </div>
@@ -87,7 +87,7 @@ const MootCourt = () => {
 
                         {/* SIDEBAR ANALYTICS */}
                         <div className="col-span-3 space-y-6">
-                            <div className="bg-white/5 rounded-3xl p-6 border border-white/10 h-1/2">
+                            <div className="bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10 h-1/2 shadow-lg">
                                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-6 flex items-center gap-2">
                                     <MessageSquare size={14} /> Live Analysis
                                 </h4>
@@ -97,32 +97,32 @@ const MootCourt = () => {
                                             <span>Legal Logic</span>
                                             <span className="text-emerald-400">92%</span>
                                         </div>
-                                        <div className="w-full bg-white/10 h-1 rounded-full"><div className="bg-emerald-500 h-full w-[92%] rounded-full"></div></div>
+                                        <div className="w-full bg-white/10 h-1 rounded-full"><div className="bg-emerald-500 h-full w-[92%] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div></div>
                                     </div>
                                     <div>
                                         <div className="flex justify-between text-xs font-bold text-slate-300 mb-2">
                                             <span>Persuasion</span>
                                             <span className="text-amber-400">68%</span>
                                         </div>
-                                        <div className="w-full bg-white/10 h-1 rounded-full"><div className="bg-amber-400 h-full w-[68%] rounded-full"></div></div>
+                                        <div className="w-full bg-white/10 h-1 rounded-full"><div className="bg-amber-400 h-full w-[68%] rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)]"></div></div>
                                     </div>
                                     <div>
                                         <div className="flex justify-between text-xs font-bold text-slate-300 mb-2">
                                             <span>Voice Modulation</span>
                                             <span className="text-indigo-400">74%</span>
                                         </div>
-                                        <div className="w-full bg-white/10 h-1 rounded-full"><div className="bg-indigo-500 h-full w-[74%] rounded-full"></div></div>
+                                        <div className="w-full bg-white/10 h-1 rounded-full"><div className="bg-indigo-500 h-full w-[74%] rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white/5 rounded-3xl p-6 border border-white/10 h-[calc(50%-1.5rem)]">
+                            <div className="bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10 h-[calc(50%-1.5rem)] shadow-lg">
                                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
                                     <Users size={14} /> Spectators
                                 </h4>
                                 <div className="flex -space-x-2">
-                                    {[1, 2, 3, 4].map(i => <div key={i} className="w-8 h-8 rounded-full bg-slate-700 border-2 border-black"></div>)}
-                                    <div className="w-8 h-8 rounded-full bg-slate-800 border-2 border-black flex items-center justify-center text-[10px] font-bold text-slate-400">+12</div>
+                                    {[1, 2, 3, 4].map(i => <div key={i} className="w-8 h-8 rounded-full bg-slate-800 border-2 border-[#0f172a]"></div>)}
+                                    <div className="w-8 h-8 rounded-full bg-slate-900 border-2 border-[#0f172a] flex items-center justify-center text-[10px] font-bold text-slate-400">+12</div>
                                 </div>
                             </div>
                         </div>

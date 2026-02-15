@@ -52,7 +52,7 @@ const CourtStatus = () => {
     };
 
     return (
-        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
             <Navbar />
 
             {/* HEADER HERO */}

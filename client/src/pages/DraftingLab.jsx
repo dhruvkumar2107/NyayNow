@@ -88,7 +88,7 @@ const DraftingLab = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-100 text-slate-900 font-sans pb-20 pt-28 px-6 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] text-slate-400 font-sans pb-20 pt-28 px-6 selection:bg-indigo-500/30">
             <Navbar />
             <SubscriptionModal
                 isOpen={showModal}
@@ -99,18 +99,18 @@ const DraftingLab = () => {
             <div className="max-w-[1400px] mx-auto">
                 {/* HEADER */}
                 <header className="mb-12 text-center relative">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-200/50 rounded-full blur-[100px] pointer-events-none mix-blend-multiply"></div>
-                    <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 text-slate-900 tracking-tight relative z-10">
-                        Smart <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-cyan-600">Drafting Lab</span>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none mix-blend-screen"></div>
+                    <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 text-white tracking-tight relative z-10">
+                        Smart <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Drafting Lab</span>
                     </h1>
-                    <p className="text-slate-600 max-w-2xl mx-auto text-lg leading-relaxed relative z-10">
+                    <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed relative z-10">
                         The ultimate tool for legal precision. Draft ironclad contracts or dissect agreements for hidden risks with military-grade AI.
                     </p>
                 </header>
 
                 {/* TABS */}
                 <div className="flex justify-center mb-12 relative z-10">
-                    <div className="bg-white/5 backdrop-blur-md p-1.5 rounded-2xl border border-white/10 inline-flex shadow-xl">
+                    <div className="bg-[#0f172a] backdrop-blur-md p-1.5 rounded-2xl border border-white/10 inline-flex shadow-xl">
                         <button
                             onClick={() => setActiveTab('draft')}
                             className={`px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 ${activeTab === 'draft' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
@@ -136,9 +136,9 @@ const DraftingLab = () => {
                 >
                     {/* LEFT COLUMN: INPUT */}
                     <div className="lg:col-span-5 space-y-6">
-                        <div className="bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 shadow-2xl">
+                        <div className="bg-[#0f172a] backdrop-blur-md rounded-3xl p-8 border border-white/10 shadow-2xl">
                             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/5">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${activeTab === 'draft' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${activeTab === 'draft' ? 'bg-indigo-500/10 text-indigo-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
                                     {activeTab === 'draft' ? <Zap size={20} /> : <Search size={20} />}
                                 </div>
                                 <h3 className="text-xl font-bold text-white">
@@ -153,13 +153,13 @@ const DraftingLab = () => {
                                         <select
                                             value={contractType}
                                             onChange={(e) => setContractType(e.target.value)}
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-black/40 transition appearance-none"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-white/10 transition appearance-none"
                                         >
-                                            <option>Non-Disclosure Agreement (NDA)</option>
-                                            <option>Employment Contract</option>
-                                            <option>Rental Agreement</option>
-                                            <option>Freelance Service Agreement</option>
-                                            <option>Legal Notice</option>
+                                            <option className="bg-[#0f172a] text-slate-200">Non-Disclosure Agreement (NDA)</option>
+                                            <option className="bg-[#0f172a] text-slate-200">Employment Contract</option>
+                                            <option className="bg-[#0f172a] text-slate-200">Rental Agreement</option>
+                                            <option className="bg-[#0f172a] text-slate-200">Freelance Service Agreement</option>
+                                            <option className="bg-[#0f172a] text-slate-200">Legal Notice</option>
                                         </select>
                                     </div>
                                     <div className="space-y-2">
@@ -169,7 +169,7 @@ const DraftingLab = () => {
                                             value={parties}
                                             onChange={(e) => setParties(e.target.value)}
                                             placeholder="e.g., Company X and Mr. John Doe"
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-black/40 transition placeholder:text-slate-600"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-white/10 transition placeholder:text-slate-600"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -178,7 +178,7 @@ const DraftingLab = () => {
                                             value={terms}
                                             onChange={(e) => setTerms(e.target.value)}
                                             placeholder="e.g., 2 year duration, monthly salary 50k, 30 days notice period..."
-                                            className="w-full h-40 bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-black/40 transition placeholder:text-slate-600 resize-none custom-scrollbar"
+                                            className="w-full h-40 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500 hover:bg-white/10 transition placeholder:text-slate-600 resize-none custom-scrollbar"
                                         ></textarea>
                                     </div>
                                     <button
@@ -204,7 +204,7 @@ const DraftingLab = () => {
                                             value={analysisText}
                                             onChange={(e) => setAnalysisText(e.target.value)}
                                             placeholder="Paste the legal text here to check for loopholes..."
-                                            className="w-full h-[500px] bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-emerald-500 hover:bg-black/40 transition placeholder:text-slate-600 font-mono text-sm leading-relaxed custom-scrollbar"
+                                            className="w-full h-[500px] bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-emerald-500 hover:bg-white/10 transition placeholder:text-slate-600 font-mono text-sm leading-relaxed custom-scrollbar"
                                         ></textarea>
                                     </div>
                                     <button
@@ -228,22 +228,22 @@ const DraftingLab = () => {
 
                     {/* RIGHT COLUMN: OUTPUT */}
                     <div className="lg:col-span-7">
-                        <div className={`bg-white text-slate-900 rounded-3xl p-8 border border-white/10 shadow-2xl h-[800px] relative overflow-hidden flex flex-col ${!generatedContract && !analysisResult ? 'items-center justify-center' : ''}`}>
+                        <div className={`bg-[#0f172a] text-slate-300 rounded-3xl p-8 border border-white/10 shadow-2xl h-[800px] relative overflow-hidden flex flex-col ${!generatedContract && !analysisResult ? 'items-center justify-center' : ''}`}>
 
                             {!generatedContract && !analysisResult && !loading && (
                                 <div className="text-center opacity-40">
-                                    <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                                        <FileText size={40} className="text-slate-400" />
+                                    <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <FileText size={40} className="text-slate-500" />
                                     </div>
                                     <h3 className="text-2xl font-bold text-slate-300 mb-2">Ready to Process</h3>
-                                    <p className="text-slate-400">AI output will appear here in real-time.</p>
+                                    <p className="text-slate-500">AI output will appear here in real-time.</p>
                                 </div>
                             )}
 
                             {loading && (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm z-10">
-                                    <div className="w-20 h-20 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin mb-6"></div>
-                                    <p className="text-indigo-600 font-bold animate-pulse">Consulting NyayLM-70B...</p>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#020617]/80 backdrop-blur-sm z-10">
+                                    <div className="w-20 h-20 border-4 border-white/10 border-t-indigo-600 rounded-full animate-spin mb-6"></div>
+                                    <p className="text-indigo-400 font-bold animate-pulse">Consulting NyayLM-70B...</p>
                                 </div>
                             )}
 
@@ -251,11 +251,11 @@ const DraftingLab = () => {
                                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
                                     {activeTab === 'draft' && generatedContract ? (
                                         <>
-                                            <div className="flex justify-between items-center mb-6 pb-6 border-b border-slate-100">
-                                                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold uppercase tracking-wider">Draft Generated</span>
-                                                <button className="text-slate-400 hover:text-indigo-600 transition"><Download size={20} /></button>
+                                            <div className="flex justify-between items-center mb-6 pb-6 border-b border-white/5">
+                                                <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-xs font-bold uppercase tracking-wider border border-indigo-500/20">Draft Generated</span>
+                                                <button className="text-slate-400 hover:text-indigo-400 transition"><Download size={20} /></button>
                                             </div>
-                                            <div className="prose prose-slate max-w-none font-serif">
+                                            <div className="prose prose-invert prose-slate max-w-none font-serif text-slate-300">
                                                 <ReactMarkdown>{generatedContract}</ReactMarkdown>
                                             </div>
                                         </>
@@ -263,14 +263,14 @@ const DraftingLab = () => {
                                         <div className="space-y-8">
                                             {/* SCORECARD */}
                                             <div className="grid grid-cols-2 gap-4">
-                                                <div className={`p-6 rounded-2xl border ${analysisResult.riskLevel === 'High' ? 'bg-red-50 border-red-100 text-red-700' : 'bg-emerald-50 border-emerald-100 text-emerald-700'}`}>
+                                                <div className={`p-6 rounded-2xl border ${analysisResult.riskLevel === 'High' ? 'bg-red-900/10 border-red-500/20 text-red-400' : 'bg-emerald-900/10 border-emerald-500/20 text-emerald-400'}`}>
                                                     <p className="text-xs font-bold uppercase tracking-wider opacity-70 mb-1">Risk Assessment</p>
                                                     <div className="text-3xl font-black flex items-center gap-2">
                                                         {analysisResult.riskLevel}
                                                         <AlertTriangle size={24} />
                                                     </div>
                                                 </div>
-                                                <div className="p-6 rounded-2xl border bg-blue-50 border-blue-100 text-blue-700">
+                                                <div className="p-6 rounded-2xl border bg-blue-900/10 border-blue-500/20 text-blue-400">
                                                     <p className="text-xs font-bold uppercase tracking-wider opacity-70 mb-1">Clarity Score</p>
                                                     <div className="text-3xl font-black flex items-center gap-2">
                                                         {analysisResult.accuracyScore}/100
@@ -285,7 +285,7 @@ const DraftingLab = () => {
                                                 </h3>
                                                 <ul className="space-y-3">
                                                     {analysisResult.missingClauses?.map((c, i) => (
-                                                        <li key={i} className="flex gap-3 text-sm text-slate-700 bg-red-50/50 p-3 rounded-xl border border-red-100">
+                                                        <li key={i} className="flex gap-3 text-sm text-slate-300 bg-red-900/10 p-3 rounded-xl border border-red-500/20">
                                                             <span className="text-red-500 font-bold">•</span> {c}
                                                         </li>
                                                     ))}
@@ -298,15 +298,15 @@ const DraftingLab = () => {
                                                 </h3>
                                                 <ul className="space-y-3">
                                                     {analysisResult.ambiguousClauses?.map((c, i) => (
-                                                        <li key={i} className="flex gap-3 text-sm text-slate-700 bg-amber-50/50 p-3 rounded-xl border border-amber-100">
+                                                        <li key={i} className="flex gap-3 text-sm text-slate-300 bg-amber-900/10 p-3 rounded-xl border border-amber-500/20">
                                                             <span className="text-amber-500 font-bold">•</span> {c}
                                                         </li>
                                                     ))}
                                                 </ul>
                                             </div>
 
-                                            <div className="prose prose-sm font-sans text-slate-600 mt-8 pt-8 border-t border-slate-100">
-                                                <h4 className="text-slate-900 font-bold uppercase text-xs tracking-wider mb-4">Detailed Analysis</h4>
+                                            <div className="prose prose-sm font-sans text-slate-400 mt-8 pt-8 border-t border-white/5">
+                                                <h4 className="text-white font-bold uppercase text-xs tracking-wider mb-4">Detailed Analysis</h4>
                                                 <ReactMarkdown>{analysisResult.analysisText}</ReactMarkdown>
                                             </div>
                                         </div>
