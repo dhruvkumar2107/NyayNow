@@ -145,9 +145,9 @@ export default function App() {
               <Route path="/judge-profile" element={<JudgeProfile />} />
               <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
               <Route path="/setup-profile" element={<ProtectedRoute><SetupProfile /></ProtectedRoute>} /> {/* NEW */}
-              <Route path="/research" element={<ProtectedRoute><LegalResearch /></ProtectedRoute>} /> {/* NEW */}
-              <Route path="/drafting" element={<ProtectedRoute><DraftingLab /></ProtectedRoute>} /> {/* NEW */}
-              <Route path="/career" element={<ProtectedRoute><CareerHub /></ProtectedRoute>} /> {/* NEW */}
+              <Route path="/research" element={<LegalResearch />} /> {/* NEW */}
+              <Route path="/drafting" element={<DraftingLab />} /> {/* NEW */}
+              <Route path="/career" element={<CareerHub />} /> {/* NEW */}
             </Routes>
           </Suspense>
         </main>

@@ -96,82 +96,75 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- LEGAL SUPERMIND SHOWCASE (3D TILT EFFECT) --- */}
-      <section className="py-32 bg-slate-900 relative overflow-hidden">
-        {/* Background Gradients */}
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-900/40 via-slate-900 to-slate-900"></div>
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+      {/* --- LEGAL SUPERMIND SHOWCASE (UNICORN STYLE) --- */}
+      <section className="py-32 bg-[#050511] relative overflow-hidden">
+        {/* Animated Background Orbs */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[128px] animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[128px] animate-pulse delay-1000"></div>
+
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 contrast-150 brightness-100"></div>
 
         <div className="max-w-[1400px] mx-auto px-6 relative z-10">
-          <div className="text-center mb-20">
+          <div className="text-center mb-20 space-y-4">
             <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              className="px-4 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-bold uppercase tracking-[0.2em]"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="px-5 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-bold uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(99,102,241,0.3)]"
             >
               The Pro Suite
             </motion.span>
-            <h2 className="text-5xl md:text-7xl font-black text-white mt-6 mb-4 tracking-tight">
-              Legal <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Supermind.</span>
+            <h2 className="text-5xl md:text-8xl font-black text-white mt-6 mb-6 tracking-tight leading-tight">
+              Legal <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-gradient-x">Supermind.</span>
             </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-lg md:text-xl font-light">
-              A comprehensive arsenal of AI tools designed for the next generation of legal professionals.
+            <p className="text-slate-400 max-w-2xl mx-auto text-xl md:text-2xl font-light leading-relaxed">
+              Unlock the future of legal practice with our flagship AI modules. <br />Designed for the top 1%.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 perspective-1000">
 
             {/* CARD 1: MOOT COURT */}
-            <TiltCard
+            <UnicornCard
               title="Moot Court VR"
-              desc="Practice oral arguments against an AI Judge with real-time feedback."
+              desc="Practice oral arguments against a ruthless AI Judge. Real-time feedback on your speech & extensive logic."
               icon="🏛️"
-              color="from-purple-500 to-indigo-600"
+              color="from-indigo-500 via-purple-500 to-pink-500"
               href="/moot-court"
               badge="Flagship"
+              delay={0}
             />
 
             {/* CARD 2: RESEARCH */}
-            <TiltCard
+            <UnicornCard
               title="Deep Research"
-              desc="Semantic search that understands legal context, not just keywords."
+              desc="Semantic search that finds precedents based on legal context, not just keyword matching."
               icon="🔍"
-              color="from-blue-500 to-cyan-500"
+              color="from-blue-500 via-cyan-500 to-teal-500"
               href="/research"
+              delay={0.1}
             />
 
             {/* CARD 3: DRAFTING */}
-            <TiltCard
+            <UnicornCard
               title="Drafting Lab"
-              desc="Auto-generate ironclad contracts and detect risks instantly."
+              desc="Auto-generate ironclad contracts, clauses, and notices while detecting hidden risks instantly."
               icon="📝"
-              color="from-emerald-500 to-teal-500"
+              color="from-emerald-500 via-green-500 to-lime-500"
               href="/drafting"
+              delay={0.2}
             />
 
             {/* CARD 4: CAREER */}
-            <TiltCard
+            <UnicornCard
               title="Career Hub"
-              desc="Virtual internships and mentorship from top legal minds."
+              desc="Virtual internships, task grading, and mentorship from avatars of top Supreme Court advocates."
               icon="💼"
-              color="from-pink-500 to-rose-500"
+              color="from-orange-500 via-pink-500 to-rose-500"
               href="/career"
+              delay={0.3}
             />
 
-          </div>
-        </div>
-      </section>
-
-
-      {/* --- TRUST FOOTER --- */}
-      <section className="py-12 border-t border-slate-200 bg-slate-50">
-        <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 opacity-60 grayscale hover:grayscale-0 transition duration-500">
-          <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Trusted By Teams At</span>
-          <div className="flex gap-8 items-center">
-            <div className="h-6 w-24 bg-slate-300 rounded"></div>
-            <div className="h-6 w-24 bg-slate-300 rounded"></div>
-            <div className="h-6 w-24 bg-slate-300 rounded"></div>
-            <div className="h-6 w-24 bg-slate-300 rounded"></div>
           </div>
         </div>
       </section>
@@ -180,36 +173,43 @@ export default function Home() {
   );
 }
 
-function TiltCard({ title, desc, icon, color, href, badge }) {
+function UnicornCard({ title, desc, icon, color, href, badge, delay }) {
   return (
     <motion.div
-      whileHover={{ y: -10 }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      whileHover={{ y: -15, rotateX: 5, scale: 1.02 }}
       className="relative group cursor-pointer"
       onClick={() => window.location.href = href}
     >
-      <div className={`absolute inset-0 bg-gradient-to-br ${color} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition duration-500`}></div>
-      <div className="relative h-full bg-slate-800/50 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col items-start overflow-hidden hover:border-white/20 transition-colors">
+      {/* GLOW EFFECT */}
+      <div className={`absolute -inset-0.5 bg-gradient-to-r ${color} rounded-2xl blur opacity-30 group-hover:opacity-100 transition duration-500 group-hover:blur-md`}></div>
+
+      {/* CARD CONTENT */}
+      <div className="relative h-full bg-[#0a0a1a] border border-white/10 rounded-2xl p-8 flex flex-col items-start overflow-hidden hover:border-white/20 transition-all shadow-2xl">
 
         {badge && (
-          <span className="absolute top-4 right-4 px-2 py-1 bg-white/10 text-white text-[10px] font-bold uppercase rounded-md border border-white/10">
+          <span className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-bold uppercase rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)] tracking-wider">
             {badge}
           </span>
         )}
 
-        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-3xl shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300`}>
+        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-3xl shadow-lg mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
           {icon}
         </div>
 
-        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-slate-300 transition-colors">
+        <h3 className="text-2xl font-bold text-white mb-4 group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-slate-300 transition-colors">
           {title}
         </h3>
 
-        <p className="text-slate-400 text-sm leading-relaxed mb-6">
+        <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-grow border-l-2 border-white/5 pl-4 group-hover:border-white/20 transition-colors">
           {desc}
         </p>
 
-        <div className="mt-auto flex items-center gap-2 text-sm font-bold text-white opacity-60 group-hover:opacity-100 transition-opacity">
-          Explore Feature <span className="group-hover:translate-x-1 transition-transform">→</span>
+        <div className="mt-auto w-full pt-4 border-t border-white/5 flex items-center justify-between text-sm font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity">
+          <span>Try Now</span>
+          <span className="group-hover:translate-x-2 transition-transform bg-white/10 rounded-full w-8 h-8 flex items-center justify-center">→</span>
         </div>
       </div>
     </motion.div>
