@@ -17,7 +17,7 @@ const MootCourt = () => {
     const startSession = () => setSessionActive(true);
 
     return (
-        <div className="min-h-screen bg-black text-slate-200 font-sans selection:bg-indigo-900 overflow-hidden relative">
+        <div className="min-h-screen bg-midnight-900 text-slate-200 font-sans selection:bg-indigo-900 overflow-hidden relative">
 
             {/* AMBIENT BACKGROUND */}
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center opacity-20 pointer-events-none"></div>

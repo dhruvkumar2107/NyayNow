@@ -12,7 +12,7 @@ export default {
       },
       colors: {
         midnight: {
-          900: '#0B1120', // Deepest Navy (Backgrounds)
+          900: '#0f172a', // Slate 900 (Lighter Background)
           800: '#151e32', // Panel Backgrounds
           700: '#2a3b55', // Borders/Separators
         },

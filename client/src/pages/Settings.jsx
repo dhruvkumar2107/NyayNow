@@ -20,7 +20,7 @@ export default function Settings() {
     ];
 
     return (
-        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-midnight-900 font-sans text-slate-200 selection:bg-indigo-500/30 pb-20">
             <Navbar />
 
             <div className="max-w-6xl mx-auto pt-28 pb-12 px-6">
