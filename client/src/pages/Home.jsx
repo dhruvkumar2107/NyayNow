@@ -115,7 +115,7 @@ export default function Home() {
               The Pro Suite
             </motion.span>
             <h2 className="text-5xl md:text-8xl font-black text-white mt-6 mb-6 tracking-tight leading-tight">
-              Legal <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-gradient-x">Supermind.</span>
+              The Legal <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-gradient-x">Singularity.</span>
             </h2>
             <p className="text-slate-400 max-w-2xl mx-auto text-xl md:text-2xl font-light leading-relaxed">
               Unlock the future of legal practice with our flagship AI modules. <br />Designed for the top 1%.
@@ -124,14 +124,14 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 perspective-1000">
 
-            {/* CARD 1: MOOT COURT */}
+            {/* CARD 1: AI ASSISTANT (FIRST) */}
             <UnicornCard
-              title="Moot Court VR"
-              desc="Practice oral arguments against a ruthless AI Judge. Real-time feedback on your speech & extensive logic."
-              icon="🏛️"
-              color="from-indigo-500 via-purple-500 to-pink-500"
-              href="/moot-court"
-              badge="Flagship"
+              title="AI Legal Assistant"
+              desc="Your 24/7 legal genius. Ask complex queries and get citations, case laws, and strategy in seconds."
+              icon="🤖"
+              color="from-cyan-500 via-blue-500 to-indigo-500"
+              href="/assistant"
+              badge="Daily Driver"
               delay={0}
             />
 
@@ -146,57 +146,28 @@ export default function Home() {
               delay={0.1}
             />
 
-            {/* CARD 3: RESEARCH */}
-            <UnicornCard
-              title="Deep Research"
-              desc="Semantic search that finds precedents based on legal context, not just keyword matching."
-              icon="🔍"
-              color="from-blue-500 via-cyan-500 to-teal-500"
-              href="/research"
-              delay={0.2}
-            />
-
-            {/* CARD 4: DRAFTING */}
-            <UnicornCard
-              title="Drafting Lab"
-              desc="Auto-generate ironclad contracts, clauses, and notices while detecting hidden risks instantly."
-              icon="📝"
-              color="from-emerald-500 via-green-500 to-lime-500"
-              href="/drafting"
-              delay={0.3}
-            />
-
-            {/* CARD 5: NYAY VOICE (VIRAL) */}
+            {/* CARD 3: NYAY VOICE (VIRAL) */}
             <UnicornCard
               title="NyayVoice"
               desc="Your multilingual AI Legal Companion. Speak naturally in Hindi, Tamil, or 10+ languages."
               icon="🎙️"
               color="from-violet-500 via-purple-500 to-fuchsia-500"
               href="/voice-assistant"
-              delay={0.4}
+              delay={0.2}
             />
 
-            {/* CARD 6: CAREER */}
+            {/* CARD 4: MOOT COURT */}
             <UnicornCard
-              title="Career Hub"
-              desc="Virtual internships, task grading, and mentorship from avatars of top Supreme Court advocates."
-              icon="💼"
-              color="from-orange-500 via-pink-500 to-rose-500"
-              href="/career"
-              delay={0.5}
+              title="Moot Court VR"
+              desc="Practice oral arguments against a ruthless AI Judge. Real-time feedback on your speech & extensive logic."
+              icon="🏛️"
+              color="from-indigo-500 via-purple-500 to-pink-500"
+              href="/moot-court"
+              badge="Flagship"
+              delay={0.3}
             />
 
-            {/* CARD 7: AI ASSISTANT */}
-            <UnicornCard
-              title="AI Legal Assistant"
-              desc="Your 24/7 legal genius. Ask complex queries and get citations, case laws, and strategy in seconds."
-              icon="🤖"
-              color="from-cyan-500 via-blue-500 to-indigo-500"
-              href="/assistant"
-              delay={0.6}
-            />
-
-            {/* CARD 8: MARKETPLACE */}
+            {/* CARD 5: MARKETPLACE */}
             <UnicornCard
               title="Elite Legal Network"
               desc="Connect with the top 1% of legal minds in the country. Validated lawyers, arbitrators, and experts."
@@ -204,6 +175,36 @@ export default function Home() {
               color="from-amber-400 via-orange-500 to-red-500"
               href="/marketplace"
               badge="Exclusive"
+              delay={0.4}
+            />
+
+            {/* CARD 6: DRAFTING */}
+            <UnicornCard
+              title="Drafting Lab"
+              desc="Auto-generate ironclad contracts, clauses, and notices while detecting hidden risks instantly."
+              icon="📝"
+              color="from-emerald-500 via-green-500 to-lime-500"
+              href="/drafting"
+              delay={0.5}
+            />
+
+            {/* CARD 7: RESEARCH */}
+            <UnicornCard
+              title="Deep Research"
+              desc="Semantic search that finds precedents based on legal context, not just keyword matching."
+              icon="🔍"
+              color="from-blue-500 via-cyan-500 to-teal-500"
+              href="/research"
+              delay={0.6}
+            />
+
+            {/* CARD 8: CAREER */}
+            <UnicornCard
+              title="Career Hub"
+              desc="Virtual internships, task grading, and mentorship from avatars of top Supreme Court advocates."
+              icon="💼"
+              color="from-orange-500 via-pink-500 to-rose-500"
+              href="/career"
               delay={0.7}
             />
 
