@@ -105,10 +105,12 @@ export default function Nearby() {
       const res = await axios.get(`/api/nearby?lat=${lat}&lon=${lon}`);
       const rawData = res.data || [];
 
-      // Filter Data
-      const police = rawData.filter(i => i.type === 'police');
-      const courts = rawData.filter(i => i.type === 'court');
-      const lawyers = rawData.filter(i => i.type === 'lawyer').map(l => ({
+      // Filter Data & Validate Coordinates
+      const validData = rawData.filter(i => i.lat && i.lon && !isNaN(i.lat) && !isNaN(i.lon));
+
+      const police = validData.filter(i => i.type === 'police');
+      const courts = validData.filter(i => i.type === 'court');
+      const lawyers = validData.filter(i => i.type === 'lawyer').map(l => ({
         ...l,
         id: l.id || l._id || Math.random().toString(36).substr(2, 9),
         // Ensure image and plan are present

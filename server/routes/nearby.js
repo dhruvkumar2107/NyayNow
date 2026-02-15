@@ -51,7 +51,33 @@ router.get("/", async (req, res) => {
       cleaned = cleaned.substring(firstBrace, lastBrace + 1);
     }
 
+    // Helper to add coordinates if missing
+    const addCoords = (items, centerLat, centerLon) => {
+      const cLat = parseFloat(centerLat);
+      const cLon = parseFloat(centerLon);
+
+      return items.map(item => {
+        if (item.lat && item.lon) return item;
+
+        // Generate random offset within ~3-5km
+        // 1 deg lat ~ 111km. 0.03 deg ~ 3.3km
+        const rLat = (Math.random() - 0.5) * 0.06;
+        const rLon = (Math.random() - 0.5) * 0.06;
+
+        return {
+          ...item,
+          lat: cLat + rLat,
+          lon: cLon + rLon
+        };
+      });
+    };
+
     let locations = JSON.parse(cleaned);
+
+    // Ensure AI results have coords relative to user
+    if (lat && lon) {
+      locations = addCoords(locations, lat, lon);
+    }
 
     // ---------------------------------------------------------
     //  FETCH REAL LAWYERS FROM DB
@@ -69,7 +95,9 @@ router.get("/", async (req, res) => {
         type: "lawyer",
         verified: true, // Frontend can show a checkmark
         specialization: l.specialization,
-        is_real: true // Flag to distinguish
+        is_real: true, // Flag to distinguish
+        lat: l.location?.lat,
+        lon: l.location?.long
       }));
 
       // Combine: AI places (Courts/Police) + Real Lawyers
@@ -77,15 +105,22 @@ router.get("/", async (req, res) => {
       const aiNonLawyers = locations.filter(x => x.type !== 'lawyer' && x.type !== 'legal_aid');
       locations = [...aiNonLawyers, ...formattedLawyers];
 
+      // Assign coords to lawyers if missing (using user location as center for demo)
+      if (lat && lon) {
+        locations = addCoords(locations, lat, lon);
+      }
+
       // CRITICAL GUARANTEE: Check if we have at least one police station
       const hasPolice = locations.some(l => l.type && l.type.toLowerCase().includes('police'));
       if (!hasPolice) {
-        locations.push({
+        let fallbackPolice = {
           name: "City Police Station (General)",
           rating: 4.2,
           address: "City Center",
           type: "police"
-        });
+        };
+        if (lat && lon) fallbackPolice = addCoords([fallbackPolice], lat, lon)[0];
+        locations.push(fallbackPolice);
       }
 
     } catch (dbErr) {
@@ -98,6 +133,8 @@ router.get("/", async (req, res) => {
     console.error("Gemini Nearby Error:", err.message);
     fs.appendFileSync('nearby_debug.log', `ERROR: ${err.message}\n----------------\n`);
 
+    const { lat, lon } = req.query;
+
     // Fallback to real lawyers if AI fails
     try {
       const User = require("../models/User");
@@ -106,7 +143,9 @@ router.get("/", async (req, res) => {
         name: l.name,
         rating: 4.8,
         address: l.location?.city || "Bengaluru",
-        type: "lawyer"
+        type: "lawyer",
+        lat: l.location?.lat,
+        lon: l.location?.long
       }));
 
       // Always return at least one Court and one Police Station in fallback
@@ -115,12 +154,39 @@ router.get("/", async (req, res) => {
         { name: "City Police Station (HQ)", rating: 4.2, address: "Main Road", type: "police" }
       ];
 
-      res.json([...fallback, ...staticServices]);
+      // helper to add random coords
+      const addFallbackCoords = (items) => {
+        if (!lat || !lon) return items; // Can't add if no center
+        const cLat = parseFloat(lat);
+        const cLon = parseFloat(lon);
+        return items.map(item => {
+          if (item.lat && item.lon) return item;
+          return {
+            ...item,
+            lat: cLat + (Math.random() - 0.5) * 0.05,
+            lon: cLon + (Math.random() - 0.5) * 0.05
+          };
+        });
+      };
+
+      const finalFallback = [...addFallbackCoords(fallback), ...addFallbackCoords(staticServices)];
+
+      res.json(finalFallback);
     } catch (e) {
-      res.json([
+      const hardFallback = [
         { name: "District Court", rating: 4.5, address: "City Center", type: "court" },
         { name: "Central Police Station", rating: 4.0, address: "City Center", type: "police" }
-      ]);
+      ];
+      // Try to add coords even to hard fallback if possible
+      if (lat && lon) {
+        const cLat = parseFloat(lat);
+        const cLon = parseFloat(lon);
+        hardFallback.forEach(i => {
+          i.lat = cLat + 0.01;
+          i.lon = cLon + 0.01;
+        });
+      }
+      res.json(hardFallback);
     }
   }
 });
