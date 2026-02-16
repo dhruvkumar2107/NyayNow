@@ -5,64 +5,39 @@
 @tailwind utilities;
 
 /* Custom Scrollbar */
+/* Premium Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  /* slate-100 */
+  background: #020617;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  /* slate-300 */
-  border-radius: 4px;
+  background: #334155;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-  /* slate-400 */
+  background: #D4AF37;
+  /* Gold on Hover */
 }
 
 /* Global resets */
-/* Global resets */
 :root {
   --font-sans: 'Inter', sans-serif;
-  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Playfair Display', serif;
 }
 
 html,
 body,
 #root {
-  background-color: #ffffff;
-  /* Clean White Base */
-  color: #0f172a;
-  /* Slate 900 */
+  background-color: #020617;
+  /* Deepest Midnight */
+  color: #f8fafc;
   font-family: var(--font-sans);
   overflow-x: hidden;
-}
-
-/* Lenis Recommended Styles */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
 }
 
 h1,
@@ -72,31 +47,48 @@ h4,
 h5,
 h6 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
-  /* Tight tracking for modern feel */
+  letter-spacing: -0.01em;
 }
 
-/* Glassmorphism Utilities */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+/* Premium Utilities */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #FDE047 0%, #D4AF37 50%, #B4912F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-gold {
+  background: linear-gradient(135deg, #D4AF37 0%, #B4912F 100%);
+}
+
+.glass-premium {
+  background: rgba(15, 23, 42, 0.6);
+  /* Midnight 900 with opacity */
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  background: rgba(30, 41, 59, 0.4);
+  /* Midnight 800 */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 .glass-input {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(2, 6, 23, 0.5);
+  /* Midnight 950 */
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
+  transition: all 0.3s ease;
 }
 
 .glass-input:focus {
-  border-color: #00D4FF;
+  border-color: #D4AF37;
+  /* Gold Focus */
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
   outline: none;
 }

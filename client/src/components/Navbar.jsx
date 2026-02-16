@@ -61,13 +61,16 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-[9999] bg-[#020617]/80 backdrop-blur-xl border-b border-white/5 h-[80px] transition-all duration-300">
+      <nav className="fixed top-0 w-full z-[9999] glass-premium h-[80px] transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
           {/* LOGO */}
           <Link to="/" className="flex items-center gap-3 group relative z-50">
-            <img src="/logo.png" alt="NyayNow" className="w-10 h-10 object-contain hover:scale-105 transition duration-300" />
-            <span className="text-xl font-bold tracking-tight text-white group-hover:text-indigo-400 transition-colors duration-300">NyayNow</span>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gold-500 blur-[20px] opacity-20 group-hover:opacity-40 transition duration-500"></div>
+              <img src="/logo.png" alt="NyayNow" className="relative w-10 h-10 object-contain hover:scale-105 transition duration-300 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+            </div>
+            <span className="text-2xl font-display font-bold tracking-tight text-white group-hover:text-gold-400 transition-colors duration-300">NyayNow</span>
           </Link>
 
           {/* DESKTOP NAV */}
@@ -79,9 +82,9 @@ export default function Navbar() {
                 onMouseEnter={() => handleMouseEnter(idx)}
                 onMouseLeave={handleMouseLeave}
               >
-                <button className={`flex items-center gap-1.5 text-sm font-bold transition-colors duration-300 ${hoveredIndex === idx ? "text-indigo-400" : "text-slate-300 hover:text-white"}`}>
+                <button className={`flex items-center gap-1.5 text-sm font-bold tracking-wide transition-all duration-300 ${hoveredIndex === idx ? "text-gold-400" : "text-slate-300 hover:text-white"}`}>
                   {category.label}
-                  <ChevronDown size={14} className={`transition-transform duration-300 ${hoveredIndex === idx ? "rotate-180" : ""}`} />
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${hoveredIndex === idx ? "rotate-180 text-gold-400" : ""}`} />
                 </button>
 
                 <AnimatePresence>
@@ -90,21 +93,27 @@ export default function Navbar() {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[600px]"
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-full left-1/2 -translate-x-1/2 pt-6 w-[600px]"
                     >
-                      <div className="bg-[#0f172a] border border-white/10 rounded-2xl p-2 shadow-2xl grid grid-cols-2 gap-2 relative overflow-hidden backdrop-blur-xl">
+                      <div className="glass-card border border-white/10 rounded-2xl p-2 shadow-2xl grid grid-cols-2 gap-2 relative overflow-hidden">
+                        {/* Gold Border Glow */}
+                        <div className="absolute inset-0 pointer-events-none border border-gold-500/10 rounded-2xl"></div>
+
                         {category.items.map((item, i) => (
                           <Link
                             key={i}
                             to={item.href}
-                            className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition group relative z-10"
+                            className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition group relative z-10 border border-transparent hover:border-gold-500/10"
                           >
-                            <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-indigo-500/50 transition group-hover:scale-110 duration-300">
-                              {item.icon}
+                            <div className="w-10 h-10 rounded-lg bg-midnight-800 flex items-center justify-center border border-white/5 group-hover:border-gold-500/30 transition group-hover:scale-110 duration-300 shadow-lg">
+                              {/* Override Icon Colors for Premium Feel */}
+                              <div className="group-hover:text-gold-400 transition duration-300">
+                                {item.icon}
+                              </div>
                             </div>
                             <div>
-                              <div className="text-slate-200 font-bold text-sm group-hover:text-indigo-400 transition">{item.name}</div>
+                              <div className="text-slate-200 font-display font-semibold text-sm group-hover:text-gold-400 transition">{item.name}</div>
                               <div className="text-slate-500 text-xs font-medium">{item.desc}</div>
                             </div>
                           </Link>
@@ -121,29 +130,30 @@ export default function Navbar() {
           <div className="flex items-center gap-4 relative z-50">
             {!user ? (
               <>
-                <Link to="/login" className="hidden sm:block font-bold text-sm text-slate-300 hover:text-white transition-colors duration-300">Log in</Link>
-                <Link to="/register" className="px-6 py-2.5 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-600/20">
-                  Get Started
+                <Link to="/login" className="hidden sm:block font-bold text-sm text-slate-300 hover:text-gold-400 transition-colors duration-300">Log in</Link>
+                <Link to="/register" className="relative overflow-hidden px-6 py-2.5 bg-gradient-gold text-midnight-950 font-bold text-sm rounded-xl hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition duration-300 group">
+                  <span className="relative z-10">Get Started</span>
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition duration-300"></div>
                 </Link>
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <Link to={user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard'} className="hidden sm:flex items-center gap-2 transition font-bold text-sm text-slate-300 hover:text-white duration-300">
-                  <LayoutDashboard size={18} /> Dashboard
+                <Link to={user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard'} className="hidden sm:flex items-center gap-2 transition font-bold text-sm text-slate-300 hover:text-white duration-300 hover:bg-white/5 px-3 py-1.5 rounded-lg border border-transparent hover:border-white/10">
+                  <LayoutDashboard size={18} className="text-gold-400" /> Dashboard
                 </Link>
 
                 <div className="relative group cursor-pointer">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 p-[2px]">
-                    <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
-                      {user.profileImage ? <img src={user.profileImage} className="w-full h-full object-cover" /> : <span className="font-bold text-white">{user.name[0]}</span>}
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gold-400 to-yellow-600 p-[2px] shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                    <div className="w-full h-full rounded-full bg-midnight-950 flex items-center justify-center overflow-hidden">
+                      {user.profileImage ? <img src={user.profileImage} className="w-full h-full object-cover" /> : <span className="font-display font-bold text-gold-400 text-lg">{user.name[0]}</span>}
                     </div>
                   </div>
-                  <div className="absolute right-0 top-full mt-4 w-56 bg-[#0f172a] border border-white/10 rounded-xl p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right backdrop-blur-xl">
-                    <div className="px-3 py-3 border-b border-white/5 mb-2">
-                      <p className="text-white font-bold text-sm truncate">{user.name}</p>
+                  <div className="absolute right-0 top-full mt-4 w-64 glass-card rounded-xl p-2 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                    <div className="px-3 py-3 border-b border-white/5 mb-2 bg-midnight-950/30 rounded-t-lg">
+                      <p className="text-white font-display font-bold text-sm truncate">{user.name}</p>
                       <p className="text-slate-500 text-xs truncate">{user.email}</p>
                     </div>
-                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg text-sm transition font-medium">
+                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-gold-400 hover:bg-white/5 rounded-lg text-sm transition font-medium">
                       <User size={16} /> Profile & Settings
                     </Link>
                     <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 text-rose-500 hover:bg-rose-500/10 rounded-lg text-sm transition font-medium text-left">
@@ -155,7 +165,7 @@ export default function Navbar() {
             )}
 
             {/* MOBILE MENU BTN */}
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-300 hover:text-white transition-colors duration-300">
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-300 hover:text-gold-400 transition-colors duration-300">
               {mobileMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
@@ -169,23 +179,23 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-[#020617] pt-24 px-6 overflow-y-auto"
+            className="fixed inset-0 z-40 bg-midnight-950/95 backdrop-blur-xl pt-24 px-6 overflow-y-auto"
           >
             <div className="flex flex-col gap-6 pb-20">
               {navItems.map((group, idx) => (
                 <div key={idx} className="space-y-3">
-                  <h3 className="text-indigo-400 font-bold text-xs uppercase tracking-widest">{group.label}</h3>
+                  <h3 className="text-gold-400 font-display font-bold text-sm uppercase tracking-widest border-b border-white/5 pb-2">{group.label}</h3>
                   <div className="grid grid-cols-1 gap-2">
                     {group.items.map((item, i) => (
                       <Link
                         key={i}
                         to={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5"
+                        className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-gold-500/30 transition"
                       >
-                        <div className="text-slate-200">{item.icon}</div>
+                        <div className="text-slate-300">{item.icon}</div>
                         <div>
-                          <div className="text-white font-bold text-sm">{item.name}</div>
+                          <div className="text-white font-semibold text-sm">{item.name}</div>
                           <div className="text-slate-500 text-xs">{item.desc}</div>
                         </div>
                       </Link>
@@ -195,9 +205,9 @@ export default function Navbar() {
               ))}
 
               {!user && (
-                <div className="flex flex-col gap-3 mt-4">
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-white/10 text-white font-bold text-center">Log In</Link>
-                  <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-indigo-600 text-white font-bold text-center shadow-lg shadow-indigo-600/20">Get Started</Link>
+                <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/10">
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-center border border-white/10 transition">Log In</Link>
+                  <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 rounded-xl bg-gradient-gold text-midnight-950 font-bold text-center shadow-lg shadow-gold-500/20">Get Started</Link>
                 </div>
               )}
             </div>

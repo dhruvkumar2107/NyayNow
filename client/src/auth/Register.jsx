@@ -140,204 +140,159 @@ export default function Register() {
   };
 
   return (
-    <main className="min-h-screen grid lg:grid-cols-[1fr_500px] xl:grid-cols-[1fr_600px] bg-[#020617] font-sans selection:bg-indigo-500/30">
+    <main className="min-h-screen grid lg:grid-cols-[1fr_500px] xl:grid-cols-[1fr_600px] bg-[#020617] font-sans selection:bg-gold-500/30">
 
-      {/* LEFT: BRANDING / AMBIENCE */}
-      <div className="hidden lg:flex flex-col justify-between relative overflow-hidden p-16">
-        {/* Ambient Blobs */}
-        <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
+      {/* LEFT: PREMIUM AMBIENCE */}
+      <div className="hidden lg:flex flex-col justify-between relative overflow-hidden p-16 bg-midnight-950">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1505664194779-8beaceb9300d?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-midnight-950/90 via-midnight-950/80 to-midnight-900/40"></div>
+
+        {/* Animated Gold Orbs */}
+        <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-gold-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-royal-600/20 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative z-10">
           <Link to="/" className="flex items-center gap-3 w-fit group">
-            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-violet-500 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/20 ring-1 ring-white/10 group-hover:scale-105 transition duration-300">⚖️</div>
-            <span className="font-bold text-2xl tracking-tight text-white/90">NyayNow</span>
+            <div className="w-12 h-12 bg-gradient-to-br from-gold-400 to-yellow-600 rounded-2xl flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(212,175,55,0.3)] ring-1 ring-white/10 group-hover:scale-105 transition duration-300 transform rotate-3">⚖️</div>
+            <span className="font-display font-bold text-3xl tracking-wide text-white drop-shadow-md">NyayNow</span>
           </Link>
         </div>
 
-        <div className="relative z-10 space-y-8 max-w-2xl">
-          <h1 className="text-6xl font-extrabold leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-slate-400">
-            Justice in the<br />Digital Age.
+        <div className="relative z-10 space-y-6 max-w-2xl">
+          <h1 className="text-6xl font-display font-bold leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 drop-shadow-sm">
+            Join the<br />
+            <span className="text-gold-400 italic">Elite.</span>
           </h1>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-6 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition duration-300 group">
-              <span className="text-3xl mb-3 block group-hover:scale-110 transition duration-300">🚀</span>
-              <h3 className="font-bold text-white text-lg">For Clients</h3>
-              <p className="text-slate-400 text-sm mt-1">Instant AI legal advice and connection to top 1% lawyers.</p>
-            </div>
-            <div className="p-6 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition duration-300 group">
-              <span className="text-3xl mb-3 block group-hover:scale-110 transition duration-300">⚖️</span>
-              <h3 className="font-bold text-white text-lg">For Lawyers</h3>
-              <p className="text-slate-400 text-sm mt-1">10x your practice with high-quality leads and AI tools.</p>
-            </div>
-          </div>
+          <p className="text-lg text-slate-300/90 max-w-lg font-light leading-relaxed border-l-2 border-gold-500/50 pl-6">
+            Empower your legal practice with next-generation AI tools. Sign up today and transform your workflow.
+          </p>
         </div>
 
-        <p className="relative z-10 text-xs text-slate-500 font-medium tracking-widest uppercase">
-          Trusted by 10,000+ Legal Professionals
-        </p>
+        <div className="relative z-10 flex items-center gap-4 text-xs font-bold tracking-widest uppercase text-gold-500/80">
+          <span>Smart</span>
+          <span className="w-1 h-1 rounded-full bg-gold-500"></span>
+          <span>Efficient</span>
+          <span className="w-1 h-1 rounded-full bg-gold-500"></span>
+          <span>Powerful</span>
+        </div>
       </div>
 
       {/* RIGHT: FORM */}
-      <div className="flex flex-col justify-center p-6 lg:p-12 bg-[#0f172a]/80 backdrop-blur-xl border-l border-white/10 overflow-y-auto">
-        <div className="w-full max-w-md mx-auto space-y-8">
+      <div className="flex flex-col justify-center p-6 lg:p-12 bg-midnight-900 relative overflow-hidden">
+        {/* Mobile Background Texture */}
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none"></div>
+
+        <div className="w-full max-w-xl mx-auto space-y-8 relative z-10 my-10">
 
           <div className="text-center lg:text-left">
-            <h2 className="text-3xl font-bold text-white">Create Account</h2>
-            <p className="text-slate-400 mt-2">Get started with your free account today.</p>
+            <h2 className="text-3xl font-display font-bold text-white">Create Account</h2>
+            <p className="text-slate-400 text-sm mt-1">Join thousands of legal professionals.</p>
           </div>
 
-          {/* Role Toggle */}
-          <div className="flex gap-1 p-1.5 bg-black/40 rounded-2xl border border-white/10">
-            <button onClick={() => setRole("client")} className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${role === "client" ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "text-slate-400 hover:text-white hover:bg-white/5"}`}>
-              👤 Client
-            </button>
-            <button onClick={() => setRole("lawyer")} className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${role === "lawyer" ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "text-slate-400 hover:text-white hover:bg-white/5"}`}>
-              ⚖️ Lawyer
-            </button>
+          {/* ROLE SELECTOR */}
+          <div className="flex gap-4 p-1 bg-midnight-950/50 rounded-2xl border border-white/5 backdrop-blur-sm">
+            {[
+              { id: 'client', label: 'Client', icon: '👤' },
+              { id: 'lawyer', label: 'Lawyer / Student', icon: '⚖️' }
+            ].map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => setFormData(p => ({ ...p, role: r.id }))}
+                className={`flex-1 py-4 rounded-xl transition-all duration-300 border ${formData.role === r.id
+                    ? "bg-gradient-gold text-midnight-950 border-gold-500/0 shadow-lg shadow-gold-500/20 scale-[1.02]"
+                    : "bg-transparent text-slate-400 border-transparent hover:bg-white/5 hover:text-white"
+                  }`}
+              >
+                <div className="text-2xl mb-1">{r.icon}</div>
+                <div className="font-bold text-sm">{r.label}</div>
+              </button>
+            ))}
           </div>
 
-          <div className="space-y-4">
+          <form onSubmit={(e) => { e.preventDefault(); handleRegister(); }} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
-              <InputGroup label="Full Name" name="name" placeholder="John Doe" value={formData.name} onChange={handleChange} />
-              <InputGroup label="Email" name="email" type="email" placeholder="you@example.com" value={formData.email} onChange={handleChange} />
+              <InputGroup label="Full Name" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" />
+              <InputGroup label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} placeholder="+91 98765 43210" />
             </div>
+
+            <InputGroup label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="john@example.com" />
 
             <div className="grid grid-cols-2 gap-4">
-              <InputGroup label="Password" name="password" type="password" placeholder="••••••••" value={formData.password} onChange={handleChange} />
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-400 ml-1">Phone Number</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">+91</span>
-                  <input
-                    name="phone"
-                    type="tel"
-                    maxLength={10}
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pl-10 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                    placeholder="9876543210"
-                  />
-                </div>
-              </div>
+              <InputGroup label="Password" type="password" name="password" value={formData.password} onChange={handleChange} placeholder="••••••••" />
+              <InputGroup label="Confirm Password" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="••••••••" />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <InputGroup label="Age" name="age" type="number" placeholder="25" value={formData.age} onChange={handleChange} />
-              <div className="col-span-2 space-y-1.5">
-                <label className="block text-xs font-bold text-slate-400 ml-1">Gender</label>
-                <div className="flex gap-2 h-[46px] items-center">
-                  {["Male", "Female", "Other"].map(opt => (
-                    <label key={opt} className={`flex-1 cursor-pointer flex items-center justify-center h-full rounded-xl border border-white/5 text-sm font-medium transition ${formData.sex === opt ? "bg-indigo-600/20 border-indigo-500/50 text-indigo-300" : "bg-white/5 text-slate-500 hover:bg-white/10"}`}>
-                      <input type="radio" name="sex" value={opt} checked={formData.sex === opt} onChange={handleChange} className="hidden" />
-                      {opt}
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
+            {formData.role === 'lawyer' && (
+              <div className="space-y-4 pt-4 border-t border-white/10 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-gold-400 font-display font-bold text-lg">Professional Details</h3>
 
-            {/* LAWYER FIELDS (Animated) */}
-            <AnimatePresence>
-              {role === "lawyer" && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="space-y-4 pt-2 overflow-hidden">
-                  <div className="flex gap-2 p-1 bg-white/5 rounded-xl mb-4">
+                  {/* LAWYER / STUDENT TOGGLE */}
+                  <div className="flex bg-midnight-950 rounded-lg p-1 border border-white/10">
                     <button
-                      onClick={() => toggleStudent(false)}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${!formData.isStudent ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                      type="button"
+                      onClick={() => setFormData(p => ({ ...p, isStudent: false, studentRollNumber: "" }))}
+                      className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${!formData.isStudent ? 'bg-gold-500 text-midnight-950 shadow-md' : 'text-slate-400 hover:text-white'}`}
                     >
                       Practicing Lawyer
                     </button>
                     <button
-                      onClick={() => toggleStudent(true)}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${formData.isStudent ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                      type="button"
+                      onClick={() => setFormData(p => ({ ...p, isStudent: true, barCouncilId: "" }))}
+                      className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${formData.isStudent ? 'bg-royal-500 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}
                     >
                       Law Student
                     </button>
                   </div>
+                </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    {!formData.isStudent ? (
-                      <InputGroup label="Bar Council ID" name="barCouncilId" placeholder="MAH/1239/2023" value={formData.barCouncilId} onChange={handleChange} />
-                    ) : (
-                      <InputGroup label="Student Roll No." name="studentRollNumber" placeholder="U12345678" value={formData.studentRollNumber} onChange={handleChange} />
-                    )}
-                    <InputGroup label="Experience (Yrs)" name="experience" type="number" placeholder="5" value={formData.experience} onChange={handleChange} />
+                {!formData.isStudent ? (
+                  <div className="space-y-4">
+                    <InputGroup label="Bar Council ID" name="barCouncilId" value={formData.barCouncilId} onChange={handleChange} placeholder="MAH/1234/2023" />
                   </div>
-
-                  {/* ID CARD UPLOAD */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-400 ml-1">
-                      {formData.isStudent ? "Upload Student ID Card" : "Upload Bar Council ID"} <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative w-full h-32 bg-white/5 border-2 border-dashed border-white/10 rounded-xl overflow-hidden hover:border-indigo-500/50 transition cursor-pointer group">
-                      <input type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-                      {idCardPreview ? (
-                        <img src={idCardPreview} alt="Preview" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group-hover:text-indigo-400 transition">
-                          <span className="text-2xl mb-2">📂</span>
-                          <span className="text-xs font-medium">Click to Upload ID</span>
-                        </div>
-                      )}
-                    </div>
+                ) : (
+                  <div className="space-y-4">
+                    <InputGroup label="Student Roll No." name="studentRollNumber" value={formData.studentRollNumber} onChange={handleChange} placeholder="20230001" />
                   </div>
+                )}
 
-                  <div className="grid grid-cols-2 gap-4 relative">
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-bold text-slate-400 ml-1">Specialization</label>
-                      <select name="specialization" value={formData.specialization} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition appearance-none">
-                        <option value="" className="bg-[#0f172a]">Select...</option>
-                        {["Criminal Law", "Corporate Law", "Family Law", "Civil Law", "IP Law", "Real Estate", "Labor Law", "Cyber Law"].map(o => <option key={o} value={o} className="bg-[#0f172a]">{o}</option>)}
-                      </select>
-                    </div>
+                <InputGroup label="Specialization" name="specialization" value={formData.specialization} onChange={handleChange} placeholder="Criminal, Civil, Corporate..." />
 
-                    {/* SEARCHABLE CITY DROPDOWN */}
-                    <div className="space-y-1.5 relative">
-                      <label className="block text-xs font-bold text-slate-400 ml-1">City</label>
-                      <div
-                        onClick={() => setShowCityDropdown(!showCityDropdown)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white cursor-pointer flex justify-between items-center hover:bg-white/10 transition"
-                      >
-                        <span className={selectedCity ? "text-white" : "text-slate-600"}>{selectedCity || "Select City"}</span>
-                        <span className="text-xs text-slate-500">▼</span>
+                <div className="grid grid-cols-2 gap-4">
+                  <InputGroup label="Experience (Years)" type="number" name="experience" value={formData.experience} onChange={handleChange} placeholder="5" />
+                  <InputGroup label="Location (City)" name="location" value={formData.location} onChange={handleChange} placeholder="Mumbai" />
+                </div>
+
+                {/* ID CARD UPLOAD */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">
+                    {formData.isStudent ? "Upload Student ID Card" : "Upload Bar Council ID"} <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative group">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="block w-full text-sm text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-white/5 file:text-gold-400 hover:file:bg-gold-500/10 transition cursor-pointer border border-dashed border-white/20 rounded-xl p-2"
+                    />
+                    {formData.idCardImage && (
+                      <div className="mt-2 text-xs text-green-400 flex items-center gap-2">
+                        <span>✓ Image Selected</span>
                       </div>
-
-                      {showCityDropdown && (
-                        <div className="absolute bottom-full mb-2 left-0 w-full bg-[#1A1F2E] border border-white/10 rounded-xl shadow-2xl z-50 max-h-60 overflow-hidden flex flex-col">
-                          <input
-                            autoFocus
-                            placeholder="Search city..."
-                            value={citySearch}
-                            onChange={(e) => setCitySearch(e.target.value)}
-                            className="w-full p-3 bg-white/5 border-b border-white/5 text-white text-sm outline-none placeholder-slate-500"
-                          />
-                          <div className="overflow-y-auto flex-1 custom-scrollbar">
-                            {filteredCities.map(city => (
-                              <div
-                                key={city}
-                                onClick={() => { setSelectedCity(city); setShowCityDropdown(false); }}
-                                className="px-4 py-2.5 text-sm text-slate-300 hover:bg-indigo-600/20 hover:text-indigo-300 cursor-pointer transition"
-                              >
-                                {city}
-                              </div>
-                            ))}
-                            {filteredCities.length === 0 && <div className="p-4 text-center text-xs text-slate-500">No city found</div>}
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    )}
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
+              </div>
+            )}
 
-            <button onClick={handleRegister} disabled={loading} className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/25 active:scale-95 disabled:opacity-70 mt-4 relative overflow-hidden group">
-              <span className="relative z-10">{loading ? "Creating Account..." : "Create Account"}</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-violet-600 opacity-0 group-hover:opacity-100 transition duration-300" />
+            <button type="submit" disabled={loading} className="w-full py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 font-bold text-lg rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition-all duration-300 active:scale-[0.98] disabled:opacity-70 mt-6 relative overflow-hidden group">
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {loading ? "Creating Account..." : "Create Account"}
+              </span>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition duration-300" />
             </button>
-          </div>
+          </form>
 
           <div className="relative py-2">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
@@ -345,13 +300,12 @@ export default function Register() {
           </div>
 
           <div className="flex justify-center">
-            <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} shape="circle" size="large" theme="filled_black" />
+            <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} />
           </div>
 
           <p className="text-center text-slate-500 text-sm">
-            Already have an account? <Link to="/login" className="text-indigo-400 font-bold hover:text-indigo-300 transition">Login</Link>
+            Already have an account? <Link to="/login" className="text-gold-400 font-bold hover:text-gold-300 transition underline decoration-transparent hover:decoration-gold-400 underline-offset-4">Log in</Link>
           </p>
-
         </div>
       </div>
     </main>
@@ -362,8 +316,8 @@ export default function Register() {
 function InputGroup({ label, ...props }) {
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-bold text-slate-400 ml-1">{label}</label>
-      <input className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition" {...props} />
+      <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">{label}</label>
+      <input className="glass-input w-full rounded-xl px-4 py-3 placeholder-slate-600 focus:ring-1 focus:ring-gold-500/50 transition duration-300" {...props} />
     </div>
   );
 }
