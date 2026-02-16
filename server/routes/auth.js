@@ -369,4 +369,24 @@ router.get("/reset-admin-force", async (req, res) => {
   }
 });
 
+/* ================= DEBUG LOGIN (REMOVE LATER) ================= */
+router.get("/test-login-force", async (req, res) => {
+  try {
+    const { email, password } = req.query;
+    const user = await User.findOne({ email });
+    if (!user) return res.json({ found: false });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    res.json({
+      found: true,
+      email: user.email,
+      storedHash: user.password,
+      inputPassword: password,
+      isMatch
+    });
+  } catch (err) {
+    res.json({ error: err.message });
+  }
+});
+
 module.exports = router;
