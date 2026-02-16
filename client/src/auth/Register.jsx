@@ -30,8 +30,14 @@ export default function Register() {
     phone: "",
     specialization: "",
     experience: "",
-    barCouncilId: ""
+    barCouncilId: "",
+    // NEW FIELDS
+    isStudent: false,
+    studentRollNumber: "",
+    idCardImage: null // File Object
   });
+
+  const [idCardPreview, setIdCardPreview] = useState(null);
 
   // Custom City Dropdown State
   const [selectedCity, setSelectedCity] = useState("");
@@ -49,30 +55,70 @@ export default function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, idCardImage: file });
+      setIdCardPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const toggleStudent = (val) => {
+    setFormData({ ...formData, isStudent: val, barCouncilId: "", studentRollNumber: "" });
+  };
+
   const handleRegister = async () => {
     const { name, email, password, phone, specialization, experience, barCouncilId, age, sex } = formData;
 
     if (!name || !email || !password || !phone) return toast.error("Please fill all required fields");
     if (!PHONE_REGEX.test(phone)) return toast.error("Invalid Indian Phone Number");
 
-    if (role === "lawyer" && (!specialization || !selectedCity)) return toast.error("Please complete lawyer profile");
+    if (role === "lawyer") {
+      if (!selectedCity) return toast.error("Please select a city");
+      if (!formData.isStudent && !formData.barCouncilId) return toast.error("Bar Council ID is required");
+      if (formData.isStudent && !formData.studentRollNumber) return toast.error("Student Roll Number is required");
+      if (!formData.idCardImage) return toast.error("ID Card Upload is mandatory");
+    }
 
     setLoading(true);
-    const userData = {
-      role,
-      plan: "silver",
-      location: selectedCity,
-      ...formData
-    };
 
-    const res = await register(userData);
-    setLoading(false);
+    try {
+      let uploadedIdUrl = "";
 
-    if (res.success) {
-      toast.success("Account Created! Please login.");
-      navigate("/login");
-    } else {
-      toast.error(res.message);
+      // 1. Upload ID Card if present
+      if (formData.idCardImage) {
+        const uploadData = new FormData();
+        uploadData.append("file", formData.idCardImage);
+
+        // We need a separate upload endpoint that returns the URL
+        // Assuming /api/uploads exists from previous context
+        const uploadRes = await axios.post("/api/uploads", uploadData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+        uploadedIdUrl = uploadRes.data.path;
+      }
+
+      const userData = {
+        role,
+        plan: "silver",
+        location: selectedCity,
+        ...formData,
+        idCardImage: uploadedIdUrl // Send URL, not file object
+      };
+
+      const res = await register(userData);
+      setLoading(false);
+
+      if (res.success) {
+        toast.success("Account Created! Please login.");
+        navigate("/login");
+      } else {
+        toast.error(res.message);
+      }
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      toast.error("Registration Failed");
     }
   };
 
@@ -196,9 +242,46 @@ export default function Register() {
             <AnimatePresence>
               {role === "lawyer" && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="space-y-4 pt-2 overflow-hidden">
+                  <div className="flex gap-2 p-1 bg-white/5 rounded-xl mb-4">
+                    <button
+                      onClick={() => toggleStudent(false)}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${!formData.isStudent ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                    >
+                      Practicing Lawyer
+                    </button>
+                    <button
+                      onClick={() => toggleStudent(true)}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${formData.isStudent ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                    >
+                      Law Student
+                    </button>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
-                    <InputGroup label="Bar Council ID" name="barCouncilId" placeholder="MAH/1239/2023" value={formData.barCouncilId} onChange={handleChange} />
+                    {!formData.isStudent ? (
+                      <InputGroup label="Bar Council ID" name="barCouncilId" placeholder="MAH/1239/2023" value={formData.barCouncilId} onChange={handleChange} />
+                    ) : (
+                      <InputGroup label="Student Roll No." name="studentRollNumber" placeholder="U12345678" value={formData.studentRollNumber} onChange={handleChange} />
+                    )}
                     <InputGroup label="Experience (Yrs)" name="experience" type="number" placeholder="5" value={formData.experience} onChange={handleChange} />
+                  </div>
+
+                  {/* ID CARD UPLOAD */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-slate-400 ml-1">
+                      {formData.isStudent ? "Upload Student ID Card" : "Upload Bar Council ID"} <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative w-full h-32 bg-white/5 border-2 border-dashed border-white/10 rounded-xl overflow-hidden hover:border-indigo-500/50 transition cursor-pointer group">
+                      <input type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
+                      {idCardPreview ? (
+                        <img src={idCardPreview} alt="Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group-hover:text-indigo-400 transition">
+                          <span className="text-2xl mb-2">📂</span>
+                          <span className="text-xs font-medium">Click to Upload ID</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 relative">

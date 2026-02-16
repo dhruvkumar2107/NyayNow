@@ -117,6 +117,11 @@ router.post("/register", async (req, res) => {
       experience,
       location,
       phone,
+      // VERIFICATION FIELDS
+      isStudent,
+      studentRollNumber,
+      barCouncilId,
+      idCardImage
     } = req.body;
 
     console.log("REGISTER BODY:", req.body);
@@ -139,6 +144,13 @@ router.post("/register", async (req, res) => {
 
     const normalizedPlan = plan ? plan.toLowerCase() : "free";
 
+    // DEFAULT VERIFIED STATUS
+    // Lawyers/Students need manual/admin verification
+    let isVerified = true;
+    if (role === "lawyer") {
+      isVerified = false;
+    }
+
     const user = await User.create({
       role,
       name,
@@ -149,6 +161,13 @@ router.post("/register", async (req, res) => {
       specialization,
       experience,
       location,
+      // NEW FIELDS
+      isStudent: !!isStudent,
+      studentRollNumber: studentRollNumber || "",
+      barCouncilId: barCouncilId || "",
+      idCardImage: idCardImage || "",
+      verified: isVerified,
+      verificationStatus: isVerified ? "verified" : "pending"
     });
 
     console.log("USER SAVED:", user._id);

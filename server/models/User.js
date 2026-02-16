@@ -134,6 +134,10 @@ const userSchema = new mongoose.Schema(
     },
     rejectionReason: { type: String, default: "" },
 
+    // STUDENT FIELDS
+    isStudent: { type: Boolean, default: false },
+    studentRollNumber: { type: String, default: "" },
+
     verified: {
       type: Boolean,
       default: false,

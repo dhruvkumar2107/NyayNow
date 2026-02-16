@@ -27,6 +27,7 @@ const Calendar = lazy(() => import("./pages/Calendar"));
 const Analytics = lazy(() => import("./pages/Analytics"));
 const VideoCall = lazy(() => import("./pages/VideoCall"));
 const SetupProfile = lazy(() => import("./pages/SetupProfile")); // NEW
+const VerificationPending = lazy(() => import("./pages/VerificationPending")); // NEW
 
 /* Lazy Load Auth */
 const Login = lazy(() => import("./auth/Login"));
@@ -87,7 +88,9 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/register" element={<Register />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/verification-pending" element={<VerificationPending />} /> {/* NEW */}
               <Route path="/video-call/:id" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
 
               {/* PUBLIC LAWYER PROFILE */}

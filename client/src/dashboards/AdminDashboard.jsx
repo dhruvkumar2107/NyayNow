@@ -111,18 +111,26 @@ export default function AdminDashboard() {
                                             <div>
                                                 <div className="flex items-center gap-3 mb-2">
                                                     <h4 className="font-bold text-white text-lg">{lawyer.name}</h4>
+                                                    {lawyer.isStudent && (
+                                                        <span className="text-purple-400 text-[10px] bg-purple-500/10 px-2 py-1 rounded border border-purple-500/20 font-bold uppercase">Law Student</span>
+                                                    )}
                                                     {!lawyer.verified ? (
                                                         <span className="text-amber-500 text-[10px] bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20 font-bold uppercase">Pending Review</span>
                                                     ) : (
                                                         <span className="text-emerald-500 text-[10px] bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 font-bold uppercase">Verified</span>
                                                     )}
                                                 </div>
-                                                <p className="text-slate-400 text-xs font-mono mb-1">BAR ID: {lawyer.barCouncilId || "N/A"}</p>
+                                                <p className="text-slate-400 text-xs font-mono mb-1">
+                                                    {lawyer.isStudent
+                                                        ? `ROLL NO: ${lawyer.studentRollNumber || "N/A"}`
+                                                        : `BAR ID: ${lawyer.barCouncilId || "N/A"}`
+                                                    }
+                                                </p>
                                                 <p className="text-slate-500 text-xs">Email: {maskEmail(lawyer.email)}</p>
 
                                                 {lawyer.idCardImage && (
-                                                    <a href={lawyer.idCardImage} target="_blank" rel="noreferrer" className="text-indigo-400 text-xs font-bold hover:underline mt-3 block">
-                                                        View Credentials Document ↗
+                                                    <a href={lawyer.idCardImage} target="_blank" rel="noreferrer" className="text-indigo-400 text-xs font-bold hover:underline mt-3 block flex items-center gap-1">
+                                                        <span>📄 View {lawyer.isStudent ? "Student ID" : "Bar Council ID"}</span>
                                                     </a>
                                                 )}
                                             </div>
