@@ -87,8 +87,28 @@ h6 {
 }
 
 .glass-input:focus {
-  border-color: #D4AF37;
-  /* Gold Focus */
   box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
   outline: none;
+}
+
+/* LENIS SCROLL FIXES */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }

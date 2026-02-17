@@ -70,7 +70,7 @@ const LoadingFallback = () => (
 export default function App() {
   return (
     <BrowserRouter>
-      <SmoothScroll />
+      {/* <SmoothScroll /> */}
       {/* ROOT APP WRAPPER */}
       <div className="min-h-screen bg-[#020617] text-slate-400 font-sans">
         <Toaster position="top-right" reverseOrder={false} />
