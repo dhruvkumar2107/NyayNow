@@ -244,7 +244,9 @@ router.post("/verify-otp", async (req, res) => {
 /* ================= LOGIN ================= */
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email = email.trim().toLowerCase();
+    password = password.trim();
 
     const user = await User.findOne({ email });
     if (!user) {
