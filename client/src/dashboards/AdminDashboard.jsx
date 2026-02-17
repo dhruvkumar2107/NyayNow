@@ -16,12 +16,12 @@ export default function AdminDashboard() {
 
     const fetchData = async () => {
         try {
-            const [resLawyers, statsRes] = await Promise.all([
-                axios.get("/api/lawyers"),
+            const [pendingRes, statsRes] = await Promise.all([
+                axios.get("/api/admin/pending-lawyers"),
                 axios.get("/api/admin/stats")
             ]);
 
-            setLawyers(resLawyers.data.lawyers || resLawyers.data);
+            setLawyers(pendingRes.data); // Now actively sets ONLY pending lawyers
             setStats({
                 users: statsRes.data.users,
                 pending: statsRes.data.pending,
@@ -39,13 +39,14 @@ export default function AdminDashboard() {
 
     const verifyLawyer = async (id, status) => {
         try {
-            await axios.put(`/api/users/${id}`, {
-                verified: status === 'verified',
-                verificationStatus: status
-            });
-            toast.success(`Lawyer ${status === 'verified' ? 'Approved' : 'Rejected'}`);
-            fetchData();
-        } catch (err) { toast.error("Action Failed"); }
+            // Use dedicated Admin Endpoint
+            await axios.post(`/api/admin/verify-lawyer/${id}`, { status });
+            toast.success(`Lawyer ${status === 'approved' ? 'Approved' : 'Rejected'}`);
+            fetchData(); // Refresh list
+        } catch (err) {
+            console.error(err);
+            toast.error("Action Failed");
+        }
     };
 
     const maskEmail = (email) => {
@@ -137,7 +138,7 @@ export default function AdminDashboard() {
                                             {!lawyer.verified && (
                                                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <button onClick={() => verifyLawyer(lawyer._id, 'rejected')} className="p-2 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition" title="Decline"><XCircle size={20} /></button>
-                                                    <button onClick={() => verifyLawyer(lawyer._id, 'verified')} className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white transition" title="Approve"><CheckCircle size={20} /></button>
+                                                    <button onClick={() => verifyLawyer(lawyer._id, 'approved')} className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white transition" title="Approve"><CheckCircle size={20} /></button>
                                                 </div>
                                             )}
                                         </div>

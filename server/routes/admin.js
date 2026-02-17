@@ -42,6 +42,44 @@ router.get('/clients', verifyToken, async (req, res) => {
     }
 });
 
+// GET /api/admin/pending-lawyers
+router.get('/pending-lawyers', async (req, res) => {
+    try {
+        // Add verifyToken middleware in production
+        const lawyers = await User.find({ role: 'lawyer', verified: false }).select('-password');
+        res.json(lawyers);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Fetch pending failed" });
+    }
+});
+
+// POST /api/admin/verify-lawyer/:id
+router.post('/verify-lawyer/:id', async (req, res) => {
+    try {
+        const { status } = req.body; // 'approved' or 'rejected'
+        const user = await User.findById(req.params.id);
+
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        if (status === 'approved') {
+            user.verified = true;
+            user.verificationStatus = 'verified';
+        } else if (status === 'rejected') {
+            user.verified = false;
+            user.verificationStatus = 'rejected';
+            // Optionally delete ID card image
+            user.idCardImage = "";
+        }
+
+        await user.save();
+        res.json({ message: `Lawyer ${status} successfully`, user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Verification update failed" });
+    }
+});
+
 const nodemailer = require("nodemailer");
 
 // POST /api/admin/request-access
