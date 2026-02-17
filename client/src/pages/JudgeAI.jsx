@@ -40,7 +40,7 @@ const JudgeAI = () => {
         doc.setTextColor(50, 50, 50);
         doc.setFontSize(10);
         doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 50);
-        doc.text(`Case ID: REF-${Math.floor(Math.random() * 10000)}`, 160, 50);
+        doc.text(`Case ID: ${result.caseId}`, 160, 50);
 
         // EXECUTIVE SUMMARY
         doc.setFontSize(14);
@@ -123,11 +123,12 @@ const JudgeAI = () => {
 
             if (res.data) {
                 setResult({
+                    caseId: res.data.case_id || `REF-${Math.floor(Math.random() * 10000)}`,
                     winProbability: parseInt(res.data.win_probability) || 75,
-                    riskLevel: res.data.risk_analysis ? "High" : "Medium", // Keep simple logic or use AI return
-                    keyPrecedents: Math.floor(Math.random() * 50) + 10,
+                    riskLevel: res.data.risk_level || "Medium",
+                    keyPrecedents: res.data.precedent_count || 12,
                     sentiment: "Neutral",
-                    analysis: res.data.strategy ? res.data.strategy[0] : "Analysis complete.", // Fallback
+                    analysis: res.data.strategy ? res.data.strategy[0] : "Analysis complete.",
                     risks: res.data.risk_analysis || [],
                     strategy: res.data.strategy || [],
                     precedent: res.data.relevant_precedent
@@ -138,16 +139,8 @@ const JudgeAI = () => {
             console.error(err);
             toast.error("AI Overload. Using Fallback Analysis.");
             // Fallback Mock
-            setResult({
-                winProbability: 72,
-                riskLevel: "Medium",
-                keyPrecedents: 12,
-                sentiment: "Positive",
-                analysis: "The case has merit but faces procedural hurdles.",
-                risks: ["Lack of primary evidence", "Statute of limitations check required"],
-                strategy: ["File for discovery immediately", "Seek amicable settlement"],
-                precedent: "State vs. XYZ (2018)"
-            });
+            toast.error("AI Analysis failed. Please try again.");
+            setResult(null);
         } finally {
             setAnalyzing(false);
         }

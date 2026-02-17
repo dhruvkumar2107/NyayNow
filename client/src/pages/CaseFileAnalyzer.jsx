@@ -50,29 +50,22 @@ const CaseFileAnalyzer = () => {
         formData.append('file', file);
 
         try {
-            // Simulate API call
-            // const token = localStorage.getItem('token');
-            //  const res = await axios.post('/api/ai/analyze-case-file', formData, ...);
+            const token = localStorage.getItem('token');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-            // Simulate scanning delay for effect
-            setTimeout(() => {
-                setAnalysis({
-                    winProbability: 72,
-                    summary: "The document is an FIR related to a property dispute. Key allegations involve trespassing and criminal intimidation. The timeline suggests a delay in filing the complaint.",
-                    timeline: [
-                        { date: "12 Aug 2023", event: "Incident Occurred at Dwarka Sector 12" },
-                        { date: "15 Aug 2023", event: "Complaint Filed at Police Station" },
-                    ],
-                    risks: ["Delay of 3 days in filing FIR not explained", "Lack of independent witnesses"],
-                    contradictions: ["Complainant mentions 3 attackers, but CCTV analysis (if available) should be verified."],
-                    citations: ["Lalita Kumari v. Govt. of UP", "State of Haryana v. Bhajan Lal"]
-                });
-                toast.success("Forensic Analysis Complete");
-                setLoading(false);
-            }, 2000);
+            const res = await axios.post('/api/ai/analyze-case-file', formData, {
+                headers: {
+                    ...headers,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            setAnalysis(res.data);
+            toast.success("Forensic Analysis Complete");
         } catch (err) {
             console.error(err);
-            toast.error("Analysis Failed");
+            toast.error(err.response?.data?.error || "Analysis Failed");
+        } finally {
             setLoading(false);
         }
     };

@@ -142,8 +142,35 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    settings: {
+      notifications: {
+        email: { type: Boolean, default: true },
+        push: { type: Boolean, default: true },
+        marketing: { type: Boolean, default: false }
+      },
+      privacy: {
+        profileVisible: { type: Boolean, default: true },
+        showStatus: { type: Boolean, default: true }
+      },
+      theme: { type: String, default: 'Dark' }
+    }
   },
   { timestamps: true }
 );
+
+const { syncLawyer, deleteRecord } = require("../utils/algolia");
+
+userSchema.post("save", function (doc) {
+  if (doc.role === "lawyer") {
+    syncLawyer(doc);
+  }
+});
+
+userSchema.post("findOneAndDelete", function (doc) {
+  if (doc && doc.role === "lawyer") {
+    deleteRecord("lawyers", doc._id.toString());
+  }
+});
 
 module.exports = mongoose.model("User", userSchema);

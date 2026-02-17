@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 export default function BookingModal({ lawyer, client, onClose }) {
@@ -6,9 +6,19 @@ export default function BookingModal({ lawyer, client, onClose }) {
     const [slot, setSlot] = useState("");
     const [notes, setNotes] = useState("");
     const [loading, setLoading] = useState(false);
+    const [bookedSlots, setBookedSlots] = useState([]);
 
-    // Mock available slots
+    // Real available slots
     const TIME_SLOTS = ["10:00 AM", "11:00 AM", "02:00 PM", "04:00 PM", "06:00 PM"];
+
+    // Fetch booked slots when date changes
+    React.useEffect(() => {
+        if (date && lawyer._id) {
+            axios.get(`/api/appointments/booked-slots?lawyerId=${lawyer._id}&date=${date}`)
+                .then(res => setBookedSlots(res.data))
+                .catch(err => console.error("Failed to fetch slots", err));
+        }
+    }, [date, lawyer._id]);
 
     const handleBook = async () => {
         if (!date || !slot) return alert("Please select date and time");
@@ -47,25 +57,34 @@ export default function BookingModal({ lawyer, client, onClose }) {
                             className="w-full bg-[#020617] border border-white/10 rounded-lg p-3 outline-none focus:border-indigo-500 text-white placeholder:text-slate-600"
                             min={new Date().toISOString().split("T")[0]}
                             value={date}
-                            onChange={e => setDate(e.target.value)}
+                            onChange={e => {
+                                setDate(e.target.value);
+                                setSlot(""); // Reset slot on date change
+                            }}
                         />
                     </div>
 
                     <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Select Time Slot</label>
                         <div className="grid grid-cols-3 gap-2">
-                            {TIME_SLOTS.map(t => (
-                                <button
-                                    key={t}
-                                    onClick={() => setSlot(t)}
-                                    className={`py-2 text-xs font-medium rounded-lg border transition ${slot === t
-                                        ? "bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-600/20"
-                                        : "bg-[#020617] text-slate-300 border-white/10 hover:bg-white/5 hover:text-white"
-                                        }`}
-                                >
-                                    {t}
-                                </button>
-                            ))}
+                            {TIME_SLOTS.map(t => {
+                                const isBooked = bookedSlots.includes(t);
+                                return (
+                                    <button
+                                        key={t}
+                                        onClick={() => setSlot(t)}
+                                        disabled={isBooked || !date}
+                                        className={`py-2 text-xs font-medium rounded-lg border transition ${slot === t
+                                            ? "bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-600/20"
+                                            : isBooked
+                                                ? "bg-[#020617] text-slate-600 border-white/5 cursor-not-allowed decoration-slice line-through"
+                                                : "bg-[#020617] text-slate-300 border-white/10 hover:bg-white/5 hover:text-white"
+                                            }`}
+                                    >
+                                        {t}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
 

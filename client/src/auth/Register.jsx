@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { motion, AnimatePresence } from "framer-motion";
+import { UploadCloud } from "lucide-react";
 
 const INDIAN_CITIES = [
   "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata", "Pune", "Jaipur", "Surat",
@@ -34,10 +35,9 @@ export default function Register() {
     // NEW FIELDS
     isStudent: false,
     studentRollNumber: "",
-    idCardImage: null // File Object
+    verified: false
   });
 
-  const [idCardPreview, setIdCardPreview] = useState(null);
 
   // Custom City Dropdown State
   const [selectedCity, setSelectedCity] = useState("");
@@ -77,33 +77,19 @@ export default function Register() {
       if (!selectedCity) return toast.error("Please select a city");
       if (!formData.isStudent && !formData.barCouncilId) return toast.error("Bar Council ID is required");
       if (formData.isStudent && !formData.studentRollNumber) return toast.error("Student Roll Number is required");
-      if (!formData.idCardImage) return toast.error("ID Card Upload is mandatory");
+      // Check for ID Image instead of Verification
+      if (!formData.idCardImage) return toast.error("Please upload your ID Card / Bar Council Cert");
     }
 
     setLoading(true);
 
     try {
-      let uploadedIdUrl = "";
-
-      // 1. Upload ID Card if present
-      if (formData.idCardImage) {
-        const uploadData = new FormData();
-        uploadData.append("file", formData.idCardImage);
-
-        // We need a separate upload endpoint that returns the URL
-        // Assuming /api/uploads exists from previous context
-        const uploadRes = await axios.post("/api/uploads", uploadData, {
-          headers: { "Content-Type": "multipart/form-data" }
-        });
-        uploadedIdUrl = uploadRes.data.path;
-      }
-
       const userData = {
         role,
         plan: "silver",
         location: selectedCity,
         ...formData,
-        idCardImage: uploadedIdUrl // Send URL, not file object
+        verificationStatus: formData.verified ? "verified" : "pending"
       };
 
       const res = await register(userData);
@@ -200,8 +186,8 @@ export default function Register() {
                 type="button"
                 onClick={() => setFormData(p => ({ ...p, role: r.id }))}
                 className={`flex-1 py-4 rounded-xl transition-all duration-300 border ${formData.role === r.id
-                    ? "bg-gradient-gold text-midnight-950 border-gold-500/0 shadow-lg shadow-gold-500/20 scale-[1.02]"
-                    : "bg-transparent text-slate-400 border-transparent hover:bg-white/5 hover:text-white"
+                  ? "bg-gradient-gold text-midnight-950 border-gold-500/0 shadow-lg shadow-gold-500/20 scale-[1.02]"
+                  : "bg-transparent text-slate-400 border-transparent hover:bg-white/5 hover:text-white"
                   }`}
               >
                 <div className="text-2xl mb-1">{r.icon}</div>
@@ -264,24 +250,60 @@ export default function Register() {
                   <InputGroup label="Location (City)" name="location" value={formData.location} onChange={handleChange} placeholder="Mumbai" />
                 </div>
 
-                {/* ID CARD UPLOAD */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">
-                    {formData.isStudent ? "Upload Student ID Card" : "Upload Bar Council ID"} <span className="text-rose-500">*</span>
-                  </label>
-                  <div className="relative group">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="block w-full text-sm text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-white/5 file:text-gold-400 hover:file:bg-gold-500/10 transition cursor-pointer border border-dashed border-white/20 rounded-xl p-2"
-                    />
-                    {formData.idCardImage && (
-                      <div className="mt-2 text-xs text-green-400 flex items-center gap-2">
-                        <span>✓ Image Selected</span>
-                      </div>
-                    )}
+                {/* MANUAL VERIFICATION - ID CARD UPLOAD */}
+                <div className="space-y-4 p-4 bg-indigo-900/20 border border-indigo-500/30 rounded-xl">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-white font-bold text-sm flex items-center gap-2">
+                        <UploadCloud size={18} className="text-indigo-400" />
+                        Bar Council ID / ID Card
+                      </h4>
+                      <p className="text-xs text-indigo-300 mt-1">Upload for admin approval.</p>
+                    </div>
                   </div>
+
+                  {formData.idCardImage ? (
+                    <div className="relative w-full h-32 bg-black/40 rounded-lg overflow-hidden border border-white/10 group">
+                      <img src={typeof formData.idCardImage === 'string' ? formData.idCardImage : URL.createObjectURL(formData.idCardImage)} alt="ID Preview" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, idCardImage: "" })}
+                        className="absolute top-2 right-2 bg-red-600/80 p-1 rounded-full text-white hover:bg-red-500 transition"
+                      >
+                        ×
+                      </button>
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition">
+                        <span className="text-white text-xs font-bold">Change File</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative border-2 border-dashed border-slate-600 hover:border-indigo-500 rounded-xl p-6 transition-colors bg-black/20 text-center cursor-pointer group">
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        onChange={async (e) => {
+                          const file = e.target.files[0];
+                          if (!file) return;
+
+                          const toastId = toast.loading("Uploading ID...");
+                          try {
+                            const { uploadFile } = await import("../api"); // Dynamic import to avoid cycles or path issues
+                            const res = await uploadFile(file);
+                            setFormData({ ...formData, idCardImage: res.path });
+                            toast.success("ID Uploaded", { id: toastId });
+                          } catch (err) {
+                            console.error(err);
+                            toast.error("Upload Failed", { id: toastId });
+                          }
+                        }}
+                      />
+                      <UploadCloud className="mx-auto text-slate-500 group-hover:text-indigo-400 mb-2 transition" />
+                      <p className="text-xs text-slate-400 group-hover:text-slate-200 transition">Click to Upload or Drag & Drop</p>
+                    </div>
+                  )}
+
+                  <p className="text-[10px] text-slate-500">Your account will be "Pending" until an admin verifies this document.</p>
                 </div>
               </div>
             )}

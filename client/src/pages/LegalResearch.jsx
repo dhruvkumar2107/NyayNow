@@ -17,35 +17,21 @@ const LegalResearch = () => {
         setLoading(true);
         setSearched(true);
         try {
-            // Mocking API for UI demo if backend not fully ready or for speed
-            // const { data } = await axios.post('/api/ai/research', { query });
+            const { data } = await axios.post('/api/ai/legal-research', { query });
 
-            setTimeout(() => {
-                setResults([
-                    {
-                        title: "Kesavananda Bharati v. State of Kerala (1973)",
-                        citation: "AIR 1973 SC 1461",
-                        summary: "The Supreme Court held that the Parliament cannot alter the basic structure of the Constitution. This case established the 'Basic Structure Doctrine'.",
-                        relevance: "98%",
-                        tags: ["Constitutional Law", "Basic Structure"]
-                    },
-                    {
-                        title: "Maneka Gandhi v. Union of India (1978)",
-                        citation: "1978 AIR 597",
-                        summary: "Expanded the meaning of 'Personal Liberty' under Article 21. Any procedure establishing deprivation of life or liberty must be fair, just, and reasonable.",
-                        relevance: "92%",
-                        tags: ["Article 21", "Fundamental Rights"]
-                    },
-                    {
-                        title: "Vishaka v. State of Rajasthan (1997)",
-                        citation: "AIR 1997 SC 3011",
-                        summary: "Laid down guidelines to prevent sexual harassment at workplace, which later paved the way for the POSH Act, 2013.",
-                        relevance: "88%",
-                        tags: ["Workplace Safety", "Gender Justice"]
-                    }
-                ]);
-                setLoading(false);
-            }, 1000);
+            if (data.cases) {
+                setResults(data.cases.map(c => ({
+                    title: c.name + " " + (c.citation || ""),
+                    citation: c.citation,
+                    summary: c.ratio || c.relevance,
+                    relevance: "High", // AI doesn't always return score, default to High
+                    tags: ["Supreme Court", "Judgment"]
+                })));
+            } else {
+                setResults([]);
+            }
+
+            setLoading(false);
 
         } catch (err) {
             console.error(err);

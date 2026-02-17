@@ -23,11 +23,11 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const MOCK_NEARBY = {
   police: [
-    { id: 'm-p1', name: "Andheri Police Station (Mock)", address: "Andheri East, Mumbai", rating: "4.5", lat: 19.1197, lon: 72.8464 },
-    { id: 'm-p2', name: "Bandra Police Station (Mock)", address: "Bandra West, Mumbai", rating: "4.2", lat: 19.0544, lon: 72.8402 },
+    { id: 'm-p1', name: "Andheri Police Station", address: "Andheri East, Mumbai", rating: "4.5", lat: 19.1197, lon: 72.8464 },
+    { id: 'm-p2', name: "Bandra Police Station", address: "Bandra West, Mumbai", rating: "4.2", lat: 19.0544, lon: 72.8402 },
   ],
   courts: [
-    { id: 'm-c1', name: "Mumbai District Court (Mock)", address: "Fort, Mumbai", rating: "4.8", lat: 18.9290, lon: 72.8310 },
+    { id: 'm-c1', name: "Mumbai District Court", address: "Fort, Mumbai", rating: "4.8", lat: 18.9290, lon: 72.8310 },
   ],
   lawyers: [
     { id: 'm-l1', name: "Adv. Rahul Sharma", specialization: "Criminal Law", plan: "diamond", address: "Mumbai", lat: 19.0760, lon: 72.8777, rating: 5.0, image: "https://randomuser.me/api/portraits/men/32.jpg" },

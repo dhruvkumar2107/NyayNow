@@ -9,14 +9,19 @@ export default function Contact() {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
     const [sending, setSending] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setSending(true);
-        setTimeout(() => {
+        try {
+            await axios.post('https://nyaynow.in/api/contact', formData);
             toast.success("Message transmitted securely.");
             setFormData({ name: '', email: '', message: '' });
+        } catch (error) {
+            console.error(error);
+            toast.error("Transmission failed. Please try again.");
+        } finally {
             setSending(false);
-        }, 1500);
+        }
     };
 
     return (

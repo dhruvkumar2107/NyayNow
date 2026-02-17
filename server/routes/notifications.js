@@ -1,6 +1,31 @@
 const express = require("express");
 const router = express.Router();
 const Message = require("../models/Message");
+const User = require("../models/User"); // Add User model to fetch phone number
+const { sendWhatsApp } = require("../utils/sms"); // Import WhatsApp utility
+
+// POST /api/notifications/send-whatsapp
+// Manually trigger a WhatsApp alert (e.g., when a new case is assigned or urgent message received)
+router.post("/send-whatsapp", async (req, res) => {
+    try {
+        const { userId, message } = req.body;
+
+        if (!userId || !message) return res.status(400).json({ error: "Missing fields" });
+
+        const user = await User.findById(userId);
+        if (!user || !user.phone) {
+            return res.status(404).json({ error: "User or phone number not found" });
+        }
+
+        // Send WhatsApp
+        await sendWhatsApp(user.phone, `Scalable Justice Alert: ${message}`);
+
+        res.json({ success: true, message: "WhatsApp alert sent" });
+    } catch (err) {
+        console.error("WhatsApp Route Error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
 
 // GET /api/notifications/unread?userId=...
 router.get("/unread", async (req, res) => {

@@ -67,4 +67,21 @@ router.put("/:id", async (req, res) => {
     }
 });
 
+// GET /api/appointments/booked-slots
+// Get booked slots for a lawyer on a specific date
+router.get("/booked-slots", async (req, res) => {
+    try {
+        const { lawyerId, date } = req.query;
+        if (!lawyerId || !date) return res.status(400).json({ error: "Missing parameters" });
+
+        const appointments = await Appointment.find({ lawyerId, date, status: { $ne: "cancelled" } });
+        const bookedSlots = appointments.map(a => a.slot);
+
+        res.json(bookedSlots);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to fetch slots" });
+    }
+});
+
 module.exports = router;

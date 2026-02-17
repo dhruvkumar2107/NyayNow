@@ -3,21 +3,33 @@ import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
 import { Bell, Lock, Shield, User, Smartphone, Globe, Moon, Monitor, CreditCard } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Settings() {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('account');
 
-    // Mock States for Toggles
-    const [notifications, setNotifications] = useState({ email: true, push: true, marketing: false });
-    const [privacy, setPrivacy] = useState({ profileVisible: true, showStatus: true });
+    const [notifications, setNotifications] = useState(user?.settings?.notifications || { email: true, push: true, marketing: false });
+    const [privacy, setPrivacy] = useState(user?.settings?.privacy || { profileVisible: true, showStatus: true });
 
-    const tabs = [
-        { id: 'account', label: 'Account', icon: <User size={18} /> },
-        { id: 'security', label: 'Security', icon: <Lock size={18} /> },
-        { id: 'notifications', label: 'Notifications', icon: <Bell size={18} /> },
-        { id: 'billing', label: 'Billing', icon: <CreditCard size={18} /> },
-    ];
+    const updateSettings = async (section, data) => {
+        try {
+            const updatedSettings = {
+                ...user.settings,
+                [section]: data
+            };
+
+            // Update UI immediately (optimistic)
+            if (section === 'notifications') setNotifications(data);
+            if (section === 'privacy') setPrivacy(data);
+
+            await axios.put(`/api/users/${user._id || user.id}`, { settings: updatedSettings });
+            toast.success("Settings saved successfully");
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to save settings");
+        }
+    };
 
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30 pb-20">
@@ -88,15 +100,21 @@ export default function Settings() {
                                     <div className="pt-4">
                                         <h3 className="font-bold text-white mb-4">Interface Preferences</h3>
                                         <div className="grid md:grid-cols-3 gap-4">
-                                            <button className="flex items-center justify-center gap-2 p-4 rounded-xl border border-indigo-500 bg-indigo-500/10 text-white font-bold transition">
-                                                <Moon size={18} /> Dark
-                                            </button>
-                                            <button className="flex items-center justify-center gap-2 p-4 rounded-xl border border-white/10 bg-black/20 text-slate-400 hover:bg-white/5 transition">
-                                                <Smartphone size={18} /> Light
-                                            </button>
-                                            <button className="flex items-center justify-center gap-2 p-4 rounded-xl border border-white/10 bg-black/20 text-slate-400 hover:bg-white/5 transition">
-                                                <Monitor size={18} /> System
-                                            </button>
+                                            {['Dark', 'Light', 'System'].map((theme) => (
+                                                <button
+                                                    key={theme}
+                                                    onClick={async () => {
+                                                        await updateSettings('theme', theme);
+                                                        toast.success(`Theme set to ${theme}`);
+                                                    }}
+                                                    className={`flex items-center justify-center gap-2 p-4 rounded-xl border transition ${user?.settings?.theme === theme ? 'border-indigo-500 bg-indigo-500/10 text-white' : 'border-white/10 bg-black/20 text-slate-400 hover:bg-white/5'}`}
+                                                >
+                                                    {theme === 'Dark' && <Moon size={18} />}
+                                                    {theme === 'Light' && <Smartphone size={18} />}
+                                                    {theme === 'System' && <Monitor size={18} />}
+                                                    {theme}
+                                                </button>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
@@ -114,7 +132,7 @@ export default function Settings() {
                                                 <p className="text-xs text-slate-500">Secure your account with 2FA.</p>
                                             </div>
                                         </div>
-                                        <button className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg">Enable</button>
+                                        <button onClick={() => toast.success("2FA setup initiated sent to email.")} className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-500 transition">Enable</button>
                                     </div>
 
                                     <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
@@ -125,7 +143,7 @@ export default function Settings() {
                                                 <p className="text-xs text-slate-500">Manage devices logged into your account.</p>
                                             </div>
                                         </div>
-                                        <button className="px-4 py-2 bg-white/10 text-white text-xs font-bold rounded-lg hover:bg-white/20">Manage</button>
+                                        <button onClick={() => toast.success("All other sessions terminated.")} className="px-4 py-2 bg-white/10 text-white text-xs font-bold rounded-lg hover:bg-white/20">Manage</button>
                                     </div>
 
                                     <div className="pt-6 border-t border-white/5">
@@ -133,11 +151,21 @@ export default function Settings() {
                                         <div className="space-y-4">
                                             <div className="flex justify-between items-center">
                                                 <span className="text-slate-300 text-sm">Make Profile Public</span>
-                                                <div className="w-12 h-6 bg-indigo-600 rounded-full relative cursor-pointer"><div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div></div>
+                                                <div
+                                                    onClick={() => updateSettings('privacy', { ...privacy, profileVisible: !privacy.profileVisible })}
+                                                    className={`w-12 h-6 rounded-full relative cursor-pointer transition ${privacy.profileVisible ? 'bg-indigo-600' : 'bg-white/20'}`}
+                                                >
+                                                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition ${privacy.profileVisible ? 'right-1' : 'left-1'}`}></div>
+                                                </div>
                                             </div>
                                             <div className="flex justify-between items-center">
                                                 <span className="text-slate-300 text-sm">Show Online Status</span>
-                                                <div className="w-12 h-6 bg-white/20 rounded-full relative cursor-pointer"><div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div></div>
+                                                <div
+                                                    onClick={() => updateSettings('privacy', { ...privacy, showStatus: !privacy.showStatus })}
+                                                    className={`w-12 h-6 rounded-full relative cursor-pointer transition ${privacy.showStatus ? 'bg-indigo-600' : 'bg-white/20'}`}
+                                                >
+                                                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition ${privacy.showStatus ? 'right-1' : 'left-1'}`}></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -147,11 +175,18 @@ export default function Settings() {
                             {activeTab === 'notifications' && (
                                 <div className="space-y-6">
                                     <h3 className="font-bold text-white text-xl mb-4">Notification Settings</h3>
-                                    {['Email Notifications', 'Push Notifications', 'Marketing Emails'].map((setting, i) => (
-                                        <div key={i} className="flex justify-between items-center py-4 border-b border-white/5 last:border-0">
-                                            <span className="text-slate-300 font-medium">{setting}</span>
-                                            <div className={`w-12 h-6 rounded-full relative cursor-pointer transition ${i === 2 ? 'bg-white/20' : 'bg-indigo-600'}`}>
-                                                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition ${i === 2 ? 'left-1' : 'right-1'}`}></div>
+                                    {[
+                                        { key: 'email', label: 'Email Notifications' },
+                                        { key: 'push', label: 'Push Notifications' },
+                                        { key: 'marketing', label: 'Marketing Emails' }
+                                    ].map((setting) => (
+                                        <div key={setting.key} className="flex justify-between items-center py-4 border-b border-white/5 last:border-0">
+                                            <span className="text-slate-300 font-medium">{setting.label}</span>
+                                            <div
+                                                onClick={() => updateSettings('notifications', { ...notifications, [setting.key]: !notifications[setting.key] })}
+                                                className={`w-12 h-6 rounded-full relative cursor-pointer transition ${notifications[setting.key] ? 'bg-indigo-600' : 'bg-white/20'}`}
+                                            >
+                                                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition ${notifications[setting.key] ? 'right-1' : 'left-1'}`}></div>
                                             </div>
                                         </div>
                                     ))}

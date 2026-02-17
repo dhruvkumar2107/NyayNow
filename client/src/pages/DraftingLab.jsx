@@ -43,7 +43,7 @@ const DraftingLab = () => {
 
         setLoading(true);
         try {
-            const { data } = await axios.post('https://nyaynow.in/api/ai/draft-contract', {
+            const { data } = await axios.post('/api/ai/draft-contract', {
                 type: contractType,
                 parties: parties,
                 terms: terms
@@ -65,6 +65,32 @@ const DraftingLab = () => {
         }
     };
 
+    const handleSign = async () => {
+        if (!generatedContract) return;
+
+        const toastId = toast.loading("Preparing DocuSign Envelope...");
+        try {
+            const { data } = await axios.post("/api/docusign/sign", {
+                email: "user@example.com", // In a real app, get from AuthContext
+                name: "Current User",
+                documentBase64: window.btoa(generatedContract), // Simple encoding for demo
+                returnUrl: window.location.href
+            });
+
+            if (data.signingUrl) {
+                toast.success("Redirecting to DocuSign...", { id: toastId });
+                // In a real app, we might open this in a modal or redirect
+                // For demo, we just simulate the success
+                setTimeout(() => {
+                    window.open(data.signingUrl, "_blank");
+                }, 1000);
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Signing session failed", { id: toastId });
+        }
+    };
+
     const handleAnalyze = async () => {
         if (!analysisText.trim()) return;
 
@@ -72,7 +98,7 @@ const DraftingLab = () => {
 
         setLoading(true);
         try {
-            const { data } = await axios.post('https://nyaynow.in/api/ai/agreement', {
+            const { data } = await axios.post('/api/ai/agreement', {
                 text: analysisText
             }, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -253,7 +279,16 @@ const DraftingLab = () => {
                                         <>
                                             <div className="flex justify-between items-center mb-6 pb-6 border-b border-white/5">
                                                 <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-xs font-bold uppercase tracking-wider border border-indigo-500/20">Draft Generated</span>
-                                                <button className="text-slate-400 hover:text-indigo-400 transition"><Download size={20} /></button>
+                                                <div className="flex gap-3">
+                                                    <button
+                                                        onClick={handleSign}
+                                                        className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white text-sm font-bold rounded-lg transition shadow-lg shadow-yellow-600/20"
+                                                    >
+                                                        <img src="https://img.icons8.com/color/48/docusign.png" className="w-5 h-5 bg-white rounded-sm p-0.5" alt="DocuSign" />
+                                                        e-Sign
+                                                    </button>
+                                                    <button className="text-slate-400 hover:text-indigo-400 transition" title="Download PDF"><Download size={20} /></button>
+                                                </div>
                                             </div>
                                             <div className="prose prose-invert prose-slate max-w-none font-serif text-slate-300">
                                                 <ReactMarkdown>{generatedContract}</ReactMarkdown>

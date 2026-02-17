@@ -56,6 +56,7 @@ const Careers = lazy(() => import("./pages/Careers"));
 const Blog = lazy(() => import("./pages/Blog"));
 const Contact = lazy(() => import("./pages/Contact"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
+const DigiLockerMock = lazy(() => import("./pages/DigiLockerMock")); // NEW
 
 /* Loading Component */
 const LoadingFallback = () => (
@@ -165,6 +166,7 @@ export default function App() {
               <Route path="/blog" element={<Blog />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/help" element={<HelpCenter />} />
+              <Route path="/digilocker-verify" element={<DigiLockerMock />} /> {/* NEW: Mock Route */}
 
             </Routes>
           </Suspense>

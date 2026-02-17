@@ -26,58 +26,9 @@ export default function SetupProfile() {
     const [verificationReason, setVerificationReason] = useState("");
     const [idCardUrl, setIdCardUrl] = useState(user?.idCardImage || "");
 
-    const handleIDUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
 
-        const formData = new FormData();
-        formData.append("file", file);
 
-        const toastId = toast.loading("Uploading ID Card...");
-        try {
-            const res = await axios.post("/api/uploads", formData, {
-                headers: { "Content-Type": "multipart/form-data" }
-            });
-            const url = res.data.path;
-            setIdCardUrl(url);
-            toast.success("ID Card Uploaded!", { id: toastId });
-        } catch (err) {
-            console.error(err);
-            toast.error("Upload failed", { id: toastId });
-        }
-    };
 
-    const verifyID = async () => {
-        if (!idCardUrl) return toast.error("Please upload an ID card first");
-
-        setVerificationStatus("scanning");
-        try {
-            const res = await axios.post("/api/lawyers/verify-id", {
-                userId: user._id || user.id,
-                imageUrl: idCardUrl
-            });
-
-            if (res.data.valid) {
-                setVerificationStatus("verified");
-                setVerificationReason(`Verified as ${res.data.name}`);
-                toast.success("Verification Successful!");
-
-                // Update local form data if name is extracted and empty
-                if (res.data.name && !formData.headline) {
-                    setFormData(prev => ({ ...prev, headline: `Advocate ${res.data.name}` }));
-                }
-            } else {
-                setVerificationStatus("failed");
-                setVerificationReason(res.data.reason || "Could not verify ID");
-                toast.error("Verification Failed");
-            }
-        } catch (err) {
-            console.error(err);
-            setVerificationStatus("failed");
-            setVerificationReason("Server Error during verification");
-            toast.error("Verification Process Failed");
-        }
-    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -244,59 +195,66 @@ export default function SetupProfile() {
                                     <Shield className="text-indigo-400" size={20} /> Identity Verification
                                 </h3>
                                 <p className="text-xs text-slate-400 mb-6 max-w-sm">
-                                    Upload your Bar Council ID Card to get the <span className="text-indigo-400 font-bold">Verified Badge</span>.
-                                    Our AI uses OCR to instantly verify your credentials.
+                                    Verify your identity via <span className="text-indigo-400 font-bold">DigiLocker</span> (Govt. of India) to get the Verified Badge instantly.
                                 </p>
 
                                 <div className="space-y-4">
-                                    {/* Upload Area */}
-                                    <div className="flex items-center gap-4">
-                                        <div className="relative group w-full">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleIDUpload}
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                                disabled={verificationStatus === "verified"}
-                                            />
-                                            <div className={`flex items-center justify-center gap-3 w-full px-4 py-3 bg-black/40 border border-dashed rounded-xl transition ${verificationStatus === 'verified' ? 'border-emerald-500/50 text-emerald-500 cursor-not-allowed' : 'border-slate-500 text-slate-400 group-hover:border-indigo-500 group-hover:text-indigo-400'}`}>
-                                                <UploadCloud size={20} />
-                                                <span className="text-sm font-medium truncate">
-                                                    {idCardUrl ? "ID Card Uploaded (Click to change)" : "Upload ID Card"}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     {/* Action Button & Status */}
-                                    <div className="flex items-center justify-between">
-                                        <button
-                                            type="button"
-                                            onClick={verifyID}
-                                            disabled={!idCardUrl || verificationStatus === "scanning" || verificationStatus === "verified"}
-                                            className="px-6 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-lg shadow-indigo-600/20"
-                                        >
-                                            {verificationStatus === "scanning" ? (
-                                                <span className="flex items-center gap-2"><Loader size={16} className="animate-spin" /> Scanning...</span>
-                                            ) : verificationStatus === "verified" ? (
-                                                <span className="flex items-center gap-2"><CheckCircle size={16} /> Verified</span>
-                                            ) : (
-                                                "Verify Now"
-                                            )}
-                                        </button>
-
-                                        {/* Status Text */}
-                                        {verificationStatus === "failed" && (
-                                            <div className="flex items-center gap-2 text-red-400 text-xs font-bold bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20">
-                                                <XCircle size={14} /> {verificationReason}
+                                    <div className="space-y-4">
+                                        {idCardUrl ? (
+                                            <div className="relative w-full h-40 bg-black/40 rounded-lg overflow-hidden border border-white/10 group">
+                                                <img src={idCardUrl} alt="ID Uploaded" className="w-full h-full object-cover" />
+                                                {!formData.verified && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIdCardUrl("")}
+                                                        className="absolute top-2 right-2 bg-red-600/80 p-1.5 rounded-full text-white hover:bg-red-500 transition"
+                                                    >
+                                                        <XCircle size={16} />
+                                                    </button>
+                                                )}
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                                    <span className="text-white text-xs font-bold flex items-center gap-2">
+                                                        <CheckCircle size={14} className="text-emerald-400" /> Document Uploaded
+                                                    </span>
+                                                </div>
                                             </div>
-                                        )}
-                                        {verificationStatus === "verified" && (
-                                            <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                                                <CheckCircle size={14} /> {verificationReason || "ID Verified"}
+                                        ) : (
+                                            <div className="relative border-2 border-dashed border-slate-600 hover:border-indigo-500 rounded-xl p-8 transition-colors bg-black/20 text-center cursor-pointer group">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*,application/pdf"
+                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files[0];
+                                                        if (!file) return;
+
+                                                        const toastId = toast.loading("Uploading Document...");
+                                                        try {
+                                                            const { uploadFile } = await import("../api");
+                                                            const res = await uploadFile(file);
+                                                            setIdCardUrl(res.path);
+                                                            toast.success("Document Uploaded", { id: toastId });
+                                                            // We keep verificationStatus as 'pending' implicitly since verified is false
+                                                        } catch (err) {
+                                                            console.error(err);
+                                                            toast.error("Upload Failed", { id: toastId });
+                                                        }
+                                                    }}
+                                                />
+                                                <UploadCloud className="mx-auto text-slate-500 group-hover:text-indigo-400 mb-2 transition" size={32} />
+                                                <p className="text-sm font-bold text-slate-300 group-hover:text-white transition">Upload Bar Council ID</p>
+                                                <p className="text-xs text-slate-500 mt-1">Click or Drag & Drop</p>
                                             </div>
                                         )}
                                     </div>
+
+                                    {/* Status Text */}
+                                    {verificationStatus === "verified" && (
+                                        <div className="mt-4 flex items-center gap-2 text-emerald-400 text-sm font-bold bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20 justify-center">
+                                            <CheckCircle size={18} /> Verified Account
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}

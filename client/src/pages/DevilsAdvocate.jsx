@@ -83,7 +83,7 @@ const DevilsAdvocate = () => {
                                 <h3 className="font-bold text-lg text-blue-400 flex items-center gap-2">
                                     <span className="w-2 h-2 bg-blue-500 rounded-full"></span> DEFENSE STRATEGY
                                 </h3>
-                                <span className="text-xs font-mono text-slate-500">INPUT // MOCK_ARGUMENT</span>
+                                <span className="text-xs font-mono text-slate-500">INPUT // DEFENSE_STATEMENT</span>
                             </div>
 
                             <textarea

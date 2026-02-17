@@ -145,10 +145,11 @@ router.post("/register", async (req, res) => {
     const normalizedPlan = plan ? plan.toLowerCase() : "free";
 
     // DEFAULT VERIFIED STATUS
-    // Lawyers/Students need manual/admin verification
+    // Lawyers/Students need verification
+    // IF verificationStatus is passed as 'verified' (from DigiLocker flow), we respect it.
     let isVerified = true;
     if (role === "lawyer") {
-      isVerified = false;
+      isVerified = req.body.verificationStatus === "verified";
     }
 
     const user = await User.create({
@@ -188,6 +189,8 @@ router.post("/register", async (req, res) => {
 /* ================= OTP AUTH ================= */
 const OTP_STORE = new Map();
 
+const { sendSMS } = require("../utils/sms");
+
 router.post("/send-otp", async (req, res) => {
   const { phone } = req.body;
   if (!phone) {
@@ -197,9 +200,13 @@ router.post("/send-otp", async (req, res) => {
   const otp = Math.floor(1000 + Math.random() * 9000).toString();
   OTP_STORE.set(phone, otp);
 
-  console.log(`[OTP] ${phone} → ${otp}`);
+  // Send via Twilio
+  // If keys are missing, it will log mock SMS to console automatically
+  await sendSMS(phone, `Your NyayNow verification code is: ${otp}. Valid for 10 minutes.`);
 
-  res.json({ message: "OTP sent", mockOtp: otp });
+  console.log(`[OTP LOG] ${phone} → ${otp}`);
+
+  res.json({ message: "OTP sent via SMS" });
 });
 
 router.post("/verify-otp", async (req, res) => {
@@ -309,8 +316,9 @@ router.post("/forgot-password", async (req, res) => {
       await sendResetEmail(email, token);
       res.json({ message: "Reset link sent to email" });
     } catch (e) {
-      console.log("Email failed, sending mock link for dev:", `http://localhost:5173/reset-password/${token}`);
-      res.json({ message: "Mock Reset Link Sent (Check Console)", mockToken: token });
+      console.log("Email failed:", e.message);
+      // Fallback for dev if email fails (but we try real first)
+      res.json({ message: "Reset link generated (Dev Mode)", mockToken: token });
     }
 
   } catch (err) {

@@ -214,6 +214,9 @@ loadRoute("/api/notifications", "./routes/notifications"); // NEW
 loadRoute("/api/agreements", "./routes/agreements"); // NEW
 loadRoute("/api/events", "./routes/events"); // NEW CALENDAR ROUTE
 loadRoute("/api/admin", "./routes/admin"); // NEW ADMIN ANALYTICS
+loadRoute("/api/contact", "./routes/contact"); // NEW CONTACT ROUTE
+loadRoute("/api/docusign", "./routes/docusign"); // NEW DOCUSIGN ROUTE
+loadRoute("/api/verification", "./routes/verification"); // REAL DIGILOCKER ROUTE
 
 // Custom Sentry Error Handler (Compatible with all versions)
 app.use((err, req, res, next) => {

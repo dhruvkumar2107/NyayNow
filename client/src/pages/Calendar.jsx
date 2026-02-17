@@ -23,23 +23,14 @@ export default function Calendar() {
                 time: apt.slot,
                 status: apt.status
             }));
-            // Mock data for visual pop if empty
             if (mapped.length === 0) {
-                setEvents([
-                    { id: 1, title: 'Case Strategy Session', date: '2026-02-16', time: '10:00 AM', status: 'confirmed' },
-                    { id: 2, title: 'Legal Notice Review', date: '2026-02-18', time: '02:00 PM', status: 'pending' },
-                    { id: 3, title: 'Client Consultation', date: '2026-02-20', time: '11:30 AM', status: 'confirmed' },
-                ]);
+                setEvents([]);
             } else {
                 setEvents(mapped);
             }
         } catch (err) {
             console.error("Failed to fetch appointments");
-            // Fallback Mock
-            setEvents([
-                { id: 1, title: 'Case Strategy Session', date: '2026-02-16', time: '10:00 AM', status: 'confirmed' },
-                { id: 2, title: 'Legal Notice Review', date: '2026-02-18', time: '02:00 PM', status: 'pending' },
-            ]);
+            setEvents([]);
         } finally {
             setLoading(false);
         }
@@ -88,8 +79,10 @@ export default function Calendar() {
 
                             {[...Array(28).keys()].map(index => {
                                 const day = index + 1;
-                                const hasEvent = [16, 18, 20].includes(day); // Mock logic matching mockup data
-                                const isToday = day === 15;
+                                // Check if this day has any events
+                                const dateString = `2026-02-${day.toString().padStart(2, '0')}`;
+                                const hasEvent = events.some(e => e.date.includes(dateString));
+                                const isToday = day === 15; // Keeping today fixed for demo or use new Date()
 
                                 return (
                                     <div key={day} className={`

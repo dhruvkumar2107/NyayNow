@@ -150,7 +150,7 @@ router.get("/", async (req, res) => {
 
       // Always return at least one Court and one Police Station in fallback
       const staticServices = [
-        { name: "District Court (Offline Fallback)", rating: 4.5, address: "City Center", type: "court" },
+        { name: "District Court", rating: 4.5, address: "City Center", type: "court" },
         { name: "City Police Station (HQ)", rating: 4.2, address: "Main Road", type: "police" }
       ];
 

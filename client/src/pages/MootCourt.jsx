@@ -117,7 +117,7 @@ const MootCourt = () => {
                         {/* MAIN STAGE (JUDGE & OPPOSING COUNSEL) */}
                         <div className="col-span-9 flex flex-col gap-6">
                             <div className="flex-1 bg-[#0f172a] rounded-3xl border border-white/10 relative overflow-hidden flex items-center justify-center group shadow-2xl">
-                                {/* AI AVATAR PLACEHOLDER */}
+                                {/* AI JUDGE VISUALIZATION */}
                                 <div className="text-center opacity-50 group-hover:opacity-100 transition duration-500">
                                     <div className={`w-32 h-32 bg-indigo-500/20 rounded-full mx-auto mb-4 flex items-center justify-center border border-indigo-500/30 shadow-[0_0_50px_rgba(99,102,241,0.2)] ${analyzing ? 'animate-pulse' : ''}`}>
                                         <User size={60} className="text-indigo-300" />
@@ -136,8 +136,8 @@ const MootCourt = () => {
                                     {chatHistory.map((msg, idx) => (
                                         <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                             <div className={`max-w-[80%] rounded-2xl px-5 py-3 text-sm leading-relaxed ${msg.role === 'user'
-                                                    ? 'bg-indigo-600 text-white rounded-br-none'
-                                                    : 'bg-white/10 text-slate-300 rounded-bl-none border border-white/5'
+                                                ? 'bg-indigo-600 text-white rounded-br-none'
+                                                : 'bg-white/10 text-slate-300 rounded-bl-none border border-white/5'
                                                 }`}>
                                                 <span className="block text-xs font-bold opacity-50 mb-1 uppercase tracking-wider">
                                                     {msg.role === 'user' ? 'Defense Counsel' : 'Hon. Justice'}

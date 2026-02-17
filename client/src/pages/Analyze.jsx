@@ -35,23 +35,15 @@ export default function Analyze() {
     setResult(null);
 
     try {
-      // Mock API call to preserve functionality
-      // const res = await axios.post("/api/ai/case-analysis", { text });
-      // setResult(res.data);
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-      // SIMULATED RESPONSE
-      setTimeout(() => {
-        setResult({
-          summary: "The user is facing a potential consumer dispute regarding a defective product. The core issue is refusal of refund by the seller.",
-          laws: ["Consumer Protection Act, 2019", "Sale of Goods Act, 1930"],
-          advice: "File a formal complaint with the National Consumer Helpline. If unresolved, approach the District Consumer Disputes Redressal Commission."
-        });
-        setLoading(false);
-      }, 2000);
-
+      const res = await axios.post("/api/ai/case-analysis", { text }, { headers });
+      setResult(res.data);
     } catch (err) {
       console.error(err);
       toast.error("Analysis failed. Please try again.");
+    } finally {
       setLoading(false);
     }
   };

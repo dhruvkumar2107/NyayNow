@@ -30,23 +30,27 @@ export default function Assistant() {
     setIsLoading(true);
 
     try {
-      // Simulate API call for now, replacing with actual endpoint if available
-      // const res = await axios.post("http://localhost:4000/api/ai/chat", { message: input });
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-      // Mock Response for UI Demo
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "model",
-            text: "Based on the *Indian Penal Code (IPC)* and recent Supreme Court judgments, here is an analysis of your query.\n\n### Key Legal Provisions:\n1. **Section 420 IPC**: Cheating and dishonestly inducing delivery of property.\n2. **Section 406 IPC**: Criminal breach of trust.\n\n### Strategic Advice:\nI recommend filing a formal police complaint under these sections. Additionally, you may want to issue a legal notice for recovery of dues. Would you like me to draft a *Legal Notice* for this situation?",
-          },
-        ]);
-        setIsLoading(false);
-      }, 1500);
+      const res = await axios.post("/api/ai/assistant", {
+        question: input,
+        history: messages.slice(-5).map(m => ({ role: m.role, content: m.text }))
+      }, { headers });
 
+      const aiResponse = res.data.answer;
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "model", text: aiResponse },
+      ]);
     } catch (error) {
       console.error(error);
+      setMessages((prev) => [
+        ...prev,
+        { role: "model", text: "⚠️ System Error: Unable to reach the Legal AI Council. Please try again later." },
+      ]);
+    } finally {
       setIsLoading(false);
     }
   };

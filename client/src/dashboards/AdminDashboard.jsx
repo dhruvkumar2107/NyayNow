@@ -28,13 +28,12 @@ export default function AdminDashboard() {
                 revenue: statsRes.data.revenue
             });
 
-            // Mock Data for now
-            setClients([
-                { _id: "1", name: "Rahul S.", email: "rahul@gmail.com", plan: "gold" },
-                { _id: "2", name: "Priya M.", email: "priya@yahoo.com", plan: "free" },
-            ]);
+            // Fetch Clients
+            const resClients = await axios.get("/api/admin/clients");
+            setClients(resClients.data);
+
         } catch (err) {
-            // Quiet fail for demo
+            console.error("Dashboard fetch error", err);
         }
     };
 
@@ -182,7 +181,23 @@ export default function AdminDashboard() {
                             <p className="text-slate-400 max-w-sm mx-auto mb-8 font-light leading-relaxed">
                                 Financial data is end-to-end encrypted. Administrator access to raw transaction logs is restricted.
                             </p>
-                            <button className="bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-xl font-bold text-sm transition border border-white/10">
+                            <button
+                                onClick={async () => {
+                                    const toastId = toast.loading("Requesting secure token...");
+                                    try {
+                                        const token = localStorage.getItem("token");
+                                        await axios.post("/api/admin/request-access", {}, {
+                                            headers: { Authorization: `Bearer ${token}` }
+                                        });
+                                        toast.dismiss(toastId);
+                                        toast.success("Access Token Sent to Admin Email");
+                                    } catch (err) {
+                                        toast.dismiss(toastId);
+                                        toast.error("Request Failed");
+                                    }
+                                }}
+                                className="bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-xl font-bold text-sm transition border border-white/10"
+                            >
                                 Request Access Token
                             </button>
                         </div>

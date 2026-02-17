@@ -39,20 +39,10 @@ export default function Agreements() {
     setResult(null);
 
     try {
-      // Mock API call if real one fails or is not set up
-      // const res = await axios.post("/api/ai/agreement", { text });
-      // setResult(res.data);
-
-      // SIMULATED RESPONSE FOR UI DEMO
-      setTimeout(() => {
-        setResult({
-          riskLevel: "Medium",
-          accuracyScore: 87,
-          missingClauses: ["Arbitration Clause", "Force Majeure", "Non-Compete Duration"],
-          analysisText: "### Summary\nThe agreement is generally standard but lacks specific protections for the service provider.\n\n### Critical Findings\n1. **Indemnity**: The indemnity clause is one-sided.\n2. **Termination**: Notice period is not defined.\n\n### Recommendation\nAdd a mutual indemnity clause and specify a 30-day notice period for termination."
-        });
-        setLoading(false);
-      }, 2000);
+      // Real API Call
+      const res = await axios.post("/api/ai/agreement", { text });
+      setResult(res.data);
+      setLoading(false);
 
     } catch (err) {
       if (err.response?.status === 403 || err.response?.status === 401) setShowPaywall(true);

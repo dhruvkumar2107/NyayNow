@@ -60,25 +60,34 @@ const JudgeProfile = () => {
         setLoading(true);
         setData(null);
 
-        // Mock Data for Demo
-        setTimeout(() => {
+        try {
+            const token = localStorage.getItem("token");
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+            // Using the new real AI endpoint
+            const res = await axios.post("/api/ai/judge-profile", {
+                name: query,
+                court: "High Court" // Default context
+            }, { headers });
+
+            setData(res.data);
+        } catch (err) {
+            console.error(err);
+            // Fallback for visual continuity if API fails
             setData({
-                name: query || "Justice A.K. Menon",
-                court: "High Court of Bombay",
-                adjective: "Strict Constructionist",
-                appointed: "2013",
-                total_judgments: 842,
-                biases: [
-                    { topic: "Commercial Disputes", tendency: "Pro-Creditor", color: "green" },
-                    { topic: "Criminal Bail", tendency: "Conservative", color: "red" },
-                    { topic: "Family Law", tendency: "Pro-Settlement", color: "green" }
-                ],
-                favorite_citations: ["Kesavananda Bharati v. State of Kerala", "Maneka Gandhi v. Union of India"],
-                keywords: ["Maintainability", "Prima Facie", "Jurisdiction", "Equity", "Limitation"],
-                image: "https://via.placeholder.com/150" // Placeholder, in real app would be fetched
+                name: query,
+                court: "Court of Record",
+                adjective: "Analysis Unavailable",
+                appointed: "N/A",
+                total_judgments: 0,
+                biases: [],
+                favorite_citations: ["System Error", "Please try again"],
+                keywords: ["Error"]
             });
+            alert("Failed to analyze judge. Please try again.");
+        } finally {
             setLoading(false);
-        }, 1500);
+        }
     };
 
     return (

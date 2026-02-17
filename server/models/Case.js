@@ -34,4 +34,16 @@ const CaseSchema = new mongoose.Schema({
   postedAt: { type: Date, default: Date.now },
 });
 
+const { syncLead, deleteRecord } = require("../utils/algolia");
+
+CaseSchema.post("save", function (doc) {
+  syncLead(doc);
+});
+
+CaseSchema.post("findOneAndDelete", function (doc) {
+  if (doc) {
+    deleteRecord("leads", doc._id.toString());
+  }
+});
+
 module.exports = mongoose.model('Case', CaseSchema);

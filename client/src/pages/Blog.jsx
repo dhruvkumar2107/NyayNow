@@ -3,7 +3,14 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 
+import { toast } from 'react-hot-toast';
+
 export default function Blog() {
+    const handleReadMore = (e) => {
+        e.preventDefault();
+        toast("This article is available in the premium archive.", { icon: "🔒" });
+    }
+
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
 
@@ -47,7 +54,7 @@ export default function Blog() {
                         <p className="text-slate-400 text-lg mb-8 leading-relaxed">
                             An inside look at the transformer models powering our Judge AI and how predictive justice is reshaping litigation strategy for modern law firms.
                         </p>
-                        <div className="flex items-center gap-2 text-white font-bold text-sm uppercase tracking-widest group-hover:text-indigo-400 transition">
+                        <div onClick={handleReadMore} className="flex items-center gap-2 text-white font-bold text-sm uppercase tracking-widest group-hover:text-indigo-400 transition">
                             Read Full Article <ArrowRight size={16} className="group-hover:translate-x-1 transition" />
                         </div>
                     </div>
@@ -58,8 +65,9 @@ export default function Blog() {
             <section className="pb-24 px-6 max-w-7xl mx-auto">
                 <div className="flex justify-between items-end mb-12 border-b border-white/5 pb-4">
                     <h3 className="text-2xl font-bold text-white font-serif">Recent Articles</h3>
-                    <a href="#" className="text-xs font-bold text-slate-500 uppercase tracking-widest hover:text-white transition">View Archive →</a>
+                    <a href="#" onClick={handleReadMore} className="text-xs font-bold text-slate-500 uppercase tracking-widest hover:text-white transition">View Archive →</a>
                 </div>
+
 
                 <div className="grid md:grid-cols-3 gap-8">
                     <BlogCard

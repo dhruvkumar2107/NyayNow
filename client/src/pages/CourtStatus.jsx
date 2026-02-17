@@ -21,29 +21,11 @@ const CourtStatus = () => {
         setCaseData(null);
 
         try {
-            // Simulate API call with delay for 'real' feel
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            // Mock Data if API fails or for demo
-            const mock = {
-                court: "High Court of Delhi",
-                cnr: query.toUpperCase(),
-                caseNumber: "W.P.(C) 1234/2024",
-                filingDate: "12-01-2024",
-                nextHearing: "15-03-2024",
-                judge: "Hon'ble Mr. Justice Sanjeev Narula",
-                stage: "Evidence",
-                status: "Pending",
-                petitioner: "Amit Kumar & Ors.",
-                respondent: "State of NCT of Delhi",
-                acts: ["Constitution of India", "Civil Procedure Code"],
-                history: [
-                    { date: "12-02-2024", action: "Notice Issued", outcome: "Adjourned" },
-                    { date: "15-01-2024", action: "Filing", outcome: "Listed" }
-                ]
-            };
-            setCaseData(mock);
-            // const res = await axios.get(`/api/ecourts/search?query=${query}`);
-            // setCaseData(res.data);
+            // Real API Call
+            const res = await axios.get(`/api/ecourts/search?query=${query}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+            setCaseData(res.data);
         } catch (err) {
             setError("Case record not found. Please verify CNR number.");
         } finally {
