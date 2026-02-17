@@ -75,7 +75,8 @@ export default function Navbar() {
 
           {/* DESKTOP NAV */}
           <div className="hidden lg:flex items-center gap-8 h-full">
-            {navItems.map((category, idx) => (
+            {/* HIDE MENU FOR ADMINS TO KEEP IT STRICT */}
+            {user?.role !== 'admin' && navItems.map((category, idx) => (
               <div
                 key={idx}
                 className="relative h-full flex items-center"
@@ -124,6 +125,14 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
             ))}
+
+            {/* ADMIN SPECIFIC HEADER TEXT */}
+            {user?.role === 'admin' && (
+              <div className="flex items-center gap-2 px-4 py-1 bg-red-900/20 border border-red-500/30 rounded-full">
+                <Shield size={16} className="text-red-500" />
+                <span className="text-red-400 text-xs font-bold uppercase tracking-widest">Administrator Mode</span>
+              </div>
+            )}
           </div>
 
           {/* RIGHT ACTIONS */}
@@ -138,8 +147,8 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <Link to={user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard'} className="hidden sm:flex items-center gap-2 transition font-bold text-sm text-slate-300 hover:text-white duration-300 hover:bg-white/5 px-3 py-1.5 rounded-lg border border-transparent hover:border-white/10">
-                  <LayoutDashboard size={18} className="text-gold-400" /> Dashboard
+                <Link to={user.role === 'admin' ? '/admin' : (user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard')} className="hidden sm:flex items-center gap-2 transition font-bold text-sm text-slate-300 hover:text-white duration-300 hover:bg-white/5 px-3 py-1.5 rounded-lg border border-transparent hover:border-white/10">
+                  <LayoutDashboard size={18} className="text-gold-400" /> {user.role === 'admin' ? 'Back to Console' : 'Dashboard'}
                 </Link>
 
                 <div className="relative group cursor-pointer">
