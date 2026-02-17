@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, MapPin, Star, ShieldCheck, Filter, X } from "lucide-react";
 import Navbar from "../components/Navbar";
-import algoliasearch from 'algoliasearch/lite';
+import { liteClient as algoliasearch } from 'algoliasearch/lite';
 import { InstantSearch, useHits, useSearchBox, useRefinementList, usePagination } from 'react-instantsearch';
 
 // ALGOLIA CONFIG
