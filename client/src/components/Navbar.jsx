@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Scale, BookOpen, FileText, Briefcase, Gavel,
   Mic, User, Search, MapPin, Video, DollarSign,
-  Users, Menu, X, ChevronDown, LogOut, LayoutDashboard
+  Users, Menu, X, ChevronDown, LogOut, LayoutDashboard, Shield
 } from "lucide-react";
 
 export default function Navbar() {
