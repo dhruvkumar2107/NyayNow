@@ -94,13 +94,48 @@ router.get('/insights', async (req, res) => {
             .sort((a, b) => new Date(b.date) - new Date(a.date))
             .slice(0, 20);
 
+        // 4. Performance Analytics (Last 6 Weeks)
+        const performance = [];
+        const today = new Date();
+        for (let i = 5; i >= 0; i--) {
+            const start = new Date(today);
+            start.setDate(today.getDate() - (i * 7) - 6);
+            start.setHours(0, 0, 0, 0);
+
+            const end = new Date(today);
+            end.setDate(today.getDate() - (i * 7));
+            end.setHours(23, 59, 59, 999);
+
+            // Count Leads (Cases created in this week)
+            const leadsCount = cases.filter(c => {
+                const d = new Date(c.postedAt);
+                return d >= start && d <= end;
+            }).length;
+
+            // Count Revenue (Invoices paid in this week)
+            // Note: Invoices usually linked to Lawyer, ensuring 'invoices' var is fetched if not present above
+            const weeklyInvoices = await Invoice.find({
+                lawyerId: userId,
+                date: { $gte: start, $lte: end },
+                status: 'paid'
+            });
+            const revenue = weeklyInvoices.reduce((acc, inv) => acc + (Number(inv.amount) || 0), 0);
+
+            performance.push({
+                name: `W${6 - i}`,
+                revenue: revenue,
+                leads: leadsCount
+            });
+        }
+
         res.json({
             workload: {
                 status: workloadStatus,
                 activeCases: activeCasesCount,
                 upcomingHearings
             },
-            caseInsights: caseInsights.slice(0, 5), // Top 5 worries
+            caseInsights: caseInsights.slice(0, 5),
+            analytics: performance, // New Real Data
             activityFeed: feed
         });
 
