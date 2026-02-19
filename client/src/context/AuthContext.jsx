@@ -44,7 +44,6 @@ export function AuthProvider({ children }) {
       setUser(user);
       return { success: true, user };
     } catch (error) {
-    } catch (error) {
       console.error("Login failed:", error);
       let msg = error.response?.data?.message || "Login failed";
       if (error.code === "ECONNABORTED") msg = "Server timeout. Please try again.";
