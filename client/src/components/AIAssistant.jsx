@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Sparkles, User, Anchor } from "lucide-react";
+import axios from "axios";
 
 export default function AIAssistant() {
     const [isOpen, setIsOpen] = useState(false);
@@ -27,20 +28,26 @@ export default function AIAssistant() {
         setInput("");
         setIsTyping(true);
 
-        // Simulate AI Delay
-        setTimeout(() => {
-            const aiResponses = [
-                "I can help you draft a rental agreement. Would you like to start?",
-                "That sounds like a civil matter. I recommend consulting a property lawyer.",
-                "Based on recent data, cases like this have a 65% success rate.",
-                "To process this, I'll need more details about the incident.",
-                "You can find relevant lawyers in our Marketplace section."
-            ];
-            const randomResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+        setIsTyping(true);
 
-            setMessages(prev => [...prev, { role: "system", content: randomResponse }]);
+        try {
+            const token = localStorage.getItem("token");
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+            const res = await axios.post("/api/ai/assistant", {
+                question: input,
+                history: messages.slice(-5).map(m => ({ role: m.role, content: m.content }))
+            }, { headers });
+
+            const aiResponse = res.data.answer;
+
+            setMessages(prev => [...prev, { role: "system", content: aiResponse }]);
+        } catch (error) {
+            console.error(error);
+            setMessages(prev => [...prev, { role: "system", content: "I am currently experiencing high traffic. Please try again in a moment." }]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
+        }
     };
 
     return (
@@ -77,8 +84,8 @@ export default function AIAssistant() {
                             {messages.map((msg, i) => (
                                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                     <div className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
-                                            ? 'bg-indigo-600 text-white rounded-br-none'
-                                            : 'bg-[#1e293b] text-slate-200 border border-white/5 rounded-bl-none'
+                                        ? 'bg-indigo-600 text-white rounded-br-none'
+                                        : 'bg-[#1e293b] text-slate-200 border border-white/5 rounded-bl-none'
                                         }`}>
                                         {msg.content}
                                     </div>
