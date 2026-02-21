@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Scale, BookOpen, FileText, Briefcase, Gavel,
   Mic, User, Search, MapPin, Video, DollarSign,
-  Users, Menu, X, ChevronDown, LogOut, LayoutDashboard, Shield
+  Users, Menu, X, ChevronDown, LogOut, LayoutDashboard, Shield, Siren
 } from "lucide-react";
 
 export default function Navbar() {
@@ -173,7 +173,25 @@ export default function Navbar() {
               </div>
             )}
 
+            <Link
+              to="/courtroom-battle"
+              className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-black text-xs uppercase tracking-widest hover:bg-amber-500/20 transition shadow-[0_0_12px_rgba(245,158,11,0.15)] group"
+            >
+              <Gavel size={13} className="group-hover:animate-bounce" />
+              <span>NyayCourt</span>
+            </Link>
             {/* MOBILE MENU BTN */}
+            <Link
+              to="/legal-sos"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-600/20 border border-red-500/40 text-red-400 font-black text-xs uppercase tracking-widest hover:bg-red-600/30 transition shadow-[0_0_15px_rgba(239,68,68,0.25)] group"
+            >
+              <span className="relative flex h-2 w-2 mr-0.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+              </span>
+              <span className="hidden sm:inline">Legal SOS</span>
+              <Siren size={14} className="group-hover:animate-bounce" />
+            </Link>
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-300 hover:text-gold-400 transition-colors duration-300">
               {mobileMenuOpen ? <X /> : <Menu />}
             </button>

@@ -57,6 +57,8 @@ const Blog = lazy(() => import("./pages/Blog"));
 const Contact = lazy(() => import("./pages/Contact"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 const DigiLockerMock = lazy(() => import("./pages/DigiLockerMock")); // NEW
+const LegalSOS = lazy(() => import("./pages/LegalSOS")); // BIGGEST NOVELTY
+const CourtroomBattle = lazy(() => import("./pages/CourtroomBattle")); // NYAYCOURT
 
 import PremiumLoader from "./components/PremiumLoader";
 import AIAssistant from "./components/AIAssistant";
@@ -163,6 +165,8 @@ export default function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/help" element={<HelpCenter />} />
               <Route path="/digilocker-verify" element={<DigiLockerMock />} /> {/* NEW: Mock Route */}
+              <Route path="/legal-sos" element={<LegalSOS />} /> {/* BIGGEST NOVELTY */}
+              <Route path="/courtroom-battle" element={<CourtroomBattle />} /> {/* NYAYCOURT */}
 
             </Routes>
           </Suspense>

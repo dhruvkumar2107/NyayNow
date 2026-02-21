@@ -81,6 +81,317 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ══════════════════════════════════════════════════════
+          LEGAL SOS — CENTERPIECE NOVELTY SECTION
+      ══════════════════════════════════════════════════════ */}
+      <section className="relative py-0 overflow-hidden">
+        {/* Full-bleed dark red gradient band */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1a0008] via-[#020617] to-[#020617]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))] from-red-900/30 via-transparent to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-900/20 to-transparent" />
+
+        <div className="max-w-[1200px] mx-auto px-6 py-24 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+            {/* LEFT: Text & CTA */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/25 mb-6">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+                </span>
+                <span className="text-red-400 font-black text-xs tracking-[0.2em] uppercase">India's First Emergency Legal AI</span>
+              </div>
+
+              <h2 className="text-5xl md:text-6xl font-serif font-black text-white mb-5 leading-[1.1]">
+                Legal emergency? <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-rose-400">
+                  60 seconds.
+                </span>{" "}
+                Not 60 days.
+              </h2>
+
+              <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-lg">
+                Arrested at midnight? Cheated by a business partner? Police refusing to register your FIR?
+                <br /><br />
+                <span className="text-white font-semibold">Hit SOS.</span> Get your fundamental rights, an AI-drafted FIR, and connect with a verified lawyer — instantly.
+              </p>
+
+              {/* Stats row */}
+              <div className="flex flex-wrap gap-6 mb-10">
+                {[
+                  { value: '60s', label: 'FIR Generated' },
+                  { value: '10+', label: 'Indian Languages' },
+                  { value: '100%', label: 'Free to Use' },
+                ].map(({ value, label }) => (
+                  <div key={label} className="flex flex-col">
+                    <span className="text-3xl font-black text-white">{value}</span>
+                    <span className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-0.5">{label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                  to="/legal-sos"
+                  className="group relative flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-base tracking-wide shadow-[0_0_50px_rgba(239,68,68,0.35)] hover:shadow-[0_0_70px_rgba(239,68,68,0.5)] transition-all duration-300 overflow-hidden active:scale-95"
+                >
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/50" />
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-white" />
+                  </span>
+                  🚨 Activate Legal SOS
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                </Link>
+                <a
+                  href="tel:112"
+                  className="flex items-center justify-center gap-2 px-8 py-5 rounded-2xl bg-white/5 border border-white/10 text-slate-300 font-bold text-base hover:bg-white/10 hover:border-red-500/30 transition active:scale-95"
+                >
+                  📞 Call Police: 112
+                </a>
+              </div>
+            </motion.div>
+
+            {/* RIGHT: Feature cards */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.15 }}
+              className="space-y-4"
+            >
+              {[
+                {
+                  step: '01',
+                  icon: '📋',
+                  title: 'Describe Your Emergency',
+                  desc: 'Type what happened in plain language. Our AI classifies it instantly — arrest, fraud, violence, or any legal crisis.',
+                  color: 'from-red-500/10 to-rose-500/5',
+                  border: 'border-red-500/20',
+                  tag: 'Step 1',
+                  tagColor: 'bg-red-500/20 text-red-400',
+                },
+                {
+                  step: '02',
+                  icon: '⚖️',
+                  title: 'Know Your Rights Instantly',
+                  desc: 'Get your fundamental rights under the Indian Constitution in plain language — Article 22, bail rights, right to legal counsel, and more.',
+                  color: 'from-amber-500/10 to-orange-500/5',
+                  border: 'border-amber-500/20',
+                  tag: 'Step 2',
+                  tagColor: 'bg-amber-500/20 text-amber-400',
+                },
+                {
+                  step: '03',
+                  icon: '📄',
+                  title: 'AI-Drafted FIR in 30 Seconds',
+                  desc: 'A legally formatted FIR — ready to print, copy, or share with a lawyer. Generated under the correct BNS/IPC sections.',
+                  color: 'from-indigo-500/10 to-blue-500/5',
+                  border: 'border-indigo-500/20',
+                  tag: 'Step 3',
+                  tagColor: 'bg-indigo-500/20 text-indigo-400',
+                },
+              ].map(({ step, icon, title, desc, color, border, tag, tagColor }, i) => (
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.12 }}
+                  className={`relative flex items-start gap-5 p-6 rounded-2xl bg-gradient-to-r ${color} border ${border} hover:scale-[1.02] transition-transform duration-300`}
+                >
+                  <div className="text-3xl flex-shrink-0 mt-0.5">{icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-white font-bold text-base">{title}</h3>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${tagColor}`}>{tag}</span>
+                    </div>
+                    <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* Bottom disclaimer */}
+              <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-white/[0.03] border border-white/5">
+                <span className="text-emerald-500 text-lg">🔒</span>
+                <p className="text-slate-600 text-xs leading-relaxed">
+                  All SOS submissions are <span className="text-slate-400 font-semibold">confidential</span>. No data is stored permanently without your consent.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          NYAYCOURT BATTLE — FLAGSHIP NOVELTY SECTION
+      ══════════════════════════════════════════════════════ */}
+      <section className="relative py-0 overflow-hidden">
+        {/* Majestic court-room dark panel bg */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0014] via-[#020617] to-[#0d0500]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.12),_transparent_65%)]" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-800/20 via-amber-500/50 to-amber-800/20" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-900/30 to-transparent" />
+
+        <div className="max-w-[1200px] mx-auto px-6 py-24 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+            {/* LEFT: The 3 AI Personas */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="order-2 lg:order-1"
+            >
+              {/* Court room avatar display */}
+              <div className="relative">
+                {/* Center judge */}
+                <div className="flex justify-center mb-3 relative">
+                  <motion.div
+                    animate={{ boxShadow: ['0 0 20px rgba(239,68,68,0.2)', '0 0 40px rgba(239,68,68,0.5)', '0 0 20px rgba(239,68,68,0.2)'] }}
+                    transition={{ repeat: Infinity, duration: 3 }}
+                    className="w-28 h-28 rounded-3xl bg-gradient-to-br from-red-500/20 to-rose-900/20 border border-red-500/30 flex flex-col items-center justify-center relative z-10"
+                  >
+                    <span className="text-5xl">⚖️</span>
+                    <p className="text-red-400 font-black text-[10px] uppercase tracking-widest mt-1">THE BENCH</p>
+                  </motion.div>
+                </div>
+                {/* Plaintiff & defense side by side */}
+                <div className="flex gap-4">
+                  <motion.div
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 }}
+                    className="flex-1 rounded-2xl bg-amber-500/5 border border-amber-500/20 p-5 text-center"
+                  >
+                    <div className="text-4xl mb-2">👨‍⚖️</div>
+                    <p className="text-amber-300 font-bold text-sm">Adv. Vikram Anand</p>
+                    <p className="text-amber-600 text-[10px] font-black uppercase tracking-widest">Prosecution</p>
+                    <div className="mt-3 space-y-1.5">
+                      {['BNS Sections', 'SC Precedents', 'Evidence Law'].map(tag => (
+                        <div key={tag} className="text-[10px] text-amber-400/70 bg-amber-500/10 rounded-lg py-0.5 px-2">{tag}</div>
+                      ))}
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, x: 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                    className="flex-1 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 p-5 text-center"
+                  >
+                    <div className="text-4xl mb-2">👩‍⚖️</div>
+                    <p className="text-indigo-300 font-bold text-sm">Adv. Priya Rathore</p>
+                    <p className="text-indigo-600 text-[10px] font-black uppercase tracking-widest">Defense</p>
+                    <div className="mt-3 space-y-1.5">
+                      {['Fundamental Rights', 'Bail Lex', 'Procedure Law'].map(tag => (
+                        <div key={tag} className="text-[10px] text-indigo-400/70 bg-indigo-500/10 rounded-lg py-0.5 px-2">{tag}</div>
+                      ))}
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* VS divider */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-[#020617] border border-white/10 flex items-center justify-center">
+                  <span className="text-slate-500 font-serif font-black text-sm">vs</span>
+                </div>
+
+                {/* Connecting lines */}
+                <div className="absolute top-28 left-1/2 -translate-x-1/2 w-px h-12 bg-gradient-to-b from-red-500/30 to-transparent" />
+              </div>
+
+              {/* Trial progress animation */}
+              <div className="mt-6 bg-white/[0.02] border border-white/5 rounded-2xl p-5">
+                <p className="text-slate-600 text-[10px] uppercase tracking-widest font-black mb-3">5-Round Trial Sequence</p>
+                <div className="flex items-center gap-1">
+                  {['Opening', 'Rebuttal', 'Judge Q', 'Response', 'Closing', 'Verdict'].map((step, i) => (
+                    <React.Fragment key={step}>
+                      <div className="flex flex-col items-center gap-1 flex-1">
+                        <div className={`w-full h-1.5 rounded-full ${i < 5 ? 'bg-violet-500/40' : 'bg-amber-500/60'
+                          }`} />
+                        <p className="text-[9px] text-slate-600 font-bold text-center leading-tight">{step}</p>
+                      </div>
+                      {i < 5 && <div className="w-1.5 h-1.5 rounded-full bg-white/10 flex-shrink-0 mb-3" />}
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* RIGHT: Copy & CTA */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="order-1 lg:order-2"
+            >
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/25 mb-6">
+                <span className="text-amber-400 font-black text-xs tracking-[0.2em] uppercase">⚖️ World's First</span>
+                <span className="w-px h-3 bg-amber-500/30" />
+                <span className="text-amber-400/70 text-xs font-bold">AI Multi-Agent Trial</span>
+              </div>
+
+              <h2 className="text-5xl md:text-6xl font-serif font-black text-white mb-5 leading-[1.1]">
+                Your case. <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-400">
+                  A real AI trial.
+                </span>{' '}
+                Full verdict.
+              </h2>
+
+              <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-lg">
+                Describe your legal situation. Three specialized AI personas — a senior plaintiff advocate, a legendary defense lawyer, and a Supreme Court judge — argue it live. 5 round debate. Then the AI delivers its final judgment.
+              </p>
+
+              <div className="flex flex-wrap gap-6 mb-10">
+                {[
+                  { value: '3', label: 'AI Legal Minds' },
+                  { value: '5', label: 'Trial Rounds' },
+                  { value: '100%', label: 'Indian Law' },
+                ].map(({ value, label }) => (
+                  <div key={label} className="flex flex-col">
+                    <span className="text-3xl font-black text-white">{value}</span>
+                    <span className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-0.5">{label}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                  to="/courtroom-battle"
+                  className="group relative flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white font-black text-base tracking-wide shadow-[0_0_50px_rgba(245,158,11,0.35)] hover:shadow-[0_0_80px_rgba(245,158,11,0.55)] transition-all duration-300 overflow-hidden active:scale-95"
+                >
+                  ⚖️ Start AI Trial Now
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                </Link>
+                <Link
+                  to="/courtroom-battle"
+                  className="flex items-center justify-center gap-2 px-8 py-5 rounded-2xl bg-white/5 border border-white/10 text-slate-300 font-bold text-base hover:bg-white/10 transition active:scale-95"
+                >
+                  See how it works →
+                </Link>
+              </div>
+
+              <p className="text-slate-600 text-xs mt-5">
+                Powered by Gemini AI · Indian law (BNS/IPC) · Real SC case citations · Instant verdict
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* --- AI COMPARISON SECTION (PREMIUM) --- */}
       <section className="py-16 md:py-24 relative overflow-hidden">
         <div className="max-w-[1200px] mx-auto px-6 relative z-10">

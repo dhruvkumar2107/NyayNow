@@ -20,11 +20,11 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "missing_key"
 // Helper for Model Fallback
 // Helper for Model Fallback
 async function generateWithFallback(prompt) {
-  // USER REQUESTED 2.5 PRO.
-  // API DEBUG CONFIRMED: Key only has access to 2.x models. 1.5/1.0 are 404.
-  "gemini-1.5-pro",      // Primary (High Intelligence)
+  const modelsToTry = [
+    "gemini-1.5-pro",      // Primary (High Intelligence)
     "gemini-1.5-flash",    // High-speed Fallback
     "gemini-pro"           // Legacy Fallback
+  ];
 
   const SYSTEM_PROMPT = `You are 'NyayNow', an elite Senior Suprereme Court Lawyer and Legal Consultant in India.
 
@@ -696,4 +696,266 @@ router.post("/judge-profile", verifyTokenOptional, checkAiLimit, async (req, res
   }
 });
 
+/* ---------------- LEGAL SOS (EMERGENCY TRIAGE) ---------------- */
+router.post("/legal-sos", verifyTokenOptional, async (req, res) => {
+  try {
+    const { situation, emergencyType, language } = req.body;
+    if (!situation) return res.status(400).json({ error: "Situation description required" });
+
+    const prompt = `
+      ACT AS AN ELITE CRISIS LEGAL ADVISOR OF INDIA. A person is in a LEGAL EMERGENCY right now.
+
+      EMERGENCY TYPE: "${emergencyType}"
+      LANGUAGE FOR RESPONSE: ${language || "English"}
+      DESCRIPTION: "${situation}"
+
+      CRITICAL TASK:
+      1. CLASSIFY the exact legal emergency in one short phrase (e.g. "Unlawful Arrest", "Cheating Under BNS").
+      2. URGENCY: Assign "Critical", "High", or "Medium" urgency.
+      3. RIGHTS: List 4-6 FUNDAMENTAL RIGHTS the person has RIGHT NOW. For each right:
+         - title: Short name of the right
+         - description: 1-2 sentence plain-language explanation (in ${language || "English"})
+         - article: The specific Article/Section that guarantees it (e.g. "Article 22, Constitution of India")
+      4. APPLICABLE_SECTIONS: List 3-5 relevant BNS/IPC/BNSS/CrPC sections as an array of strings.
+      5. IMMEDIATE_ACTIONS: 4-5 step-by-step actions the person should take RIGHT NOW (numbered, plain language).
+
+      OUTPUT STRICT JSON:
+      {
+        "classified_as": "...",
+        "urgency": "Critical|High|Medium",
+        "rights": [
+          { "title": "...", "description": "...", "article": "..." }
+        ],
+        "applicable_sections": ["Section 41 CrPC", "Section 315 BNS"],
+        "immediate_actions": ["Action 1", "Action 2"]
+      }
+    `;
+
+    const result = await generateWithFallback(prompt);
+    const response = await result.response;
+    let text = response.text();
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const s = text.indexOf('{');
+    const e = text.lastIndexOf('}');
+    if (s !== -1 && e !== -1) text = text.substring(s, e + 1);
+    res.json(JSON.parse(text));
+  } catch (err) {
+    console.error("Legal SOS Error:", err.message);
+    res.status(500).json({ error: "Emergency analysis failed. Please try again." });
+  }
+});
+
+/* ---------------- FIR GENERATOR (EMERGENCY DRAFT) ---------------- */
+router.post("/fir-generator", verifyTokenOptional, async (req, res) => {
+  try {
+    const { situation, emergencyType, language, complaintDetails, rights } = req.body;
+    if (!situation) return res.status(400).json({ error: "Situation required" });
+
+    const { name, date, place, against } = complaintDetails || {};
+
+    const prompt = `
+      ACT AS A SENIOR POLICE OFFICER AND LEGAL DRAFTER IN INDIA.
+      Draft a formal First Information Report (FIR) in ${language || "English"}.
+
+      COMPLAINANT DETAILS:
+      - Name: ${name || "[Complainant Name]"}
+      - Date of Incident: ${date || "[Date of Incident]"}
+      - Place of Incident: ${place || "[Place of Incident]"}
+      - Accused / Against: ${against || "[Accused Person/Entity]"}
+
+      SITUATION DESCRIPTION:
+      "${situation}"
+
+      EMERGENCY TYPE: ${emergencyType}
+      APPLICABLE SECTIONS: ${rights?.applicable_sections?.join(", ") || "As applicable under BNS/IPC"}
+
+      DRAFT THE FIR with the following exact structure:
+      1. FIR No. and Date (use today's date: ${new Date().toLocaleDateString('en-IN')})
+      2. Police Station: [Name of Police Station]
+      3. Under Sections: (list the applicable BNS/IPC sections)
+      4. NAME OF COMPLAINANT:
+      5. ADDRESS OF COMPLAINANT:
+      6. NAME OF ACCUSED (if known):
+      7. DATE/TIME OF INCIDENT:
+      8. PLACE OF INCIDENT:
+      9. BRIEF FACTS OF THE CASE: (3-5 paragraphs describing the incident in formal police language)
+      10. RELIEF SOUGHT: (What action the complainant wants)
+      11. DECLARATION: "I hereby declare that the above information is true to the best of my knowledge..."
+      12. SIGNATURE / THUMB IMPRESSION: ____________________
+      13. DATE OF FILING:
+
+      Write in formal, legally accepted FIR language. Use "the complainant" and third person. Include the applicable law sections properly. Do NOT add any notes or disclaimers around the FIR — output ONLY the FIR text.
+    `;
+
+    const result = await generateWithFallback(prompt);
+    const response = await result.response;
+    const draft = response.text();
+    res.json({ draft });
+  } catch (err) {
+    console.error("FIR Generator Error:", err.message);
+    res.status(500).json({ error: "FIR generation failed. Please try again." });
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   NYAYCOURT — AI MULTI-AGENT COURTROOM BATTLE SIMULATOR
+   The most powerful AI feature: 3 AI personas argue the user's
+   real case against each other. Full trial in 60 seconds.
+   ═══════════════════════════════════════════════════════════════ */
+router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
+  try {
+    const { caseTitle, caseDescription, caseType, plaintiffSide, defenseSide } = req.body;
+    if (!caseDescription) return res.status(400).json({ error: "Case description required" });
+
+    // ── AI Personas ─────────────────────────────────────────────────────────
+    const PLAINTIFF_PERSONA = `You are Adv. Vikram Anand, a senior Supreme Court advocate known for aggressive, evidence-based prosecution. You represent the PLAINTIFF/PROSECUTION side. You cite specific Indian laws (BNS, IPC, BNSS, CPC) and real case precedents. You are sharp, persuasive, and relentless. Courtroom diction only.`;
+    const DEFENSE_PERSONA = `You are Adv. Priya Rathore, a legendary defense lawyer known for dismantling prosecution arguments with surgical precision. You expertly exploit legal loopholes and protect constitutional rights. You cite specific Indian laws and case laws. You are brilliant, calm, and devastating in your rebuttals. Courtroom diction only.`;
+    const JUDGE_PERSONA = `You are Hon. Justice Ramesh Krishnamurthy, a no-nonsense Supreme Court judge with 30 years of experience. You are neutral, deeply learned, and cut through weak arguments instantly. You ask piercing questions and give crisp judicial observations. You cite specific constitutional provisions. Courtroom diction only.`;
+
+    const caseContext = `
+      CASE TITLE: "${caseTitle || "The Instant Case"}"
+      CASE TYPE: ${caseType || "General Civil/Criminal Matter"}
+      PLAINTIFF SIDE: ${plaintiffSide || "As described in facts"}
+      DEFENSE SIDE: ${defenseSide || "As described in facts"}
+      FACTS OF THE CASE: "${caseDescription}"
+    `;
+
+    async function callAgent(persona, role, instruction, priorTranscript) {
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+        systemInstruction: persona,
+      });
+      const prompt = `
+        ${caseContext}
+
+        PRIOR COURTROOM TRANSCRIPT:
+        ${priorTranscript || "Court is now in session."}
+
+        YOUR ROLE TODAY: ${role}
+        YOUR TASK: ${instruction}
+
+        STRICT RULES:
+        1. Stay in character as a courtroom professional.
+        2. Cite at least 1-2 specific Indian law sections or case laws.
+        3. Be DRAMATIC and INCISIVE — this is a real courtroom.
+        4. Keep response to 120-200 words — concise but powerful.
+        5. Start with your title (e.g. "My Lord," or "Your Honor," or "Learned Counsel,")
+        6. End with a 1-line punch statement.
+        7. Return ONLY the courtroom speech. No meta-commentary.
+      `;
+      const result = await model.generateContent(prompt);
+      return result.response.text().trim();
+    }
+
+    // ── Run 5 rounds sequentially ────────────────────────────────────────────
+    let transcript = "";
+    const rounds = [];
+
+    // Round 1: Plaintiff Opening
+    const r1 = await callAgent(
+      PLAINTIFF_PERSONA,
+      "PLAINTIFF'S COUNSEL — OPENING ARGUMENT",
+      "Deliver a powerful opening argument establishing the facts and the legal basis of your case. State the relief sought.",
+      transcript
+    );
+    rounds.push({ speaker: "plaintiff", name: "Adv. Vikram Anand", type: "Opening Argument", speech: r1, sections: extractSections(r1) });
+    transcript += `\n\nPLAINTIFF'S COUNSEL (Opening Argument):\n${r1}`;
+
+    // Round 2: Defense Rebuttal
+    const r2 = await callAgent(
+      DEFENSE_PERSONA,
+      "DEFENSE COUNSEL — REBUTTAL",
+      "Rebut the plaintiff's opening argument. Expose its weaknesses, challenge the legal positions, and lay the groundwork for your defense.",
+      transcript
+    );
+    rounds.push({ speaker: "defense", name: "Adv. Priya Rathore", type: "Rebuttal", speech: r2, sections: extractSections(r2) });
+    transcript += `\n\nDEFENSE COUNSEL (Rebuttal):\n${r2}`;
+
+    // Round 3: Judge's Observation
+    const r3 = await callAgent(
+      JUDGE_PERSONA,
+      "PRESIDING JUDGE — JUDICIAL OBSERVATION & QUESTION",
+      "Interrupt proceedings. Ask a sharp, penetrating question to the plaintiff's counsel that challenges the weakest point of their argument. Cite a relevant constitutional provision or procedural law.",
+      transcript
+    );
+    rounds.push({ speaker: "judge", name: "Hon. Justice R.K. Krishnamurthy", type: "Judicial Observation", speech: r3, sections: extractSections(r3) });
+    transcript += `\n\nHON. JUDGE (Judicial Observation):\n${r3}`;
+
+    // Round 4: Plaintiff Response to Judge
+    const r4 = await callAgent(
+      PLAINTIFF_PERSONA,
+      "PLAINTIFF'S COUNSEL — RESPONSE TO COURT",
+      "Respond to the Judge's observation. Answer the Judge's question directly and turn the court's attention back to the strength of your case with a compelling precedent.",
+      transcript
+    );
+    rounds.push({ speaker: "plaintiff", name: "Adv. Vikram Anand", type: "Response to Court", speech: r4, sections: extractSections(r4) });
+    transcript += `\n\nPLAINTIFF'S COUNSEL (Response to Court):\n${r4}`;
+
+    // Round 5: Defense Closing
+    const r5 = await callAgent(
+      DEFENSE_PERSONA,
+      "DEFENSE COUNSEL — CLOSING ARGUMENT",
+      "Deliver the closing argument. Systematically dismantle all of the plaintiff's arguments, invoke the accused's constitutional rights, and make a compelling plea to the Court.",
+      transcript
+    );
+    rounds.push({ speaker: "defense", name: "Adv. Priya Rathore", type: "Closing Argument", speech: r5, sections: extractSections(r5) });
+    transcript += `\n\nDEFENSE COUNSEL (Closing Argument):\n${r5}`;
+
+    // Final: AI Judge Verdict
+    const verdictPrompt = `
+      ${JUDGE_PERSONA}
+
+      ${caseContext}
+
+      FULL COURTROOM TRANSCRIPT:
+      ${transcript}
+
+      YOUR TASK: Deliver the FINAL JUDGMENT. Based on the arguments presented:
+      1. Summarize which side argued more convincingly and why.
+      2. Apply the applicable law sections.
+      3. Give a final ruling: "In favor of Plaintiff" or "In favor of Defense"
+      4. Assign win_probability_plaintiff (0-100) based on argument strength.
+      5. Name 1-2 key precedents that guided your decision.
+      6. Give the final order in 1-2 sentences (what must happen next).
+
+      RETURN STRICT JSON ONLY:
+      {
+        "ruling": "In favor of Plaintiff" or "In favor of Defense",
+        "win_probability_plaintiff": 65,
+        "win_probability_defense": 35,
+        "judge_summary": "After careful analysis of both sides...",
+        "key_precedents": ["Case Name v. State (Year)", "Case Name 2"],
+        "deciding_factor": "The plaintiff's reliance on Section X was the turning point...",
+        "final_order": "The defendant is directed to..."
+      }
+    `;
+
+    const verdictModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const verdictResult = await verdictModel.generateContent(verdictPrompt);
+    let verdictText = verdictResult.response.text().trim();
+    verdictText = verdictText.replace(/```json/g, "").replace(/```/g, "").trim();
+    const vs = verdictText.indexOf('{');
+    const ve = verdictText.lastIndexOf('}');
+    const verdict = JSON.parse(verdictText.substring(vs, ve + 1));
+
+    res.json({
+      case_title: caseTitle || "The Instant Case",
+      case_type: caseType || "Legal Matter",
+      rounds,
+      verdict,
+    });
+
+  } catch (err) {
+    console.error("NyayCourt Error:", err.message);
+    res.status(500).json({ error: "Court session failed. Please try again." });
+  }
+});
+
+// Helper to extract cited law sections from speech text
+function extractSections(text) {
+  const matches = text.match(/(?:Section|Article|Order|Rule)\s+[\w\s,\/]+(?:of\s+the\s+[\w\s]+)?/gi) || [];
+  return [...new Set(matches)].slice(0, 3);
+}
+
 module.exports = router;
+
