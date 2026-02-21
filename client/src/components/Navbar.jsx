@@ -185,7 +185,7 @@ export default function Navbar() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 to="/courtroom-battle"
-                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-amber-500/20 transition shadow-[0_0_15px_rgba(245,158,11,0.15)] group"
+                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-100 border border-amber-200 text-amber-700 font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-amber-200 transition shadow-sm group"
               >
                 <Gavel size={14} className="group-hover:rotate-12 transition duration-300" />
                 <span>NyayCourt</span>
@@ -195,13 +195,13 @@ export default function Navbar() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 to="/legal-sos"
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600/15 border border-red-500/30 text-red-500 font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-red-600/25 transition shadow-[0_0_20px_rgba(239,68,68,0.2)] group"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-100 border border-red-200 text-red-700 font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-red-600 hover:text-white transition shadow-sm group"
               >
                 <span className="relative flex h-2 w-2 mr-0.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600" />
                 </span>
-                <span className="hidden lg:inline text-red-400">Legal SOS</span>
+                <span className="hidden lg:inline">Legal SOS</span>
                 <Siren size={15} className="group-hover:animate-pulse transition duration-300" />
               </Link>
             </motion.div>
