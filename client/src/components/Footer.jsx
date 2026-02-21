@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
     return (
-        <footer className="bg-[#020617] border-t border-white/5 text-slate-400 font-sans pt-24 pb-12 relative overflow-hidden">
+        <footer className="bg-white border-t border-slate-200 text-slate-600 font-sans pt-24 pb-12 relative overflow-hidden">
 
             {/* Background Glow */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-indigo-600/5 blur-[120px] rounded-full pointer-events-none"></div>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-indigo-500/[0.03] blur-[120px] rounded-full pointer-events-none"></div>
 
             <div className="container mx-auto px-6 max-w-[1400px] relative z-10">
 
@@ -15,12 +15,12 @@ const Footer = () => {
                 <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-20">
                     <div className="max-w-md">
                         <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
-                            <div className="h-10 w-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20">
+                            <div className="h-10 w-10 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
                                 N
                             </div>
-                            <span className="text-2xl font-bold text-white tracking-tight">NyayNow</span>
+                            <span className="text-2xl font-bold text-slate-900 tracking-tight">NyayNow</span>
                         </Link>
-                        <p className="text-slate-400 text-lg leading-relaxed mb-8">
+                        <p className="text-slate-600 text-lg leading-relaxed mb-8">
                             The operating system for the Indian Justice System. We are democratizing legal intelligence for 1.4 billion people with AI.
                         </p>
                         <div className="flex gap-4">
@@ -30,18 +30,18 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    <div className="w-full lg:w-auto bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
-                        <h4 className="text-lg font-bold text-white mb-2">Stay ahead of the curve.</h4>
-                        <p className="text-sm text-slate-400 mb-6 max-w-xs">
+                    <div className="w-full lg:w-auto bg-slate-50 border border-slate-200 rounded-2xl p-8 shadow-sm">
+                        <h4 className="text-lg font-bold text-slate-900 mb-2">Stay ahead of the curve.</h4>
+                        <p className="text-sm text-slate-600 mb-6 max-w-xs">
                             Get the latest updates on Supreme Court judgments and new AI features.
                         </p>
                         <form className="flex gap-2">
                             <input
                                 type="email"
                                 placeholder="Enter your email"
-                                className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-full"
+                                className="bg-white border border-slate-200 rounded-lg px-4 py-3 text-slate-900 placeholder:text-slate-400 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-full"
                             />
-                            <button className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-lg text-sm transition shadow-lg shadow-indigo-600/20">
+                            <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-lg text-sm transition shadow-lg shadow-indigo-600/10">
                                 Subscribe
                             </button>
                         </form>
@@ -92,18 +92,18 @@ const Footer = () => {
                 </div>
 
                 {/* BOTTOM BAR */}
-                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-slate-500 text-sm font-medium">
                         © {new Date().getFullYear()} NyayNow Legal Tech Pvt Ltd. All rights reserved.
                     </p>
-                    <div className="flex gap-8 text-xs font-bold uppercase tracking-wider text-slate-500">
-                        <span className="flex items-center gap-2 hover:text-emerald-400 cursor-pointer transition">
+                    <div className="flex gap-8 text-xs font-bold uppercase tracking-wider text-slate-400">
+                        <span className="flex items-center gap-2 hover:text-emerald-600 cursor-pointer transition">
                             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                             All Systems Operational
                         </span>
-                        <span className="hover:text-white cursor-pointer transition">Status</span>
-                        <span className="hover:text-white cursor-pointer transition">Twitter</span>
-                        <span className="hover:text-white cursor-pointer transition">Github</span>
+                        <span className="hover:text-slate-900 cursor-pointer transition">Status</span>
+                        <span className="hover:text-slate-900 cursor-pointer transition">Twitter</span>
+                        <span className="hover:text-slate-900 cursor-pointer transition">Github</span>
                     </div>
                 </div>
 
@@ -114,7 +114,7 @@ const Footer = () => {
 
 const FooterColumn = ({ title, children }) => (
     <div className="flex flex-col gap-4">
-        <h3 className="font-bold text-white uppercase tracking-wider text-sm">{title}</h3>
+        <h3 className="font-bold text-slate-900 uppercase tracking-wider text-sm">{title}</h3>
         <ul className="flex flex-col gap-3">
             {children}
         </ul>
@@ -123,14 +123,14 @@ const FooterColumn = ({ title, children }) => (
 
 const FooterLink = ({ to, children }) => (
     <li>
-        <Link to={to} className="text-sm hover:text-white transition-colors duration-200 flex items-center">
+        <Link to={to} className="text-sm hover:text-indigo-600 transition-colors duration-200 flex items-center">
             {children}
         </Link>
     </li>
 );
 
 const SocialIcon = ({ path }) => (
-    <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-300">
+    <a href="#" className="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-300 shadow-sm">
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">{path}</svg>
     </a>
 );

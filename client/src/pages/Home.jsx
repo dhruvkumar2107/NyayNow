@@ -22,23 +22,23 @@ export default function Home() {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-600 selection:bg-indigo-500/30">
       {/* ══════════════════════════════════════════════════════
           NEW HERO ENTRANCE — "JUSTICE SHOULDN'T BE A LUXURY"
       ══════════════════════════════════════════════════════ */}
       <section className="relative pt-40 pb-32 lg:pt-56 lg:pb-48 overflow-hidden">
         {/* Background elements */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-[#020617] to-[#020617] pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none mix-blend-screen" />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[130px] pointer-events-none" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/40 via-slate-50 to-slate-50 pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] bg-indigo-500/5 rounded-full blur-[140px] pointer-events-none mix-blend-multiply" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-violet-600/5 rounded-full blur-[130px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 mix-blend-overlay" />
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-indigo-300 text-[10px] font-black uppercase tracking-[0.25em] mb-10 backdrop-blur-xl shadow-2xl"
+            className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white border border-slate-200 text-indigo-600 text-[10px] font-black uppercase tracking-[0.25em] mb-10 backdrop-blur-xl shadow-sm"
           >
             <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_#6366f1]" />
             Free for Every Indian Citizen
@@ -48,11 +48,11 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-            className="text-5xl md:text-7xl font-serif font-black text-white mb-6 leading-[0.95] tracking-tight"
+            className="text-5xl md:text-7xl font-serif font-black text-slate-900 mb-6 leading-[0.95] tracking-tight"
           >
             Justice shouldn't
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-300 to-purple-400 indigo-glow">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-500 to-purple-600">
               be a luxury.
             </span>
           </motion.h1>
@@ -61,10 +61,10 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide"
+            className="text-base md:text-xl text-slate-600 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide"
           >
             NyayNow puts the full power of the Indian legal system in your pocket. <br className="hidden md:block" />
-            Designed for the <span className="text-white font-semibold">1.4 billion</span> who deserve access to justice.
+            Designed for the <span className="text-slate-900 font-semibold">1.4 billion</span> who deserve access to justice.
           </motion.p>
 
           <motion.div
@@ -75,23 +75,23 @@ export default function Home() {
           >
             <Link
               to={!user ? "/register" : (user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
-              className="group relative w-full sm:w-auto px-12 py-5 rounded-2xl text-white font-black text-lg bg-indigo-600 hover:bg-indigo-500 transition-all duration-300 shadow-[0_0_60px_rgba(99,102,241,0.4)] active:scale-95 overflow-hidden"
+              className="group relative w-full sm:w-auto px-12 py-5 rounded-2xl text-white font-black text-lg bg-indigo-600 hover:bg-indigo-700 transition-all duration-300 shadow-xl active:scale-95 overflow-hidden"
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
-                {!user ? "✦ Get Started Free" : "✦ Enter Command Center"}
+                ✦ {!user ? "Get Started Free" : "Enter Command Center"}
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             </Link>
             <Link
               to="/legal-sos"
-              className="w-full sm:w-auto px-10 py-5 rounded-2xl font-bold text-base text-slate-300 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-red-500/40 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-10 py-5 rounded-2xl font-bold text-base text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-red-500/40 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 shadow-sm"
             >
               🚨 Legal SOS
             </Link>
             {!user && (
               <Link
                 to="/login"
-                className="w-full sm:w-auto px-6 py-5 text-slate-500 hover:text-white font-bold text-sm transition-colors duration-300 flex items-center justify-center underline underline-offset-4"
+                className="w-full sm:w-auto px-6 py-5 text-slate-500 hover:text-slate-900 font-bold text-sm transition-colors duration-300 flex items-center justify-center underline underline-offset-4"
               >
                 Member Login
               </Link>
@@ -103,15 +103,14 @@ export default function Home() {
       {/* ══════════════════════════════════════════════════════
           TRUST BAR — MARQUEE STYLE
       ══════════════════════════════════════════════════════ */}
-      <section className="py-10 border-y border-white/5 bg-black/20 flex flex-col items-center justify-center">
-        <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-6">Trusted by the Indian Legal Community</p>
-        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
-          {/* Placeholder for trusted names using premium typography */}
-          <span className="font-serif italic text-2xl text-white tracking-widest">SUPREME COURT</span>
-          <span className="font-serif italic text-2xl text-white tracking-widest">HIGH COURTS</span>
-          <span className="font-serif italic text-2xl text-white tracking-widest">LEGAL AID</span>
-          <span className="font-serif italic text-2xl text-white tracking-widest">NALSAR</span>
-          <span className="font-serif italic text-2xl text-white tracking-widest">NLSIU</span>
+      <section className="py-10 border-y border-slate-200 bg-white flex flex-col items-center justify-center">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6">Trusted by the Indian Legal Community</p>
+        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
+          <span className="font-serif italic text-2xl text-slate-900 tracking-widest">SUPREME COURT</span>
+          <span className="font-serif italic text-2xl text-slate-900 tracking-widest">HIGH COURTS</span>
+          <span className="font-serif italic text-2xl text-slate-900 tracking-widest">LEGAL AID</span>
+          <span className="font-serif italic text-2xl text-slate-900 tracking-widest">NALSAR</span>
+          <span className="font-serif italic text-2xl text-slate-900 tracking-widest">NLSIU</span>
         </div>
       </section>
 
@@ -135,7 +134,7 @@ export default function Home() {
                 transition={{ delay: i * 0.1 }}
               >
                 <div className={`text-4xl md:text-6xl font-black mb-2 ${stat.color} tracking-tighter`}>{stat.val}</div>
-                <div className="text-slate-500 text-xs font-bold uppercase tracking-widest">{stat.label}</div>
+                <div className="text-slate-400 text-xs font-bold uppercase tracking-widest">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -147,10 +146,10 @@ export default function Home() {
       ══════════════════════════════════════════════════════ */}
       <section className="relative py-0 overflow-hidden">
         {/* Full-bleed dark red gradient band */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a0008] via-[#020617] to-[#020617]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))] from-red-900/30 via-transparent to-transparent" />
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-900/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#fff1f2] via-slate-50 to-slate-50" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))] from-red-500/10 via-transparent to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-200 to-transparent" />
 
         <div className="max-w-[1200px] mx-auto px-6 py-24 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -163,26 +162,26 @@ export default function Home() {
               transition={{ duration: 0.7 }}
             >
               {/* Badge */}
-              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/25 mb-6">
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-red-50 border border-red-200 mb-6">
                 <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
                 </span>
-                <span className="text-red-400 font-black text-xs tracking-[0.2em] uppercase">India's First Emergency Legal AI</span>
+                <span className="text-red-700 font-black text-xs tracking-[0.2em] uppercase">India's First Emergency Legal AI</span>
               </div>
 
-              <h2 className="text-5xl md:text-6xl font-serif font-black text-white mb-5 leading-[1.1]">
+              <h2 className="text-5xl md:text-6xl font-serif font-black text-slate-900 mb-5 leading-[1.1]">
                 Legal emergency? <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-rose-400">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500">
                   60 seconds.
                 </span>{" "}
                 Not 60 days.
               </h2>
 
-              <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-lg">
+              <p className="text-slate-600 text-lg leading-relaxed mb-8 max-w-lg">
                 Arrested at midnight? Cheated by a business partner? Police refusing to register your FIR?
                 <br /><br />
-                <span className="text-white font-semibold">Hit SOS.</span> Get your fundamental rights, an AI-drafted FIR, and connect with a verified lawyer — instantly.
+                <span className="text-slate-900 font-semibold">Hit SOS.</span> Get your fundamental rights, an AI-drafted FIR, and connect with a verified lawyer — instantly.
               </p>
 
               {/* Stats row */}
@@ -193,7 +192,7 @@ export default function Home() {
                   { value: '100%', label: 'Free to Use' },
                 ].map(({ value, label }) => (
                   <div key={label} className="flex flex-col">
-                    <span className="text-3xl font-black text-white">{value}</span>
+                    <span className="text-3xl font-black text-slate-900">{value}</span>
                     <span className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-0.5">{label}</span>
                   </div>
                 ))}
@@ -203,7 +202,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   to="/legal-sos"
-                  className="group relative flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-base tracking-wide shadow-[0_0_50px_rgba(239,68,68,0.35)] hover:shadow-[0_0_70px_rgba(239,68,68,0.5)] transition-all duration-300 overflow-hidden active:scale-95"
+                  className="group relative flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-base tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden active:scale-95"
                 >
                   <span className="relative flex h-3 w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/50" />
@@ -214,7 +213,7 @@ export default function Home() {
                 </Link>
                 <a
                   href="tel:112"
-                  className="flex items-center justify-center gap-2 px-8 py-5 rounded-2xl bg-white/5 border border-white/10 text-slate-300 font-bold text-base hover:bg-white/10 hover:border-red-500/30 transition active:scale-95"
+                  className="flex items-center justify-center gap-2 px-8 py-5 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold text-base hover:bg-slate-50 transition active:scale-95 shadow-sm"
                 >
                   📞 Call Police: 112
                 </a>
@@ -267,15 +266,15 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.12 }}
-                  className={`relative flex items-start gap-5 p-6 rounded-2xl bg-gradient-to-r ${color} border ${border} hover:scale-[1.02] transition-transform duration-300`}
+                  className={`relative flex items-start gap-5 p-6 rounded-2xl bg-white border ${border} hover:scale-[1.02] transition-transform duration-300 shadow-sm`}
                 >
                   <div className="text-3xl flex-shrink-0 mt-0.5">{icon}</div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-white font-bold text-base">{title}</h3>
+                      <h3 className="text-slate-900 font-bold text-base">{title}</h3>
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${tagColor}`}>{tag}</span>
                     </div>
-                    <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
+                    <p className="text-slate-600 text-sm leading-relaxed">{desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -297,10 +296,10 @@ export default function Home() {
       ══════════════════════════════════════════════════════ */}
       <section className="relative py-0 overflow-hidden">
         {/* Majestic court-room dark panel bg */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0014] via-[#020617] to-[#0d0500]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.12),_transparent_65%)]" />
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-800/20 via-amber-500/50 to-amber-800/20" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-900/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#f5f3ff] via-slate-50 to-white" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.08),_transparent_65%)]" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-200/20 via-amber-400/30 to-amber-200/20" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-200 to-transparent" />
 
         <div className="max-w-[1200px] mx-auto px-6 py-24 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -462,7 +461,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-4xl md:text-5xl font-serif font-bold text-white mb-4"
+              className="text-4xl md:text-5xl font-serif font-bold text-slate-900 mb-4"
             >
               Two Minds. One Purpose.
             </motion.h2>
@@ -471,7 +470,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="text-slate-400 max-w-2xl mx-auto text-lg"
+              className="text-slate-600 max-w-2xl mx-auto text-lg"
             >
               Choose the right intelligence for your legal battle.
             </motion.p>
@@ -487,27 +486,27 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="group relative"
             >
-              <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-orange-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative h-full bg-[#0f172a] border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden hover:border-red-500/30 transition-all duration-500 shadow-2xl flex flex-col items-center text-center">
+              <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-orange-600 rounded-3xl blur opacity-5 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative h-full bg-white border border-slate-200 rounded-3xl p-8 md:p-12 overflow-hidden hover:border-red-500/30 transition-all duration-500 shadow-xl flex flex-col items-center text-center">
 
-                <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/[0.03] rounded-full blur-[100px] pointer-events-none"></div>
 
                 <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-4xl shadow-lg mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 relative z-10 text-white">
                   ⚖️
                 </div>
 
-                <h3 className="text-3xl font-serif font-bold text-white mb-2">Judge AI</h3>
-                <p className="text-red-400 font-bold uppercase tracking-widest text-xs mb-8">The Strategist</p>
+                <h3 className="text-3xl font-serif font-bold text-slate-900 mb-2">Judge AI</h3>
+                <p className="text-red-600 font-bold uppercase tracking-widest text-xs mb-8">The Strategist</p>
 
-                <div className="text-lg text-slate-300 leading-relaxed mb-8 font-light">
-                  "Use Judge AI to <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400 font-black text-2xl">WIN</span> a case."
+                <div className="text-lg text-slate-700 leading-relaxed mb-8 font-light">
+                  "Use Judge AI to <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600 font-black text-2xl">WIN</span> a case."
                 </div>
 
                 <p className="text-sm text-slate-500 max-w-xs mx-auto mb-8">
                   Predict win probability, identify risks, and formulate a ruthless winning strategy.
                 </p>
 
-                <Link to="/judge-ai" className="px-8 py-3 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 font-bold hover:bg-red-500 hover:text-white transition-all uppercase tracking-wider text-sm mt-auto">
+                <Link to="/judge-ai" className="px-8 py-3 rounded-xl bg-red-50 text-red-600 border border-red-100 font-bold hover:bg-red-600 hover:text-white transition-all uppercase tracking-wider text-sm mt-auto">
                   Launch Strategist
                 </Link>
               </div>
@@ -521,27 +520,27 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="group relative"
             >
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative h-full bg-[#0f172a] border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden hover:border-cyan-500/30 transition-all duration-500 shadow-2xl flex flex-col items-center text-center">
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl blur opacity-5 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative h-full bg-white border border-slate-200 rounded-3xl p-8 md:p-12 overflow-hidden hover:border-cyan-500/30 transition-all duration-500 shadow-xl flex flex-col items-center text-center">
 
-                <div className="absolute top-0 left-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+                <div className="absolute top-0 left-0 w-64 h-64 bg-cyan-500/[0.03] rounded-full blur-[100px] pointer-events-none"></div>
 
                 <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-4xl shadow-lg mb-8 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500 relative z-10 text-white">
                   🧠
                 </div>
 
-                <h3 className="text-3xl font-serif font-bold text-white mb-2">AI Assistant</h3>
-                <p className="text-cyan-400 font-bold uppercase tracking-widest text-xs mb-8">The Consultant</p>
+                <h3 className="text-3xl font-serif font-bold text-slate-900 mb-2">AI Assistant</h3>
+                <p className="text-cyan-600 font-bold uppercase tracking-widest text-xs mb-8">The Consultant</p>
 
-                <div className="text-lg text-slate-300 leading-relaxed mb-8 font-light">
-                  "Use AI Assistant to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 font-black text-2xl">UNDERSTAND</span> the law."
+                <div className="text-lg text-slate-700 leading-relaxed mb-8 font-light">
+                  "Use AI Assistant to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600 font-black text-2xl">UNDERSTAND</span> the law."
                 </div>
 
                 <p className="text-sm text-slate-500 max-w-xs mx-auto mb-8">
                   Get instant legal opinions, research complex topics, and draft notices conversationally.
                 </p>
 
-                <Link to="/assistant" className="px-8 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold hover:bg-cyan-500 hover:text-white transition-all uppercase tracking-wider text-sm mt-auto">
+                <Link to="/assistant" className="px-8 py-3 rounded-xl bg-cyan-50 text-cyan-600 border border-cyan-100 font-bold hover:bg-cyan-600 hover:text-white transition-all uppercase tracking-wider text-sm mt-auto">
                   Start Consultation
                 </Link>
               </div>
@@ -554,10 +553,10 @@ export default function Home() {
       {/* ══════════════════════════════════════════════════════
           FEATURE BENTO GRID — PREMIUM DISPLAY
       ══════════════════════════════════════════════════════ */}
-      <section className="py-32 relative overflow-hidden bg-black/20">
+      <section className="py-32 relative overflow-hidden bg-slate-100/50 border-y border-slate-200">
         <div className="max-w-[1400px] mx-auto px-6 relative z-10">
           <div className="text-center mb-20">
-            <h2 className="text-5xl font-serif font-black text-white mb-4">Elite Capabilities.</h2>
+            <h2 className="text-5xl font-serif font-black text-slate-900 mb-4">Elite Capabilities.</h2>
             <p className="text-slate-500 text-lg">The world's most advanced legal operating system.</p>
           </div>
 
@@ -636,7 +635,7 @@ function BentoCard({ title, desc, icon, color, href, badge, className }) {
     <motion.div
       whileHover={{ y: -5 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`relative group bg-[#0f172a] border border-white/5 rounded-[24px] p-5 overflow-hidden hover:border-white/20 transition-all shadow-2xl flex flex-col ${className}`}
+      className={`relative group bg-white border border-slate-200 rounded-[24px] p-5 overflow-hidden hover:border-indigo-500/20 transition-all shadow-sm hover:shadow-xl flex flex-col ${className}`}
       onClick={() => window.location.href = href}
     >
       {/* Mesh Gradient Background */}
@@ -646,7 +645,7 @@ function BentoCard({ title, desc, icon, color, href, badge, className }) {
       <div className={`absolute -top-24 -right-24 w-64 h-64 bg-gradient-to-br ${color} blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-700`} />
 
       {badge && (
-        <span className="absolute top-5 right-5 px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-[8px] font-black uppercase tracking-widest text-white/50 group-hover:text-white transition-colors">
+        <span className="absolute top-5 right-5 px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-full text-[8px] font-black uppercase tracking-widest text-slate-500 group-hover:text-indigo-600 transition-colors">
           {badge}
         </span>
       )}
@@ -662,16 +661,16 @@ function BentoCard({ title, desc, icon, color, href, badge, className }) {
       </motion.div>
 
       <div className="relative z-10">
-        <h3 className="text-lg font-display font-bold text-white mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:${color} transition-all duration-300">
+        <h3 className="text-lg font-display font-bold text-slate-900 mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r transition-all duration-300">
           {title}
         </h3>
-        <p className="text-slate-500 text-[12px] leading-relaxed max-w-sm group-hover:text-slate-400 transition-colors">
+        <p className="text-slate-600 text-[12px] leading-relaxed max-w-sm group-hover:text-slate-700 transition-colors">
           {desc}
         </p>
       </div>
 
       <div className="mt-auto pt-2 relative z-10">
-        <span className="text-white/40 text-[9px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 group-hover:text-white transition-all">
+        <span className="text-slate-400 text-[9px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 group-hover:text-indigo-600 transition-all">
           Explore Module
           <motion.span
             className="inline-block"
@@ -682,7 +681,7 @@ function BentoCard({ title, desc, icon, color, href, badge, className }) {
       </div>
 
       {/* Border Glow */}
-      <div className={`absolute inset-0 border border-white/10 rounded-[24px] group-hover:border-white/20 transition-colors pointer-events-none`} />
+      <div className={`absolute inset-0 border border-slate-200 rounded-[24px] group-hover:border-indigo-500/10 transition-colors pointer-events-none`} />
     </motion.div>
   );
 }

@@ -69,10 +69,10 @@ export default function Navbar() {
           {/* LOGO */}
           <Link to="/" className="flex items-center gap-3 group relative z-50">
             <div className="relative">
-              <div className="absolute inset-0 bg-gold-500 blur-[20px] opacity-20 group-hover:opacity-40 transition duration-500"></div>
-              <img src="/logo.png" alt="NyayNow" className="relative w-10 h-10 object-contain hover:scale-105 transition duration-300 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+              <div className="absolute inset-0 bg-gold-400 blur-[20px] opacity-10 group-hover:opacity-30 transition duration-500"></div>
+              <img src="/logo.png" alt="NyayNow" className="relative w-10 h-10 object-contain hover:scale-105 transition duration-300 drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]" />
             </div>
-            <span className="text-2xl font-display font-bold tracking-tight text-white group-hover:text-gold-400 transition-colors duration-300">NyayNow</span>
+            <span className="text-2xl font-display font-bold tracking-tight text-slate-900 group-hover:text-gold-600 transition-colors duration-300">NyayNow</span>
           </Link>
 
           {/* DESKTOP NAV */}
@@ -85,9 +85,9 @@ export default function Navbar() {
                 onMouseEnter={() => handleMouseEnter(idx)}
                 onMouseLeave={handleMouseLeave}
               >
-                <button className={`flex items-center gap-1.5 text-sm font-bold tracking-wide transition-all duration-300 ${hoveredIndex === idx ? "text-gold-400" : "text-slate-300 hover:text-white"}`}>
+                <button className={`flex items-center gap-1.5 text-sm font-bold tracking-wide transition-all duration-300 ${hoveredIndex === idx ? "text-gold-600" : "text-slate-600 hover:text-slate-900"}`}>
                   {category.label}
-                  <ChevronDown size={14} className={`transition-transform duration-300 ${hoveredIndex === idx ? "rotate-180 text-gold-400" : ""}`} />
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${hoveredIndex === idx ? "rotate-180 text-gold-600" : ""}`} />
                 </button>
 
                 <AnimatePresence>
@@ -99,7 +99,7 @@ export default function Navbar() {
                       transition={{ duration: 0.2, ease: "easeOut" }}
                       className="absolute top-full left-1/2 -translate-x-1/2 pt-6 w-[600px]"
                     >
-                      <div className="glass-card border border-white/10 rounded-2xl p-2 shadow-2xl grid grid-cols-2 gap-2 relative overflow-hidden">
+                      <div className="bg-white border border-slate-200 rounded-2xl p-2 shadow-2xl grid grid-cols-2 gap-2 relative overflow-hidden backdrop-blur-3xl">
                         {/* Gold Border Glow */}
                         <div className="absolute inset-0 pointer-events-none border border-gold-500/10 rounded-2xl"></div>
 
@@ -107,16 +107,16 @@ export default function Navbar() {
                           <Link
                             key={i}
                             to={item.href}
-                            className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition group relative z-10 border border-transparent hover:border-gold-500/10"
+                            className="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 transition group relative z-10 border border-transparent hover:border-gold-500/10"
                           >
-                            <div className="w-10 h-10 rounded-lg bg-midnight-800 flex items-center justify-center border border-white/5 group-hover:border-gold-500/30 transition group-hover:scale-110 duration-300 shadow-lg">
+                            <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 group-hover:border-gold-500/30 transition group-hover:scale-110 duration-300 shadow-sm">
                               {/* Override Icon Colors for Premium Feel */}
                               <div className="group-hover:text-gold-400 transition duration-300">
                                 {item.icon}
                               </div>
                             </div>
                             <div>
-                              <div className="text-slate-200 font-display font-semibold text-sm group-hover:text-gold-400 transition">{item.name}</div>
+                              <div className="text-slate-900 font-display font-semibold text-sm group-hover:text-gold-600 transition">{item.name}</div>
                               <div className="text-slate-500 text-xs font-medium">{item.desc}</div>
                             </div>
                           </Link>
@@ -141,9 +141,9 @@ export default function Navbar() {
           <div className="flex items-center gap-3 lg:gap-4 relative z-50">
             {!user ? (
               <div className="flex items-center gap-5">
-                <Link to="/login" className="hidden sm:block font-bold text-sm text-slate-300 hover:text-white transition-all duration-300 relative group">
+                <Link to="/login" className="hidden sm:block font-bold text-sm text-slate-600 hover:text-slate-900 transition-all duration-300 relative group">
                   Log in
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-400 transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-600 transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Link to="/register" className="relative overflow-hidden px-6 py-2.5 bg-gradient-to-r from-gold-400 to-yellow-600 text-midnight-950 font-bold text-sm rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition duration-300 group flex items-center gap-2">
@@ -155,8 +155,8 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center gap-3">
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Link to={user.role === 'admin' ? '/admin' : (user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard')} className="hidden sm:flex items-center gap-2 transition font-bold text-xs uppercase tracking-widest text-slate-300 hover:text-white duration-300 bg-white/5 px-4 py-2 rounded-xl border border-white/10 hover:border-gold-500/30">
-                    <LayoutDashboard size={15} className="text-gold-400" /> {user.role === 'admin' ? 'Console' : 'Dashboard'}
+                  <Link to={user.role === 'admin' ? '/admin' : (user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard')} className="hidden sm:flex items-center gap-2 transition font-bold text-xs uppercase tracking-widest text-slate-600 hover:text-slate-900 duration-300 bg-white px-4 py-2 rounded-xl border border-slate-200 hover:border-gold-500/30 shadow-sm">
+                    <LayoutDashboard size={15} className="text-gold-600" /> {user.role === 'admin' ? 'Console' : 'Dashboard'}
                   </Link>
                 </motion.div>
 
@@ -166,12 +166,12 @@ export default function Navbar() {
                       {user.profileImage ? <img src={user.profileImage} className="w-full h-full object-cover" /> : <span className="font-display font-bold text-gold-400 text-lg">{user.name[0]}</span>}
                     </div>
                   </div>
-                  <div className="absolute right-0 top-full mt-4 w-64 glass-card rounded-xl p-2 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right border border-white/10">
-                    <div className="px-3 py-3 border-b border-white/5 mb-2 bg-midnight-950/30 rounded-t-lg">
-                      <p className="text-white font-display font-bold text-sm truncate">{user.name}</p>
+                  <div className="absolute right-0 top-full mt-4 w-64 bg-white border border-slate-200 rounded-xl p-2 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                    <div className="px-3 py-3 border-b border-slate-100 mb-2 bg-slate-50/50 rounded-t-lg">
+                      <p className="text-slate-900 font-display font-bold text-sm truncate">{user.name}</p>
                       <p className="text-slate-500 text-xs truncate">{user.email}</p>
                     </div>
-                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-gold-400 hover:bg-white/5 rounded-lg text-sm transition font-medium">
+                    <Link to="/settings" className="flex items-center gap-3 px-3 py-2 text-slate-600 hover:text-gold-600 hover:bg-slate-50 rounded-lg text-sm transition font-medium">
                       <User size={16} /> Profile & Settings
                     </Link>
                     <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 text-rose-500 hover:bg-rose-500/10 rounded-lg text-sm transition font-medium text-left">
@@ -206,7 +206,7 @@ export default function Navbar() {
               </Link>
             </motion.div>
 
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-300 hover:text-gold-400 transition-colors duration-300">
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-600 hover:text-gold-600 transition-colors duration-300">
               {mobileMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
@@ -220,23 +220,23 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-midnight-950/95 backdrop-blur-xl pt-24 px-6 overflow-y-auto"
+            className="fixed inset-0 z-40 bg-white backdrop-blur-xl pt-24 px-6 overflow-y-auto"
           >
             <div className="flex flex-col gap-6 pb-20">
               {navItems.map((group, idx) => (
                 <div key={idx} className="space-y-3">
-                  <h3 className="text-gold-400 font-display font-bold text-sm uppercase tracking-widest border-b border-white/5 pb-2">{group.label}</h3>
+                  <h3 className="text-gold-600 font-display font-bold text-sm uppercase tracking-widest border-b border-slate-100 pb-2">{group.label}</h3>
                   <div className="grid grid-cols-1 gap-2">
                     {group.items.map((item, i) => (
                       <Link
                         key={i}
                         to={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-gold-500/30 transition"
+                        className="flex items-center gap-4 p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-gold-500/30 transition"
                       >
-                        <div className="text-slate-300">{item.icon}</div>
+                        <div className="text-slate-600">{item.icon}</div>
                         <div>
-                          <div className="text-white font-semibold text-sm">{item.name}</div>
+                          <div className="text-slate-900 font-semibold text-sm">{item.name}</div>
                           <div className="text-slate-500 text-xs">{item.desc}</div>
                         </div>
                       </Link>
