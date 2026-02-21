@@ -1,13 +1,17 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
+import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+
 
 export default function Home() {
   const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
+      <Navbar />
 
       {/* --- HERO SECTION (PREMIUM DARK) --- */}
       <section className="relative pt-32 pb-32 lg:pt-48 lg:pb-40 overflow-hidden">
@@ -563,6 +567,103 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ══════════════════════════════════════════════════════
+          FINAL CTA — "JOIN THE LEGAL REVOLUTION"
+      ══════════════════════════════════════════════════════ */}
+      <section className="relative py-32 overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#020617] via-indigo-950/20 to-[#020617]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(99,102,241,0.15),_transparent_70%)]" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+        {/* Floating orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-[0.2em] mb-8"
+          >
+            <span className="flex h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
+            Free for Every Indian Citizen
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-[1.05]"
+          >
+            Justice shouldn't
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400">
+              be a luxury.
+            </span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed"
+          >
+            NyayNow puts the full power of the Indian legal system in your pocket. For free, forever, for every citizen of 1.4 billion.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+          >
+            <Link
+              to="/register"
+              className="group relative px-10 py-5 rounded-2xl text-white font-bold text-base bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 transition-all duration-300 shadow-[0_0_50px_rgba(99,102,241,0.4)] hover:shadow-[0_0_80px_rgba(99,102,241,0.6)] active:scale-95 overflow-hidden"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                ✦ Get Legal Power — Free
+              </span>
+              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            </Link>
+            <Link
+              to="/legal-sos"
+              className="px-10 py-5 rounded-2xl font-bold text-sm text-slate-300 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 active:scale-95"
+            >
+              🚨 Emergency Legal Help
+            </Link>
+          </motion.div>
+
+          {/* Feature pills */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-wrap items-center justify-center gap-3"
+          >
+            {[
+              '⚖️ AI Legal Analysis',
+              '📋 Instant FIR Drafting',
+              '🏛️ 50,000+ Lawyers',
+              '🎙️ 10+ Indian Languages',
+              '🔒 100% Confidential',
+              '💎 Free for Citizens'
+            ].map((pill) => (
+              <span key={pill} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-slate-400 text-xs font-semibold backdrop-blur-sm hover:bg-white/10 hover:text-white transition-all duration-200">
+                {pill}
+              </span>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { useNavigate, Link } from "react-router-dom";
 import PaywallModal from "../components/PaywallModal";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -200,6 +201,7 @@ export default function Agreements() {
 
         </div>
       </div>
+      <Footer />
     </main>
   );
 }

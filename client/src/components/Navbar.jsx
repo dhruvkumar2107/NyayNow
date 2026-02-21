@@ -37,6 +37,8 @@ export default function Navbar() {
         { name: "Legal Research", href: "/research", desc: "Semantic Case Search", icon: <Search className="text-blue-400" size={20} /> },
         { name: "Drafting Lab", href: "/drafting", desc: "AI Contract Generator", icon: <FileText className="text-emerald-400" size={20} /> },
         { name: "NyayVoice", href: "/voice-assistant", desc: "Multilingual Voice AI", icon: <Mic className="text-purple-400" size={20} /> },
+        { name: "⚖️ NyayCourt", href: "/courtroom-battle", desc: "AI Multi-Agent Trial", icon: <Gavel className="text-amber-400" size={20} /> },
+        { name: "🚨 Legal SOS", href: "/legal-sos", desc: "Emergency Legal Triage", icon: <Shield className="text-red-400" size={20} /> },
       ]
     },
     {

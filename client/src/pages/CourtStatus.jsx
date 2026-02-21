@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
@@ -195,6 +196,7 @@ const CourtStatus = () => {
                     )}
                 </AnimatePresence>
             </div>
+            <Footer />
         </div>
     );
 };

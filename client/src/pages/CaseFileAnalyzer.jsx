@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileText, Calendar, AlertTriangle, Shield, CheckCircle, Search, Scale } from 'lucide-react';
 
@@ -238,6 +239,7 @@ const CaseFileAnalyzer = () => {
 
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import {
@@ -15,7 +16,7 @@ const EMERGENCY_TYPES = [
     { id: 'fraud', label: 'Fraud / Cheating', icon: '💸', color: 'from-orange-500 to-amber-600' },
     { id: 'violence', label: 'Domestic Violence', icon: '🏠', color: 'from-pink-500 to-rose-600' },
     { id: 'theft', label: 'Theft / Robbery', icon: '🔓', color: 'from-violet-500 to-purple-600' },
-    { id: 'harassment', 'label': 'Harassment / Stalking', icon: '🚨', color: 'from-yellow-500 to-orange-600' },
+    { id: 'harassment', label: 'Harassment / Stalking', icon: '🚨', color: 'from-yellow-500 to-orange-600' },
     { id: 'other', label: 'Other Emergency', icon: '⚠️', color: 'from-slate-500 to-slate-600' },
 ];
 
@@ -552,6 +553,7 @@ export default function LegalSOS() {
                     )}
                 </AnimatePresence>
             </div>
+            <Footer />
         </div>
     );
 }

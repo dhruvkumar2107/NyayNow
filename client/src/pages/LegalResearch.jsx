@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { Search, BookOpen, Scale, FileText, ArrowRight, Filter } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const LegalResearch = () => {
     const [query, setQuery] = useState('');
@@ -186,6 +187,7 @@ const LegalResearch = () => {
 
                 </div>
             )}
+            <Footer />
         </div>
     );
 };

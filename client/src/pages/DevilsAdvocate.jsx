@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -192,6 +193,7 @@ const DevilsAdvocate = () => {
 
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

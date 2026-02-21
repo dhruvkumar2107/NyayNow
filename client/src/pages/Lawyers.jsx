@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Star, Shield, Filter, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -140,6 +141,7 @@ export default function Lawyers() {
           <button className="px-8 py-3 border border-white/10 bg-white/5 hover:bg-white/10 rounded-xl text-white font-bold transition">Load More Profiles</button>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

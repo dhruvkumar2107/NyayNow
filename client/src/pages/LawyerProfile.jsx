@@ -4,6 +4,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { motion } from "framer-motion";
 import { Mail, Linkedin, MapPin, Globe, Award, Briefcase, Gavel, Star, MessageCircle, UserPlus, Clock } from "lucide-react";
 
@@ -257,6 +258,7 @@ export default function LawyerProfile() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </main>
     );
 }

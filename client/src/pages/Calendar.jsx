@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { Calendar as CalendarIcon, Clock, ChevronRight, Video, RefreshCw } from "lucide-react";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function Calendar() {
     const { user } = useAuth();
@@ -37,8 +39,9 @@ export default function Calendar() {
     };
 
     return (
-        <div className="min-h-screen bg-[#020617] px-6 py-12 font-sans text-slate-400">
-            <div className="max-w-6xl mx-auto">
+        <div className="min-h-screen bg-[#020617] font-sans text-slate-400">
+            <Navbar />
+            <div className="px-6 py-12 pt-28">
                 <header className="mb-10 flex justify-between items-end">
                     <div>
                         <h1 className="text-4xl font-bold text-white mb-2 font-serif">Command Center Calendar</h1>
@@ -132,6 +135,7 @@ export default function Calendar() {
 
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

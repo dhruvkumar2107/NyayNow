@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import SubscriptionModal from '../components/SubscriptionModal';
 import { Briefcase, ChevronRight, Award, CheckCircle, Clock } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const CareerHub = () => {
     const [activeTask, setActiveTask] = useState(null);
@@ -228,6 +229,7 @@ const CareerHub = () => {
 
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

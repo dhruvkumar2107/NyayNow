@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { motion } from "framer-motion";
-import { Bell, Lock, Shield, User, Smartphone, Globe, Moon, Monitor, CreditCard } from "lucide-react";
+import { Bell, Lock, Shield, User, Smartphone, Globe, Moon, Monitor, CreditCard, Settings2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function Settings() {
@@ -40,13 +41,30 @@ export default function Settings() {
     };
 
     return (
-        <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30 pb-20">
+        <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30 pb-20 relative overflow-hidden">
             <Navbar />
 
-            <div className="max-w-6xl mx-auto pt-28 pb-12 px-6">
-                <header className="mb-10 text-center">
-                    <h1 className="text-3xl font-bold text-white mb-2 leading-tight">System Preferences</h1>
-                    <p className="text-slate-400">Manage your account security and AI configurations.</p>
+            {/* Ambient Glow */}
+            <div className="absolute top-20 right-1/4 w-[500px] h-[500px] bg-indigo-500/8 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-40 left-1/4 w-[400px] h-[400px] bg-violet-500/6 rounded-full blur-[80px] pointer-events-none" />
+
+            <div className="max-w-6xl mx-auto pt-28 pb-12 px-6 relative z-10">
+                <header className="mb-12">
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-xs font-bold uppercase tracking-widest mb-4"
+                    >
+                        <Settings2 size={11} /> Account Preferences
+                    </motion.div>
+                    <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+                        className="text-4xl font-bold text-white mb-2 leading-tight"
+                    >
+                        Settings
+                    </motion.h1>
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
+                        className="text-slate-500 text-sm"
+                    >
+                        Manage your account security, notifications, and AI configurations.
+                    </motion.p>
                 </header>
 
                 <div className="grid lg:grid-cols-12 gap-8 min-h-[600px]">
@@ -218,6 +236,7 @@ export default function Settings() {
 
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
-
+import Footer from '../../components/Footer';
 import { Shield, Lock, Eye, Database } from 'lucide-react';
 
 const PrivacyPolicy = () => {
@@ -90,6 +90,7 @@ const PrivacyPolicy = () => {
                 </div>
             </div>
 
+            <Footer />
         </div>
     );
 };

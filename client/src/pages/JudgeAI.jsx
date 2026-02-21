@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { UploadCloud, FileText, CheckCircle, AlertTriangle, Scale, Swords, Play } from "lucide-react";
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
@@ -296,6 +297,7 @@ const JudgeAI = () => {
             </section>
 
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} feature="Premium Legal Dossiers" />
+            <Footer />
         </div>
     );
 };

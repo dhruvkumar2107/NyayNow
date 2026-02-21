@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
@@ -62,7 +63,7 @@ const SPEAKERS = {
 function RoundCard({ round, index, isActive, onDone }) {
     const cfg = SPEAKERS[round.speaker] || SPEAKERS.judge;
     const { displayed, done } = useTypewriter(round.speech, 15, isActive);
-    useEffect(() => { if (done && onDone) onDone(); }, [done]);
+    useEffect(() => { if (done && onDone) onDone(); }, [done, onDone]);
     return (
         <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.96 }}
@@ -145,7 +146,6 @@ function VerdictReveal({ verdict }) {
     if (!verdict) return null;
     const plaintiff = verdict.win_probability_plaintiff ?? 50;
     const defense = verdict.win_probability_defense ?? 50;
-    const rulingFor = verdict.ruling?.toLowerCase().includes('plaintiff') ? 'plaintiff' : 'defense';
     return (
         <AnimatePresence>
             {show && (
@@ -370,8 +370,8 @@ export default function CourtroomBattle() {
                         className="flex flex-col sm:flex-row gap-4 justify-center mt-8 mb-2"
                     >
                         {[
-                            { avatar: '👨‍⚖️', name: 'Adv. Vikram Anand', role: 'Plaintiff's Counsel', color: 'border - amber - 500 / 30 bg- amber - 500 / 5' },
-              { avatar: '⚖️', name: 'Justice R.K. Krishnamurthy', role: 'Presiding Judge', color: 'border-red-500/30 bg-red-500/5' },
+                            { avatar: '👨‍⚖️', name: 'Adv. Vikram Anand', role: "Plaintiff's Counsel", color: 'border-amber-500/30 bg-amber-500/5' },
+                            { avatar: '⚖️', name: 'Justice R.K. Krishnamurthy', role: 'Presiding Judge', color: 'border-red-500/30 bg-red-500/5' },
                             { avatar: '👩‍⚖️', name: 'Adv. Priya Rathore', role: 'Defense Counsel', color: 'border-indigo-500/30 bg-indigo-500/5' },
                         ].map((p) => (
                             <div key={p.name} className={`flex items-center gap-3 px-4 py-3 rounded-2xl border ${p.color} text-left`}>
@@ -591,8 +591,8 @@ export default function CourtroomBattle() {
                                 />
                             ))}
 
-                            {/* Loading next round indicator */}
-                            {phase === 'trial' && activeRound < result.rounds.length && (
+                            {/* Loading next round indicator — only while waiting between rounds (not during active typing) */}
+                            {phase === 'trial' && activeRound !== -1 && activeRound < result.rounds.length && shownRounds.length < result.rounds.length && (
                                 <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
@@ -615,6 +615,7 @@ export default function CourtroomBattle() {
                     )}
                 </AnimatePresence>
             </div>
+            <Footer />
         </div>
     );
 }

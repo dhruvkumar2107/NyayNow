@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import SubscriptionModal from '../components/SubscriptionModal';
 import { FileText, Search, Zap, AlertTriangle, CheckCircle, Download } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const DraftingLab = () => {
     const [activeTab, setActiveTab] = useState('draft'); // 'draft' or 'analyze'
@@ -358,6 +359,7 @@ const DraftingLab = () => {
                 </motion.div>
 
             </div>
+            <Footer />
         </div>
     );
 };
