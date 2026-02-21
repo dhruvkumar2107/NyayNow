@@ -72,8 +72,11 @@ export default function App() {
       {/* ROOT APP WRAPPER */}
       <div className="min-h-screen bg-[#020617] text-slate-400 font-sans">
         <Toaster position="top-right" reverseOrder={false} />
-        {/* FIXED NAVBAR */}
-        <Navbar />
+        {/* FIXED NAVBAR - Conditionally Hidden on Auth/Dashboard */}
+        {!window.location.pathname.startsWith('/login') &&
+          !window.location.pathname.startsWith('/register') &&
+          !window.location.pathname.includes('/dashboard') &&
+          <Navbar />}
 
         {/* PAGE CONTENT */}
         <main className="pt-[72px]">

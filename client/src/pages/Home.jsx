@@ -11,77 +11,122 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
-      <Navbar />
+      {/* ══════════════════════════════════════════════════════
+          NEW HERO ENTRANCE — "JUSTICE SHOULDN'T BE A LUXURY"
+      ══════════════════════════════════════════════════════ */}
+      <section className="relative pt-40 pb-32 lg:pt-56 lg:pb-48 overflow-hidden">
+        {/* Background elements */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-[#020617] to-[#020617] pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none mix-blend-screen" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[130px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
 
-      {/* --- HERO SECTION (PREMIUM DARK) --- */}
-      <section className="relative pt-32 pb-32 lg:pt-48 lg:pb-40 overflow-hidden">
-        {/* Abstract Backgrounds with New Gradients */}
-        <div className="absolute top-0 left-0 right-0 h-[800px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-[#020617] to-[#020617] pointer-events-none"></div>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
-        <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-500/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
-
-        <div className="max-w-[1200px] mx-auto px-6 relative z-10 text-center">
+        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 shadow-sm mb-6 backdrop-blur-md"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-indigo-300 text-[10px] font-black uppercase tracking-[0.25em] mb-10 backdrop-blur-xl shadow-2xl"
           >
-            <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
-            <span className="text-xs font-bold text-indigo-300 tracking-[0.15em] uppercase">The Future of Legal Practice</span>
+            <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_#6366f1]" />
+            Free for Every Indian Citizen
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-6xl md:text-8xl font-serif font-bold tracking-tight text-white mb-6 leading-[1.05]"
+            transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+            className="text-6xl md:text-9xl font-serif font-black text-white mb-8 leading-[0.95] tracking-tight"
           >
-            Your Personal <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-violet-400">Legal Supermind.</span>
+            Justice shouldn't
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-300 to-purple-400 indigo-glow">
+              be a luxury.
+            </span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-medium"
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto mb-14 font-light leading-relaxed tracking-wide"
           >
-            Navigate the complexities of Indian Law with elite precision. <br className="hidden md:block" />
-            Designed for the top 1% of legal professionals and visionary firms.
+            NyayNow puts the full power of the Indian legal system in your pocket. <br className="hidden md:block" />
+            Designed for the <span className="text-white font-semibold">1.4 billion</span> who deserve access to justice.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6"
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-5"
           >
-            {!user ? (
-              <>
-                <Link
-                  to="/register"
-                  className="w-full sm:w-auto px-10 py-5 rounded-xl bg-white text-slate-900 font-bold text-sm hover:bg-indigo-50 transition shadow-[0_0_40px_rgba(255,255,255,0.1)] active:scale-95 duration-200 uppercase tracking-wider"
-                >
-                  Start Free Trial
-                </Link>
-                <Link
-                  to="/login"
-                  className="w-full sm:w-auto px-10 py-5 rounded-xl bg-white/5 text-white border border-white/10 font-bold text-sm hover:bg-white/10 transition active:scale-95 duration-200 uppercase tracking-wider"
-                >
-                  Member Login
-                </Link>
-              </>
-            ) : (
+            <Link
+              to={!user ? "/register" : (user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
+              className="group relative w-full sm:w-auto px-12 py-5 rounded-2xl text-white font-black text-lg bg-indigo-600 hover:bg-indigo-500 transition-all duration-300 shadow-[0_0_60px_rgba(99,102,241,0.4)] active:scale-95 overflow-hidden"
+            >
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {!user ? "✦ Get Started Free" : "✦ Enter Command Center"}
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+            </Link>
+            <Link
+              to="/legal-sos"
+              className="w-full sm:w-auto px-10 py-5 rounded-2xl font-bold text-base text-slate-300 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-red-500/40 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
+            >
+              🚨 Legal SOS
+            </Link>
+            {!user && (
               <Link
-                to={user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard"}
-                className="w-full sm:w-auto px-10 py-5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-sm hover:opacity-90 transition shadow-[0_0_40px_rgba(99,102,241,0.4)] active:scale-95 duration-200 uppercase tracking-wider flex items-center gap-2 justify-center"
+                to="/login"
+                className="w-full sm:w-auto px-6 py-5 text-slate-500 hover:text-white font-bold text-sm transition-colors duration-300 flex items-center justify-center underline underline-offset-4"
               >
-                Enter Command Center
+                Member Login
               </Link>
             )}
           </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          TRUST BAR — MARQUEE STYLE
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-10 border-y border-white/5 bg-black/20 flex flex-col items-center justify-center">
+        <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-6">Trusted by the Indian Legal Community</p>
+        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+          {/* Placeholder for trusted names using premium typography */}
+          <span className="font-serif italic text-2xl text-white tracking-widest">SUPREME COURT</span>
+          <span className="font-serif italic text-2xl text-white tracking-widest">HIGH COURTS</span>
+          <span className="font-serif italic text-2xl text-white tracking-widest">LEGAL AID</span>
+          <span className="font-serif italic text-2xl text-white tracking-widest">NALSAR</span>
+          <span className="font-serif italic text-2xl text-white tracking-widest">NLSIU</span>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          MILESTONE STATS section
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+            {[
+              { val: "100K+", label: "Legal Queries", color: "text-indigo-400" },
+              { val: "50,000+", label: "Lawyers Joined", color: "text-violet-400" },
+              { val: "₹0", label: "Paid for Counsel", color: "text-emerald-400" },
+              { val: "14", label: "Languages", color: "text-amber-400" }
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <div className={`text-4xl md:text-6xl font-black mb-2 ${stat.color} tracking-tighter`}>{stat.val}</div>
+                <div className="text-slate-500 text-xs font-bold uppercase tracking-widest">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -494,177 +539,115 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- LEGAL SUPERMIND SHOWCASE --- */}
-      <section className="py-24 bg-[#020617] relative overflow-hidden border-t border-white/5">
+      {/* ══════════════════════════════════════════════════════
+          FEATURE BENTO GRID — PREMIUM DISPLAY
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-32 relative overflow-hidden bg-black/20">
         <div className="max-w-[1400px] mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 perspective-1000">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl font-serif font-black text-white mb-4">Elite Capabilities.</h2>
+            <p className="text-slate-500 text-lg">The world's most advanced legal operating system.</p>
+          </div>
 
-
-
-            {/* CARD 3: NYAY VOICE (VIRAL) */}
-            <UnicornCard
-              title="NyayVoice"
-              desc="Your multilingual AI Legal Companion. Speak naturally in Hindi, Tamil, or 10+ languages."
-              icon="🎙️"
-              color="from-violet-500 via-purple-500 to-fuchsia-500"
-              href="/voice-assistant"
-              delay={0.2}
-            />
-
-            {/* CARD 4: MOOT COURT */}
-            <UnicornCard
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[300px]">
+            {/* LARGE FEATURE: MOOT COURT */}
+            <BentoCard
               title="Moot Court VR"
               desc="Practice oral arguments against a ruthless AI Judge. Real-time feedback on your speech & extensive logic."
               icon="🏛️"
               color="from-indigo-500 via-purple-500 to-pink-500"
               href="/moot-court"
               badge="Flagship"
-              delay={0.3}
+              className="md:col-span-8 md:row-span-2"
             />
-
-            {/* CARD 5: MARKETPLACE */}
-            <UnicornCard
+            {/* NYAY VOICE */}
+            <BentoCard
+              title="NyayVoice"
+              desc="Speak naturally in Hindi, Tamil, or 10+ languages."
+              icon="🎙️"
+              color="from-violet-500 via-purple-500 to-fuchsia-500"
+              href="/voice-assistant"
+              className="md:col-span-4"
+            />
+            {/* ELITE NETWORK */}
+            <BentoCard
               title="Elite Network"
-              desc="Connect with the top 1% of legal minds in the country. Validated lawyers, arbitrators, and experts."
+              desc="Connect with the top 1% of legal minds."
               icon="💎"
               color="from-amber-400 via-orange-500 to-red-500"
               href="/marketplace"
               badge="Exclusive"
-              delay={0.4}
+              className="md:col-span-4"
             />
-
-            {/* CARD 6: DRAFTING */}
-            <UnicornCard
+            {/* DRAFTING */}
+            <BentoCard
               title="Drafting Lab"
-              desc="Auto-generate ironclad contracts, clauses, and notices while detecting hidden risks instantly."
+              desc="Auto-generate ironclad contracts & notices."
               icon="📝"
               color="from-emerald-500 via-green-500 to-lime-500"
               href="/drafting"
-              delay={0.5}
+              className="md:col-span-4"
             />
-
-            {/* CARD 7: RESEARCH */}
-            <UnicornCard
+            {/* RESEARCH */}
+            <BentoCard
               title="Deep Research"
-              desc="Semantic search that finds precedents based on legal context, not just keyword matching."
+              desc="Semantic search for legal precedents."
               icon="🔍"
               color="from-blue-500 via-cyan-500 to-teal-500"
               href="/research"
-              delay={0.6}
+              className="md:col-span-4"
             />
-
-            {/* CARD 8: CAREER */}
-            <UnicornCard
+            {/* CAREER HUB */}
+            <BentoCard
               title="Career Hub"
-              desc="Virtual internships, task grading, and mentorship from avatars of top Supreme Court advocates."
+              desc="Internships & mentorship from top advocates."
               icon="💼"
               color="from-orange-500 via-pink-500 to-rose-500"
               href="/career"
-              delay={0.7}
+              className="md:col-span-4"
             />
-
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          FINAL CTA — "JOIN THE LEGAL REVOLUTION"
+          REMOVED OLD JUSTICE SECTION (MOVED TO TOP)
       ══════════════════════════════════════════════════════ */}
-      <section className="relative py-32 overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#020617] via-indigo-950/20 to-[#020617]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(99,102,241,0.15),_transparent_70%)]" />
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
-        {/* Floating orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
-
-        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-[0.2em] mb-8"
-          >
-            <span className="flex h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
-            Free for Every Indian Citizen
-          </motion.div>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-[1.05]"
-          >
-            Justice shouldn't
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400">
-              be a luxury.
-            </span>
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-xl text-slate-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed"
-          >
-            NyayNow puts the full power of the Indian legal system in your pocket. For free, forever, for every citizen of 1.4 billion.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
-          >
-            <Link
-              to="/register"
-              className="group relative px-10 py-5 rounded-2xl text-white font-bold text-base bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 transition-all duration-300 shadow-[0_0_50px_rgba(99,102,241,0.4)] hover:shadow-[0_0_80px_rgba(99,102,241,0.6)] active:scale-95 overflow-hidden"
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                ✦ Get Legal Power — Free
-              </span>
-              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            </Link>
-            <Link
-              to="/legal-sos"
-              className="px-10 py-5 rounded-2xl font-bold text-sm text-slate-300 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 active:scale-95"
-            >
-              🚨 Emergency Legal Help
-            </Link>
-          </motion.div>
-
-          {/* Feature pills */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-3"
-          >
-            {[
-              '⚖️ AI Legal Analysis',
-              '📋 Instant FIR Drafting',
-              '🏛️ 50,000+ Lawyers',
-              '🎙️ 10+ Indian Languages',
-              '🔒 100% Confidential',
-              '💎 Free for Citizens'
-            ].map((pill) => (
-              <span key={pill} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-slate-400 text-xs font-semibold backdrop-blur-sm hover:bg-white/10 hover:text-white transition-all duration-200">
-                {pill}
-              </span>
-            ))}
-          </motion.div>
-        </div>
-      </section>
 
       <Footer />
     </div>
+  );
+}
+
+function BentoCard({ title, desc, icon, color, href, badge, className }) {
+  return (
+    <motion.div
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.3 }}
+      className={`relative group bg-[#0f172a] border border-white/5 rounded-3xl p-8 overflow-hidden hover:border-white/20 transition-all shadow-2xl flex flex-col ${className}`}
+      onClick={() => window.location.href = href}
+    >
+      <div className={`absolute -inset-1 bg-gradient-to-r ${color} rounded-3xl blur opacity-0 group-hover:opacity-10 transition duration-500`} />
+
+      {badge && (
+        <span className="absolute top-6 right-6 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-indigo-400">
+          {badge}
+        </span>
+      )}
+
+      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-2xl shadow-lg mb-6 group-hover:scale-110 transition-transform duration-500 text-white`}>
+        {icon}
+      </div>
+
+      <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
+      <p className="text-slate-500 text-sm leading-relaxed max-w-xs">{desc}</p>
+
+      <div className="mt-auto pt-6 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="text-white text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+          Explore Module <span className="translate-x-0 group-hover:translate-x-1 transition-transform">→</span>
+        </span>
+      </div>
+    </motion.div>
   );
 }
 

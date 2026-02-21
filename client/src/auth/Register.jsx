@@ -138,10 +138,7 @@ export default function Register() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-royal-600/20 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative z-10">
-          <Link to="/" className="flex items-center gap-3 w-fit group">
-            <div className="w-12 h-12 bg-gradient-to-br from-gold-400 to-yellow-600 rounded-2xl flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(212,175,55,0.3)] ring-1 ring-white/10 group-hover:scale-105 transition duration-300 transform rotate-3">⚖️</div>
-            <span className="font-display font-bold text-3xl tracking-wide text-white drop-shadow-md">NyayNow</span>
-          </Link>
+          {/* LOGO REMOVED TO PREVENT DUPLICATION WITH GLOBAL NAVBAR */}
         </div>
 
         <div className="relative z-10 space-y-6 max-w-2xl">
