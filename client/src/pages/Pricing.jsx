@@ -231,9 +231,9 @@ const Pricing = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-[0.2em] mb-6"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-[0.2em] mb-6"
           >
-            <Sparkles size={12} className="text-indigo-400" />
+            <Sparkles size={12} className="text-amber-400" />
             Simple, Honest Pricing
           </motion.div>
 
@@ -244,7 +244,7 @@ const Pricing = () => {
             className="text-5xl md:text-7xl font-serif font-bold text-white leading-[1.05] mb-6"
           >
             Invest in your{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-500">
               legal future.
             </span>
           </motion.h1>
@@ -297,7 +297,7 @@ const Pricing = () => {
               <motion.div
                 animate={{ x: billingCycle === 'yearly' ? 26 : 2 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                className="absolute top-1 w-5 h-5 bg-indigo-500 rounded-full shadow-lg shadow-indigo-500/50"
+                className="absolute top-1 w-5 h-5 bg-amber-500 rounded-full shadow-lg shadow-amber-500/50"
               />
             </button>
             <span className={`text-sm font-bold transition-colors flex items-center gap-2 ${billingCycle === 'yearly' ? 'text-white' : 'text-slate-500'}`}>

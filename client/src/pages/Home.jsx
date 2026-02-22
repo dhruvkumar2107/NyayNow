@@ -38,9 +38,9 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-indigo-400 text-[10px] font-black uppercase tracking-[0.25em] mb-10 backdrop-blur-xl shadow-sm"
+            className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-gold-400 text-[10px] font-black uppercase tracking-[0.25em] mb-10 backdrop-blur-xl shadow-sm"
           >
-            <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_#6366f1]" />
+            <span className="flex h-2 w-2 rounded-full bg-gold-500 animate-pulse shadow-[0_0_10px_#fbbf24]" />
             Free for Every Indian Citizen
           </motion.div>
 
@@ -52,7 +52,7 @@ export default function Home() {
           >
             Justice shouldn't
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-500 to-purple-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 via-yellow-500 to-amber-600">
               be a luxury.
             </span>
           </motion.h1>
@@ -75,12 +75,12 @@ export default function Home() {
           >
             <Link
               to={!user ? "/register" : (user.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
-              className="group relative w-full sm:w-auto px-12 py-5 rounded-2xl text-white font-black text-lg bg-indigo-600 hover:bg-indigo-700 transition-all duration-300 shadow-xl active:scale-95 overflow-hidden"
+              className="group relative w-full sm:w-auto px-12 py-5 rounded-2xl text-midnight-950 font-black text-lg bg-gradient-to-r from-gold-400 to-yellow-600 hover:shadow-[0_0_40px_rgba(212,175,55,0.3)] transition-all duration-300 active:scale-95 overflow-hidden"
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 ✦ {!user ? "Get Started Free" : "Enter Command Center"}
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             </Link>
             <Link
               to="/legal-sos"
@@ -105,12 +105,12 @@ export default function Home() {
       ══════════════════════════════════════════════════════ */}
       <section className="py-10 border-y border-white/5 bg-[#0a0f1d] flex flex-col items-center justify-center">
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6">Trusted by the Indian Legal Community</p>
-        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
-          <span className="font-serif italic text-2xl text-white tracking-widest">SUPREME COURT</span>
-          <span className="font-serif italic text-2xl text-white tracking-widest">HIGH COURTS</span>
-          <span className="font-serif italic text-2xl text-white tracking-widest">LEGAL AID</span>
-          <span className="font-serif italic text-2xl text-white tracking-widest">NALSAR</span>
-          <span className="font-serif italic text-2xl text-white tracking-widest">NLSIU</span>
+        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-30 grayscale hover:opacity-60 transition-all duration-700">
+          <span className="font-serif italic text-xl md:text-2xl text-white tracking-[0.3em]">SUPREME COURT</span>
+          <span className="font-serif italic text-xl md:text-2xl text-white tracking-[0.3em]">HIGH COURTS</span>
+          <span className="font-serif italic text-xl md:text-2xl text-white tracking-[0.3em]">LEGAL AID</span>
+          <span className="font-serif italic text-xl md:text-2xl text-white tracking-[0.3em]">NALSAR</span>
+          <span className="font-serif italic text-xl md:text-2xl text-white tracking-[0.3em]">NLSIU</span>
         </div>
       </section>
 

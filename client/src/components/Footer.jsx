@@ -15,10 +15,10 @@ const Footer = () => {
                 <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-20">
                     <div className="max-w-md">
                         <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
-                            <div className="h-10 w-10 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                            <div className="h-10 w-10 bg-gradient-to-br from-gold-400 to-yellow-600 rounded-xl flex items-center justify-center text-midnight-950 font-bold text-xl shadow-lg">
                                 N
                             </div>
-                            <span className="text-2xl font-bold text-white tracking-tight">NyayNow</span>
+                            <span className="text-2xl font-bold text-white tracking-tight group-hover:text-gold-400 transition-colors">NyayNow</span>
                         </Link>
                         <p className="text-slate-400 text-lg leading-relaxed mb-8">
                             The operating system for the Indian Justice System. We are democratizing legal intelligence for 1.4 billion people with AI.
@@ -114,7 +114,7 @@ const Footer = () => {
 
 const FooterColumn = ({ title, children }) => (
     <div className="flex flex-col gap-4">
-        <h3 className="font-bold text-slate-900 uppercase tracking-wider text-sm">{title}</h3>
+        <h3 className="font-bold text-white uppercase tracking-wider text-sm">{title}</h3>
         <ul className="flex flex-col gap-3">
             {children}
         </ul>
