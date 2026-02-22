@@ -564,12 +564,13 @@ export default function Home() {
             {/* LARGE FEATURE: MOOT COURT */}
             <BentoCard
               title="Moot Court VR"
-              desc="Experience the raw intensity of a real courtroom without leaving your home. Practice your oral arguments against a ruthless AI Judge that listens, analyzes your logic, and provides instant, professional feedback on your speech, legal reasoning, and emotional delivery. Perfect for students and practitioners looking to sharpen their litigation edge in a safe, high-stakes environment."
+              desc="Experience the raw intensity of a real courtroom without leaving your home. NyayNow's Moot Court VR is a groundbreaking simulation environment designed for students, legal professionals, and anyone wishing to master the art of advocacy. Practice your oral arguments against a ruthless, adaptive AI Judge that listens to every word, analyzes your logic for inconsistencies, and provides instant, professional feedback on your speech, legal reasoning, and emotional delivery. Our proprietary AI simulates various judicial temperaments—from the patient and inquiring to the sharp and demanding—ensuring you're prepared for any bench response. This immersive environment tracks your vocal modulation, use of precedents, and argumentative structure in real-time. Whether you're a student preparing for a national moot competition or a seasoned practitioner refining a complex special leave petition, this module provides the high-stakes practice you need to master the art of persuasion and sharpen your litigation edge in a safe yet demanding environment. Step into the virtual dock today and transform your courtroom presence."
               icon={<Scale className="text-white" size={20} />}
               color="from-indigo-500 via-purple-500 to-pink-500"
               href="/moot-court"
               badge="Flagship"
               className="md:col-span-8 md:row-span-2"
+              isLarge={true}
             />
             {/* NYAY VOICE */}
             <BentoCard
@@ -630,12 +631,12 @@ export default function Home() {
   );
 }
 
-function BentoCard({ title, desc, icon, color, href, badge, className }) {
+function BentoCard({ title, desc, icon, color, href, badge, className, isLarge }) {
   return (
     <motion.div
       whileHover={{ y: -5 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`relative group bg-white/5 border border-white/10 rounded-[24px] p-5 overflow-hidden hover:border-indigo-500/20 transition-all shadow-sm hover:shadow-xl flex flex-col ${className}`}
+      className={`relative group bg-white/5 border border-white/10 rounded-[24px] ${isLarge ? 'p-8 md:p-12' : 'p-5'} overflow-hidden hover:border-indigo-500/20 transition-all shadow-sm hover:shadow-xl flex flex-col ${className}`}
       onClick={() => window.location.href = href}
     >
       {/* Mesh Gradient Background */}
@@ -645,7 +646,7 @@ function BentoCard({ title, desc, icon, color, href, badge, className }) {
       <div className={`absolute -top-24 -right-24 w-64 h-64 bg-gradient-to-br ${color} blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-700`} />
 
       {badge && (
-        <span className="absolute top-5 right-5 px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-[8px] font-black uppercase tracking-widest text-slate-400 group-hover:text-indigo-400 transition-colors">
+        <span className={`absolute ${isLarge ? 'top-8 right-8' : 'top-5 right-5'} px-3 py-1 bg-white/5 border border-white/10 rounded-full ${isLarge ? 'text-[10px]' : 'text-[8px]'} font-black uppercase tracking-widest text-slate-400 group-hover:text-indigo-400 transition-colors`}>
           {badge}
         </span>
       )}
@@ -654,17 +655,17 @@ function BentoCard({ title, desc, icon, color, href, badge, className }) {
       <motion.div
         animate={{ y: [0, -2, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg mb-3 relative z-10`}
+        className={`${isLarge ? 'w-16 h-16 rounded-2xl' : 'w-10 h-10 rounded-xl'} bg-gradient-to-br ${color} flex items-center justify-center shadow-lg ${isLarge ? 'mb-8' : 'mb-3'} relative z-10`}
       >
-        <div className="absolute inset-0 rounded-xl bg-white/20 blur-sm scale-90 opacity-0 group-hover:opacity-100 transition-opacity" />
-        {icon}
+        <div className={`absolute inset-0 ${isLarge ? 'rounded-2xl' : 'rounded-xl'} bg-white/20 blur-sm scale-90 opacity-0 group-hover:opacity-100 transition-opacity`} />
+        {React.cloneElement(icon, { size: isLarge ? 32 : 20 })}
       </motion.div>
 
       <div className="relative z-10">
-        <h3 className="text-lg font-display font-bold text-white mb-1 group-hover:text-indigo-400 transition-all duration-300">
+        <h3 className={`${isLarge ? 'text-2xl' : 'text-lg'} font-display font-bold text-white mb-2 group-hover:text-indigo-400 transition-all duration-300`}>
           {title}
         </h3>
-        <p className="text-slate-400 text-[12px] leading-relaxed max-w-sm group-hover:text-slate-200 transition-colors">
+        <p className={`text-slate-400 ${isLarge ? 'text-sm' : 'text-[12px]'} leading-relaxed ${isLarge ? '' : 'max-w-sm'} group-hover:text-slate-200 transition-colors`}>
           {desc}
         </p>
       </div>

@@ -16,9 +16,11 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [googleData, setGoogleData] = useState(null);
+  const [consent, setConsent] = useState(false);
 
   const handleEmailLogin = async () => {
     if (!email || !password) return toast.error("Please enter credentials");
+    if (!consent) return toast.error("Please acknowledge the legal disclosure to continue.");
     setLoading(true);
     const res = await login(email, password);
     setLoading(false);
@@ -31,6 +33,7 @@ export default function Login() {
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
+    if (!consent) return toast.error("Please acknowledge the legal disclosure to continue.");
     setLoading(true);
     try {
       const res = await axios.post("/api/auth/google", { token: credentialResponse.credential });
@@ -125,6 +128,16 @@ export default function Login() {
                   <Link to="/forgot-password" className="text-xs font-bold text-gold-400 hover:text-gold-300 transition">Forgot?</Link>
                 </div>
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="glass-input w-full rounded-xl px-4 py-3.5 placeholder-slate-600 focus:ring-1 focus:ring-gold-500/50 transition duration-300" placeholder="••••••••" />
+              </div>
+
+              {/* LEGAL CONSENT CHECKBOX */}
+              <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10 group cursor-pointer hover:bg-white/10 transition-all" onClick={() => setConsent(!consent)}>
+                <div className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border flex items-center justify-center transition-all ${consent ? 'bg-gold-500 border-gold-500' : 'border-slate-600'}`}>
+                  {consent && <span className="text-midnight-950 text-xs font-bold">✓</span>}
+                </div>
+                <p className="text-[11px] leading-relaxed text-slate-400 group-hover:text-slate-200 select-none">
+                  I understand this is an <span className="text-white font-bold">AI tool for information</span> and does not create an <span className="text-white font-bold">Attorney-Client relationship</span>.
+                </p>
               </div>
 
               <button onClick={handleEmailLogin} disabled={loading} className="w-full py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 font-bold text-lg rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition-all duration-300 active:scale-[0.98] disabled:opacity-70 mt-4 relative overflow-hidden group">

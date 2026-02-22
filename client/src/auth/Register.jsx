@@ -35,7 +35,8 @@ export default function Register() {
     // NEW FIELDS
     isStudent: false,
     studentRollNumber: "",
-    verified: false
+    verified: false,
+    consent: false
   });
 
 
@@ -71,6 +72,7 @@ export default function Register() {
     const { name, email, password, phone, specialization, experience, barCouncilId, age, sex } = formData;
 
     if (!name || !email || !password || !phone) return toast.error("Please fill all required fields");
+    if (!formData.consent) return toast.error("Please acknowledge the legal disclosure to continue.");
     if (!PHONE_REGEX.test(phone)) return toast.error("Invalid Indian Phone Number");
 
     if (role === "lawyer") {
@@ -109,6 +111,7 @@ export default function Register() {
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
+    if (!formData.consent) return toast.error("Please acknowledge the legal disclosure to continue.");
     setLoading(true);
     try {
       const res = await axios.post("/api/auth/google", {
@@ -304,6 +307,16 @@ export default function Register() {
                 </div>
               </div>
             )}
+
+            {/* LEGAL CONSENT CHECKBOX */}
+            <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10 group cursor-pointer hover:bg-white/10 transition-all mt-4" onClick={() => setFormData({ ...formData, consent: !formData.consent })}>
+              <div className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border flex items-center justify-center transition-all ${formData.consent ? 'bg-gold-500 border-gold-500' : 'border-slate-600'}`}>
+                {formData.consent && <span className="text-midnight-950 text-xs font-bold">✓</span>}
+              </div>
+              <p className="text-[11px] leading-relaxed text-slate-400 group-hover:text-slate-200 select-none">
+                I understand this is an <span className="text-white font-bold">AI tool for information</span> and does not create an <span className="text-white font-bold">Attorney-Client relationship</span>.
+              </p>
+            </div>
 
             <button type="submit" disabled={loading} className="w-full py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 font-bold text-lg rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition-all duration-300 active:scale-[0.98] disabled:opacity-70 mt-6 relative overflow-hidden group">
               <span className="relative z-10 flex items-center justify-center gap-2">
