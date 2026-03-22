@@ -22,11 +22,11 @@ export function BentoGrid() {
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[220px]">
                     <BentoCard
-                        title="Moot Court VR"
-                        desc="Adaptive AI Judges that evaluate every nuance of your oral arguments."
+                        title="NyayCourt Simulator"
+                        desc="Neural AI Judges that evaluate every nuance of your oral arguments in a simulated trial."
                         icon={<Scale className="text-white" size={20} />}
                         color="from-blue-600 via-indigo-600 to-indigo-500"
-                        href="/moot-court"
+                        href="/courtroom-battle"
                         badge="Flagship"
                         className="md:col-span-8 md:row-span-2"
                         isLarge={true}
@@ -58,8 +58,8 @@ export function BentoGrid() {
                         className="md:col-span-4 md:row-span-1"
                     />
                     <BentoCard
-                        title="Deep Research"
-                        desc="Find wining precedents across 5M+ judicial records."
+                        title="Precedent Engine"
+                        desc="Find winning precedents across judicial records with neural semantic search."
                         icon={<Search className="text-white" size={20} />}
                         color="from-indigo-500 via-violet-500 to-purple-500"
                         href="/research"

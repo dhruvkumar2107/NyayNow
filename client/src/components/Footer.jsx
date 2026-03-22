@@ -88,37 +88,32 @@ const Footer = () => {
                     <FooterColumn title="Intelligence">
                         <FooterLink href="/assistant">Legal Assistant</FooterLink>
                         <FooterLink href="/judge-ai">Judge AI</FooterLink>
-                        <FooterLink href="/voice-assistant">NyayVoice</FooterLink>
-                        <FooterLink href="/moot-court">Simulation VR</FooterLink>
+                        <FooterLink href="/voice-assistant">NyayVoice <Badge color="bg-blue-500/10 text-blue-400">Live</Badge></FooterLink>
+                        <FooterLink href="/courtroom-battle">Moot Court Simulator <Badge color="bg-emerald-500/10 text-emerald-400">New</Badge></FooterLink>
                         <FooterLink href="/research">Precedent Engine</FooterLink>
                     </FooterColumn>
 
                     <FooterColumn title="Enterprise">
                         <FooterLink href="/drafting">Drafting Lab</FooterLink>
-                        <FooterLink href="/agreements">Risk Audit</FooterLink>
-                        <FooterLink href="/compliances">Compliance Hub</FooterLink>
-                        <FooterLink href="/ecourts">Court Analytics</FooterLink>
+                        <FooterLink href="/agreements">Quantum Vault</FooterLink>
+                        <FooterLink href="/compliances">Compliance Hub <Badge color="bg-white/5 text-slate-500">v2</Badge></FooterLink>
+                        <FooterLink href="/analytics">Court Analytics</FooterLink>
                     </FooterColumn>
 
                     <FooterColumn title="Network">
-                        {/* <FooterLink href="/marketplace">Elite Directory</FooterLink> */}
-                        {/* <FooterLink href="/lawyer/dashboard">For Advocates</FooterLink> */}
                         <FooterLink href="/client/dashboard">For Citizens</FooterLink>
-                        <FooterLink href="/career">For Students</FooterLink>
-                        <FooterLink href="/judiciary">For Judiciary</FooterLink>
+                        <FooterLink href="/register">Institutional Access</FooterLink>
+                        <FooterLink href="/about">For Judiciary</FooterLink>
                     </FooterColumn>
 
                     <FooterColumn title="Foundation">
                         <FooterLink href="/about">Our Vision</FooterLink>
-                        <FooterLink href="/careers">Careers <Badge color="bg-white/5 text-slate-500">8 Open Roles</Badge></FooterLink>
-                        <FooterLink href="/press">Media Kit</FooterLink>
                         <FooterLink href="/contact">Support</FooterLink>
-                        <FooterLink href="/partners">Integrations</FooterLink>
+                        <FooterLink href="/terms">Terms of Service</FooterLink>
                     </FooterColumn>
 
                     <FooterColumn title="Compliance">
-                        <FooterLink href="/terms">Protocol</FooterLink>
-                        <FooterLink href="/privacy">Privacy Matrix</FooterLink>
+                        <FooterLink href="/privacy">Privacy Policy</FooterLink>
                         <FooterLink href="/contact">Grievance Redressal</FooterLink>
                         <FooterLink href="/security">Security Shell</FooterLink>
                     </FooterColumn>

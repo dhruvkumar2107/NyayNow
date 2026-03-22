@@ -225,11 +225,16 @@ export default function ClientDashboard() {
             <span className="text-2xl font-black text-white tracking-tighter transition-colors group-hover:text-indigo-400">NyayNow</span>
           </Link>
 
-          <div className="space-y-1 mt-8">
+            <div className="space-y-1 mt-8">
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
             <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
             <NavItem icon="🤖" label="Judge AI" to="/judge-ai" />
             <NavItem icon="📝" label="Drafting Lab" to="/drafting" />
+            <NavItem icon="🎙️" label="NyayVoice" to="/voice-assistant" badge="Live" />
+            <NavItem icon="⚔️" label="NyayCourt" to="/courtroom-battle" badge="New" />
+            <NavItem icon="🔍" label="Precedent Engine" to="/research" />
+            <NavItem icon="🛡️" label="Compliance Hub" to="/compliances" />
+            <NavItem icon="📈" label="Analytics" to="/analytics" />
             <NavItem icon="📄" label="Quantum Vault" to="/agreements" />
             <NavItem icon="💬" label="Messages" to="/messages" />
             <NavItem icon="💳" label="Smart Escrow" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />

@@ -46,9 +46,8 @@ export default function Navbar() {
       label: "Intelligence",
       items: [
         { name: "Judge AI", href: "/judge-ai", desc: "Strategic Prediction", icon: <Gavel size={18} /> },
-        { name: "Legal Research", href: "/research", desc: "Semantic Search", icon: <Search size={18} /> },
         { name: "Drafting Lab", href: "/drafting", desc: "AI Automation", icon: <FileText size={18} /> },
-        { name: "NyayVoice", href: "/voice-assistant", desc: "Multi-dialect AI", icon: <Mic size={18} /> },
+        { name: "NyayVoice", href: "/voice-assistant", desc: "Voice Intelligence", icon: <Mic size={18} /> },
         { name: "NyayCourt", href: "/courtroom-battle", desc: "Trial Simulator", icon: <Command size={18} /> },
         { name: "Legal SOS", href: "/legal-sos", desc: "Crisis Triage", icon: <Siren size={18} /> },
       ]
@@ -56,21 +55,13 @@ export default function Navbar() {
     {
       label: "Enterprise",
       items: [
-        { name: "Moot Court VR", href: "/moot-court", desc: "Elite Practice", icon: <Scale size={18} /> },
-        // { name: "Career Hub", href: "/career", desc: "Lawyer Network", icon: <Briefcase size={18} /> },
-        { name: "Agreements", href: "/agreements", desc: "Verified Docs", icon: <BookOpen size={18} /> },
+        { name: "Quantum Vault", href: "/agreements", desc: "Verified Docs", icon: <BookOpen size={18} /> },
         { name: "AI Assistant", href: "/assistant", desc: "24/7 Counsel", icon: <Sparkles size={18} /> },
+        { name: "Precedent Engine", href: "/research", desc: "Semantic Search", icon: <Search size={18} /> },
+        { name: "Compliance Hub", href: "/compliances", desc: "Statutory Shield", icon: <Shield size={18} /> },
+        { name: "Pricing", href: "/pricing", desc: "Enterprise Plans", icon: <DollarSign size={18} /> },
       ]
-    },
-    {
-      label: "Network",
-      items: [
-        // { name: "Find Lawyers", href: "/marketplace", desc: "Verified Counsel", icon: <Users size={18} /> },
-        { name: "Nearby Help", href: "/nearby", desc: "Locate Services", icon: <MapPin size={18} /> },
-        // { name: "Video Meeting", href: "/meet", desc: "Secure Chambers", icon: <Video size={18} /> },
-        { name: "Pricing", href: "/pricing", desc: "Client Plans", icon: <DollarSign size={18} /> },
-      ]
-    },
+    }
   ];
 
   const isDashboard = pathname?.startsWith('/lawyer') || pathname?.startsWith('/client') || pathname?.startsWith('/admin');
