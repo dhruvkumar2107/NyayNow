@@ -357,13 +357,13 @@ export default function LawyerDashboard() {
 
           <div className="flex items-center gap-4">
             {/* VIDEO CALL BUTTON */}
-            <button
+            {/* <button
               onClick={() => router.push('/video-call')}
               className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 group active:scale-95"
             >
               <Video size={14} className="group-hover:rotate-12 transition" />
               Virtual Court
-            </button>
+            </button> */}
 
             {/* NOTIFICATION BELL */}
             <div className="relative">
@@ -652,12 +652,7 @@ export default function LawyerDashboard() {
                           </div>
                         </div>
                         {apt.status === 'confirmed' ? (
-                          <button
-                            onClick={() => window.open(`${window.location.origin}/meet/${apt._id}`, "_blank")}
-                            className="bg-indigo-600/10 text-indigo-400 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border border-indigo-500/20 hover:bg-indigo-600 hover:text-white transition shadow-lg shadow-indigo-500/10"
-                          >
-                            Join
-                          </button>
+                          <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500/60 px-3 py-1 bg-emerald-500/5 rounded-lg border border-emerald-500/10">Confirmed</span>
                         ) : (
                           <span className="text-[8px] font-black uppercase tracking-widest text-amber-500/60 px-3 py-1 bg-amber-500/5 rounded-lg border border-amber-500/10">Pending</span>
                         )}

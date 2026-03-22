@@ -67,8 +67,8 @@ export default function Navbar() {
       items: [
         // { name: "Find Lawyers", href: "/marketplace", desc: "Verified Counsel", icon: <Users size={18} /> },
         { name: "Nearby Help", href: "/nearby", desc: "Locate Services", icon: <MapPin size={18} /> },
-        { name: "Video Meeting", href: "/meet", desc: "Secure Chambers", icon: <Video size={18} /> },
-        // { name: "Enterprise Pricing", href: "/pricing", desc: "Global Access", icon: <DollarSign size={18} /> },
+        // { name: "Video Meeting", href: "/meet", desc: "Secure Chambers", icon: <Video size={18} /> },
+        { name: "Pricing", href: "/pricing", desc: "Client Plans", icon: <DollarSign size={18} /> },
       ]
     },
   ];

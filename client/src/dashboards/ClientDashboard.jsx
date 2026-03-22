@@ -292,13 +292,13 @@ export default function ClientDashboard() {
           </motion.div>
           <div className="flex items-center gap-6">
             {/* VIDEO CALL BUTTON (PRO) */}
-            <button
+            {/* <button
               onClick={handleInstantConsult}
               className="px-4 py-2 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-600 hover:text-white transition flex items-center gap-2"
             >
               <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_8px_#818cf8]"></span>
               Secure Virtual Meeting
-            </button>
+            </button> */}
 
             {/* NOTIFICATION BELL */}
             <div className="relative">
@@ -476,14 +476,14 @@ export default function ClientDashboard() {
                             <p className="text-sm font-bold text-white">{apt.lawyerName || apt.lawyerId?.name || "Legal Counsel"}</p>
                             <p className="text-xs text-slate-500">{apt.slot}</p>
                           </div>
-                          {(apt.status === 'confirmed' || apt.status === 'active') && (
+                          {/* {(apt.status === 'confirmed' || apt.status === 'active') && (
                             <button
                               onClick={() => router.push(`/meet/${apt._id}`)}
                               className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px] font-bold uppercase hover:bg-emerald-500 hover:text-white transition"
                             >
                               Join
                             </button>
-                          )}
+                          )} */}
                         </div>
                       ))
                     )}
