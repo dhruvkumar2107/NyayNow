@@ -180,6 +180,59 @@ router.post("/agreement", verifyTokenOptional, checkAiLimit, async (req, res) =>
   }
 });
 
+/* ---------------- AGREEMENT PDF ANALYSIS ---------------- */
+router.post("/analyze-agreement-pdf", verifyTokenOptional, checkAiLimit, upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "No PDF file uploaded" });
+
+    const pdfData = await pdf(req.file.buffer);
+    const text = pdfData.text;
+
+    if (!text || text.length < 50) {
+      return res.status(400).json({ error: "PDF seems empty or unreadable." });
+    }
+
+    const truncatedText = text.substring(0, 15000);
+
+    const prompt = `
+      Analyze this legal agreement text extracted from a PDF:
+      "${truncatedText}"
+      
+      Provide a specific JSON output with the following keys:
+      - "accuracyScore": Number (0-100) representing legal robustness.
+      - "riskLevel": String ("Low", "Medium", "High").
+      - "missingClauses": Array of strings (important clauses missing).
+      - "ambiguousClauses": Array of strings (clauses that are vague).
+      - "jurisdictionContext": String (which laws apply).
+      - "analysisText": String (Markdown formatted detailed analysis).
+      
+      IMPORTANT: Detect the language of the input text and provide the analysis IN THAT SAME LANGUAGE.
+      Output ONLY valid JSON.
+    `;
+
+    const result = await generateWithFallback(prompt);
+    const response = await result.response;
+    const rawText = response.text();
+    const analysisData = safeJsonParse(rawText, "Agreement PDF Analysis");
+
+    if (req.user && req.user.plan === 'free') {
+      analysisData.riskLevel = "🔒 Upgrade to Unlock";
+      analysisData.missingClauses = ["🔒 Upgrade to view missing clauses"];
+      analysisData.ambiguousClauses = ["🔒 Upgrade to view ambiguous clauses"];
+      analysisData.accuracyScore = 0;
+      analysisData.isLocked = true;
+    } else {
+      analysisData.isLocked = false;
+    }
+
+    res.json(analysisData);
+
+  } catch (err) {
+    console.error("Gemini PDF Agreement Error:", err.message);
+    res.status(500).json({ error: "Failed to analyze PDF agreement", details: err.message });
+  }
+});
+
 /* ---------------- CASE ANALYSIS (Legal Issue) ---------------- */
 /* ---------------- CASE ANALYSIS (Legal Issue) ---------------- */
 router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res) => {
@@ -285,21 +338,24 @@ router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res)
 /* ---------------- JUDGE AI (CASE PREDICTOR) ---------------- */
 router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
-    const { caseTitle, caseDescription, caseType, oppositionDetails } = req.body;
+    const { caseTitle, caseDescription, caseType, oppositionDetails, assignedJudge } = req.body;
     console.log(`📑 /predict-outcome requested for: ${caseTitle || "Unnamed Case"}`);
 
     const prompt = `
       ACT AS THE NYAYNOW JUDICIAL PREDICTION ENGINE.
       Verify the user's case details:
       - Title: "${caseTitle}"
-      - Type: "${caseType}"
+      - Type / Court: "${caseType}"
       - Description: "${caseDescription}"
-      - Opposition: "${oppositionDetails}"
+      - Opposing Party: "${oppositionDetails}"
+      - Assigned Justice: "${assignedJudge || 'Unassigned / Bench Not Formed'}"
 
       Based on the Bharatiya Nyaya Sanhita (BNS) 2023, BNSS, and applicable Civil/Criminal Codes, perform an elite judicial dissection:
       
+      CRITICAL INSTRUCTION: If an 'Assigned Justice' or 'Court' is provided, mathematically factor their historical strictness/leniency into your "Win Probability" and tailor your "Strategic Moves" to that specific Judge/Court's established biases.
+
       1. **Fact Summarization**: Briefly state the core legal dispute.
-      2. **Win Probability**: Give a realistic percentage (0-100%).
+      2. **Win Probability**: Give a realistic percentage (0-100%). Weigh the opposing party's known resources and the judge's presumed tendencies.
       3. **Strategic Risks**: 3 critical loopholes or weaknesses.
       4. **Strategic Moves**: 3 legal motions to file.
       5. **BNS Citations**: YOU MUST cite specific sections of the BNS or BNSS.

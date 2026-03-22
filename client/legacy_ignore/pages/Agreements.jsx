@@ -73,17 +73,17 @@ export default function Agreements() {
 
         {/* HEADER */}
         <div className="text-center max-w-4xl mx-auto mb-16 relative z-10">
-          <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 text-gold-400 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border border-white/10 shadow-[0_0_15px_rgba(250,204,21,0.1)]">
-            <Zap size={14} className="fill-gold-400" /> AI Document Intelligence
+          <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 text-emerald-400 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+            <Shield size={14} className="fill-emerald-400" /> Post-Quantum Encryption (PQC) Active
           </motion.div>
 
           <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white mb-6 leading-tight">
-            Analyze Contracts with <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">Military-Grade Precision</span>
+            Evidence & <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-emerald-400 to-cyan-400">Quantum Vault</span>
           </motion.h1>
 
           <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto">
-            Detect hidden risks, missing clauses, and loopholes in seconds using our specialized Legal LLM trained on Indian Contract Law.
+            Securely store and analyze litigation evidence using military-grade PQC encryption algorithms and deep-learning forensic scans.
           </motion.p>
 
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="mt-10 flex flex-wrap gap-4 justify-center">
@@ -155,7 +155,9 @@ export default function Agreements() {
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#0f172a]/90 backdrop-blur-xl h-full rounded-3xl border border-white/10 shadow-2xl overflow-hidden flex flex-col">
                   {/* Result Header */}
                   <div className="bg-white/5 border-b border-white/5 px-6 py-4 flex justify-between items-center">
-                    <span className="font-bold text-white flex items-center gap-2"><Shield size={16} className="text-indigo-400" /> Analysis Report</span>
+                    <span className="font-bold text-white flex items-center gap-2">
+                       <Shield size={16} className="text-emerald-400" /> Forensic Scan Pass
+                    </span>
                     <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border ${getRiskColor(result.riskLevel)}`}>
                       {result.riskLevel} Risk
                     </span>

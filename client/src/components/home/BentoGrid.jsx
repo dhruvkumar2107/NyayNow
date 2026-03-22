@@ -51,7 +51,7 @@ export function BentoGrid() {
                     /> */}
                     <BentoCard
                         title="Drafting Lab"
-                        desc="Generate contracts in seconds using BCI-standard templates."
+                        desc="Deploy Agentic AI to autonomously draft and negotiate enterprise contracts."
                         icon={<FileText className="text-white" size={20} />}
                         color="from-blue-400 via-cyan-500 to-emerald-500"
                         href="/drafting"

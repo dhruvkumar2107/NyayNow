@@ -48,7 +48,7 @@ export default function Home() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24">
                         {[
                             { val: 100, suffix: "K+", label: "Legal Queries", color: "from-blue-400 to-indigo-500" },
-                            // { val: 50, suffix: "K+", label: "Verified Lawyers", color: "from-blue-500 to-cyan-500" },
+                            { val: 1.2, suffix: "M", label: "Precedents Analyzed", color: "from-blue-500 to-cyan-500" },
                             { val: 0, suffix: "", label: "Entry Fees", color: "from-emerald-400 to-teal-500" },
                             { val: 14, suffix: "", label: "Regional Dialects", color: "from-amber-400 to-orange-500" }
                         ].map((stat, i) => (

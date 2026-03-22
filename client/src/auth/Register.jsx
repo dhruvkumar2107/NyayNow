@@ -145,7 +145,7 @@ export default function Register() {
             <span className="text-gold-400 italic">Elite.</span>
           </h1>
           <p className="text-lg text-slate-300/90 max-w-lg font-light leading-relaxed border-l-2 border-gold-500/50 pl-6">
-            Empower your legal practice with next-generation AI tools. Sign up today and transform your workflow.
+            Empower yourself with next-generation AI legal intelligence. Sign up today and access the predictive network.
           </p>
         </div>
 
@@ -167,28 +167,10 @@ export default function Register() {
 
           <div className="text-center lg:text-left">
             <h2 className="text-3xl font-display font-bold text-white">Create Account</h2>
-            <p className="text-slate-400 text-sm mt-1">Join thousands of legal professionals.</p>
+            <p className="text-slate-400 text-sm mt-1">Access enterprise-grade legal artificial intelligence.</p>
           </div>
 
-          <div className="flex gap-4 p-1 bg-midnight-950/50 rounded-2xl border border-white/5 backdrop-blur-sm">
-            {[
-              { id: 'client', label: 'Client', icon: '👤' },
-              // { id: 'lawyer', label: 'Lawyer / Student', icon: '⚖️' }
-            ].map((r) => (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => setFormData(p => ({ ...p, role: r.id }))}
-                className={`flex-1 py-4 rounded-xl transition-all duration-300 border ${formData.role === r.id
-                  ? "bg-gradient-gold text-midnight-950 border-gold-500/0 shadow-lg shadow-gold-500/20 scale-[1.02]"
-                  : "bg-transparent text-slate-400 border-transparent hover:bg-white/5 hover:text-white"
-                  }`}
-              >
-                <div className="text-2xl mb-1">{r.icon}</div>
-                <div className="font-bold text-sm">{r.label}</div>
-              </button>
-            ))}
-          </div>
+
 
           <form onSubmit={(e) => { e.preventDefault(); handleRegister(); }} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
@@ -203,104 +185,7 @@ export default function Register() {
               <InputGroup label="Confirm Password" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="••••••••" />
             </div>
 
-            {formData.role === 'lawyer' && (
-              <div className="space-y-4 pt-4 border-t border-white/10 animate-in fade-in slide-in-from-top-4 duration-500">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-gold-400 font-display font-bold text-lg">Professional Details</h3>
 
-                  {/* LAWYER / STUDENT TOGGLE */}
-                  <div className="flex bg-midnight-950 rounded-lg p-1 border border-white/10">
-                    <button
-                      type="button"
-                      onClick={() => setFormData(p => ({ ...p, isStudent: false, studentRollNumber: "" }))}
-                      className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${!formData.isStudent ? 'bg-gold-500 text-midnight-950 shadow-md' : 'text-slate-400 hover:text-white'}`}
-                    >
-                      Practicing Lawyer
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFormData(p => ({ ...p, isStudent: true, barCouncilId: "" }))}
-                      className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${formData.isStudent ? 'bg-royal-500 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}
-                    >
-                      Law Student
-                    </button>
-                  </div>
-                </div>
-
-                {!formData.isStudent ? (
-                  <div className="space-y-4">
-                    <InputGroup label="Bar Council ID" name="barCouncilId" value={formData.barCouncilId} onChange={handleChange} placeholder="MAH/1234/2023" />
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <InputGroup label="Student Roll No." name="studentRollNumber" value={formData.studentRollNumber} onChange={handleChange} placeholder="20230001" />
-                  </div>
-                )}
-
-                <InputGroup label="Specialization" name="specialization" value={formData.specialization} onChange={handleChange} placeholder="Criminal, Civil, Corporate..." />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <InputGroup label="Experience (Years)" type="number" name="experience" value={formData.experience} onChange={handleChange} placeholder="5" />
-                  <InputGroup label="Location (City)" name="location" value={formData.location} onChange={handleChange} placeholder="Mumbai" />
-                </div>
-
-                {/* MANUAL VERIFICATION - ID CARD UPLOAD */}
-                <div className="space-y-4 p-4 bg-indigo-900/20 border border-indigo-500/30 rounded-xl">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-white font-bold text-sm flex items-center gap-2">
-                        <UploadCloud size={18} className="text-indigo-400" />
-                        Bar Council ID / ID Card
-                      </h4>
-                      <p className="text-xs text-indigo-300 mt-1">Upload for admin approval.</p>
-                    </div>
-                  </div>
-
-                  {formData.idCardImage ? (
-                    <div className="relative w-full h-32 bg-black/40 rounded-lg overflow-hidden border border-white/10 group">
-                      <img src={typeof formData.idCardImage === 'string' ? formData.idCardImage : URL.createObjectURL(formData.idCardImage)} alt="ID Preview" className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => setFormData({ ...formData, idCardImage: "" })}
-                        className="absolute top-2 right-2 bg-red-600/80 p-1 rounded-full text-white hover:bg-red-500 transition"
-                      >
-                        ×
-                      </button>
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition">
-                        <span className="text-white text-xs font-bold">Change File</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="relative border-2 border-dashed border-slate-600 hover:border-indigo-500 rounded-xl p-6 transition-colors bg-black/20 text-center cursor-pointer group">
-                      <input
-                        type="file"
-                        accept="image/*,application/pdf"
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        onChange={async (e) => {
-                          const file = e.target.files[0];
-                          if (!file) return;
-
-                          const toastId = toast.loading("Uploading ID...");
-                          try {
-                            const { uploadFile } = await import("../api"); // Dynamic import to avoid cycles or path issues
-                            const res = await uploadFile(file);
-                            setFormData({ ...formData, idCardImage: res.path });
-                            toast.success("ID Uploaded", { id: toastId });
-                          } catch (err) {
-                            console.error(err);
-                            toast.error("Upload Failed", { id: toastId });
-                          }
-                        }}
-                      />
-                      <UploadCloud className="mx-auto text-slate-500 group-hover:text-indigo-400 mb-2 transition" />
-                      <p className="text-xs text-slate-400 group-hover:text-slate-200 transition">Click to Upload or Drag & Drop</p>
-                    </div>
-                  )}
-
-                  <p className="text-[10px] text-slate-500">Your account will be "Pending" until an admin verifies this document.</p>
-                </div>
-              </div>
-            )}
 
             {/* LEGAL CONSENT CHECKBOX */}
             <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10 group cursor-pointer hover:bg-white/10 transition-all mt-4" onClick={() => setFormData({ ...formData, consent: !formData.consent })}>

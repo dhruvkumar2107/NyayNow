@@ -98,7 +98,6 @@ const Footer = () => {
                         <FooterLink href="/agreements">Risk Audit</FooterLink>
                         <FooterLink href="/compliances">Compliance Hub</FooterLink>
                         <FooterLink href="/ecourts">Court Analytics</FooterLink>
-                        <Badge color="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" className="mt-4">ISO 27001 Certified</Badge>
                     </FooterColumn>
 
                     <FooterColumn title="Network">
@@ -122,14 +121,6 @@ const Footer = () => {
                         <FooterLink href="/privacy">Privacy Matrix</FooterLink>
                         <FooterLink href="/contact">Grievance Redressal</FooterLink>
                         <FooterLink href="/security">Security Shell</FooterLink>
-                        <div className="mt-6 flex flex-col gap-4">
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[10px] font-black uppercase tracking-widest">
-                                Startup India
-                            </div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-black uppercase tracking-widest">
-                                BCI Compliant
-                            </div>
-                        </div>
                     </FooterColumn>
                 </div>
 

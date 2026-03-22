@@ -24,6 +24,7 @@ const DraftingLab = () => {
 
     // ANALYSIS STATE
     const [analysisText, setAnalysisText] = useState('');
+    const [file, setFile] = useState(null);
     const [analysisResult, setAnalysisResult] = useState(null);
     const recognitionRef = useRef(null);
 
@@ -125,7 +126,7 @@ const DraftingLab = () => {
     };
 
     const handleAnalyze = async () => {
-        if (!analysisText.trim()) return;
+        if (!analysisText.trim() && !file) return;
 
         if (!checkFreeTrial()) return;
 
@@ -133,10 +134,22 @@ const DraftingLab = () => {
         try {
             const token = localStorage.getItem('token');
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
-            const { data } = await axios.post('/api/ai/agreement', {
-                text: analysisText
-            }, { headers });
-            setAnalysisResult(data);
+            
+            let responseData;
+            
+            if (file) {
+                 const formData = new FormData();
+                 formData.append("file", file);
+                 const res = await axios.post('/api/ai/analyze-agreement-pdf', formData, { 
+                     headers: { ...headers, "Content-Type": "multipart/form-data" } 
+                 });
+                 responseData = res.data;
+            } else {
+                 const res = await axios.post('/api/ai/agreement', { text: analysisText }, { headers });
+                 responseData = res.data;
+            }
+
+            setAnalysisResult(responseData);
             toast.success("Analysis complete!");
         } catch (err) {
             console.error(err);
@@ -263,19 +276,40 @@ const DraftingLab = () => {
                                 </form>
                             ) : (
                                 <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
-                                            <span>Paste Contract Text</span>
-                                            <button type="button" onClick={() => startVoiceInput('analysisText')} className="text-slate-500 hover:text-emerald-400 transition flex items-center gap-1">
-                                                <Mic size={14} /> Tap to Speak
-                                            </button>
-                                        </label>
-                                        <textarea
-                                            value={analysisText}
-                                            onChange={(e) => setAnalysisText(e.target.value)}
-                                            placeholder="Paste the legal text here to check for loopholes..."
-                                            className="w-full h-[500px] bg-[#0a0f1e] !bg-midnight-950 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-emerald-500 hover:bg-white/10 transition placeholder:text-slate-600 font-mono text-sm leading-relaxed custom-scrollbar shadow-inner"
-                                        ></textarea>
+                                    <div className="space-y-4">
+                                        
+                                        <div className="border-2 border-dashed border-emerald-500/30 bg-emerald-900/10 rounded-xl p-8 hover:bg-emerald-900/20 transition flex flex-col items-center justify-center cursor-pointer relative group">
+                                            <input 
+                                                type="file" 
+                                                accept=".pdf" 
+                                                onChange={(e) => setFile(e.target.files[0])} 
+                                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                                            />
+                                            <UploadCloud size={32} className="text-emerald-400 mb-3 group-hover:scale-110 transition-transform" />
+                                            <p className="font-bold text-emerald-400 text-sm mb-1">{file ? file.name : "Upload Contract PDF"}</p>
+                                            <p className="text-xs text-emerald-500/70 font-bold uppercase tracking-widest">We securely scan for risks</p>
+                                        </div>
+
+                                        <div className="flex items-center gap-4 py-2">
+                                            <div className="h-px bg-white/5 flex-1"></div>
+                                            <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">OR PASTE TEXT</span>
+                                            <div className="h-px bg-white/5 flex-1"></div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
+                                                <span>Raw Contract Text</span>
+                                                <button type="button" onClick={() => startVoiceInput('analysisText')} className="text-slate-500 hover:text-emerald-400 transition flex items-center gap-1">
+                                                    <Mic size={14} /> Tap to Speak
+                                                </button>
+                                            </label>
+                                            <textarea
+                                                value={analysisText}
+                                                onChange={(e) => setAnalysisText(e.target.value)}
+                                                placeholder="Paste the legal text here to check for loopholes..."
+                                                className="w-full h-40 bg-[#0a0f1e] !bg-midnight-950 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-emerald-500 hover:bg-white/10 transition placeholder:text-slate-600 font-mono text-xs leading-relaxed custom-scrollbar shadow-inner"
+                                            ></textarea>
+                                        </div>
                                     </div>
                                     <button
                                         onClick={handleAnalyze}

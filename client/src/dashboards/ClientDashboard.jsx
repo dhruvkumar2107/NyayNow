@@ -229,9 +229,9 @@ export default function ClientDashboard() {
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
             <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
             {/* <NavItem icon="🔍" label="Find Lawyer" to="/marketplace" /> */}
-            <NavItem icon="📄" label="Documents" to="/agreements" />
+            <NavItem icon="📄" label="Quantum Vault" to="/agreements" />
             <NavItem icon="💬" label="Messages" to="/messages" />
-            <NavItem icon="💳" label="Payments" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
+            <NavItem icon="💳" label="Smart Escrow" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
             <NavItem icon="📡" label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
             <div className="my-2 h-px bg-white/5" />
             <NavItem icon="🎭" label="Confession Booth" active={activeTab === 'confessions'} onClick={() => setActiveTab('confessions')} />
@@ -379,7 +379,7 @@ export default function ClientDashboard() {
                       {activeCase ? activeCase.title : "No Active Legal Matters"}
                     </h2>
                     <p className="text-slate-400 max-w-lg leading-relaxed">
-                      {activeCase ? activeCase.desc : "Post a new case to get started with our AI legal assistance."}
+                      {activeCase ? activeCase.desc : "Upload a new document to begin autonomous AI analysis."}
                     </p>
                   </div>
                   {activeCase && <div className="text-right">
@@ -581,15 +581,20 @@ export default function ClientDashboard() {
           {activeTab === 'invoices' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-8 space-y-6">
               <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[80px] rounded-full -mr-20 -mt-20 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full -mr-20 -mt-20 pointer-events-none"></div>
 
                 <div className="flex justify-between items-center mb-8 relative z-10">
                   <div>
-                    <h3 className="font-bold text-2xl text-white tracking-tight">Financial Records</h3>
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Safe Vault & Transaction Ledger</p>
+                    <div className="flex items-center gap-3">
+                      <h3 className="font-bold text-2xl text-white tracking-tight">Smart Settlement Escrow</h3>
+                      <span className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Web3 Secured
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Immutable Blockchain Ledger</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Outstanding</p>
+                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Locked In Escrow</p>
                     <p className="text-2xl font-black text-white tracking-tighter">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
                   </div>
                 </div>
@@ -597,7 +602,7 @@ export default function ClientDashboard() {
                 <div className="space-y-4 relative z-10">
                   {invoices.length === 0 ? (
                     <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-3xl opacity-30">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Your safe vault is currently empty.</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Your cryptographic vault is currently empty.</p>
                     </div>
                   ) : (
                     invoices.map(inv => (
@@ -607,20 +612,22 @@ export default function ClientDashboard() {
                             {inv.status === 'paid' ? '✓' : '₹'}
                           </div>
                           <div>
-                            <p className="text-white font-bold text-sm">{inv.lawyerName || 'Legal Counsel'}</p>
+                            <p className="text-white font-bold text-sm">{inv.lawyerName || 'API Transaction'}</p>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{new Date(inv.createdAt).toLocaleDateString()} • {inv.description || `Ref: ${inv._id.slice(-6)}`}</p>
                           </div>
                         </div>
                         <div className="text-right">
                           <p className="text-xl font-black text-white tracking-tight mb-1">₹{inv.amount}</p>
                           <div className="flex items-center gap-3">
-                            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border ${inv.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>{inv.status}</span>
+                            <span className={`flex items-center gap-1 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border ${inv.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
+                              {inv.status === 'paid' ? '🔒 SETTLED' : '🔓 PENDING LOCK'}
+                            </span>
                             {inv.status !== 'paid' && (
                               <button
                                 onClick={() => router.push(`/payment/${inv._id}`)}
-                                className="text-[9px] font-black uppercase tracking-widest text-indigo-400 hover:text-white hover:bg-indigo-600 px-3 py-1 rounded-lg border border-indigo-500/30 transition"
+                                className="text-[9px] font-black uppercase tracking-widest text-emerald-400 hover:text-white hover:bg-emerald-600 px-3 py-1 rounded-lg border border-emerald-500/30 transition shadow-lg shadow-emerald-500/10"
                               >
-                                Pay Now
+                                Authorize Contract
                               </button>
                             )}
                           </div>
@@ -652,6 +659,7 @@ export default function ClientDashboard() {
                 </div>
 
                 {/* SUGGESTED LAWYERS */}
+                {/*
                 <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
                   <h3 className="font-bold text-lg text-white mb-4">Recommended Counsel</h3>
                   <div className="space-y-4">
@@ -687,6 +695,7 @@ export default function ClientDashboard() {
                     View Marketplace
                   </button>
                 </div>
+                */}
               </div>
             )
           }

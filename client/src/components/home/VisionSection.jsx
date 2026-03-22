@@ -8,8 +8,8 @@ export default function VisionSection() {
     const pillars = [
         {
             icon: <Search className="text-blue-500" size={24} />,
-            title: "Discovery Engine",
-            desc: "Access verified Indian legal professionals through proprietary matching and verified credentials."
+            title: "Predictive Analytics",
+            desc: "Access mathematical outcome heuristics through our proprietary neural-network precedent matching system."
         },
         {
             icon: <Lock className="text-indigo-400" size={24} />,

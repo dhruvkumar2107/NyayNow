@@ -77,10 +77,10 @@ export default function Contact() {
                             {
                                 icon: <MapPin size={22} />,
                                 color: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
-                                title: 'Headquarters',
-                                value: 'Gurugram, India',
-                                sub: 'DLF Cyber City, Haryana 122002',
-                                href: 'https://maps.google.com/?q=DLF+Cyber+City+Gurugram'
+                                title: 'Location',
+                                value: 'Pan-India',
+                                sub: 'Operating 100% Remotely',
+                                href: null
                             },
                             {
                                 icon: <Clock size={22} />,

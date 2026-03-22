@@ -108,9 +108,9 @@ export default function OnboardingSection() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <FeatureCard
                         icon={Search}
-                        title="Discovery Engine"
-                        description="Access verified Indian legal professionals through our proprietary matching system and verified credentials."
-                        forWho="For Clients"
+                        title="Predictive Analytics"
+                        description="Access mathematical outcome heuristics through our proprietary neural-network precedent matching system."
+                        forWho="Enterprise"
                         delay={0.1}
                     />
 
@@ -134,7 +134,7 @@ export default function OnboardingSection() {
                         icon={Gavel}
                         title="Strategy Sandbox"
                         description="Advanced simulation environment powered by neural networks to predict case outcomes and refine arguments."
-                        forWho="For Advocates"
+                        forWho="Litigation"
                         delay={0.4}
                     />
 
@@ -179,7 +179,7 @@ export default function OnboardingSection() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     {[
                                         { t: "Legal SOS", d: "Immediate crisis response" },
-                                        { t: "Marketplace", d: "Verified expert matching" },
+                                        { t: "Marketplace", d: "Deep precedent matching" },
                                         { t: "Knowledge", d: "Plain-language laws" },
                                         { t: "AI Drafting", d: "Instant official notices" }
                                     ].map((item, i) => (

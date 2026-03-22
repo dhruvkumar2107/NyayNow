@@ -44,7 +44,7 @@ const TIMELINE = [
     { year: "Q1 2025", label: "Beta Launch", desc: "First 500 beta users. AI Legal Assistant and Drafting Lab released." },
     { year: "Q3 2025", label: "Judge AI", desc: "Win Probability Predictor launched. 94% historical accuracy validated." },
     { year: "Q4 2025", label: "Marketplace", desc: "Verified Lawyer Marketplace with 200+ verified advocates goes live." },
-    { year: "2026", label: "NyayVoice + NyayCourt", desc: "Multilingual voice AI and AI Courtroom Battle Simulator released. Startup India recognition." },
+    { year: "2026", label: "NyayVoice + NyayCourt", desc: "Multilingual voice AI and AI Courtroom Battle Simulator released." },
 ];
 
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } };

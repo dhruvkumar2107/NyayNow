@@ -19,6 +19,9 @@ const JudgeAI = () => {
     const [analyzing, setAnalyzing] = useState(false);
     const [result, setResult] = useState(null);
     const [caseInput, setCaseInput] = useState("");
+    const [assignedJudge, setAssignedJudge] = useState("");
+    const [courtType, setCourtType] = useState("");
+    const [opposingParty, setOpposingParty] = useState("");
 
     const generatePDF = () => {
         if (user?.plan !== 'gold') {
@@ -117,10 +120,11 @@ const JudgeAI = () => {
         try {
             // Updated route to call actual backend
             const res = await axios.post('/api/ai/predict-outcome', {
-                caseTitle: "User Query",
-                caseType: "General Legal",
+                caseTitle: `Case vs ${opposingParty || 'Unknown'}`,
+                caseType: courtType || "General Legal",
                 caseDescription: caseInput,
-                oppositionDetails: "Not specified"
+                oppositionDetails: opposingParty,
+                assignedJudge: assignedJudge
             });
 
             if (res.data) {
@@ -178,13 +182,47 @@ const JudgeAI = () => {
                     {!result && !analyzing && (
                         <div className="space-y-6">
                             <div>
-                                <h3 className="text-2xl font-bold mb-2 text-white">Case Brief / Facts</h3>
-                                <p className="text-slate-400 text-sm mb-4">Paste your case details, legal notice, or situation description below for immediate strategic analysis.</p>
+                                <h3 className="text-2xl font-bold mb-6 text-white tracking-tight">Case Parameters</h3>
+                                
+                                <div className="grid md:grid-cols-3 gap-4 mb-6">
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Court Type / Jurisdiction</label>
+                                        <input
+                                            type="text"
+                                            value={courtType}
+                                            onChange={(e) => setCourtType(e.target.value)}
+                                            placeholder="e.g. Delhi High Court"
+                                            className="w-full bg-black/20 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-indigo-500/50 transition placeholder-slate-600"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Assigned Justice</label>
+                                        <input
+                                            type="text"
+                                            value={assignedJudge}
+                                            onChange={(e) => setAssignedJudge(e.target.value)}
+                                            placeholder="e.g. Justice D.Y. Chandrachud"
+                                            className="w-full bg-black/20 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-indigo-500/50 transition placeholder-slate-600"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Opposing Party / Counsel</label>
+                                        <input
+                                            type="text"
+                                            value={opposingParty}
+                                            onChange={(e) => setOpposingParty(e.target.value)}
+                                            placeholder="e.g. Reliance Industries"
+                                            className="w-full bg-black/20 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-indigo-500/50 transition placeholder-slate-600"
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Case Facts & Arguments</label>
                                 <textarea
                                     value={caseInput}
                                     onChange={(e) => setCaseInput(e.target.value)}
-                                    placeholder="e.g. My landlord is refusing to return my security deposit of ₹50,000 despite 1 month notice..."
-                                    className="w-full h-40 bg-black/20 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-indigo-500/50 transition resize-none custom-scrollbar"
+                                    placeholder="Paste comprehensive case details, legal notices, or situation descriptions here for deep mathematical analysis..."
+                                    className="w-full h-40 bg-black/20 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-indigo-500/50 transition resize-none custom-scrollbar text-sm leading-relaxed"
                                 />
                             </div>
                             <div className="flex justify-center">
