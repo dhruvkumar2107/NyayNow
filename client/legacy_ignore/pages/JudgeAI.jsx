@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
-import { UploadCloud, FileText, CheckCircle, AlertTriangle, Scale, Swords, Play } from "lucide-react";
+import { UploadCloud, FileText, CheckCircle, AlertTriangle, Scale, Swords, Play, Lock, Sparkles } from "lucide-react";
 import Navbar from '../../src/components/Navbar';
 import Footer from '../../src/components/Footer';
 import axios from 'axios';
@@ -11,7 +11,6 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useAuth } from "../../src/context/AuthContext";
 import PaywallModal from "../../src/components/PaywallModal";
-import { Lock, Swords, Play, Sparkles } from "lucide-react";
 import { hasAccess } from "../../src/utils/planBorders";
 
 const JudgeAI = () => {
