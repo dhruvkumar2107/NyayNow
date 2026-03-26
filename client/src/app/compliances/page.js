@@ -24,26 +24,32 @@ export default function ComplianceHubPage() {
         try {
             const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/ai/chat`, {
                 message: `[COMPLIANCE HUB] Generate a 10-item legal compliance checklist for a mid-sized Indian startup regarding: ${category}. 
-                Format each item with a "title" and a "requirement". Also provide a "riskLevel" (Low, Medium, High). 
-                Format as JSON array.`
+                Format each item exactly with keys: "title" (string), "requirement" (string), and "riskLevel" (string: "Low", "Medium", "High"). 
+                RETURN ONLY A VALID JSON ARRAY. NO MARKDOWN FORMATTING, NO BACKTICKS, NO EXPLANATORY TEXT. START WITH [ AND END WITH ].`
             })
             
-            const text = res.data.response
-            const jsonMatch = text.match(/\[.*\]/s)
-            if (jsonMatch) {
-                setChecklist(JSON.parse(jsonMatch[0]))
+            let text = res.data.response;
+            // Clean up potentially bad AI output
+            text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+            const jsonStart = text.indexOf('[');
+            const jsonEnd = text.lastIndexOf(']');
+            
+            if (jsonStart !== -1 && jsonEnd !== -1) {
+                const jsonStr = text.substring(jsonStart, jsonEnd + 1);
+                setChecklist(JSON.parse(jsonStr));
             } else {
-                setChecklist([{ title: "Compliance Audit", requirement: text, riskLevel: "High" }])
+                setChecklist([{ title: "Compliance Audit", requirement: "AI failed to return valid data format. Raw response: " + text.substring(0, 100), riskLevel: "High" }]);
             }
         } catch (err) {
             console.error(err)
+            setChecklist([{ title: "Audit Error", requirement: "Connection to the Audit Engine failed.", riskLevel: "High" }]);
         } finally {
             setIsLoading(false)
         }
     }
 
     return (
-        <div className="min-h-screen bg-[#020617] text-white flex flex-col font-sans">
+        <div className="min-h-screen bg-[#020617] text-white flex flex-col font-sans pt-32">
             <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.15)_0%,transparent_50%)]" />
             </div>

@@ -147,7 +147,7 @@ export default function Messages() {
     <div className="h-screen bg-[#020617] overflow-hidden flex flex-col font-sans text-slate-400 selection:bg-indigo-500/30">
       <Navbar />
 
-      <div className="flex-1 flex max-w-[1800px] mx-auto w-full pt-20 px-4 pb-4 gap-6 h-[calc(100vh)]">
+      <div className="flex-1 flex max-w-[1800px] mx-auto w-full pt-28 px-4 pb-4 gap-6 overflow-hidden">
 
         {/* SIDEBAR */}
         <aside className="w-96 bg-white/5 backdrop-blur-xl rounded-[2rem] border border-white/10 flex flex-col overflow-hidden hidden md:flex shadow-2xl">

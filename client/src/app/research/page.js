@@ -50,7 +50,7 @@ export default function PrecedentEnginePage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#020617] text-white flex flex-col font-sans">
+        <div className="min-h-screen bg-[#020617] text-white flex flex-col font-sans pt-32">
             {/* AMBIENT LIGHTING */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-0 right-0 w-[60%] h-[60%] bg-blue-600/5 rounded-full blur-[140px]" />

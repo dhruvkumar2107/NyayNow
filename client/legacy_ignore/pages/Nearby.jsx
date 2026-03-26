@@ -259,7 +259,7 @@ export default function Nearby() {
       </AnimatePresence>
 
       {/* MAP */}
-      <div className="absolute inset-0 z-0 bg-slate-900 pt-[80px]">
+      <div className="absolute inset-0 z-0 bg-slate-900 pt-[110px]">
         {userLocation && (
           <MapContainer center={userLocation} zoom={13} scrollWheelZoom={true} className="h-full w-full outline-none" style={{ background: '#0f172a' }}>
             <TileLayer

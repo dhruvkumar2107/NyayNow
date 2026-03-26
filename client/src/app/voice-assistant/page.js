@@ -89,7 +89,7 @@ export default function NyayVoicePage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#020617] text-white flex flex-col font-sans overflow-hidden">
+        <div className="min-h-screen bg-[#020617] text-white flex flex-col font-sans overflow-hidden pt-24">
             {/* GRADIENT BLOBS */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px]" />

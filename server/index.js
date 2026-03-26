@@ -80,33 +80,33 @@ app.use(helmet({
   }
 }));
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 300,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use(limiter);
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 300,
+//   standardHeaders: true,
+//   legacyHeaders: false,
+// });
+// app.use(limiter);
 
-// 🛡️ AUTH LIMITER (Brute-force protection)
-const authLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // 10 attempts per hour
-  message: { error: "Too many login attempts. Try again in an hour." },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use("/api/auth", authLimiter);
+// // 🛡️ AUTH LIMITER (Brute-force protection)
+// const authLimiter = rateLimit({
+//   windowMs: 60 * 60 * 1000, // 1 hour
+//   max: 10, // 10 attempts per hour
+//   message: { error: "Too many login attempts. Try again in an hour." },
+//   standardHeaders: true,
+//   legacyHeaders: false,
+// });
+// app.use("/api/auth", authLimiter);
 
-// 🛡️ AI LIMITER (Cost overflow protection)
-const aiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 50, // 50 AI requests per 15 min
-  message: { error: "AI capacity limit reached. Please wait a moment." },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use("/api/ai", aiLimiter);
+// // 🛡️ AI LIMITER (Cost overflow protection)
+// const aiLimiter = rateLimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 50, // 50 AI requests per 15 min
+//   message: { error: "AI capacity limit reached. Please wait a moment." },
+//   standardHeaders: true,
+//   legacyHeaders: false,
+// });
+// app.use("/api/ai", aiLimiter);
 
 app.use(cors({
   origin: allowedOrigins,
