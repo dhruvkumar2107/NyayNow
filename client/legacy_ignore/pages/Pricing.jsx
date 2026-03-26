@@ -19,6 +19,9 @@ const Pricing = () => {
 
   const loadScript = (src) => {
     return new Promise((resolve) => {
+      if (document.querySelector(`script[src="${src}"]`)) {
+        return resolve(true);
+      }
       const script = document.createElement("script");
       script.src = src;
       script.onload = () => resolve(true);
@@ -28,28 +31,28 @@ const Pricing = () => {
   };
 
   const handleUpgrade = async (plan, price) => {
-    if (price === 'Free') {
-      if (!user) window.location.href = '/register';
-      else toast.success("You're already on the free plan!");
-      return;
-    }
-    if (!user) {
-      toast.error("Please log in to upgrade your plan.");
-      setTimeout(() => window.location.href = '/login', 1200);
-      return;
-    }
-
-    toast.loading(`Initiating ${plan} Plan upgrade...`, { id: 'upgrade-toast' });
-
-    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-    if (!res) {
-      toast.error("Razorpay SDK failed to load. Check your connection.", { id: 'upgrade-toast' });
-      return;
-    }
-
-    const amount_rupees = parseInt(price.replace(/\\D/g, ''));
-
     try {
+      if (price === 'Free') {
+        if (!user) window.location.href = '/register';
+        else toast.success("You're already on the free plan!");
+        return;
+      }
+      if (!user) {
+        toast.error("Please log in to upgrade your plan.");
+        setTimeout(() => window.location.href = '/login', 1200);
+        return;
+      }
+
+      toast.loading(`Initiating ${plan} Plan upgrade...`, { id: 'upgrade-toast' });
+
+      const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+      if (!res) {
+        toast.error("Razorpay SDK failed to load. Check your connection.", { id: 'upgrade-toast' });
+        return;
+      }
+
+      const amount_rupees = parseInt(String(price).replace(/\\D/g, ''));
+
       const token = localStorage.getItem("token");
       const orderRes = await fetch(`${API_BASE}/payments/create-order`, {
         method: 'POST',
@@ -62,7 +65,7 @@ const Pricing = () => {
 
       if (!orderRes.ok) {
         const errText = await orderRes.text();
-        console.error("Server 400 Response:", errText);
+        console.error("Server Error Response:", errText);
         throw new Error(`Failed to create order: ${orderRes.status} ${errText}`);
       }
       
@@ -101,6 +104,7 @@ const Pricing = () => {
               toast.error("Payment verification failed", { id: "upgrade-toast" });
             }
           } catch (err) {
+            console.error("Verification Error:", err);
             toast.error("Error during verification", { id: "upgrade-toast" });
           }
         },
@@ -116,13 +120,13 @@ const Pricing = () => {
 
       const paymentObject = new window.Razorpay(options);
       paymentObject.on('payment.failed', function (response) {
-        toast.error(response.error.description, { id: "upgrade-toast" });
+        toast.error("Payment Failed: " + response.error.description, { id: "upgrade-toast" });
       });
       paymentObject.open();
       toast.dismiss('upgrade-toast');
     } catch (err) {
       console.error(err);
-      toast.error("Failed to initiate payment", { id: "upgrade-toast" });
+      toast.error(err.message || "Failed to initiate payment", { id: "upgrade-toast" });
     }
   };
 
