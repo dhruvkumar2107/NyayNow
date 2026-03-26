@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
-import { UploadCloud, FileText, CheckCircle, AlertTriangle, Scale, Swords, Play, Lock, Sparkles } from "lucide-react";
+import { FileText, CheckCircle, AlertTriangle, Scale, Swords, Play, Lock, Sparkles } from "lucide-react";
 import Navbar from '../../src/components/Navbar';
 import Footer from '../../src/components/Footer';
 import axios from 'axios';

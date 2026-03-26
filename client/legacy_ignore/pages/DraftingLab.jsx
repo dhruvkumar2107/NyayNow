@@ -6,7 +6,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import SubscriptionModal from '../../src/components/SubscriptionModal';
-import { FileText, Search, Zap, AlertTriangle, CheckCircle, Download, Mic } from 'lucide-react';
+import { FileText, Search, Zap, AlertTriangle, CheckCircle, Download, Mic, UploadCloud } from 'lucide-react';
 import Navbar from '../../src/components/Navbar';
 import Footer from '../../src/components/Footer';
 
