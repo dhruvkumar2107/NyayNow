@@ -1,0 +1,19 @@
+Registering... test1774533997207@nyaynow.in
+Token acquired! Testing payloads...
+Testing: {"amount_rupees":499,"plan":"Pro"}
+Result: 200 {"orderId":"order_SVshPPhpxMiUVa","amount":49900,"currency":"INR","key":"rzp_live_SVqG1GXacFfPNP"}
+SUCCESS!!! The working payload is: {"amount_rupees":499,"plan":"Pro"}
+Testing: {"amount":499,"plan":"Pro"}
+Result: 400 {"error":"Missing required fields"}
+Testing: {"amount":"499","plan":"Pro"}
+Result: 400 {"error":"Missing required fields"}
+Testing: {"price":499,"plan":"Pro"}
+Result: 400 {"error":"Missing required fields"}
+Testing: {"amount_rupees":499,"planId":"Pro"}
+Result: 400 {"error":"Missing required fields"}
+Testing: {"amount":499,"plan":499}
+Result: 400 {"error":"Missing required fields"}
+Testing: {"amount":499,"plan":"499"}
+Result: 400 {"error":"Missing required fields"}
+Testing: {"plan":"Pro"}
+Result: 400 {"error":"Missing required fields"}

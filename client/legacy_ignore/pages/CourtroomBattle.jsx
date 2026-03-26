@@ -9,6 +9,9 @@ import {
     Gavel, Scale, Shield, ChevronRight, Loader2,
     BookOpen, Mic2, Star, RotateCcw, ChevronDown, Sparkles
 } from 'lucide-react';
+import { useAuth } from '../../src/context/AuthContext';
+import { hasAccess } from '../../src/utils/planBorders';
+import PaywallModal from '../../src/components/PaywallModal';
 
 // ── Typewriter hook ──────────────────────────────────────────────────────────
 function useTypewriter(text, speed = 18, active = false) {
@@ -263,7 +266,8 @@ export default function CourtroomBattle() {
     });
     const [result, setResult] = useState(null);
     const [activeRound, setActiveRound] = useState(-1);
-    const [shownRounds, setShownRounds] = useState([]);
+    const { user } = useAuth();
+    const [showPaywall, setShowPaywall] = useState(false);
     const bottomRef = useRef(null);
     const recognitionRef = useRef(null);
 
@@ -321,6 +325,16 @@ export default function CourtroomBattle() {
     };
 
     const submitCase = async () => {
+        const usageCount = user?.aiUsage?.count || 0;
+        if (!hasAccess(user?.plan, 'NYAY_COURT', usageCount)) {
+            setShowPaywall(true);
+            return;
+        }
+
+        if (user?.plan === 'free' && usageCount === 0) {
+            toast.success("Trial Activated: Your first Battle is free!", { icon: '⚖️' });
+        }
+
         if (!caseData.caseDescription.trim()) return;
         setPhase('loading');
         try {
@@ -681,6 +695,7 @@ export default function CourtroomBattle() {
                     )}
                 </AnimatePresence>
             </div>
+            <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} title="Upgrade for NyayCourt Battle Simulator" />
             <Footer />
         </div>
     );

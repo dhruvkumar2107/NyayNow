@@ -6,7 +6,9 @@ import Footer from "../../src/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, Volume2, VolumeX, Sparkles, Zap, MessageCircle, ChevronRight, Globe } from "lucide-react";
 import axios from "axios";
-// Redundant import removed
+import { useAuth } from "../../src/context/AuthContext";
+import { hasAccess } from "../../src/utils/planBorders";
+import PaywallModal from "../../src/components/PaywallModal";
 
 const LANGUAGES = [
     { code: 'en-IN', name: 'English (India)', native: 'English' },
@@ -40,6 +42,8 @@ const VoiceAssistant = () => {
     const [loading, setLoading] = useState(false);
     const [history, setHistory] = useState([]);
     const [selectedLang, setSelectedLang] = useState({ code: 'en-IN', name: 'English (India)', native: 'English' });
+    const { user } = useAuth();
+    const [showPaywall, setShowPaywall] = useState(false);
     const recognitionRef = useRef(null);
     const synthRef = useRef(typeof window !== 'undefined' ? window.speechSynthesis : null);
     const historyEndRef = useRef(null);
@@ -126,6 +130,16 @@ const VoiceAssistant = () => {
     };
 
     const toggleListening = () => {
+        const usageCount = user?.aiUsage?.count || 0;
+        if (!hasAccess(user?.plan, 'NYAY_VOICE', usageCount)) {
+            setShowPaywall(true);
+            return;
+        }
+
+        if (user?.plan === 'free' && usageCount === 0) {
+            toast.success("Trial Activated: 1 free Voice session!", { icon: '🎙️' });
+        }
+
         if (isListening) {
             recognitionRef.current?.stop();
             if (transcript) handleAIResponse(transcript);
@@ -404,6 +418,7 @@ const VoiceAssistant = () => {
                     )}
                 </div>
             </div>
+            <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} title="Upgrade for NyayVoice Assistant" />
             <Footer />
         </>
     );

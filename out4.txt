@@ -1,0 +1,2 @@
+Testing exact frontend bloated payload:
+200 {"orderId":"order_SVsiWsQbPtRSLd","amount":49900,"currency":"INR","key":"rzp_live_SVqG1GXacFfPNP"}

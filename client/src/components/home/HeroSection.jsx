@@ -10,7 +10,7 @@ export default function HeroSection() {
     const { user } = useAuth()
 
     return (
-        <section className="relative pt-24 pb-16 lg:pt-36 lg:pb-24 overflow-hidden text-center bg-[#000000]">
+        <section className="relative pt-20 md:pt-36 pb-16 lg:pb-24 overflow-hidden text-center bg-[#000000]">
             {/* ULTRA-PREMIUM MESH GRADIENT */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse transition-all duration-[10s]" />
@@ -42,7 +42,7 @@ export default function HeroSection() {
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-4xl md:text-6xl lg:text-[85px] font-bold text-white mb-8 leading-[1.1] tracking-[-0.04em]"
+                        className="text-3xl md:text-6xl lg:text-[85px] font-bold text-white mb-8 leading-[1.1] tracking-[-0.04em]"
                     >
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">
                             Get Clear, Instant Legal Help <br />

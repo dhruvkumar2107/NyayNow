@@ -69,8 +69,8 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-[9999] transition-all duration-500 border-b ${scrolled ? "bg-[#020617]/90 backdrop-blur-3xl border-white/10 h-[70px] py-2" : "bg-transparent border-transparent h-[90px] py-4"}`}>
-        <div className="max-w-[1440px] mx-auto px-8 h-full flex items-center justify-between">
+      <nav className={`fixed top-0 w-full z-[9999] transition-all duration-500 border-b ${scrolled ? "bg-[#020617]/90 backdrop-blur-3xl border-white/10 h-[60px] md:h-[70px] py-1 md:py-2" : "bg-transparent border-transparent h-[72px] md:h-[90px] py-2 md:py-4"}`}>
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex items-center justify-between">
 
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3 group relative z-50 shrink-0" aria-label="NyayNow Home">
@@ -199,7 +199,7 @@ export default function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-0 z-[9998] bg-[#020617] pt-28 px-8 overflow-y-auto"
+            className="fixed inset-0 z-[9998] bg-[#020617] pt-20 md:pt-28 px-4 md:px-8 overflow-y-auto"
           >
             <div className="flex flex-col gap-12 pb-24 max-w-lg mx-auto">
               {navItems.map((group, idx) => (

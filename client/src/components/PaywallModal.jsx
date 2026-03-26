@@ -31,22 +31,17 @@ export default function PaywallModal({ isOpen, onClose, title = "Upgrade to Acce
                         You've reached your free trial limit. Unlock the full power of the judiciary AI.
                     </p>
 
-                    <div className="grid md:grid-cols-3 gap-4 mb-10 text-left">
+                    <div className="grid md:grid-cols-2 gap-4 mb-10 text-left">
                         <PlanCard
-                            name="Silver"
+                            name="Pro (Silver)"
                             price="₹499"
-                            features={["Drafting Tool", "Basic Analysis"]}
+                            features={["Unlimited AI Chat", "Document Drafting", "Legal Research"]}
                         />
                         <PlanCard
-                            name="Gold"
-                            price="₹999"
+                            name="Premium (Gold)"
+                            price="₹1,499"
                             highlight
-                            features={["Deep Search", "Priority Queue", "Adv. Insights"]}
-                        />
-                        <PlanCard
-                            name="Diamond"
-                            price="₹2499"
-                            features={["Full Access", "Human Review", "API Access"]}
+                            features={["Lawyer Consultation", "NyayCourt Simulator", "Agreement Review"]}
                         />
                     </div>
 

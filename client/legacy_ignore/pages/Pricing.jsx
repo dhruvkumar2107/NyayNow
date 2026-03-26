@@ -10,7 +10,6 @@ import { useAuth } from '../../src/context/AuthContext';
 
 const Pricing = () => {
   const { user } = useAuth();
-  const [billingCycle, setBillingCycle] = useState('monthly');
   const [userType, setUserType] = useState('client');
   const [openFaq, setOpenFaq] = useState(null);
 
@@ -53,12 +52,11 @@ const Pricing = () => {
 
       console.log("DEBUG: handleUpgrade input:", { plan, price });
       
-      // 1. More robust price parsing to avoid NaN
+      // 1. More robust price parsing to avoid NaN (One-time payment)
       const priceStr = String(price || "");
       const amount_rupees = parseInt(priceStr.replace(/[^0-9]/g, '')) || 0;
       
       // 2. Map UI names to Database Enum names (User.js)
-      // Database allows: ["free", "silver", "gold", "diamond"]
       let mappedPlan = plan?.toLowerCase();
       if (mappedPlan === "pro") mappedPlan = "silver";
       if (mappedPlan === "premium") mappedPlan = "gold";
@@ -149,8 +147,8 @@ const Pricing = () => {
   const clientPlans = [
     {
       name: "Basic",
-      price: { monthly: "Free", yearly: "Free" },
-      period: "",
+      price: "Free",
+      period: "forever",
       savings: null,
       tagline: "Essential legal help for every Indian citizen, forever.",
       features: [
@@ -168,20 +166,20 @@ const Pricing = () => {
     },
     {
       name: "Pro",
-      price: { monthly: "₹499", yearly: "₹399" },
-      period: "/mo",
-      savings: "Save ₹1,200/yr",
+      price: "₹499",
+      period: "one-time",
+      savings: null,
       tagline: "Unlimited AI power for individuals and families.",
       features: [
         'Unlimited AI Legal Chat',
+        'Judge AI (Strategic Web Analysis)',
         'Document Drafting (10/mo)',
-        'Legal Research Access',
-        'Priority Support (24hrs)',
+        'Precedent Research Engine',
+        'NyayVoice (Multi-lingual Assistant)',
         'FIR Draft Generator',
         'Emergency Legal SOS',
-        'NyayVoice (10 languages)',
       ],
-      cta: 'Start Pro — Free Trial',
+      cta: 'Start Pro',
       color: 'indigo',
       icon: Zap,
       highlight: true,
@@ -189,18 +187,18 @@ const Pricing = () => {
     },
     {
       name: "Premium",
-      price: { monthly: "₹1,499", yearly: "₹1,199" },
-      period: "/mo",
-      savings: "Save ₹3,600/yr",
+      price: "₹1,499",
+      period: "one-time",
+      savings: null,
       tagline: "Complete legal protection for families and businesses.",
       features: [
-        'Everything in Pro',
-        '1 Lawyer Consultation/mo',
-        'Agreement Review & Analysis',
+        'Everything in Pro +',
+        'Judge AI Strategic Dossier (PDF)',
+        'NyayCourt (Trial Simulator)',
+        'DevilsAdvocate AI (Rebuttals)',
+        'Quantum Vault (Storage)',
+        'Agreement Review & Deep Analysis',
         'Dedicated Case Manager',
-        'NyayCourt Battle Simulator',
-        'DevilsAdvocate AI',
-        'Priority HD Video Calls',
       ],
       cta: 'Go Premium',
       color: 'amber',
@@ -213,8 +211,8 @@ const Pricing = () => {
   const lawyerPlans = [
     {
       name: "Starter",
-      price: { monthly: "Free", yearly: "Free" },
-      period: "",
+      price: "Free",
+      period: "forever",
       savings: null,
       tagline: "Build your digital presence and start getting clients.",
       features: [
@@ -232,9 +230,9 @@ const Pricing = () => {
     },
     {
       name: "Professional",
-      price: { monthly: "₹1,999", yearly: "₹1,599" },
-      period: "/mo",
-      savings: "Save ₹4,800/yr",
+      price: "₹1,999",
+      period: "one-time",
+      savings: null,
       tagline: "Grow your practice with AI tools and verified leads.",
       features: [
         'Verified Badge ✓',
@@ -253,9 +251,9 @@ const Pricing = () => {
     },
     {
       name: "Elite",
-      price: { monthly: "₹4,999", yearly: "₹3,999" },
-      period: "/mo",
-      savings: "Save ₹12,000/yr",
+      price: "₹4,999",
+      period: "one-time",
+      savings: null,
       tagline: "Dominate your legal niche with unlimited AI power.",
       features: [
         'Unlimited Connection Requests',
@@ -336,7 +334,7 @@ const Pricing = () => {
       <Navbar />
 
       {/* ─── HERO ──────────────────────────────────────────── */}
-      <section className="relative pt-40 pb-20 overflow-hidden text-center">
+      <section className="relative pt-24 md:pt-40 pb-20 overflow-hidden text-center">
         {/* Background glows */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-indigo-500/8 blur-[130px] rounded-full pointer-events-none" />
         <div className="absolute top-40 left-1/4 w-[400px] h-[400px] bg-violet-500/5 blur-[100px] rounded-full pointer-events-none" />
@@ -396,30 +394,6 @@ const Pricing = () => {
               ))}
             </div>
           </motion.div>
-
-          {/* BILLING TOGGLE */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.25 }}
-            className="flex items-center justify-center gap-4 mb-4"
-          >
-            <span className={`text-sm font-bold transition-colors ${billingCycle === 'monthly' ? 'text-white' : 'text-slate-500'}`}>Monthly</span>
-            <button
-              onClick={() => setBillingCycle(c => c === 'monthly' ? 'yearly' : 'monthly')}
-              className="relative w-14 h-7 bg-[#0f172a] border border-white/10 rounded-full transition-all"
-            >
-              <motion.div
-                animate={{ x: billingCycle === 'yearly' ? 26 : 2 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                className="absolute top-1 w-5 h-5 bg-amber-500 rounded-full shadow-lg shadow-amber-500/50"
-              />
-            </button>
-            <span className={`text-sm font-bold transition-colors flex items-center gap-2 ${billingCycle === 'yearly' ? 'text-white' : 'text-slate-500'}`}>
-              Annual
-              <span className="text-[10px] text-emerald-400 bg-emerald-500/15 border border-emerald-500/20 px-2 py-0.5 rounded-full font-black">Save 20%</span>
-            </span>
-          </motion.div>
         </div>
       </section>
 
@@ -438,7 +412,7 @@ const Pricing = () => {
               {plans.map((plan, idx) => {
                 const c = colorMap[plan.color];
                 const Icon = plan.icon;
-                const currentPrice = plan.price[billingCycle];
+                const currentPrice = plan.price;
 
                 return (
                   <motion.div
@@ -480,20 +454,11 @@ const Pricing = () => {
                         </motion.span>
                       </AnimatePresence>
                       {plan.period && (
-                        <span className="text-slate-500 text-sm pb-2">{plan.period}</span>
+                        <span className="text-slate-500 text-sm pb-2">/{plan.period}</span>
                       )}
                     </div>
 
-                    {billingCycle === 'yearly' && plan.savings && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="mb-5 inline-flex items-center gap-1.5 text-emerald-400 text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full"
-                      >
-                        🎉 {plan.savings}
-                      </motion.div>
-                    )}
-                    {!(billingCycle === 'yearly' && plan.savings) && <div className="mb-5" />}
+                    <div className="mb-5" />
 
                     {/* Divider */}
                     <div className="h-px bg-white/5 mb-6" />

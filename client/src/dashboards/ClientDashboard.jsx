@@ -17,6 +17,8 @@ import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import PremiumLoader from "../components/PremiumLoader";
+import { hasAccess } from "../utils/planBorders";
+import PaywallModal from "../components/PaywallModal";
 
 const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
 
@@ -47,6 +49,8 @@ export default function ClientDashboard() {
   const [selectedLawyer, setSelectedLawyer] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showInstantModal, setShowInstantModal] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [paywallFeature, setPaywallFeature] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -228,14 +232,14 @@ export default function ClientDashboard() {
             <div className="space-y-1 mt-8">
             <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
             <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
-            <NavItem icon="🤖" label="Judge AI" to="/judge-ai" />
-            <NavItem icon="📝" label="Drafting Lab" to="/drafting" />
-            <NavItem icon="🎙️" label="NyayVoice" to="/voice-assistant" badge="Live" />
-            <NavItem icon="⚔️" label="NyayCourt" to="/courtroom-battle" badge="New" />
-            <NavItem icon="🔍" label="Precedent Engine" to="/research" />
+            <NavItem icon="🤖" label="Judge AI" to="/judge-ai" locked={!hasAccess(user.plan, 'LEGAL_RESEARCH', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Judge AI Analysis"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
+            <NavItem icon="📝" label="Drafting Lab" to="/drafting" locked={!hasAccess(user.plan, 'DOCUMENT_DRAFTING', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Document Drafting Lab"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
+            <NavItem icon="🎙️" label="NyayVoice" to="/voice-assistant" badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : "Live"} locked={!hasAccess(user.plan, 'NYAY_VOICE', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("NyayVoice Assistant"); setShowPaywall(true); }} />
+            <NavItem icon="⚔️" label="NyayCourt" to="/courtroom-battle" badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : "New"} locked={!hasAccess(user.plan, 'NYAY_COURT', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("NyayCourt Battle Simulator"); setShowPaywall(true); }} />
+            <NavItem icon="🔍" label="Precedent Engine" to="/research" locked={!hasAccess(user.plan, 'LEGAL_RESEARCH', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Precedent Research Engine"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
             <NavItem icon="🛡️" label="Compliance Hub" to="/compliances" />
-            <NavItem icon="📈" label="Analytics" to="/analytics" />
-            <NavItem icon="📄" label="Quantum Vault" to="/agreements" />
+            <NavItem icon="📈" label="Analytics" to="/analytics" locked={!hasAccess(user.plan, 'silver')} onLocked={() => { setPaywallFeature("Deep Analytics"); setShowPaywall(true); }} />
+            <NavItem icon="📄" label="Quantum Vault" to="/agreements" locked={!hasAccess(user.plan, 'gold')} onLocked={() => { setPaywallFeature("Agreement Vault"); setShowPaywall(true); }} />
             <NavItem icon="💬" label="Messages" to="/messages" />
             <NavItem icon="💳" label="Smart Escrow" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
             <NavItem icon="📡" label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
@@ -776,7 +780,7 @@ export default function ClientDashboard() {
           </div>
         )}
       </AnimatePresence>
-
+      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} title={`Upgrade for ${paywallFeature}`} />
     </div>
   );
 }

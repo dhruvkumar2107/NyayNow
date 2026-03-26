@@ -11,7 +11,8 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useAuth } from "../../src/context/AuthContext";
 import PaywallModal from "../../src/components/PaywallModal";
-import { Lock } from "lucide-react";
+import { Lock, Swords, Play, Sparkles } from "lucide-react";
+import { hasAccess } from "../../src/utils/planBorders";
 
 const JudgeAI = () => {
     const { user } = useAuth();
@@ -24,7 +25,8 @@ const JudgeAI = () => {
     const [opposingParty, setOpposingParty] = useState("");
 
     const generatePDF = () => {
-        if (user?.plan !== 'gold') {
+        const usageCount = user?.aiUsage?.count || 0;
+        if (!hasAccess(user?.plan, 'AGREEMENT_REVIEW', usageCount)) { // Using Agreement Review level as proxy for Gold/Dossier
             setShowPaywall(true);
             return;
         }
@@ -109,6 +111,16 @@ const JudgeAI = () => {
     };
 
     const handleAnalyze = async () => {
+        const usageCount = user?.aiUsage?.count || 0;
+        if (!hasAccess(user?.plan, 'LEGAL_RESEARCH', usageCount)) {
+            setShowPaywall(true);
+            return;
+        }
+
+        if (user?.plan === 'free' && usageCount === 0) {
+            toast.success("Trial Activated: Your first analysis is on us!", { icon: '✨' });
+        }
+
         if (!caseInput.trim()) {
             toast.error("Please enter case details first.");
             return;
