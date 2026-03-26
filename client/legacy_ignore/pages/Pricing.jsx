@@ -60,7 +60,11 @@ const Pricing = () => {
         body: JSON.stringify({ amount_rupees, amount: amount_rupees, plan })
       });
 
-      if (!orderRes.ok) throw new Error("Failed to create order");
+      if (!orderRes.ok) {
+        const errText = await orderRes.text();
+        console.error("Server 400 Response:", errText);
+        throw new Error(`Failed to create order: ${orderRes.status} ${errText}`);
+      }
       
       const orderData = await orderRes.json();
 
