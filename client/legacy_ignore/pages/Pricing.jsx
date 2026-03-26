@@ -57,18 +57,12 @@ const Pricing = () => {
       const orderRes = await fetch(`${API_BASE}/payments/create-order`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
           ...(token && { Authorization: `Bearer ${token}` })
         },
-        body: JSON.stringify({ 
-          amount_rupees: amount_rupees, 
-          amount: amount_rupees, 
-          price: amount_rupees,
-          value: amount_rupees,
-          plan: plan, 
-          planId: plan,
-          planName: plan,
-          name: plan
+        body: new URLSearchParams({
+          amount_rupees: amount_rupees,
+          plan: plan,
         })
       });
 
