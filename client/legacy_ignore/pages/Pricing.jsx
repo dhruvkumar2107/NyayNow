@@ -14,7 +14,8 @@ const Pricing = () => {
   const [userType, setUserType] = useState('client');
   const [openFaq, setOpenFaq] = useState(null);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+  const _envBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+  const API_BASE = _envBase.endsWith('/api') ? _envBase : `${_envBase}/api`;
 
   const loadScript = (src) => {
     return new Promise((resolve) => {
