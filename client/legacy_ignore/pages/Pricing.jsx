@@ -57,7 +57,7 @@ const Pricing = () => {
           'Content-Type': 'application/json',
           ...(token && { Authorization: `Bearer ${token}` })
         },
-        body: JSON.stringify({ amount_rupees, plan })
+        body: JSON.stringify({ amount_rupees, amount: amount_rupees, plan })
       });
 
       if (!orderRes.ok) throw new Error("Failed to create order");
