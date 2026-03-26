@@ -51,19 +51,32 @@ const Pricing = () => {
         return;
       }
 
-      const amount_rupees = parseInt(String(price).replace(/\\D/g, ''));
+      console.log("DEBUG: handleUpgrade input:", { plan, price });
+      
+      // 1. More robust price parsing to avoid NaN
+      const priceStr = String(price || "");
+      const amount_rupees = parseInt(priceStr.replace(/[^0-9]/g, '')) || 0;
+      
+      // 2. Map UI names to Database Enum names (User.js)
+      // Database allows: ["free", "silver", "gold", "diamond"]
+      let mappedPlan = plan?.toLowerCase();
+      if (mappedPlan === "pro") mappedPlan = "silver";
+      if (mappedPlan === "premium") mappedPlan = "gold";
+
+      console.log("DEBUG: Final payload:", { amount_rupees, plan: mappedPlan });
+
+      if (amount_rupees <= 0) {
+        throw new Error("Invalid price detected. Please refresh and try again.");
+      }
 
       const token = localStorage.getItem("token");
       const orderRes = await fetch(`${API_BASE}/payments/create-order`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
           ...(token && { Authorization: `Bearer ${token}` })
         },
-        body: new URLSearchParams({
-          amount_rupees: amount_rupees,
-          plan: plan,
-        })
+        body: JSON.stringify({ amount_rupees, plan: mappedPlan })
       });
 
       if (!orderRes.ok) {
