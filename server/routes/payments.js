@@ -19,21 +19,26 @@ const Payment = require("../models/Payment");
 router.post("/create-order", verifyToken, async (req, res) => {
   try {
     const { amount_rupees, plan } = req.body;
+    
+    // Explicitly convert and validate amount
+    const cleanAmount = Number(amount_rupees);
 
     // Fetch current user email from DB to ensure integrity
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    if (!amount_rupees || !plan) {
-      return res.status(400).json({ error: "Missing required fields" });
+    if (!cleanAmount || !plan) {
+      return res.status(400).json({ error: "Missing or invalid required fields", received: { amount_rupees, plan } });
     }
 
-    const order = await razorpay.orders.create({
-      amount: amount_rupees * 100, // paise
+    const orderOptions = {
+      amount: Math.round(cleanAmount * 100), // paise
       currency: "INR",
       receipt: `receipt_${Date.now()}_${req.userId.substring(0, 5)}`,
       notes: { plan, email: user.email, userId: req.userId }
-    });
+    };
+
+    const order = await razorpay.orders.create(orderOptions);
 
     res.json({
       orderId: order.id,
@@ -45,8 +50,9 @@ router.post("/create-order", verifyToken, async (req, res) => {
     console.error("Create order error:", err);
     res.status(500).json({ 
       error: "Order creation failed", 
-      details: err.message || "Unknown error",
-      code: err.code || null
+      details: err.message || "Unknown error string",
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      rawError: err
     });
   }
 });
