@@ -1,4 +1,4 @@
-﻿const express = require("express");
+const express = require("express");
 const router = express.Router();
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
@@ -43,7 +43,11 @@ router.post("/create-order", verifyToken, async (req, res) => {
     });
   } catch (err) {
     console.error("Create order error:", err);
-    res.status(500).json({ error: "Order creation failed" });
+    res.status(500).json({ 
+      error: "Order creation failed", 
+      details: err.message || "Unknown error",
+      code: err.code || null
+    });
   }
 });
 
