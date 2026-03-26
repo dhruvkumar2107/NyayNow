@@ -14,7 +14,19 @@ const Pricing = () => {
   const [userType, setUserType] = useState('client');
   const [openFaq, setOpenFaq] = useState(null);
 
-  const handleUpgrade = (plan, price) => {
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+
+  const loadScript = (src) => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleUpgrade = async (plan, price) => {
     if (price === 'Free') {
       if (!user) window.location.href = '/register';
       else toast.success("You're already on the free plan!");
@@ -25,10 +37,88 @@ const Pricing = () => {
       setTimeout(() => window.location.href = '/login', 1200);
       return;
     }
-    toast.loading(`Initiating ${plan} Plan upgrade...`, { duration: 2000 });
-    setTimeout(() => {
-      toast.success("Payment integration coming soon! Email nyaynow.in@gmail.com for early access.", { duration: 6000 });
-    }, 2100);
+
+    toast.loading(`Initiating ${plan} Plan upgrade...`, { id: 'upgrade-toast' });
+
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+    if (!res) {
+      toast.error("Razorpay SDK failed to load. Check your connection.", { id: 'upgrade-toast' });
+      return;
+    }
+
+    const amount_rupees = parseInt(price.replace(/\\D/g, ''));
+
+    try {
+      const token = localStorage.getItem("token");
+      const orderRes = await fetch(`${API_BASE}/payments/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` })
+        },
+        body: JSON.stringify({ amount_rupees, plan })
+      });
+
+      if (!orderRes.ok) throw new Error("Failed to create order");
+      
+      const orderData = await orderRes.json();
+
+      const options = {
+        key: orderData.key,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "NyayNow",
+        description: `Upgrade to ${plan} Plan`,
+        order_id: orderData.orderId,
+        handler: async function (response) {
+          toast.loading("Verifying payment...", { id: "upgrade-toast" });
+          try {
+            const verifyRes = await fetch(`${API_BASE}/payments/verify`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` })
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                plan: plan,
+                amount: amount_rupees
+              })
+            });
+
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              toast.success(`Successfully upgraded to ${plan} Plan!`, { id: "upgrade-toast", duration: 5000 });
+              setTimeout(() => window.location.reload(), 2000);
+            } else {
+              toast.error("Payment verification failed", { id: "upgrade-toast" });
+            }
+          } catch (err) {
+            toast.error("Error during verification", { id: "upgrade-toast" });
+          }
+        },
+        prefill: {
+          name: user?.name || "",
+          email: user?.email || "",
+          contact: user?.phone || ""
+        },
+        theme: {
+          color: "#6366f1"
+        }
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.on('payment.failed', function (response) {
+        toast.error(response.error.description, { id: "upgrade-toast" });
+      });
+      paymentObject.open();
+      toast.dismiss('upgrade-toast');
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to initiate payment", { id: "upgrade-toast" });
+    }
   };
 
   const clientPlans = [
