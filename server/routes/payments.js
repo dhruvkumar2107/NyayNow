@@ -11,6 +11,13 @@ const razorpay = new Razorpay({
   key_secret: process.env.RZP_KEY_SECRET
 });
 
+// Health check to verify Keys on server startup
+if (!process.env.RZP_KEY_ID) {
+  console.error("❌ RAZORPAY ERROR: RZP_KEY_ID is missing from environment variables!");
+} else {
+  console.log("✅ RAZORPAY INFO: Key ID is present:", process.env.RZP_KEY_ID.substring(0, 8) + "...");
+}
+
 const Payment = require("../models/Payment");
 
 /**
