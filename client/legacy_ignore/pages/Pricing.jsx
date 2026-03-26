@@ -60,7 +60,16 @@ const Pricing = () => {
           'Content-Type': 'application/json',
           ...(token && { Authorization: `Bearer ${token}` })
         },
-        body: JSON.stringify({ amount_rupees, amount: amount_rupees, plan })
+        body: JSON.stringify({ 
+          amount_rupees: amount_rupees, 
+          amount: amount_rupees, 
+          price: amount_rupees,
+          value: amount_rupees,
+          plan: plan, 
+          planId: plan,
+          planName: plan,
+          name: plan
+        })
       });
 
       if (!orderRes.ok) {
