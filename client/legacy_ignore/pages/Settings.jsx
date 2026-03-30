@@ -1,8 +1,7 @@
 'use client'
 import { useState } from "react";
 import { useAuth } from "../../src/context/AuthContext";
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
+
 import { motion } from "framer-motion";
 import { Bell, Lock, Shield, User, Smartphone, Globe, Moon, Monitor, CreditCard, Settings2, Search } from "lucide-react";
 import toast from "react-hot-toast";
@@ -83,13 +82,12 @@ export default function Settings() {
 
     return (
         <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-indigo-500/30 pb-20 relative overflow-hidden">
-            <Navbar />
 
             {/* Ambient Glow */}
             <div className="absolute top-20 right-1/4 w-[500px] h-[500px] bg-indigo-500/8 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-40 left-1/4 w-[400px] h-[400px] bg-violet-500/6 rounded-full blur-[80px] pointer-events-none" />
 
-            <div className="max-w-6xl mx-auto pt-28 pb-12 px-6 relative z-10">
+            <div className="max-w-6xl mx-auto pt-24 md:pt-32 pb-12 px-6 relative z-10">
                 <header className="mb-12">
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                         className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-xs font-bold uppercase tracking-widest mb-4"
@@ -360,7 +358,7 @@ export default function Settings() {
 
                 </div>
             </div>
-            <Footer />
-        </div>
+            <div className="pb-20" />
+        </div >
     );
 }

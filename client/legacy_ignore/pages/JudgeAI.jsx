@@ -3,8 +3,6 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { FileText, CheckCircle, AlertTriangle, Scale, Swords, Play, Lock, Sparkles } from "lucide-react";
-import Navbar from '../../src/components/Navbar';
-import Footer from '../../src/components/Footer';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
@@ -164,10 +162,9 @@ const JudgeAI = () => {
 
     return (
         <div className="min-h-screen bg-[#0c1220] text-slate-400 font-sans selection:bg-indigo-500/30">
-            <Navbar />
 
             {/* HERO SECTION */}
-            <section className="relative pt-40 pb-20 overflow-hidden">
+            <section className="relative pt-24 md:pt-36 pb-20 overflow-hidden">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-indigo-500/20 blur-[150px] rounded-full pointer-events-none mix-blend-screen"></div>
 
                 <div className="container mx-auto px-6 relative z-10 text-center">
@@ -357,7 +354,7 @@ const JudgeAI = () => {
             </section>
 
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} feature="Premium Legal Dossiers" />
-            <Footer />
+            <div className="pb-20" />
         </div>
     );
 };

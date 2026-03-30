@@ -7,8 +7,6 @@ import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import SubscriptionModal from '../../src/components/SubscriptionModal';
 import { FileText, Search, Zap, AlertTriangle, CheckCircle, Download, Mic, UploadCloud } from 'lucide-react';
-import Navbar from '../../src/components/Navbar';
-import Footer from '../../src/components/Footer';
 
 const DraftingLab = () => {
     const [activeTab, setActiveTab] = useState('draft'); // 'draft' or 'analyze'
@@ -161,7 +159,6 @@ const DraftingLab = () => {
 
     return (
         <div className="min-h-screen bg-[#020617] text-slate-400 font-sans pb-20 pt-[160px] px-4 md:px-8 selection:bg-indigo-500/30">
-            <Navbar />
             <SubscriptionModal
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
@@ -432,7 +429,7 @@ const DraftingLab = () => {
                 </motion.div>
 
             </div>
-            <Footer />
+            <div className="pb-20" />
         </div>
     );
 };

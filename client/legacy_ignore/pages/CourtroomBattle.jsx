@@ -1,7 +1,5 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react';
-import Navbar from '../../src/components/Navbar';
-import Footer from '../../src/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -266,6 +264,7 @@ export default function CourtroomBattle() {
     });
     const [result, setResult] = useState(null);
     const [activeRound, setActiveRound] = useState(-1);
+    const [shownRounds, setShownRounds] = useState([]);
     const { user } = useAuth();
     const [showPaywall, setShowPaywall] = useState(false);
     const bottomRef = useRef(null);
@@ -362,10 +361,9 @@ export default function CourtroomBattle() {
 
     return (
         <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-amber-500/10 relative overflow-hidden">
-            <Navbar />
 
             {/* ── HERO ─────────────────────────────────────────────────────────── */}
-            <div className="relative pt-52 pb-12 px-6 overflow-hidden">
+            <div className="relative pt-32 md:pt-48 pb-12 px-6 overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center_top,_rgba(109,40,217,0.25),_transparent_60%)]" />
                 <div className="absolute top-10 left-10 w-[600px] h-[400px] bg-violet-900/10 rounded-full blur-[120px]" />
                 <div className="absolute top-10 right-0 w-[400px] h-[400px] bg-amber-900/10 rounded-full blur-[120px]" />
@@ -696,7 +694,7 @@ export default function CourtroomBattle() {
                 </AnimatePresence>
             </div>
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} title="Upgrade for NyayCourt Battle Simulator" />
-            <Footer />
+            <div className="pb-20" />
         </div>
     );
 }

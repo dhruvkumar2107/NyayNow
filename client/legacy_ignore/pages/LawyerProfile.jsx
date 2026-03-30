@@ -4,8 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "../../src/context/AuthContext";
 import toast from "react-hot-toast";
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
+
 import { motion } from "framer-motion";
 import { Mail, Linkedin, MapPin, Globe, Award, Briefcase, Gavel, Star, MessageCircle, UserPlus, Clock } from "lucide-react";
 import { Helmet } from "react-helmet-async";
@@ -83,7 +82,6 @@ export default function LawyerProfile() {
                 <title>{lawyer ? `${lawyer.name} | Verified Lawyer on NyayNow` : "Lawyer Profile | NyayNow"}</title>
                 <meta name="description" content={lawyer ? `Consult with ${lawyer.name}, a legal expert specializing in ${lawyer.specialization || 'law'}. Book an appointment on NyayNow.` : "View lawyer profile and book consultations on NyayNow."} />
             </Helmet>
-            <Navbar />
 
             {/* HEADER HERO */}
             <div className="relative pt-40 pb-20 px-4 max-w-7xl mx-auto">
@@ -257,7 +255,7 @@ export default function LawyerProfile() {
                     </div>
                 </div>
             </div>
-            <Footer />
+            <div className="pb-20" />
         </main>
     );
 }

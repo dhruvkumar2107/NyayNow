@@ -75,7 +75,7 @@ export default function Assistant() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#0c1220] text-slate-200 font-sans overflow-hidden pt-24">
+    <div className="flex flex-col h-screen bg-[#0c1220] text-slate-200 font-sans overflow-hidden pt-20 md:pt-24">
       <div className="flex flex-1 overflow-hidden">
 
         {/* SIDEBAR HISTORY */}

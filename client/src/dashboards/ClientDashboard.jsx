@@ -20,7 +20,7 @@ import PremiumLoader from "../components/PremiumLoader";
 import { hasAccess } from "../utils/planBorders";
 import PaywallModal from "../components/PaywallModal";
 
-const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
+const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000", { transports: ['websocket'] });
 
 export default function ClientDashboard() {
   const { user, logout } = useAuth();
@@ -145,7 +145,8 @@ export default function ClientDashboard() {
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get("/api/posts");
+      const uId = user._id || user.id;
+      const res = await axios.get(`/api/posts?userId=${uId}`);
       setPosts(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Posts Fetch Error:", err);

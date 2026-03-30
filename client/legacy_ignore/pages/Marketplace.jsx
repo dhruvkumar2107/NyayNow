@@ -4,18 +4,13 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin, Star, ShieldCheck, Filter, X } from "lucide-react";
 import { Helmet } from "react-helmet-async";
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
+
 import axios from "axios";
 
 const Marketplace = () => {
   return (
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 pb-20 selection:bg-indigo-500/30">
-      <Helmet>
-        <title>Lawyer Marketplace | Find Top Legal Experts - NyayNow</title>
-        <meta name="description" content="Browse and connect with verified lawyers across India on NyayNow. Filter by specialization, location, and experience to find the right legal expert for your case." />
-      </Helmet>
-      <Navbar />
+
       <MarketplaceContent />
     </div>
   );
@@ -91,7 +86,7 @@ const MarketplaceContent = () => {
   return (
     <>
       {/* HEADER */}
-      <div className="bg-[#0f172a] text-white pt-40 pb-24 relative overflow-hidden text-center border-b border-white/5">
+      <div className="bg-[#0f172a] text-white pt-28 md:pt-36 pb-24 relative overflow-hidden text-center border-b border-white/5">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
         <div className="absolute top-0 w-full h-full bg-gradient-to-b from-[#020617] to-transparent opacity-80 pointer-events-none"></div>
         <div className="container mx-auto px-6 relative z-10">

@@ -2,7 +2,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import Navbar from '../../src/components/Navbar';
+
 import { ShieldCheck, Lock } from 'lucide-react';
 
 export default function VideoCall() {
@@ -81,9 +81,8 @@ export default function VideoCall() {
 
     return (
         <div className="h-screen w-full bg-[#020617] flex flex-col overflow-hidden font-sans selection:bg-indigo-500/30">
-            <Navbar />
 
-            <div className="flex-1 relative pt-20 px-4 pb-4">
+            <div className="flex-1 relative pt-24 md:pt-28 px-4 pb-4">
                 {/* LOADING STATE */}
                 {loading && (
                     <div className="absolute inset-0 flex items-center justify-center z-50 bg-[#020617] text-white">

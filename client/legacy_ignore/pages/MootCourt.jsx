@@ -2,8 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import { useAuth } from "../../src/context/AuthContext";
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
+
 import { Mic, MicOff, Video, VideoOff, MessageSquare, Gavel, Users, User, ArrowRight, Keyboard, Send, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
@@ -11,7 +10,7 @@ import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 
 // Connect to backend (Voice Socket)
-const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
+const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000", { transports: ['websocket'] });
 
 const MootCourt = () => {
     const { user } = useAuth();
@@ -120,13 +119,12 @@ const MootCourt = () => {
 
     return (
         <div className="min-h-screen bg-[#0c1220] font-sans selection:bg-indigo-500/30 overflow-hidden relative">
-            <Navbar />
 
             {/* AMBIENT BACKGROUND */}
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center opacity-5 pointer-events-none mix-blend-overlay"></div>
 
             {!sessionActive ? (
-                <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-6 pt-52">
+                <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-6 pt-32 md:pt-48">
                     <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 mb-8 animate-pulse shadow-[0_0_50px_rgba(255,255,255,0.05)]">
                         <Gavel size={40} className="text-slate-300" />
                     </div>
@@ -302,8 +300,8 @@ const MootCourt = () => {
                     </div>
                 </div>
             )}
-            <Footer />
-        </div>
+            <div className="pb-20" />
+        </div >
     );
 };
 

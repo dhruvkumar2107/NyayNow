@@ -5,8 +5,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, BookOpen, TrendingUp, Scale, Bell } from 'lucide-react';
 // Duplicate import removed
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
+
 
 const ARTICLES = [
     {
@@ -79,7 +78,6 @@ export default function Blog() {
 
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
-            <Navbar />
 
             {/* HERO */}
             <section className="relative pt-36 pb-20 px-6 text-center border-b border-white/5 overflow-hidden">
@@ -210,7 +208,7 @@ export default function Blog() {
                 </motion.div>
             </section>
 
-            <Footer />
+            <div className="pb-20" />
         </div>
     );
 }

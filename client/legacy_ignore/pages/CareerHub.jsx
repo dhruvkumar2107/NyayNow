@@ -5,8 +5,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import SubscriptionModal from '../../src/components/SubscriptionModal';
 import { Briefcase, ChevronRight, Award, CheckCircle, Clock } from 'lucide-react';
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
+
 
 const CareerHub = () => {
     const [activeTask, setActiveTask] = useState(null);
@@ -94,7 +93,6 @@ const CareerHub = () => {
 
     return (
         <div className="min-h-screen bg-[#020617] text-slate-400 font-sans pt-28 pb-20 px-6 selection:bg-indigo-500/30">
-            <Navbar />
             <SubscriptionModal
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
@@ -230,7 +228,7 @@ const CareerHub = () => {
 
                 </div>
             </div>
-            <Footer />
+            <div className="pb-20" />
         </div>
     );
 };

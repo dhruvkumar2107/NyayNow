@@ -18,7 +18,9 @@ const upload = multer({ storage });
 // GET /api/posts
 router.get("/", async (req, res) => {
     try {
-        const posts = await Post.find()
+        const { userId } = req.query;
+        const query = userId ? { author: userId } : {};
+        const posts = await Post.find(query)
             .populate("author", "name role") // Populate author details
             .sort({ createdAt: -1 }); // Newest first
         res.json(posts);

@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Search, BookOpen, Scale, FileText, ArrowRight, Filter } from 'lucide-react';
-import Navbar from '../../src/components/Navbar';
-import Footer from '../../src/components/Footer';
+import axios from 'axios';
 
 const LegalResearch = () => {
     const [query, setQuery] = useState('');
@@ -55,7 +54,6 @@ const LegalResearch = () => {
 
     return (
         <div className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-cyan-500/30">
-            <Navbar />
 
             {/* HERO / SEARCH SECTION */}
             <div className={`transition-all duration-700 ease-in-out ${searched ? 'pt-36 pb-12' : 'min-h-[70vh] flex flex-col justify-center items-center'}`}>
@@ -212,7 +210,7 @@ const LegalResearch = () => {
 
                 </div>
             )}
-            <Footer />
+            <div className="pb-20" />
         </div>
     );
 };

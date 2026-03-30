@@ -1,7 +1,5 @@
 'use client'
 import React, { useState } from 'react';
-import Navbar from '../../src/components/Navbar';
-import Footer from '../../src/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Zap, Shield, Star, ArrowRight, Lock, RefreshCw, Headphones, ChevronDown, Sparkles, Building2, Users2, Globe } from 'lucide-react';
 import Link from 'next/link';
@@ -331,10 +329,9 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen bg-[#0c1220] text-slate-400 font-sans selection:bg-indigo-500/30">
-      <Navbar />
 
       {/* ─── HERO ──────────────────────────────────────────── */}
-      <section className="relative pt-24 md:pt-40 pb-20 overflow-hidden text-center">
+      <section className="relative pt-24 md:pt-32 pb-20 overflow-hidden text-center">
         {/* Background glows */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-indigo-500/8 blur-[130px] rounded-full pointer-events-none" />
         <div className="absolute top-40 left-1/4 w-[400px] h-[400px] bg-violet-500/5 blur-[100px] rounded-full pointer-events-none" />
@@ -617,7 +614,6 @@ const Pricing = () => {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 };

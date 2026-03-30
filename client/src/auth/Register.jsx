@@ -210,13 +210,26 @@ export default function Register() {
             <div className="relative flex justify-center text-xs uppercase font-bold text-slate-500 bg-[#0f172a] px-4 backdrop-blur-3xl">Or continue with</div>
           </div>
 
-          <div className="flex justify-center">
-            <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} />
+          <div className="relative flex justify-center w-max mx-auto">
+            {!formData.consent && (
+               <div 
+                className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer rounded bg-black/60 backdrop-blur-sm border border-white/20 hover:border-gold-500/50 transition-all"
+                onClick={() => toast.error("Please click the tick button above to accept terms before registering with Google", { icon: "👆", duration: 4000 })}
+              >
+                  <span className="text-[10px] font-bold text-white px-2 py-1 uppercase tracking-widest text-center leading-tight">Tick Consent<br/>First</span>
+              </div>
+            )}
+            <div className={`transition duration-300 ${formData.consent ? 'opacity-100' : 'opacity-80'}`}>
+              <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} />
+            </div>
           </div>
 
-          <p className="text-center text-slate-500 text-sm">
-            Already have an account? <Link href="/login" className="text-gold-400 font-bold hover:text-gold-300 transition underline decoration-transparent hover:decoration-gold-400 underline-offset-4">Log in</Link>
-          </p>
+          <div className="mt-8 pt-8 border-t border-white/10 text-center">
+            <p className="text-slate-400 text-sm mb-4">Already have an account?</p>
+            <Link href="/login" className="inline-block w-full py-4 rounded-xl border border-gold-500/50 text-gold-400 font-bold hover:bg-gold-500/10 hover:border-gold-400 transition-all duration-300">
+              Log in to your account
+            </Link>
+          </div>
         </div>
       </div>
     </main>

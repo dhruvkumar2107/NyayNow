@@ -1,8 +1,6 @@
 'use client'
 import React, { useState, useEffect, useRef } from "react";
 import toast from 'react-hot-toast';
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, Volume2, VolumeX, Sparkles, Zap, MessageCircle, ChevronRight, Globe } from "lucide-react";
 import axios from "axios";
@@ -158,7 +156,6 @@ const VoiceAssistant = () => {
     return (
         <>
             <div className="min-h-screen bg-[#020617] text-white relative overflow-hidden font-sans selection:bg-indigo-500/30">
-                <Navbar />
 
                 {/* Ambient Background */}
                 <div className="absolute inset-0 z-0 pointer-events-none">
@@ -419,7 +416,6 @@ const VoiceAssistant = () => {
                 </div>
             </div>
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} title="Upgrade for NyayVoice Assistant" />
-            <Footer />
         </>
     );
 };

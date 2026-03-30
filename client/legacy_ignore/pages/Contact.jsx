@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Clock, Send, ArrowRight, Twitter, Linkedin, Github, MessageSquare, Zap, Phone, Shield } from 'lucide-react';
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
+
 import axios from 'axios';
 
 export default function Contact() {
@@ -33,7 +32,6 @@ export default function Contact() {
 
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
-            <Navbar />
 
             {/* HERO */}
             <section className="relative pt-36 pb-16 overflow-hidden">

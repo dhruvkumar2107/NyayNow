@@ -5,11 +5,11 @@ import axios from "axios";
 import { useAuth } from "../../src/context/AuthContext";
 import { io } from "socket.io-client";
 import { useSearchParams } from "next/navigation";
-import Navbar from "../../src/components/Navbar";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Paperclip, Smile, Video, MoreVertical, Search, Phone } from "lucide-react";
 
-const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:4000");
+const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:4000", { transports: ['websocket'] });
 
 export default function Messages() {
   const { user } = useAuth();
@@ -145,9 +145,8 @@ export default function Messages() {
 
   return (
     <div className="h-screen bg-[#020617] overflow-hidden flex flex-col font-sans text-slate-400 selection:bg-indigo-500/30">
-      <Navbar />
 
-      <div className="flex-1 flex max-w-[1800px] mx-auto w-full pt-28 px-4 pb-4 gap-6 overflow-hidden">
+      <div className="flex-1 flex max-w-[1800px] mx-auto w-full pt-20 md:pt-24 px-4 pb-4 gap-6 overflow-hidden">
 
         {/* SIDEBAR */}
         <aside className="w-96 bg-white/5 backdrop-blur-xl rounded-[2rem] border border-white/10 flex flex-col overflow-hidden hidden md:flex shadow-2xl">

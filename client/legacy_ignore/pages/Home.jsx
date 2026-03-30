@@ -639,7 +639,7 @@ export default function Home() {
           REMOVED OLD JUSTICE SECTION (MOVED TO TOP)
       ══════════════════════════════════════════════════════ */}
 
-      <Footer />
+      <div className="pb-20" />
     </div>
   );
 }

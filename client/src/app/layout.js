@@ -66,6 +66,7 @@ import Navbar from '../components/Navbar'
 import EliteCursor from '../components/EliteCursor'
 import ScrollProgress from '../components/ScrollProgress'
 import CookieConsent from '../components/CookieConsent'
+import Footer from '../components/Footer'
 
 export default function RootLayout({ children }) {
     return (
@@ -77,6 +78,7 @@ export default function RootLayout({ children }) {
                     <ScrollProgress />
                     <Navbar />
                     {children}
+                    <Footer />
                     <Toaster position="bottom-right" />
                     <AIAssistant />
                     <CookieConsent />

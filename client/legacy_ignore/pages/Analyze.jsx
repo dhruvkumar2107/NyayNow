@@ -3,8 +3,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Link from "next/link";
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { Scale, BookOpen, CheckCircle, Zap, ArrowRight, Shield, Brain, Sparkles, MessageSquare, ChevronRight } from "lucide-react";
 
@@ -57,7 +56,6 @@ export default function Analyze() {
 
   return (
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
-      <Navbar />
 
       {/* HERO */}
       <section className="relative pt-40 pb-16 overflow-hidden text-center">
@@ -256,7 +254,7 @@ export default function Analyze() {
         )}
       </section>
 
-      <Footer />
+      <div className="pb-20" />
     </div>
   );
 }

@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 export default function LegalReels() {
+    const { user } = useAuth();
     const [reels, setReels] = useState([]);
 
     useEffect(() => {
-        axios.get("/api/posts")
+        if (!user) return;
+        const uId = user._id || user.id;
+        axios.get(`/api/posts?userId=${uId}`)
             .then(res => {
                 const data = Array.isArray(res.data) ? res.data : [];
                 // Filter for reels/videos only

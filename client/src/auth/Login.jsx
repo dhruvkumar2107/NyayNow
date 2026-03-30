@@ -20,6 +20,13 @@ export default function Login() {
   const [googleData, setGoogleData] = useState(null);
   const [consent, setConsent] = useState(false);
 
+  // ⚡ CRAZY PERFORMING OPTIMIZATION: Prefetch heavy dashboard routes instantly on load
+  // so that when the user clicks 'Sign In', the transition is 0ms.
+  useEffect(() => {
+    router.prefetch("/client/dashboard");
+    router.prefetch("/lawyer/dashboard");
+  }, [router]);
+
   const handleEmailLogin = async () => {
     if (!email || !password) return toast.error("Please enter credentials");
     if (!consent) return toast.error("Please acknowledge the legal disclosure to continue.");
@@ -163,11 +170,16 @@ export default function Login() {
                 </p>
               </div>
 
-              <button onClick={handleEmailLogin} disabled={loading} className="w-full py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 font-bold text-lg rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition-all duration-300 active:scale-[0.98] disabled:opacity-70 mt-4 relative overflow-hidden group">
+              <button onClick={handleEmailLogin} disabled={loading} className="w-full py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 font-black text-lg rounded-xl hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] transition-all duration-200 active:scale-95 disabled:opacity-70 mt-4 relative overflow-hidden group">
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  {loading ? "Signing in..." : "Sign In"}
+                  {loading ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-midnight-950 border-t-transparent rounded-full animate-spin"></span>
+                        Authenticating...
+                      </>
+                    ) : "Sign In"}
                 </span>
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition duration-300" />
+                <div className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-200 ease-out" />
               </button>
             </div>
           ) : (
@@ -183,15 +195,26 @@ export default function Login() {
             <div className="relative flex justify-center text-xs uppercase font-bold text-slate-500 bg-midnight-900 px-4 tracking-widest">Or Continue With</div>
           </div>
 
-          <div className="flex justify-center">
-            <div className="p-1 rounded-full border border-white/10 hover:border-gold-500/30 transition duration-300 bg-midnight-950/50">
+          <div className="relative flex justify-center w-max mx-auto">
+            {!consent && (
+              <div 
+                className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer rounded-full bg-black/60 backdrop-blur-sm border border-white/20 hover:border-gold-500/50 transition-all"
+                onClick={() => toast.error("Please click the tick button above to accept terms before logging in with Google", { icon: "👆", duration: 4000 })}
+              >
+                 <span className="text-[9px] font-bold text-white uppercase tracking-widest text-center">Tick Consent<br/>First</span>
+              </div>
+            )}
+            <div className={`p-1 rounded-full border transition duration-300 bg-midnight-950/50 ${consent ? 'border-white/20 hover:border-gold-500/50' : 'border-white/5 opacity-80'}`}>
               <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} shape="circle" size="large" theme="filled_black" />
             </div>
           </div>
 
-          <p className="text-center text-slate-500 text-sm">
-            Don't have an account? <Link href="/register" className="text-gold-400 font-bold hover:text-gold-300 transition underline decoration-transparent hover:decoration-gold-400 underline-offset-4">Create Account</Link>
-          </p>
+          <div className="mt-8 pt-8 border-t border-white/10 text-center">
+            <p className="text-slate-400 text-sm mb-4">Don't have an account?</p>
+            <Link href="/register" className="inline-block w-full py-4 rounded-xl border border-gold-500/50 text-gold-400 font-bold hover:bg-gold-500/10 hover:border-gold-400 transition-all duration-300">
+              Create Account
+            </Link>
+          </div>
 
         </div>
       </div>

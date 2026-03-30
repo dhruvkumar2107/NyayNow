@@ -69,7 +69,7 @@ export default function Agreements() {
       <Navbar />
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
-      <div className="pt-36 pb-20 px-6 max-w-7xl mx-auto">
+      <div className="pt-24 md:pt-32 pb-20 px-6 max-w-7xl mx-auto">
 
         {/* HEADER */}
         <div className="text-center max-w-4xl mx-auto mb-16 relative z-10">

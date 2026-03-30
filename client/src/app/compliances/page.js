@@ -49,7 +49,7 @@ export default function ComplianceHubPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#020617] text-white flex flex-col font-sans pt-32">
+        <div className="min-h-screen bg-[#020617] text-white flex flex-col font-sans pt-20 md:pt-28">
             <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.15)_0%,transparent_50%)]" />
             </div>

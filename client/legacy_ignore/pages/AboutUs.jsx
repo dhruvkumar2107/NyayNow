@@ -2,8 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Scale, Shield, Users, Globe, Award, Zap, Target, Heart, Code2, ArrowRight, Sparkles } from 'lucide-react';
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
+
 
 const STATS = [
     { number: "BNS/BNSS", label: "Statutory Accuracy", icon: <Scale size={20} />, color: 'text-indigo-400' },
@@ -48,7 +47,6 @@ const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0
 export default function AboutUs() {
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
-            <Navbar />
 
             {/* HERO SECTION */}
             <section className="relative pt-36 pb-24 overflow-hidden">
@@ -215,7 +213,7 @@ export default function AboutUs() {
                 </motion.div>
             </section>
 
-            <Footer />
-        </div>
+            <div className="pb-20" />
+        </div >
     );
 }

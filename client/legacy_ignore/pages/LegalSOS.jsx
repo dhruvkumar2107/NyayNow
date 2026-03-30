@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { Mic } from 'lucide-react';
-import Navbar from '../../src/components/Navbar';
-import Footer from '../../src/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import {
@@ -154,10 +152,9 @@ export default function LegalSOS() {
 
     return (
         <div className="min-h-screen bg-[#0c1220] font-sans selection:bg-red-500/10">
-            <Navbar />
 
             {/* ── HERO ──────────────────────────────────────────────────────────── */}
-            <div className="relative pt-40 pb-16 px-6 overflow-hidden">
+            <div className="relative pt-28 md:pt-40 pb-16 px-6 overflow-hidden">
                 {/* Bloody glow background */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-red-900/25 rounded-full blur-[140px] pointer-events-none" />
                 <div className="absolute top-10 right-0 w-[400px] h-[400px] bg-rose-900/15 rounded-full blur-[100px] pointer-events-none" />
@@ -577,7 +574,7 @@ export default function LegalSOS() {
                     )}
                 </AnimatePresence>
             </div>
-            <Footer />
+            <div className="pb-20" />
         </div >
     );
 }

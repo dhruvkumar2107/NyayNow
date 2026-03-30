@@ -6,7 +6,6 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Navbar from "../../src/components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin, Shield, Gavel, User, Navigation, Scan, X } from "lucide-react";
 
@@ -154,7 +153,6 @@ export default function Nearby() {
 
   return (
     <div className="h-screen w-full relative overflow-hidden font-sans">
-      <Navbar />
 
       {/* FLOATING SIDEBAR */}
       <motion.div

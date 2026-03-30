@@ -1,7 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import Navbar from '../../src/components/Navbar';
-import Footer from '../../src/components/Footer';
+
 import { motion } from 'framer-motion';
 import { Search, MapPin, Star, Shield, Filter, Award } from 'lucide-react';
 import Link from 'next/link';
@@ -80,7 +79,6 @@ export default function Lawyers() {
 
   return (
     <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-gold-500/30 pb-20">
-      <Navbar />
 
       {/* HERO SECTION */}
       <section className="pt-32 pb-20 px-6 relative overflow-hidden">
@@ -142,7 +140,7 @@ export default function Lawyers() {
           <button className="px-8 py-3 border border-white/10 bg-white/5 hover:bg-white/10 rounded-xl text-white font-bold transition">Load More Profiles</button>
         </div>
       </section>
-      <Footer />
+      <div className="pb-20" />
     </div>
   );
 }

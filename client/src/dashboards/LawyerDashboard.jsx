@@ -40,7 +40,7 @@ import {
   Video
 } from "lucide-react";
 
-const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000");
+const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000", { transports: ['websocket'] });
 
 export default function LawyerDashboard() {
   const { user, logout } = useAuth();

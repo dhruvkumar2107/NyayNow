@@ -69,7 +69,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-[9999] transition-all duration-500 border-b ${scrolled ? "bg-[#020617]/90 backdrop-blur-3xl border-white/10 h-[60px] md:h-[70px] py-1 md:py-2" : "bg-transparent border-transparent h-[72px] md:h-[90px] py-2 md:py-4"}`}>
+      <nav className={`fixed top-0 w-full z-[9999] transition-all duration-700 ${scrolled ? "bg-[#020617]/80 backdrop-blur-3xl border-b border-white/5 h-[64px] md:h-[72px]" : "bg-transparent border-b border-transparent h-[80px] md:h-[100px]"}`}>
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex items-center justify-between">
 
           {/* LOGO */}
@@ -195,40 +195,58 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-0 z-[9998] bg-[#020617] pt-20 md:pt-28 px-4 md:px-8 overflow-y-auto"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-[9998] premium-glass pt-24 pb-12 px-6 overflow-y-auto"
           >
-            <div className="flex flex-col gap-12 pb-24 max-w-lg mx-auto">
+            <div className="max-w-lg mx-auto space-y-10">
               {navItems.map((group, idx) => (
-                <div key={idx} className="space-y-6">
-                  <h3 className="text-blue-500 font-black text-[11px] uppercase tracking-[0.4em] px-4">{group.label}</h3>
-                  <div className="grid grid-cols-1 gap-3">
+                <div key={idx} className="space-y-4">
+                  <motion.h3 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + idx * 0.1 }}
+                    className="text-blue-500 font-black text-[10px] uppercase tracking-[0.4em] px-2"
+                  >
+                    {group.label}
+                  </motion.h3>
+                  <div className="grid grid-cols-1 gap-2">
                     {group.items.map((item, i) => (
-                      <Link
+                      <motion.div
                         key={i}
-                        href={item.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-5 p-5 rounded-3xl bg-slate-900/50 border border-white/5 hover:border-blue-500/30 transition-all"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 + idx * 0.1 + i * 0.05 }}
                       >
-                        <div className="text-blue-400 w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">{item.icon}</div>
-                        <div>
-                          <div className="text-white font-bold text-[15px] tracking-tight">{item.name}</div>
-                          <div className="text-slate-400 text-[11px] font-bold uppercase tracking-widest mt-1.5">{item.desc}</div>
-                        </div>
-                      </Link>
+                        <Link
+                          href={item.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all active:scale-[0.98]"
+                        >
+                          <div className="text-blue-400 w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">{item.icon}</div>
+                          <div>
+                            <div className="text-white font-bold text-[14px] tracking-tight">{item.name}</div>
+                            <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">{item.desc}</div>
+                          </div>
+                        </Link>
+                      </motion.div>
                     ))}
                   </div>
                 </div>
               ))}
 
               {!user && (
-                <div className="flex flex-col gap-4 mt-10 pt-10 border-t border-white/10">
-                  <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-6 rounded-3xl bg-white/5 text-white font-bold text-center text-lg">Sign In</Link>
-                  <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="w-full py-6 rounded-3xl bg-white text-slate-950 font-bold text-center text-lg shadow-2xl">Get Started</Link>
-                </div>
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="pt-10 border-t border-white/10 flex flex-col gap-4"
+                >
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-5 rounded-2xl bg-white/5 text-white font-bold text-center text-sm border border-white/10">Sign In</Link>
+                  <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="w-full py-5 rounded-2xl bg-white text-slate-950 font-bold text-center text-sm shadow-2xl">Get Started</Link>
+                </motion.div>
               )}
             </div>
           </motion.div>
