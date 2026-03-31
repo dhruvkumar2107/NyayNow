@@ -418,7 +418,7 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
 });
 
 /* ---------------- CONTRACT DRAFTING (TurboAgreements) ---------------- */
-router.post("/draft-contract", verifyToken, checkAiLimit, async (req, res) => {
+router.post("/draft-contract", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { type, parties, terms } = req.body;
 
@@ -454,7 +454,7 @@ router.post("/draft-contract", verifyToken, checkAiLimit, async (req, res) => {
 });
 
 /* ---------------- JUDGE AI PRO (PDF ANALYSIS) ---------------- */
-router.post("/analyze-case-file", verifyToken, checkAiLimit, upload.single("file"), async (req, res) => {
+router.post("/analyze-case-file", verifyTokenOptional, checkAiLimit, upload.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No PDF file uploaded" });
 
@@ -509,7 +509,7 @@ router.post("/analyze-case-file", verifyToken, checkAiLimit, upload.single("file
 });
 
 /* ---------------- DEVIL'S ADVOCATE (AI REBUTTAL) ---------------- */
-router.post("/devils-advocate", verifyToken, checkAiLimit, async (req, res) => {
+router.post("/devils-advocate", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { argument } = req.body;
     if (!argument) return res.status(400).json({ error: "Argument required" });
