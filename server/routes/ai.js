@@ -123,11 +123,12 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     if (err.message.includes("400")) errorMessage = "Invalid request format.";
     if (err.message.includes("429")) errorMessage = "AI Rate limit exceeded. Please wait a moment.";
 
-    res.status(500).json({
-      answer: `**System Error**: ${errorMessage}\n\n*Technical Details: ${err.message}*`,
+    // Return 200 so the UI displays the error message gracefully in the chat bubble instead of crashing
+    res.status(200).json({
+      answer: `**Resilient Fallback Mode**: ${errorMessage}\n\n*Technical Details: ${err.message}*`,
       error: err.message,
       stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-      related_questions: [],
+      related_questions: ["What happens when the API limit resets?", "Is my data safe?"],
       intent: "error"
     });
   }
