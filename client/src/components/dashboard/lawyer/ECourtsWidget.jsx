@@ -83,11 +83,11 @@ export default function ECourtsWidget() {
                                 <h4 className="font-bold text-white text-sm">{caseData.caseInfo.partyName}</h4>
                                 <p className="text-xs text-indigo-400 font-mono mt-1">{caseData.caseInfo.cnr}</p>
                             </div>
-                            <span className={\`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded \${
+                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded ${
                                 caseData.status.currentStatus === 'Disposed' 
                                     ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
                                     : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
-                            }\`}>
+                            }`}>
                                 {caseData.status.currentStatus}
                             </span>
                         </div>
