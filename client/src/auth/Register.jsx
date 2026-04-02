@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { motion, AnimatePresence } from "framer-motion";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, Shield } from "lucide-react";
 
 const INDIAN_CITIES = [
   "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata", "Pune", "Jaipur", "Surat",
