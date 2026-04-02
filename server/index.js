@@ -287,6 +287,7 @@ loadRoute("/api/contact", "./routes/contact"); // NEW CONTACT ROUTE
 loadRoute("/api/docusign", "./routes/docusign"); // NEW DOCUSIGN ROUTE
 loadRoute("/api/verification", "./routes/verification"); // REAL DIGILOCKER ROUTE
 loadRoute("/api/confessions", "./routes/confessions"); // ANONYMOUS CONFESSION BOOTH
+loadRoute("/api/ecourts", "./routes/ecourts"); // NEW ECOURTS INTEGRATION
 
 // Custom Sentry Error Handler (Compatible with all versions)
 app.use((err, req, res, next) => {

@@ -1,7 +1,6 @@
 'use client'
 import React from "react"
 import { motion } from "framer-motion"
-import Footer from "../components/Footer"
 import { LegalSOSSection } from "../components/home/LegalSOSSection"
 import { ComparisonSection } from "../components/home/ComparisonSection"
 import { BentoGrid } from "../components/home/BentoGrid"
@@ -75,7 +74,6 @@ export default function Home() {
             <ComparisonSection />
             <BentoGrid />
 
-            <Footer />
         </div>
     )
 }

@@ -170,6 +170,24 @@ export default function Register() {
             <p className="text-slate-400 text-sm mt-1">Access enterprise-grade legal artificial intelligence.</p>
           </div>
 
+          {/* ROLE SELECTION TOGGLE */}
+          <div className="flex p-1 bg-midnight-950/50 rounded-2xl border border-white/5 backdrop-blur-sm shadow-inner">
+            <button
+                type="button"
+                onClick={() => setFormData({ ...formData, role: 'client' })}
+                className={`flex-1 py-3 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 ${formData.role === 'client' ? 'bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 shadow-lg shadow-gold-500/20' : 'text-slate-500 hover:text-slate-300'}`}
+            >
+                Individual / Client
+            </button>
+            <button
+                type="button"
+                onClick={() => setFormData({ ...formData, role: 'lawyer' })}
+                className={`flex-1 py-3 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 ${formData.role === 'lawyer' ? 'bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 shadow-lg shadow-gold-500/20' : 'text-slate-500 hover:text-slate-300'}`}
+            >
+                Legal Professional
+            </button>
+          </div>
+
 
 
           <form onSubmit={(e) => { e.preventDefault(); handleRegister(); }} className="space-y-5">
@@ -184,6 +202,58 @@ export default function Register() {
               <InputGroup label="Password" type="password" name="password" value={formData.password} onChange={handleChange} placeholder="••••••••" />
               <InputGroup label="Confirm Password" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="••••••••" />
             </div>
+
+            {/* LAWYER SPECIFIC FIELDS */}
+            <AnimatePresence>
+              {formData.role === 'lawyer' && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-5 overflow-hidden"
+                >
+                  <div className="p-5 bg-gold-500/5 rounded-2xl border border-gold-500/10 space-y-4">
+                    <div className="flex items-center gap-2 mb-2">
+                       <Shield className="text-gold-500" size={14} />
+                       <span className="text-[10px] font-black uppercase tracking-widest text-gold-500">Professional Verification</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-4 mb-4">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" checked={formData.isStudent} onChange={(e) => setFormData({...formData, isStudent: e.target.checked})} className="w-4 h-4 rounded border-white/10 bg-white/5" />
+                            <span className="text-xs text-slate-400 font-bold">Law Student?</span>
+                        </label>
+                    </div>
+
+                    {formData.isStudent ? (
+                        <InputGroup label="Roll Number" name="studentRollNumber" value={formData.studentRollNumber} onChange={handleChange} placeholder="UNI-2024-XXXX" />
+                    ) : (
+                        <InputGroup label="Bar Council ID" name="barCouncilId" value={formData.barCouncilId} onChange={handleChange} placeholder="MAH/1234/2024" />
+                    )}
+
+                    <div className="relative group">
+                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Identity Document (PDF/JPG)</label>
+                        <div className="relative h-24 rounded-xl border-2 border-dashed border-white/10 bg-white/5 flex flex-col items-center justify-center hover:border-gold-500/30 transition-all cursor-pointer overflow-hidden">
+                            <UploadCloud className="text-slate-600 mb-1" size={20} />
+                            <span className="text-[10px] font-bold text-slate-500 uppercase">Upload Certificate</span>
+                            {/* Hidden actual file input or simulated for now as per previous structure */}
+                            <input 
+                                type="file" 
+                                className="absolute inset-0 opacity-0 cursor-pointer" 
+                                onChange={(e) => setFormData({...formData, idCardImage: e.target.files[0]?.name || "uploaded_id.png"})}
+                            />
+                            {formData.idCardImage && (
+                                <div className="absolute inset-0 bg-midnight-950 flex items-center justify-center gap-2">
+                                    <span className="text-gold-400 text-xs font-bold">{formData.idCardImage}</span>
+                                    <button type="button" onClick={() => setFormData({...formData, idCardImage: ""})} className="text-red-400 font-black">×</button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
 
 

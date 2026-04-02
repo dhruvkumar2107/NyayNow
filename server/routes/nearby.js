@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
       Strict JSON format. Do not hallucinate generic names like "City Police Station". Use real station names if possible.
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     const text = response.text();
 

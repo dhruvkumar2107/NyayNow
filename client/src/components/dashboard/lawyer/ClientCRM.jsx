@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, Filter, Phone, Mail, MoreVertical, FileText, Calendar, Loader2, CheckCircle, XCircle } from "lucide-react";
+import { Search, Filter, Phone, Mail, MoreVertical, FileText, Calendar, Loader2, CheckCircle, XCircle, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { useAuth } from "../../../context/AuthContext";
@@ -178,9 +178,12 @@ export default function ClientCRM() {
                                             <span className="text-xs font-bold text-white/80 italic">{new Date(client.createdAt || Date.now()).toLocaleDateString()}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center justify-end">
-                                        <button className="px-6 py-3 bg-indigo-500/5 text-indigo-400 border border-indigo-500/20 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-indigo-500 hover:text-white transition duration-500 group-hover:shadow-[0_0_20px_rgba(99,102,241,0.2)]">
-                                            Data Dossier
+                                    <div className="flex items-center justify-end gap-3 flex-wrap">
+                                        <button className="px-5 py-3 bg-indigo-600 border border-indigo-500 rounded-xl text-[10px] text-white font-black uppercase tracking-[0.2em] hover:bg-indigo-500 transition duration-500 shadow-lg flex items-center gap-2">
+                                            <MessageSquare size={14} /> Secure Message
+                                        </button>
+                                        <button className="px-5 py-3 bg-white/5 text-slate-300 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition duration-500 flex items-center gap-2">
+                                            <FileText size={14} /> Case Files
                                         </button>
                                     </div>
                                 </div>

@@ -1,5 +1,4 @@
 import React from "react"
-import Footer from "../../components/Footer"
 import Image from "next/image"
 import MarketplaceClient from "../../components/marketplace/MarketplaceClient"
 
@@ -45,7 +44,6 @@ export default async function MarketplacePage() {
             {/* CLIENT CONTENT */}
             <MarketplaceClient initialLawyers={lawyers} />
 
-            <Footer />
         </div>
     )
 }

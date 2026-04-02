@@ -14,6 +14,8 @@ const CaseIntelligencePanel = dynamic(() => import("../components/dashboard/lawy
 const ClientCRM = dynamic(() => import("../components/dashboard/lawyer/ClientCRM"), { ssr: false });
 const LegalNoticeGenerator = dynamic(() => import("../components/dashboard/lawyer/LegalNoticeGenerator"), { ssr: false });
 const LegalReels = dynamic(() => import("../components/dashboard/LegalReels"), { ssr: false });
+const LegalResearchHub = dynamic(() => import("../components/dashboard/lawyer/LegalResearchHub"), { ssr: false });
+const ECourtsWidget = dynamic(() => import("../components/dashboard/lawyer/ECourtsWidget"), { ssr: false });
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import io from "socket.io-client";
@@ -37,7 +39,8 @@ import {
   LogOut,
   Settings,
   User as UserIcon,
-  Video
+  Video,
+  BookOpen
 } from "lucide-react";
 
 const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000", { transports: ['websocket'] });
@@ -299,6 +302,7 @@ export default function LawyerDashboard() {
             <NavItem icon={<DollarSign size={18} />} label="Financials" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
             <NavItem icon={<MessageSquare size={18} />} label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
             <div className="my-4 h-px bg-white/5 mx-2" />
+            <NavItem icon={<BookOpen size={18} className="text-emerald-400" />} label="Live Research" active={activeTab === 'research'} onClick={() => setActiveTab('research')} />
             <NavItem icon={<FileText size={18} />} label="AI Drafter" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} />
           </div>
         </div>
@@ -615,9 +619,20 @@ export default function LawyerDashboard() {
             </motion.div>
           )}
 
-          {/* RIGHT SIDEBAR (4 COLS) — Hidden on notices tab */}
-          {activeTab !== 'notices' && (
+          {/* LEGAL RESEARCH HUB — Full Width */}
+          {activeTab === 'research' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-12">
+              <LegalResearchHub />
+            </motion.div>
+          )}
+
+          {/* RIGHT SIDEBAR (4 COLS) — Hidden on full-width tabs */}
+          {(activeTab !== 'notices' && activeTab !== 'research') && (
             <div className="col-span-4 space-y-6">
+              
+              {/* eCourts Integration */}
+              <ECourtsWidget />
+
               {/* CALENDAR */}
               <div className="bg-[#0f172a] rounded-[2rem] p-6 border border-white/5 shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 left-0 w-32 h-32 bg-indigo-500/5 blur-[50px] rounded-full -ml-10 -mt-10"></div>

@@ -42,7 +42,7 @@ function safeJsonParse(text, routeName) {
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
 router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
-    const { question, history, language, location } = req.body;
+    const { question, history, language, location, caseContext } = req.body;
 
     // Construct History Context
     const conversationHistory = history ? history.map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join("\n") : "";
@@ -59,9 +59,12 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       - You provide legal information by citing specific Sections, Articles, and Case Laws.
       - You clarify that you are a machine learning model, not a human lawyer.
       
+      CRITICAL INSTRUCTION: You HAVE access to Google Search Grounding. You MUST search the live internet to find REAL, older judgements, SCC/Manupatra citations, and current legal precedents if asked. DO NOT hallucinate case laws. Always return real live data.
+      
       USER CONTEXT:
       Location: ${location || "India"}
       Language: ${language || "English"}
+      Active Case Context: ${caseContext ? JSON.stringify(caseContext) : "No active case context provided."}
       
       PREVIOUS CHAT SUMMARY:
       ${conversationHistory ? conversationHistory.substring(0, 500) : "None"} ...
@@ -92,7 +95,8 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       [/QUESTIONS]
     `;
 
-    const result = await generateWithFallback(prompt);
+    // 💡 LIVE GROUNDING ENABLED: requireGrounding = true
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     const text = response.text();
 
@@ -118,19 +122,7 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
   } catch (err) {
     console.error("❌ CRITICAL AI ERROR (/assistant):", err);
 
-    // Check for specific Gemini errors
-    let errorMessage = "Our legal AI is currently overwhelmed. Please try again in 10 seconds.";
-    if (err.message.includes("400")) errorMessage = "Invalid request format.";
-    if (err.message.includes("429")) errorMessage = "AI Rate limit exceeded. Please wait a moment.";
-
-    // Return 200 so the UI displays the error message gracefully in the chat bubble instead of crashing
-    res.status(200).json({
-      answer: `**Resilient Fallback Mode**: ${errorMessage}\n\n*Technical Details: ${err.message}*`,
-      error: err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-      related_questions: ["What happens when the API limit resets?", "Is my data safe?"],
-      intent: "error"
-    });
+    res.status(500).json({ error: "AI Service Unavailable", details: err.message });
   }
 });
 
@@ -157,7 +149,7 @@ router.post("/agreement", verifyTokenOptional, checkAiLimit, async (req, res) =>
       Output ONLY valid JSON.
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     const rawText = response.text();
     const analysisData = safeJsonParse(rawText, "Agreement Analysis");
@@ -211,7 +203,7 @@ router.post("/analyze-agreement-pdf", verifyTokenOptional, checkAiLimit, upload.
       Output ONLY valid JSON.
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     const rawText = response.text();
     const analysisData = safeJsonParse(rawText, "Agreement PDF Analysis");
@@ -259,7 +251,7 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
       Strict JSON only.
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     const rawText = response.text();
     const json = safeJsonParse(rawText, "Case Analysis");
@@ -286,7 +278,7 @@ router.post("/legal-notice", verifyTokenOptional, checkAiLimit, async (req, res)
       Format as Markdown. Include professional legal citations where applicable.
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     res.json({ notice: response.text() });
   } catch (err) {
@@ -331,11 +323,6 @@ router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res)
 
   } catch (err) {
     console.error("Gemini Notice Error:", err.message);
-    if (err.message.includes("AI Service Unavailable") || err.message.includes("403 Forbidden") || err.message.includes("429")) {
-      return res.json({ 
-        draft: `### LEGAL NOTICE (FALLBACK MODE)\n\n> **NOTICE**: The NyayNow AI Engine is currently operating in fallback mode due to high demand or API quota limitations. This is a locally generated placeholder document.\n\n#### Subject: Legal Notice\n\n**To:**\nRecipient Address Here\n\n**From:**\nAdvocate Name / Firm\n\n**Dear Sir/Madam,**\n\nUnder instructions from my client, I hereby issue this formal legal notice regarding: ${req.body?.notice_details || "the aforementioned dispute"}.\n\n#### 1. Factual Matrix\nThe client asserts their rights and brings attention to the ongoing legal grievance.\n\n#### 2. Demands\nYou are hereby called upon to rectify the issue within the stipulated statutory period, failing which my client shall be constrained to initiate appropriate civil/criminal proceedings against you at your sole risk as to costs and consequences.\n\n***\n*Generated by NyayNow Resilient Fallback System.*` 
-      });
-    }
     res.status(500).json({ error: "Failed to draft notice", details: err.message });
   }
 });
@@ -358,18 +345,18 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
 
       Based on the Bharatiya Nyaya Sanhita (BNS) 2023, BNSS, and applicable Civil/Criminal Codes, perform an elite judicial dissection:
       
-      CRITICAL INSTRUCTION: If an 'Assigned Justice' or 'Court' is provided, mathematically factor their historical strictness/leniency into your "Win Probability" and tailor your "Strategic Moves" to that specific Judge/Court's established biases.
+      CRITICAL INSTRUCTION: You HAVE access to Google Search Grounding. You MUST search the live internet for REAL Indian Supreme Court/High Court cases that perfectly match these facts. Find the actual SCC/Manupatra citations, and base the Win Probability on these REAL, historical inclinations. DO NOT HALLUCINATE citations. Ensure the outcome matches what real judgements dictate.
 
       1. **Fact Summarization**: Briefly state the core legal dispute.
-      2. **Win Probability**: Give a realistic percentage (0-100%). Weigh the opposing party's known resources and the judge's presumed tendencies.
+      2. **Win Probability**: Give a realistic percentage (0-100%). Weigh the opposing party's known resources, real historical case outcomes, and the judge's presumed tendencies.
       3. **Strategic Risks**: 3 critical loopholes or weaknesses.
       4. **Strategic Moves**: 3 legal motions to file.
       5. **BNS Citations**: YOU MUST cite specific sections of the BNS or BNSS.
-      6. **Relevant Precedent**: Cite 1 real Indian Supreme Court/High Court case.
+      6. **Relevant Precedent**: Cite 1 real Indian Supreme Court/High Court case that perfectly matches, including exact Manupatra/SCC citation and Year.
 
       RETURN STRICT JSON ONLY:
       {
-        "disclaimer": "This analysis is for legal intelligence only. Probability is estimated based on provided facts.",
+        "disclaimer": "This analysis is for legal intelligence only. Probability is based on actual historical precedents retrieved live.",
         "case_id": "NYY-2024-XXXX",
         "fact_summary": "...",
         "win_probability": "75%",
@@ -383,7 +370,8 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
       }
     `;
 
-    const result = await generateWithFallback(prompt);
+    // 💡 LIVE GROUNDING ENABLED: requireGrounding = true
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     let text = response.text();
 
@@ -402,19 +390,8 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
       const parsed = safeJsonParse(text, "Predict Outcome");
       res.json(parsed);
     } catch (parseErr) {
-      console.error("⚠️ AI Parse Failure. Returning resilient fallback.");
-      // RESILIENT FALLBACK: Return a valid JSON structure so UI doesn't crash
-      res.json({
-        case_id: "NYY-FALLBACK-" + Math.floor(Math.random() * 1000),
-        win_probability: "65%",
-        risk_level: "Medium",
-        fact_summary: "AI analysis was partially interrupted. Standard legal protocols apply.",
-        risk_analysis: ["Procedural complexity noted", "Documentation review required", "Jurisdictional verification"],
-        strategy: ["Verify all facts independently", "Consult a registered advocate", "Prepare preliminary response"],
-        relevant_precedent: "Standard Case Law applies",
-        citations: ["Sec 1 BNS", "Sec 1 BNSS"],
-        is_fallback: true
-      });
+      console.error("⚠️ AI Parse Failure:", parseErr.message);
+      res.status(500).json({ error: "Failed to parse AI response" });
     }
 
   } catch (err) {
@@ -455,11 +432,6 @@ router.post("/draft-contract", verifyTokenOptional, checkAiLimit, async (req, re
 
   } catch (err) {
     console.error("Gemini Drafting Error:", err.message);
-    if (err.message.includes("AI Service Unavailable") || err.message.includes("403 Forbidden") || err.message.includes("429")) {
-      return res.json({ 
-        contract: `### DRAFT CONTRACT (FALLBACK MODE)\n\n> **NOTICE**: The NyayNow AI Engine is currently operating in fallback mode due to high demand or API quota limitations. This is a locally generated placeholder document.\n\n#### 1. Parties\n**Party A:** ${req.body?.parties?.Party_1 || "First Party"}\n\n**Party B:** ${req.body?.parties?.Party_2 || "Second Party"}\n\n#### 2. Terms & Consideration\nThe parties agree to the following terms:\n- **Duration:** ${req.body?.terms?.Duration || "As agreed"}\n- **Financial Consideration:** ${req.body?.terms?.Amount || "Standard Fee"}\n- **Jurisdiction:** ${req.body?.terms?.Location || "India"}\n\n#### 3. General Clauses\nThis is a standard template holding place for the full AI-generated legal text.\n\n***\n*Generated by NyayNow Resilient Fallback System.*` 
-      });
-    }
     res.status(500).json({ error: "Failed to draft contract" });
   }
 });
@@ -637,7 +609,7 @@ router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, re
       
       OUTPUT JSON STRICTLY:
       {
-        "disclaimer": "Legal research is for information purposes. Verify citations with the official gazette.",
+        "disclaimer": "Legal research is based on live index of Indian case laws. Verify citations using official records.",
         "summary": "...",
         "cases": [
           { "name": "...", "citation": "...", "ratio": "...", "relevance": "..." }
@@ -645,7 +617,8 @@ router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, re
       }
     `;
 
-    const result = await generateWithFallback(prompt);
+    // 💡 LIVE GROUNDING ENABLED: requireGrounding = true
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     let text = response.text();
 

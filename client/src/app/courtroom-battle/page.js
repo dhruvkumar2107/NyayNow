@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -512,7 +511,6 @@ export default function CourtroomBattle() {
                     </AnimatePresence>
                 </div>
             </main>
-            <Footer />
         </div>
     );
 }

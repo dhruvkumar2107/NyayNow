@@ -34,10 +34,18 @@ export default function AIAssistant() {
         try {
             const token = localStorage.getItem("token");
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            
+            // Read active case context if available
+            let activeCaseContext = null;
+            try {
+                const storedCase = localStorage.getItem("nyaynow_active_case");
+                if (storedCase) activeCaseContext = JSON.parse(storedCase);
+            } catch (e) { console.error("Could not parse active case config", e); }
 
             const res = await axios.post("/api/ai/assistant", {
                 question: input,
-                history: messages.slice(-5).map(m => ({ role: m.role, content: m.content }))
+                history: messages.slice(-5).map(m => ({ role: m.role, content: m.content })),
+                caseContext: activeCaseContext
             }, { headers });
 
             const aiResponse = res.data.answer;

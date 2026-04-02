@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { Scale, BookOpen, Search, Zap } from 'lucide-react';
 
 const STAGES = ['New Lead', 'Discovery', 'Filing', 'Hearing', 'Judgment', 'Closed'];
 
 export default function KanbanBoard({ cases, onUpdate }) {
+    const router = useRouter();
     const [board, setBoard] = useState({});
 
     useEffect(() => {
@@ -44,7 +47,32 @@ export default function KanbanBoard({ cases, onUpdate }) {
                                         </button>
                                     </div>
                                     <h5 className="font-bold text-slate-100 text-sm mb-1 leading-tight group-hover:text-indigo-400 transition">{c.title}</h5>
-                                    <p className="text-[10px] text-slate-500 mb-4 font-medium uppercase tracking-wider">{c.client?.name || "Private Client"}</p>
+                                    <div className="flex flex-col gap-1 mb-4">
+                                        <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider flex items-center justify-between">
+                                            <span>Client:</span> <span className="text-white">{c.client?.name || "Private Client"}</span>
+                                        </p>
+                                        <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider flex items-center justify-between">
+                                            <span>Opposing:</span> <span className="text-amber-400">{c.oppositionDetails || c.oppositeParty || "Not Recorded"}</span>
+                                        </p>
+                                    </div>
+
+                                    {/* QUICK LINKS */}
+                                    <div className="grid grid-cols-2 gap-2 mb-4">
+                                        <button 
+                                            onClick={() => router.push('?tab=research')}
+                                            className="flex items-center justify-center gap-1.5 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all duration-300 group/btn"
+                                        >
+                                            <BookOpen size={10} className="group-hover/btn:scale-110 transition" />
+                                            <span className="text-[9px] font-black uppercase tracking-tighter">Research AI</span>
+                                        </button>
+                                        <button 
+                                            onClick={() => router.push('?tab=board')}
+                                            className="flex items-center justify-center gap-1.5 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all duration-300 group/btn"
+                                        >
+                                            <Scale size={10} className="group-hover/btn:scale-110 transition" />
+                                            <span className="text-[9px] font-black uppercase tracking-tighter">e-Courts</span>
+                                        </button>
+                                    </div>
 
                                     {/* Actions */}
                                     <div className="flex justify-between items-center pt-3 border-t border-white/5 mt-2">

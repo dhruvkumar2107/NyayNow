@@ -28,9 +28,10 @@ TONE: Objective, Analytical, Precise, and Informational.`;
  * Centrally managed AI generation with fallback logic.
  * @param {string} prompt - The user query or structured prompt.
  * @param {string} systemInstruction - Optional custom system instructions.
+ * @param {boolean} requireGrounding - Enable Google Search Grounding for real-time live data.
  * @returns {Promise<any>} - The Gemini result object.
  */
-async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_PROMPT) {
+async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_PROMPT, requireGrounding = false) {
     const modelsToTry = [
         "gemini-flash-latest", // Discovered alias
         "gemini-2.5-flash",    // Discovered bleeding edge
@@ -44,11 +45,17 @@ async function generateWithFallback(prompt, systemInstruction = DEFAULT_SYSTEM_P
 
     for (const modelName of modelsToTry) {
         try {
-            console.log(`🤖 Attempting GenAI with ${modelName}...`);
-            const model = genAI.getGenerativeModel({
+            console.log(`🤖 Attempting GenAI with ${modelName}... (Grounding: ${requireGrounding})`);
+            const modelConfig = {
                 model: modelName,
                 systemInstruction: systemInstruction
-            });
+            };
+            
+            if (requireGrounding) {
+                modelConfig.tools = [{ googleSearch: {} }];
+            }
+            
+            const model = genAI.getGenerativeModel(modelConfig);
 
             const chatResult = await model.generateContent(prompt);
             const response = await chatResult.response;

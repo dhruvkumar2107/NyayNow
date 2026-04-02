@@ -7,16 +7,16 @@ import { useAuth } from '../../../context/AuthContext';
 import jsPDF from 'jspdf';
 
 const NOTICE_TYPES = [
+    { value: 'Anticipatory Bail Application (BNSS Sec 482)', label: '⚖️ Anticipatory Bail Application — BNSS 482', color: 'indigo' },
+    { value: 'Regular Bail Application (BNSS Sec 480)', label: '⚖️ Regular Bail Application — BNSS 480', color: 'blue' },
+    { value: 'Writ Petition (Article 226/32)', label: '📜 Writ Petition (High/Supreme Court)', color: 'purple' },
+    { value: 'Criminal Complaint to Magistrate (BNSS Sec 175)', label: '🚨 Criminal Complaint — Magistrate', color: 'red' },
+    { value: 'Divorce Petition (Mutual Consent)', label: '💔 Mutual Consent Divorce Petition', color: 'rose' },
     { value: 'Demand Notice (Money Recovery)', label: '💰 Demand Notice — Money Recovery', color: 'emerald' },
     { value: 'Cheque Bounce Notice (Section 138 NI Act)', label: '🏦 Cheque Bounce — Section 138 NI Act', color: 'amber' },
-    { value: 'Eviction Notice (Tenant Removal)', label: '🏠 Eviction Notice — Tenant Removal', color: 'blue' },
-    { value: 'Defamation Notice (Online/Offline)', label: '📣 Defamation Notice', color: 'rose' },
-    { value: 'Consumer Complaint Notice (Consumer Protection Act)', label: '🛒 Consumer Complaint Notice', color: 'purple' },
-    { value: 'Employment Termination Dispute Notice', label: '💼 Employment Termination Dispute', color: 'orange' },
-    { value: 'Property Encroachment Notice', label: '🗺️ Property Encroachment Notice', color: 'teal' },
-    { value: 'Maintenance Notice (Family Law)', label: '👨‍👩‍👧 Maintenance Notice — Family Law', color: 'pink' },
-    { value: 'Intellectual Property Infringement Notice', label: '©️ IP Infringement Notice', color: 'indigo' },
-    { value: 'Breach of Contract Notice', label: '📋 Breach of Contract Notice', color: 'red' },
+    { value: 'Eviction Notice (Tenant Removal)', label: '🏠 Eviction Notice — Tenant Removal', color: 'cyan' },
+    { value: 'Defamation Notice (Online/Offline)', label: '📣 Defamation Notice', color: 'orange' },
+    { value: 'Consumer Complaint Notice (Consumer Protection Act)', label: '🛒 Consumer Complaint Notice', color: 'teal' },
 ];
 
 const FIELD_CLASS = "w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition duration-200";
@@ -201,10 +201,10 @@ export default function LegalNoticeGenerator() {
                         </div>
                         <div>
                             <div className="flex items-center gap-3 mb-2">
-                                <h2 className="text-3xl font-bold text-white tracking-tight font-serif">Aethelgard AI</h2>
+                                <h2 className="text-3xl font-bold text-white tracking-tight font-serif">Aethelgard AI Drafter</h2>
                                 <span className="px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-300 text-[10px] font-black uppercase tracking-[0.2em]">Quantum Drafting</span>
                             </div>
-                            <p className="text-slate-500 text-sm max-w-xl leading-relaxed">Synthesize court-ready legal notices with high-precision AI. Automatically optimized for Indian Judicial Standards.</p>
+                            <p className="text-slate-500 text-sm max-w-xl leading-relaxed">Synthesize court-ready legal notices, bail applications, and petitions with high-precision AI. Automatically optimized for Indian Judicial Standards (BNS/BNSS).</p>
                         </div>
                     </div>
 
@@ -252,7 +252,7 @@ export default function LegalNoticeGenerator() {
 
                             {/* Panel: Metadata */}
                             <div className="bg-[#0f172a]/50 backdrop-blur-xl rounded-[2rem] p-8 border border-white/5 shadow-xl hover:border-indigo-500/20 transition-colors duration-500">
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Select Legal Instrument</label>
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Select Legal Instrument / Application</label>
                                 <div className="grid grid-cols-1 gap-3 max-h-[360px] overflow-y-auto custom-scrollbar pr-2">
                                     {NOTICE_TYPES.map(type => (
                                         <button
@@ -289,8 +289,8 @@ export default function LegalNoticeGenerator() {
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.1em] mb-2 font-mono">Noticee (Recipient)</label>
-                                            <input name="recipientName" value={form.recipientName} onChange={handleChange} placeholder="Full Legal Name or Entity" className={FIELD_CLASS} />
+                                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.1em] mb-2 font-mono">Noticee / Respondent / State</label>
+                                            <input name="recipientName" value={form.recipientName} onChange={handleChange} placeholder="Opposite Party or State Authority" className={FIELD_CLASS} />
                                         </div>
                                     </div>
                                 </div>

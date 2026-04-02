@@ -127,14 +127,19 @@ const JudgeAI = () => {
         setResult(null);
 
         try {
-            // Updated route to call actual backend
-            const res = await axios.post('/api/ai/predict-outcome', {
+            const activeCaseContext = {
                 caseTitle: `Case vs ${opposingParty || 'Unknown'}`,
                 caseType: courtType || "General Legal",
                 caseDescription: caseInput,
                 oppositionDetails: opposingParty,
                 assignedJudge: assignedJudge
-            });
+            };
+            
+            // Sync with AI Assistant
+            localStorage.setItem("nyaynow_active_case", JSON.stringify(activeCaseContext));
+
+            // Updated route to call actual backend
+            const res = await axios.post('/api/ai/predict-outcome', activeCaseContext);
 
             if (res.data) {
                 setResult({
