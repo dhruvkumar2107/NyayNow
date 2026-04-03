@@ -16,10 +16,14 @@ import {
     Globe,
     Zap,
     Scale
-} from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
 const Footer = () => {
+    const pathname = usePathname()
     const currentYear = new Date().getFullYear()
+
+    const isDashboard = pathname?.startsWith('/lawyer') || pathname?.startsWith('/client') || pathname?.startsWith('/admin')
+    if (isDashboard) return null
 
     return (
         <footer className="bg-[#020617] border-t border-white/5 text-slate-400 font-sans pt-32 pb-12 relative overflow-hidden">
