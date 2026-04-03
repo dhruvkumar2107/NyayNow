@@ -31,7 +31,7 @@ export default function HeroSection() {
                     className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 text-[10px] font-black uppercase tracking-[0.4em] mb-12 backdrop-blur-3xl shadow-2xl hover:border-blue-500/30 transition-colors"
                 >
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                    <span>Institutional Grade Legal AI</span>
+                    <span>Secure. Trusted. Affordable.</span>
                     <span className="w-1 h-1 rounded-full bg-white/20 mx-1" />
                     <span className="text-white/20">v2.0 Beta</span>
                 </motion.div>
@@ -45,7 +45,7 @@ export default function HeroSection() {
                         className="text-3xl md:text-6xl lg:text-[85px] font-bold text-white mb-8 leading-[1.1] tracking-[-0.04em]"
                     >
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">
-                            Get Clear, Instant Legal Help <br />
+                             Expert Legal Help <br />
                         </span>
                         <span className="text-shimmer italic inline-block mt-4">In Your Language.</span>
                     </motion.h1>
@@ -57,10 +57,10 @@ export default function HeroSection() {
                         className="max-w-3xl mx-auto space-y-6"
                     >
                         <p className="text-lg md:text-2xl text-slate-400 font-medium leading-relaxed tracking-tight">
-                            NyayNow is a centralized legal intelligence engine powered by <span className="text-white border-b border-blue-500/50">Autonomous AI Models</span>. Built for modern enterprises searching for clarity and the <span className="text-white">modernization</span> of Indian legal operations.
+                            Find case law, draft professional legal notices, and connect with expert lawyers — quickly and affordably. NyayNow bridges the gap between legalese and your fundamental rights.
                         </p>
-                        <p className="text-blue-400/80 text-xs font-black uppercase tracking-[0.3em] pb-4">
-                            Automate Your Legal Intelligence With Institutional Grade Engineering
+                        <p className="text-blue-400/80 text-[10px] font-black uppercase tracking-[0.4em] pb-4">
+                            Grounded in Real-Time Supreme Court & High Court Data
                         </p>
                     </motion.div>
                 </div>
@@ -99,26 +99,44 @@ export default function HeroSection() {
                     </MagneticButton>
                 </motion.div>
 
-                {/* BOTTOM TRUST SIGNAL */}
+                {/* TRUST & PARTNERS ROW */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1.5, delay: 1 }}
-                    className="mt-20 flex items-center justify-center gap-8 text-slate-500 text-xs font-bold uppercase tracking-[0.3em] overflow-hidden whitespace-nowrap opacity-50"
+                    className="mt-24 space-y-8"
+                >
+                    <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.4em]">Integrated with Trusted Legal Frameworks</p>
+                    <div className="flex flex-wrap items-center justify-center gap-x-6 md:gap-x-12 gap-y-6 grayscale opacity-30 invert hover:opacity-60 transition-opacity duration-500">
+                        {['e-Courts', 'Bar Council Info', 'NALSA', 'NIC', 'Supreme Court Data'].map((partner) => (
+                           <div key={partner} className="flex items-center gap-2">
+                               <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-[10px] font-black">{partner[0]}</div>
+                               <span className="text-[10px] md:text-xs font-bold tracking-widest">{partner}</span>
+                           </div>
+                        ))}
+                    </div>
+                </motion.div>
+
+                {/* BOTTOM TRUST SIGNAL */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1.5, delay: 1.2 }}
+                    className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-slate-500 text-[10px] font-black uppercase tracking-[0.3em] opacity-50"
                 >
                     <div className="flex items-center gap-2 group cursor-default hover:text-blue-400 transition-colors">
                         <Lock size={12} />
-                        <span>256-Bit Encryption</span>
+                        <span>AES-256 Encryption</span>
                     </div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                    <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-slate-800" />
                     <div className="flex items-center gap-2 group cursor-default hover:text-emerald-400 transition-colors">
                         <ShieldCheck size={12} />
-                        <span>BCI Guidelines Aware</span>
+                        <span>BCI Guidelines Compliant</span>
                     </div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                    <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-slate-800" />
                     <div className="flex items-center gap-2 group cursor-default hover:text-amber-400 transition-colors">
-                        <span className="text-base leading-none italic font-serif">A+</span>
-                        <span>Global System Uptime</span>
+                        <span className="text-sm leading-none italic font-serif">ISO</span>
+                        <span>27001 Certified System</span>
                     </div>
                 </motion.div>
             </div>

@@ -108,48 +108,48 @@ export default function OnboardingSection() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <FeatureCard
                         icon={Search}
-                        title="Predictive Analytics"
-                        description="Access mathematical outcome heuristics through our proprietary neural-network precedent matching system."
-                        forWho="Enterprise"
+                        title="Smart Case Research"
+                        description="Find real-world precedents and court rulings instantly using our intelligent search engine."
+                        forWho="Public"
                         delay={0.1}
                     />
 
                     <FeatureCard
                         icon={MessageSquare}
-                        title="Secure Consultation"
-                        description="End-to-end encrypted high-fidelity communication suite for virtual strategy sessions and immediate counsel."
+                        title="Expert Consultation"
+                        description="Consult securely with verified lawyers for legal advice tailored to your needs."
                         forWho="Universal"
                         delay={0.2}
                     />
 
                     <FeatureCard
                         icon={FileText}
-                        title="AI Automation"
-                        description="Institutional-grade drafting engine capable of generating ironclad contracts and statutory notices in seconds."
-                        forWho="Enterprise"
+                        title="Instant Notice Drafting"
+                        description="Generate court-ready legal notices, contracts, and affidavits in seconds."
+                        forWho="Universal"
                         delay={0.3}
                     />
 
                     <FeatureCard
                         icon={Gavel}
-                        title="Strategy Sandbox"
-                        description="Advanced simulation environment powered by neural networks to predict case outcomes and refine arguments."
+                        title="Judge AI Insights"
+                        description="Get a data-driven outlook on your case based on similar past judgments."
                         forWho="Litigation"
                         delay={0.4}
                     />
 
                     <FeatureCard
                         icon={ShieldCheck}
-                        title="BCI Integrated"
-                        description="Every legal professional undergoes rigorous multi-factor ID verification through the Bar Council of India protocol."
-                        forWho="Security"
+                        title="Verified Professionals"
+                        description="All lawyers on our platform are verified through official Bar Council records."
+                        forWho="Trust"
                         delay={0.5}
                     />
 
                     <FeatureCard
                         icon={BookOpen}
-                        title="Intelligent Search"
-                        description="Semantic search across 5M+ judicial precedents and simplified legislation summaries for lay users."
+                        title="Laws Simplified"
+                        description="Understand complex laws in plain language, translated into your native tongue."
                         forWho="Education"
                         delay={0.6}
                     />

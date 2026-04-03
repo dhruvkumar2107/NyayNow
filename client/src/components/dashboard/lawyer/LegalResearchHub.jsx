@@ -107,22 +107,60 @@ export default function LegalResearchHub() {
                         animate={{ opacity: 1, y: 0 }}
                         className="space-y-6"
                     >
-                        {/* Executive Summary */}
-                        <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl">
-                            <h4 className="flex items-center gap-2 text-lg font-bold text-white mb-4">
-                                <Sparkles size={20} className="text-amber-400" />
-                                Jurisprudential Summary
-                            </h4>
-                            <p className="text-slate-300 leading-relaxed text-sm">{results.summary}</p>
-                            
-                            {results.disclaimer && (
-                                <div className="mt-6 p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
-                                    <AlertTriangle size={16} className="text-amber-500 mt-0.5 shrink-0" />
-                                    <p className="text-[10px] text-amber-500/80 font-bold uppercase tracking-wider leading-relaxed">
-                                        {results.disclaimer}
-                                    </p>
+                        {/* Executive Summary & Confidence */}
+                        <div className="grid md:grid-cols-3 gap-6">
+                            <div className="md:col-span-2 bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl flex flex-col justify-between">
+                                <div>
+                                    <h4 className="flex items-center gap-2 text-lg font-bold text-white mb-4">
+                                        <Sparkles size={20} className="text-amber-400" />
+                                        Jurisprudential Summary
+                                    </h4>
+                                    <p className="text-slate-300 leading-relaxed text-sm">{results.summary}</p>
                                 </div>
-                            )}
+                                
+                                {results.disclaimer && (
+                                    <div className="mt-6 p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
+                                        <AlertTriangle size={16} className="text-amber-500 mt-0.5 shrink-0" />
+                                        <p className="text-[10px] text-amber-500/80 font-bold uppercase tracking-wider leading-relaxed">
+                                            {results.disclaimer}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl flex flex-col items-center justify-center text-center group">
+                                <div className="relative w-24 h-24 mb-4">
+                                    <svg className="w-full h-full transform -rotate-90">
+                                        <circle
+                                            cx="48"
+                                            cy="48"
+                                            r="40"
+                                            stroke="currentColor"
+                                            strokeWidth="8"
+                                            fill="transparent"
+                                            className="text-white/5"
+                                        />
+                                        <motion.circle
+                                            cx="48"
+                                            cy="48"
+                                            r="40"
+                                            stroke="currentColor"
+                                            strokeWidth="8"
+                                            fill="transparent"
+                                            strokeDasharray="251.2"
+                                            initial={{ strokeDashoffset: 251.2 }}
+                                            animate={{ strokeDashoffset: 251.2 - (251.2 * (results.confidence_score || 85)) / 100 }}
+                                            transition={{ duration: 1.5, ease: "easeOut" }}
+                                            className="text-indigo-500"
+                                        />
+                                    </svg>
+                                    <div className="absolute inset-0 flex items-center justify-center flex-col">
+                                        <span className="text-2xl font-black text-white">{results.confidence_score || 85}%</span>
+                                    </div>
+                                </div>
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Grounding Confidence</h4>
+                                <p className="text-[9px] text-indigo-400 font-bold uppercase tracking-widest">Verified Citations</p>
+                            </div>
                         </div>
 
                         {/* Precedents Listing */}

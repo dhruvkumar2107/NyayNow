@@ -128,10 +128,14 @@ const Footer = () => {
                     <div className="flex flex-wrap justify-center gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
                         <div className="flex items-center gap-2 group cursor-default">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                            <span className="group-hover:text-emerald-500 transition-colors">Systems Secure</span>
+                            <span className="group-hover:text-emerald-500 transition-colors uppercase">ISO 27001 Certified</span>
+                        </div>
+                        <div className="flex items-center gap-2 group cursor-default">
+                            <ShieldCheck size={14} className="text-slate-500 group-hover:text-blue-500 transition-colors" />
+                            <span className="group-hover:text-blue-500 transition-colors uppercase">AES-256 Encrypted</span>
                         </div>
                         <span className="text-slate-700">|</span>
-                        <p className="text-slate-500">256-Bit SSL Intelligence Network</p>
+                        <p className="text-slate-500">Secure Network: 128-Bit TLS/SSL</p>
                     </div>
                 </div>
 

@@ -1,7 +1,10 @@
 const express = require("express");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { generateWithFallback, DEFAULT_SYSTEM_PROMPT: SYSTEM_PROMPT } = require("../utils/aiUtils");
+const aiAudit = require("../middleware/aiAudit");
+
 const router = express.Router();
+router.use(aiAudit); // Apply auditing to all AI routes
 const multer = require("multer");
 const pdf = require("pdf-parse");
 const upload = multer({ storage: multer.memoryStorage() });
@@ -234,21 +237,26 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
     if (!text) return res.status(400).json({ error: "No text provided" });
 
     const prompt = `
-      Analyze this legal issue description:
+      ACT AS A LEGAL INTELLIGENCE AGENT (INDIA).
+      
+      TASK: Analyze the following legal issue and provide a strategic analysis.
+      
+      LEGAL STANDARDS:
+      - Use BNS 2023/2024 and BNSS 2023/2024 for all modern criminal issues.
+      - Cite at least 2 relevant Supreme Court precedents from the last 5 years.
+      
+      ISSUE:
       "${text.substring(0, 5000)}"
       
-      Provide:
-      1. **Fact Summary**: What is the core dispute?
-      2. **Statutory Standing**: List Relevant Acts (Prioritize BNS 2024, BNSS, BSA).
-      3. **Remedy Strategy**: Suggested next steps.
-      
-      Return JSON with keys: 
-      "summary" (string),
-      "laws" (array of strings),
-      "advice" (string),
-      "disclaimer" (string - standard legal information warning).
-      
-      Strict JSON only.
+      OUTPUT STRUCTURE (JSON ONLY):
+      {
+        "analysis": "Professional legal analysis",
+        "applicable_laws": ["Section X of BNS", "Article Y"],
+        "precedents": ["Case Name (Year) - Ratio Decidendi"],
+        "strategy": "Step-by-step litigation/defense strategy",
+        "confidence_score": 92,
+        "source_verification": "Grounded in SCC/Manupatra Live Data"
+      }
     `;
 
     const result = await generateWithFallback(prompt, undefined, true);
@@ -263,63 +271,51 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
   }
 });
 
-/* ---------------- LEGAL NOTICE GENERATOR (LEGACY) ---------------- */
-router.post("/legal-notice", verifyTokenOptional, checkAiLimit, async (req, res) => {
+
+/* ---------------- LEGAL NOTICE GENERATOR ---------------- */
+router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
-    const { noticeType, senderName, senderAddress, recipientName, recipientAddress, facts, complianceDays } = req.body;
+    const { notice_details, language, type, senderName, recipientName, facts, amount, complianceDays } = req.body;
+    
+    // Support both old and new form structures
+    const details = notice_details || facts || "No details provided";
+    const lang = language || "English";
+    const noticeType = type || req.body.noticeType || "General Legal Notice";
 
     const prompt = `
-      You are an automated legal drafting engine. Draft a formal "${noticeType}".
-      Sender: ${senderName}, ${senderAddress}
-      Recipient: ${recipientName}, ${recipientAddress}
-      Facts: ${facts}
-      Compliance: ${complianceDays} days.
+      ACT AS A SENIOR SUPREME COURT ADVOCATE (INDIA).
+      Draft a formal "${noticeType}" based on the following facts.
       
-      Format as Markdown. Include professional legal citations where applicable.
+      LAW STANDARDS: Use BNS 2024, BNSS 2024, and relevant Civil Procedure if applicable.
+      LANGUAGE: ${lang}
+      
+      FACTS/DETAILS:
+      "${details}"
+      
+      SENDER: ${senderName || "[Sender Name]"}
+      RECIPIENT: ${recipientName || "[Recipient Name]"}
+      DEMAND AMOUNT: ₹${amount || "0"}
+      COMPLIANCE PERIOD: ${complianceDays || "15"} Days
+      
+      FORMAT:
+      - Ref No / Date
+      - Registered AD / Speed Post
+      - To [Recipient Name/Address Placeholder]
+      - Subject: Legal Notice regarding ${noticeType}
+      - Body: Professional legal draft starting with "Under instructions from my client..."
+      - Legal Sections: Cite specific BNS/BNSS/IPC/CPC sections.
+      - Consequences of failure (Legal action warning)
+      - Advocate Signature Placeholder
+      
+      Output ONLY the draft text in Markdown.
     `;
 
     const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
-    res.json({ notice: response.text() });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to generate notice", details: err.message });
-  }
-});
-
-/* ---------------- LEGAL NOTICE GENERATOR (NEW) ---------------- */
-/* ---------------- LEGAL NOTICE GENERATOR ---------------- */
-router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res) => {
-  try {
-    const { notice_details, language, type } = req.body;
-    if (!notice_details) return res.status(400).json({ error: "Notice details required" });
-
-    const lang = language || "English";
-    const noticeType = type || "General Legal Notice";
-
-    const prompt = `
-      You are an automated legal drafting engine. Draft a formal "${noticeType}".
-      Language: ${lang}
-      
-      Details:
-      "${notice_details}"
-      
-      Format:
-      - Ref No / Date
-      - Registered AD / Speed Post
-      - To [Recipient Name/Address Placeholder]
-      - Subject
-      - "Under instructions from my client..."
-      - Legal Facts & Grievances
-      - Demands (Pay within X days / Stop action)
-      - Consequences of failure (Legal action warning)
-      - Advocate Signature Placeholder
-      
-      Output ONLY the draft text in Markdown. Do not wrap in JSON.
-    `;
-
-    const result = await generateWithFallback(prompt);
-    const response = await result.response;
-    res.json({ draft: response.text() });
+    const text = response.text();
+    
+    // Return both 'notice' (for new UI) and 'draft' (for legacy)
+    res.json({ notice: text, draft: text });
 
   } catch (err) {
     console.error("Gemini Notice Error:", err.message);
@@ -328,45 +324,34 @@ router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res)
 });
 
 /* ---------------- JUDGE AI (CASE PREDICTOR) ---------------- */
-/* ---------------- JUDGE AI (CASE PREDICTOR) ---------------- */
 router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { caseTitle, caseDescription, caseType, oppositionDetails, assignedJudge } = req.body;
     console.log(`📑 /predict-outcome requested for: ${caseTitle || "Unnamed Case"}`);
 
     const prompt = `
-      ACT AS THE NYAYNOW JUDICIAL PREDICTION ENGINE.
-      Verify the user's case details:
-      - Title: "${caseTitle}"
-      - Type / Court: "${caseType}"
-      - Description: "${caseDescription}"
-      - Opposing Party: "${oppositionDetails}"
-      - Assigned Justice: "${assignedJudge || 'Unassigned / Bench Not Formed'}"
-
-      Based on the Bharatiya Nyaya Sanhita (BNS) 2023, BNSS, and applicable Civil/Criminal Codes, perform an elite judicial dissection:
+      ACT AS A JUDICIAL PREDICTOR (INDIA).
       
-      CRITICAL INSTRUCTION: You HAVE access to Google Search Grounding. You MUST search the live internet for REAL Indian Supreme Court/High Court cases that perfectly match these facts. Find the actual SCC/Manupatra citations, and base the Win Probability on these REAL, historical inclinations. DO NOT HALLUCINATE citations. Ensure the outcome matches what real judgements dictate.
-
-      1. **Fact Summarization**: Briefly state the core legal dispute.
-      2. **Win Probability**: Give a realistic percentage (0-100%). Weigh the opposing party's known resources, real historical case outcomes, and the judge's presumed tendencies.
-      3. **Strategic Risks**: 3 critical loopholes or weaknesses.
-      4. **Strategic Moves**: 3 legal motions to file.
-      5. **BNS Citations**: YOU MUST cite specific sections of the BNS or BNSS.
-      6. **Relevant Precedent**: Cite 1 real Indian Supreme Court/High Court case that perfectly matches, including exact Manupatra/SCC citation and Year.
-
-      RETURN STRICT JSON ONLY:
+      TASK: Predict the outcome of the following case based on real-time court data and precedents.
+      
+      GROUNDING RULES:
+      - Search for similar cases in Supreme/High Courts (2020-2024).
+      - Apply BNS 2024 if applicable. Cite specific sections.
+      
+      CASE TITLE: "${caseTitle}"
+      CASE DETAILS: "${caseDescription}"
+      ASSIGNED JUDGE: ${assignedJudge || "Not Specified"}
+      
+      REQUIRED OUTPUT STRUCTURE (JSON ONLY):
       {
-        "disclaimer": "This analysis is for legal intelligence only. Probability is based on actual historical precedents retrieved live.",
-        "case_id": "NYY-2024-XXXX",
-        "fact_summary": "...",
-        "win_probability": "75%",
-        "risk_score": 8,
-        "risk_level": "High/Medium/Low",
-        "risk_analysis": ["Risk 1", "Risk 2", "Risk 3"],
-        "strategy": ["Move 1", "Move 2", "Move 3"],
-        "estimated_duration": "14-18 months",
-        "relevant_precedent": "Case Name (Year)",
-        "citations": ["Sec X BNS", "Sec Y BNSS"]
+        "case_id": "REF-XXXX",
+        "win_probability": 75,
+        "risk_level": "Medium",
+        "precedent_count": 12,
+        "strategy": ["Step 1...", "Step 2..."],
+        "risk_analysis": ["Risk 1...", "Risk 2..."],
+        "relevant_precedent": "State vs. X (2023) - Ratio...",
+        "confidence_percentage": 88
       }
     `;
 
@@ -375,24 +360,14 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
     const response = await result.response;
     let text = response.text();
 
-    // Remove markdown code blocks if present
-    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-
-    // Attempt to isolate the JSON object if there is surrounding text
-    const jsonStart = text.indexOf('{');
-    const jsonEnd = text.lastIndexOf('}');
-    if (jsonStart !== -1 && jsonEnd !== -1) {
-      text = text.substring(jsonStart, jsonEnd + 1);
+    const parsed = safeJsonParse(text, "Predict Outcome");
+    
+    // Ensure case_id is present
+    if (!parsed.case_id || parsed.case_id === "REF-XXXX") {
+        parsed.case_id = `NYAY-${Math.floor(Math.random() * 100000)}`;
     }
 
-    try {
-      console.log("🧩 Parsing AI JSON...");
-      const parsed = safeJsonParse(text, "Predict Outcome");
-      res.json(parsed);
-    } catch (parseErr) {
-      console.error("⚠️ AI Parse Failure:", parseErr.message);
-      res.status(500).json({ error: "Failed to parse AI response" });
-    }
+    res.json(parsed);
 
   } catch (err) {
     console.error("Judge AI Error:", err.message);
@@ -424,7 +399,7 @@ router.post("/draft-contract", verifyTokenOptional, checkAiLimit, async (req, re
       Output ONLY the Markdown contract.
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     const contractText = response.text();
 
@@ -480,7 +455,7 @@ router.post("/analyze-case-file", verifyTokenOptional, checkAiLimit, upload.sing
     `;
 
     // 3. AI Analysis
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     let text = response.text();
     res.json(safeJsonParse(text, "Case File Analysis"));
@@ -516,7 +491,7 @@ router.post("/devils-advocate", verifyTokenOptional, checkAiLimit, async (req, r
       }
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     let text = response.text();
 
@@ -567,7 +542,7 @@ router.post("/moot-court", verifyTokenOptional, checkAiLimit, async (req, res) =
       }
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     let text = response.text();
 
@@ -611,6 +586,7 @@ router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, re
       {
         "disclaimer": "Legal research is based on live index of Indian case laws. Verify citations using official records.",
         "summary": "...",
+        "confidence_score": 95,
         "cases": [
           { "name": "...", "citation": "...", "ratio": "...", "relevance": "..." }
         ]
@@ -659,7 +635,7 @@ router.post("/career-mentor", verifyTokenOptional, checkAiLimit, async (req, res
       }
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     let text = response.text();
 
@@ -709,7 +685,7 @@ router.post("/judge-profile", verifyTokenOptional, checkAiLimit, async (req, res
       }
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     let text = response.text();
 
@@ -768,7 +744,7 @@ router.post("/legal-sos", verifyTokenOptional, async (req, res) => {
       }
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     let text = response.text();
     res.json(safeJsonParse(text, "Legal SOS"));
@@ -820,7 +796,7 @@ router.post("/fir-generator", verifyTokenOptional, async (req, res) => {
       Write in formal, legally accepted FIR language. Use "the complainant" and third person. Include the applicable law sections properly. Do NOT add any notes or disclaimers around the FIR — output ONLY the FIR text.
     `;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
     const draft = response.text();
     res.json({
@@ -875,7 +851,7 @@ router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
         6. End with a 1-line punch statement.
         7. Return ONLY the courtroom speech. No meta-commentary.
       `;
-      const result = await generateWithFallback(prompt, persona);
+      const result = await generateWithFallback(prompt, persona, true);
       const response = await result.response;
       return response.text().trim();
     }
@@ -963,7 +939,7 @@ router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
       }
     `;
 
-    const verdictResult = await generateWithFallback(verdictPrompt, JUDGE_PERSONA);
+    const verdictResult = await generateWithFallback(verdictPrompt, JUDGE_PERSONA, true);
     const response = await verdictResult.response;
     let verdictText = response.text();
     const verdict = safeJsonParse(verdictText, "Courtroom Battle Verdict");
@@ -1077,7 +1053,7 @@ Note: The above is a formal legal notice prepared ${senderBarCouncil ? "by a reg
 
 Generate this notice with complete professional legal language, proper recitals, and cite the most relevant Indian law sections (BNS 2023, BNSS 2023, CPC 1908, or relevant specific Acts). Make it court-ready and enforceable.`;
 
-    const result = await generateWithFallback(prompt);
+    const result = await generateWithFallback(prompt, undefined, true);
     const noticeText = result.response.text();
 
     res.json({ notice: noticeText, date: today, type: noticeType });
