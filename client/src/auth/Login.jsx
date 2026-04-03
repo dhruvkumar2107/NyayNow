@@ -22,17 +22,35 @@ export default function Login() {
 
   // ⚡ CRAZY PERFORMING OPTIMIZATION: Prefetch heavy dashboard routes instantly on load
   // so that when the user clicks 'Sign In', the transition is 0ms.
+  // ALSO: Ping backend immediately to wake up Render Free instance
   useEffect(() => {
     router.prefetch("/client/dashboard");
     router.prefetch("/lawyer/dashboard");
+    
+    // Wake up the legal engine (Render Cold Start mitigation)
+    axios.get("/healthz").catch(() => {});
   }, [router]);
+
+  const [authStatus, setAuthStatus] = useState("Sign In");
 
   const handleEmailLogin = async () => {
     if (!email || !password) return toast.error("Please enter credentials");
     if (!consent) return toast.error("Please acknowledge the legal disclosure to continue.");
+    
     setLoading(true);
+    setAuthStatus("Authenticating...");
+
+    // Show persistent "waking up" message after 3 seconds
+    const statusTiimeout = setTimeout(() => {
+        setAuthStatus("Waking up Legal Engine...");
+    }, 3500);
+
     const res = await login(email, password);
+    
+    clearTimeout(statusTiimeout);
     setLoading(false);
+    setAuthStatus("Sign In");
+
     if (res.success) {
       toast.success("Welcome back!");
       // Lawyer profile check
@@ -175,7 +193,7 @@ export default function Login() {
                   {loading ? (
                       <>
                         <span className="w-4 h-4 border-2 border-midnight-950 border-t-transparent rounded-full animate-spin"></span>
-                        Authenticating...
+                        {authStatus}
                       </>
                     ) : "Sign In"}
                 </span>
