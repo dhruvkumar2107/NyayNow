@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Letter of Intent – NyayNow</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── RESET ── */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ── SCREEN: grey background, centred sheet ── */
+    body {
+      background: #d0d0d0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 0 48px;
+      font-family: 'EB Garamond', serif;
+      color: #111;
+    }
+
+    /* ── PRINT BUTTON ── */
+    .controls {
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      gap: 12px;
+    }
+    .btn {
+      padding: 10px 30px;
+      background: #1a3a5c;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:hover { background: #1e4a73; }
+
+    /* ══════════════════════════════════════════
+       A4 SHEET  —  210 mm × 297 mm
+       At screen 96 dpi: 794px × 1123px
+    ══════════════════════════════════════════ */
+    .a4 {
+      width:  210mm;
+      height: 297mm;
+      background: #fff;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+      padding: 16mm 18mm 14mm;          /* top / sides / bottom */
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;                 /* nothing spills outside */
+      position: relative;
+    }
+
+    /* thin blue bar at the top edge */
+    .a4::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: #1a3a5c;
+    }
+
+    /* ── HEADER ── */
+    .top {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      border-bottom: 1.5px solid #1a3a5c;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .top-center {
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 15pt;
+      font-weight: 700;
+      color: #1a3a5c;
+      letter-spacing: -0.3px;
+      line-height: 1.1;
+    }
+    .top-center small {
+      display: block;
+      font-size: 6.5pt;
+      font-weight: 500;
+      color: #b8963e;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      margin-top: 2px;
+    }
+
+    .doc-info {
+      font-family: 'Inter', sans-serif;
+      font-size: 7.5pt;
+      color: #555;
+      text-align: right;
+      line-height: 1.55;
+    }
+
+    /* ── DOCUMENT TITLE ── */
+    .doc-title {
+      text-align: center;
+      margin: 8px 0 3px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12pt;
+      font-weight: 700;
+      color: #1a3a5c;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .doc-sub {
+      text-align: center;
+      font-style: italic;
+      font-size: 9pt;
+      color: #777;
+      margin-bottom: 12px;
+    }
+
+    /* thin gold divider */
+    .gold-line {
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, #b8963e, transparent);
+      margin-bottom: 12px;
+    }
+
+    /* ── BODY TEXT ── */
+    .body-text {
+      font-size: 10.5pt;
+      line-height: 1.75;
+      flex: 1;
+    }
+    .body-text p { margin-bottom: 8px; text-align: justify; }
+
+    /* fill blanks */
+    .blank {
+      display: inline-block;
+      border-bottom: 1px solid #333;
+      min-width: 160px;
+    }
+    .blank-sm {
+      display: inline-block;
+      border-bottom: 1px solid #333;
+      min-width: 70px;
+    }
+
+    /* ── KEY STATEMENT BOX ── */
+    .statement {
+      border-left: 4px solid #1a3a5c;
+      background: #f2f5fb;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-size: 10.5pt;
+      font-style: italic;
+      line-height: 1.8;
+      color: #1a1a2e;
+    }
+
+    /* ── SIGNATURE SECTION ── */
+    .sig-section {
+      margin-top: 14px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+
+    .sig-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 6.5pt;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 28px;   /* room for hand signature */
+      display: block;
+    }
+
+    .sig-line {
+      border-top: 1px solid #333;
+      margin-bottom: 6px;
+    }
+
+    .sig-meta {
+      font-family: 'Inter', sans-serif;
+      font-size: 7.5pt;
+      color: #444;
+      line-height: 1.9;
+    }
+    .sig-meta span {
+      display: inline-block;
+      border-bottom: 1px solid #bbb;
+      min-width: 130px;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 10px;
+      padding-top: 7px;
+      border-top: 1px solid #ddd;
+      font-family: 'Inter', sans-serif;
+      font-size: 6.5pt;
+      color: #aaa;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ══════════════════════════════════════════
+       PRINT — exact A4, zero browser margins
+    ══════════════════════════════════════════ */
+    @media print {
+      body   { background: #fff; padding: 0; }
+      .controls { display: none; }
+      .a4 {
+        width: 210mm;
+        height: 297mm;
+        box-shadow: none;
+        padding: 16mm 18mm 14mm;
+        page-break-after: avoid;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  </div>
+
+  <!-- A4 Sheet -->
+  <div class="a4">
+
+    <!-- Header -->
+    <div class="top">
+      <div>
+        <img src="client/public/logo.png" alt="NyayNow" style="height:52px; width:auto; display:block;" />
+      </div>
+      <div class="top-center">
+        NyayNow
+        <small>India's Legal Platform</small>
+      </div>
+      <div class="doc-info">
+        Date:&nbsp;<strong id="loi-date"></strong><br/>
+        nyaynow.in
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="doc-title">Letter of Intent</div>
+    <div class="doc-sub">Expression of Interest to Use the NyayNow Platform</div>
+    <div class="gold-line"></div>
+
+    <!-- Body -->
+    <div class="body-text">
+
+      <p>
+        I,&nbsp;<span class="blank">&nbsp;</span>,
+        an Advocate enrolled with the Bar Council of&nbsp;<span class="blank-sm">&nbsp;</span>
+        &nbsp;(Bar Council No.&nbsp;<span class="blank-sm">&nbsp;</span>),
+        currently practising in the field of&nbsp;<span class="blank">&nbsp;</span>,
+        write this letter to express my genuine interest in using and piloting the <strong>NyayNow</strong> platform.
+      </p>
+
+      <!-- Core Statement -->
+      <div class="statement">
+        "If NyayNow launches with features for online client consultations, case management, and legal appointment booking, I intend to use and/or pilot the platform in my legal practice."
+      </div>
+
+      <p>
+        I understand that NyayNow is currently in development and this letter is <strong>not a binding legal contract</strong>. It is a voluntary expression of my intent and support for the platform.
+      </p>
+
+      <p>
+        I believe a platform like NyayNow addresses a real gap in access to legal services in India, and I look forward to being an early adopter once it launches.
+      </p>
+
+    </div><!-- /body-text -->
+
+    <!-- Signature -->
+    <div class="sig-section">
+      <span class="sig-label">Advocate's Signature</span>
+      <div class="sig-line"></div>
+      <div class="sig-meta">
+        Name:&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        &emsp;&emsp;
+        Bar Council No.:&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
+        Phone:&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        &emsp;&emsp;
+        City:&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
+        Date:&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      Voluntary &amp; non-binding expression of intent only &nbsp;|&nbsp; NyayNow &nbsp;|&nbsp; nyaynow.in
+    </div>
+
+  </div><!-- /a4 -->
+
+  <script>
+    const d = new Date();
+    const months = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+    document.getElementById('loi-date').textContent =
+      d.getDate() + ' ' + months[d.getMonth()] + ', ' + d.getFullYear();
+  </script>
+
+</body>
+</html>

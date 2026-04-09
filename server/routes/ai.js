@@ -62,7 +62,7 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       - You provide legal information by citing specific Sections, Articles, and Case Laws.
       - You clarify that you are a machine learning model, not a human lawyer.
       
-      CRITICAL INSTRUCTION: You HAVE access to Google Search Grounding. You MUST search the live internet to find REAL, older judgements, SCC/Manupatra citations, and current legal precedents if asked. DO NOT hallucinate case laws. Always return real live data.
+      CRITICAL INSTRUCTION: You HAVE access to Google Search Grounding. You MUST search the live internet to find REAL, older judgements, SCC/Manupatra citations, and current legal precedents if asked. Explicitly return the Indian Kanoon Link alongside any SCC/Manupatra citation. DO NOT hallucinate case laws. Always return real live data.
       
       USER CONTEXT:
       Location: ${location || "India"}
@@ -243,7 +243,7 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
       
       LEGAL STANDARDS:
       - Use BNS 2023/2024 and BNSS 2023/2024 for all modern criminal issues.
-      - Cite at least 2 relevant Supreme Court precedents from the last 5 years.
+      - Cite at least 2 relevant Supreme Court precedents from the last 5 years. For any case cited, explicitly return the Indian Kanoon Link alongside the SCC/Manupatra citation so the user can read the real judgement for free.
       
       ISSUE:
       "${text.substring(0, 5000)}"
@@ -336,6 +336,7 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
       
       GROUNDING RULES:
       - Search for similar cases in Supreme/High Courts (2020-2024).
+      - Explicitly return the Indian Kanoon Link alongside any SCC citation to support prediction based on previous similar cases.
       - Apply BNS 2024 if applicable. Cite specific sections.
       
       CASE TITLE: "${caseTitle}"
@@ -440,7 +441,7 @@ router.post("/analyze-case-file", verifyTokenOptional, checkAiLimit, upload.sing
       1. **Timeline**: Reconstruct a chronological timeline of events.
       2. **Contradictions**: Find logic gaps or contradictions in statements (e.g., "Page 2 says X, Page 10 says Y").
       3. **Legal Risks**: Identify the biggest weaknesses in this case.
-      4. **Relevant Case Law**: Cite 2-3 specific Indian Supreme Court/High Court precedents that apply.
+      4. **Relevant Case Law**: Cite 2-3 specific Indian Supreme Court/High Court precedents that apply. Explicitly return the Indian Kanoon Link alongside the SCC citation.
       5. **Win Probability**: Estimate percentage chance of winning.
       
       OUTPUT JSON STRICTLY:
@@ -578,7 +579,7 @@ router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, re
       1. Identify core legal issues related to the query within the specified scope.
       2. Find 3-5 RELEVANT cases (Prioritize BNS 2024 context if applicable).
       3. For each case, provide:
-         - Case Name & Citation
+         - Case Name & Citation (Explicitly include the Indian Kanoon Link alongside the SCC citation)
          - Ratio Decidendi
          - Relevance to the specified scope and date range.
       
