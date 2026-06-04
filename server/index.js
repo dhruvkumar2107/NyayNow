@@ -62,23 +62,63 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://checkout.razorpay.com", "https://*.sentry.io"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.posthog.com"],
-      connectSrc: ["'self'", "https://*.sentry.io", "https://*.posthog.com", "https://*.algolia.net", "https://*.algolianet.com", "wss://*.onrender.com", "https://*.onrender.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",          // Required by Next.js
+        "https://checkout.razorpay.com",
+        "https://*.sentry.io",
+        "https://cdn.razorpay.com",
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://fonts.googleapis.com",
+        "https://nyaysathi-main.onrender.com",
+      ],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "blob:",
+        "https://res.cloudinary.com",
+        "https://*.posthog.com",
+        "https://randomuser.me",
+        "https://ui-avatars.com",
+        "https://unpkg.com",
+      ],
+      connectSrc: [
+        "'self'",
+        "https://*.sentry.io",
+        "https://*.posthog.com",
+        "https://*.algolia.net",
+        "https://*.algolianet.com",
+        "wss://nyaysathi-main.onrender.com",
+        "https://nyaysathi-main.onrender.com",
+        "https://api.razorpay.com",
+        "https://lumberjack.razorpay.com",
+      ],
+      fontSrc: [
+        "'self'",
+        "https://fonts.gstatic.com",
+        "data:",
+      ],
+      frameSrc: [
+        "https://checkout.razorpay.com",  // Allow Razorpay iframe
+        "https://api.razorpay.com",
+      ],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
     },
   },
   crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }, // Changed to allow Google Login popups
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
   hsts: {
     maxAge: 31536000,
     includeSubDomains: true,
     preload: true
   }
 }));
+
 
 // const limiter = rateLimit({
 //   windowMs: 15 * 60 * 1000,
