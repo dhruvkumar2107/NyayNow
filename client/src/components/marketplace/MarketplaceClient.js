@@ -8,7 +8,10 @@ import Image from "next/image"
 import VerifiedBadge from "../VerifiedBadge"
 
 export default function MarketplaceClient({ initialLawyers }) {
-    const [lawyers] = useState(initialLawyers || [])
+    const rawLawyers = Array.isArray(initialLawyers) 
+        ? initialLawyers 
+        : (initialLawyers && Array.isArray(initialLawyers.lawyers) ? initialLawyers.lawyers : []);
+    const [lawyers] = useState(rawLawyers)
     const [searchQuery, setSearchQuery] = useState("")
 
     // Filters State
