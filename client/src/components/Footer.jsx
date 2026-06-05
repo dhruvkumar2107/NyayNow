@@ -89,38 +89,28 @@ const Footer = () => {
                 </div>
 
                 {/* LINKS GRID */}
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 border-t border-white/5 pt-24 mb-24">
-                    <FooterColumn title="Intelligence">
-                        <FooterLink href="/assistant">Legal Assistant</FooterLink>
-                        <FooterLink href="/judge-ai">Judge AI</FooterLink>
-                        <FooterLink href="/voice-assistant">NyayVoice <Badge color="bg-blue-500/10 text-blue-400">Live</Badge></FooterLink>
-                        <FooterLink href="/courtroom-battle">Moot Court Simulator <Badge color="bg-emerald-500/10 text-emerald-400">New</Badge></FooterLink>
-                        <FooterLink href="/research">Precedent Engine</FooterLink>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12 border-t border-white/5 pt-24 mb-24">
+                    <FooterColumn title="Sitemap">
+                        <FooterLink href="/assistant">AI Assistant</FooterLink>
+                        <FooterLink href="/marketplace">Find a Lawyer</FooterLink>
+                        <FooterLink href="/nyaycourt-simulator">NyayCourt Simulator <Badge color="bg-emerald-500/10 text-emerald-400">New</Badge></FooterLink>
+                        <FooterLink href="/nyayvoice">NyayVoice <Badge color="bg-blue-500/10 text-blue-400">Live</Badge></FooterLink>
                     </FooterColumn>
 
-                    <FooterColumn title="Enterprise">
-                        <FooterLink href="/drafting">Drafting Lab</FooterLink>
-                        <FooterLink href="/agreements">Quantum Vault</FooterLink>
-                        <FooterLink href="/compliances">Compliance Hub <Badge color="bg-white/5 text-slate-500">v2</Badge></FooterLink>
-                        <FooterLink href="/analytics">Court Analytics</FooterLink>
-                    </FooterColumn>
-
-                    <FooterColumn title="Access">
-                        <FooterLink href="/login">Portal Login</FooterLink>
-                        <FooterLink href="/register">Institutional Access</FooterLink>
-                        <FooterLink href="/assistant">Legal Intelligence</FooterLink>
-                    </FooterColumn>
-
-                    <FooterColumn title="Foundation">
-                        <FooterLink href="/about">Our Vision</FooterLink>
-                        <FooterLink href="/contact">Support</FooterLink>
-                        <FooterLink href="/terms">Terms of Service</FooterLink>
-                    </FooterColumn>
-
-                    <FooterColumn title="Compliance">
+                    <FooterColumn title="Security & Compliance">
+                        <FooterLink href="/security-and-compliance">Security & Compliance</FooterLink>
+                        <FooterLink href="/methodology">Our Methodology</FooterLink>
                         <FooterLink href="/privacy">Privacy Policy</FooterLink>
+                        <FooterLink href="/terms">Terms of Service</FooterLink>
                         <FooterLink href="/disclaimer">Disclaimer</FooterLink>
                         <FooterLink href="/refund">Refund Policy</FooterLink>
+                    </FooterColumn>
+
+                    <FooterColumn title="Company">
+                        <FooterLink href="/case-studies">Case Studies</FooterLink>
+                        <FooterLink href="/press">Press</FooterLink>
+                        <FooterLink href="/careers">Careers</FooterLink>
+                        <FooterLink href="/contact">Contact Support</FooterLink>
                     </FooterColumn>
                 </div>
 
@@ -140,10 +130,6 @@ const Footer = () => {
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
-                        <div className="flex items-center gap-2 group cursor-default">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                            <span className="group-hover:text-emerald-500 transition-colors uppercase">ISO 27001 Certified</span>
-                        </div>
                         <div className="flex items-center gap-2 group cursor-default">
                             <ShieldCheck size={14} className="text-slate-500 group-hover:text-blue-500 transition-colors" />
                             <span className="group-hover:text-blue-500 transition-colors uppercase">AES-256 Encrypted</span>

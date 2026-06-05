@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, MapPin, ShieldCheck, Filter } from "lucide-react"
+import { Search, MapPin, ShieldCheck, Filter, X, HelpCircle, CheckCircle } from "lucide-react"
 import Image from "next/image"
 import VerifiedBadge from "../VerifiedBadge"
 
@@ -15,11 +15,29 @@ export default function MarketplaceClient({ initialLawyers }) {
     const [selectedSpecialization, setSelectedSpecialization] = useState([])
     const [selectedLocation, setSelectedLocation] = useState([])
     const [selectedExperience, setSelectedExperience] = useState([])
+    const [selectedLanguage, setSelectedLanguage] = useState([])
+    const [selectedBudget, setSelectedBudget] = useState([])
+    
+    // Verification criteria modal state
+    const [showVerificationModal, setShowVerificationModal] = useState(false)
 
     // Derive Filters
     const specializations = useMemo(() => [...new Set(lawyers.map(l => l.specialization).filter(Boolean))], [lawyers])
     const locations = useMemo(() => [...new Set(lawyers.map(l => l.location?.city || l.city).filter(Boolean))], [lawyers])
     const experienceLevels = ["0-5 Years", "5-10 Years", "10+ Years"]
+    
+    const languagesList = useMemo(() => {
+        const allLangs = lawyers.reduce((acc, l) => {
+            if (l.languages && Array.isArray(l.languages)) {
+                return [...acc, ...l.languages]
+            }
+            return acc
+        }, [])
+        const unique = [...new Set(allLangs)].filter(Boolean)
+        return unique.length > 0 ? unique : ["English", "Hindi", "Tamil", "Bengali", "Telugu", "Marathi"]
+    }, [lawyers])
+
+    const budgetBands = ["Free Consultation", "Under ₹1,000/hr", "₹1,000 - ₹5,000/hr", "Above ₹5,000/hr"]
 
     // Filter Logic
     const filteredLawyers = useMemo(() => {
@@ -46,13 +64,38 @@ export default function MarketplaceClient({ initialLawyers }) {
                 if (!matchesExp) return false
             }
 
+            if (selectedLanguage.length > 0) {
+                const lawyerLangs = lawyer.languages || ["English"]
+                const matchesLang = selectedLanguage.some(lang => lawyerLangs.includes(lang))
+                if (!matchesLang) return false
+            }
+
+            if (selectedBudget.length > 0) {
+                const rate = lawyer.consultationFee || lawyer.hourlyRate || 0
+                const matchesBudget = selectedBudget.some(band => {
+                    if (band === "Free Consultation") return rate === 0
+                    if (band === "Under ₹1,000/hr") return rate > 0 && rate < 1000
+                    if (band === "₹1,000 - ₹5,000/hr") return rate >= 1000 && rate <= 5000
+                    if (band === "Above ₹5,000/hr") return rate > 5000
+                    return false
+                })
+                if (!matchesBudget) return false
+            }
+
             return true
         })
-    }, [lawyers, searchQuery, selectedSpecialization, selectedLocation, selectedExperience])
+    }, [lawyers, searchQuery, selectedSpecialization, selectedLocation, selectedExperience, selectedLanguage, selectedBudget])
 
     const toggleFilter = (setFn, value) => {
         setFn(prev => prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value])
     }
+
+    const hasAnyActiveFilters = 
+        selectedSpecialization.length > 0 || 
+        selectedLocation.length > 0 || 
+        selectedExperience.length > 0 || 
+        selectedLanguage.length > 0 || 
+        selectedBudget.length > 0;
 
     return (
         <div className="container mx-auto px-6 -mt-10 relative z-20">
@@ -60,7 +103,7 @@ export default function MarketplaceClient({ initialLawyers }) {
             <div className="max-w-3xl mx-auto relative group mb-20 -translate-y-1/2">
                 <div className="absolute inset-0 bg-indigo-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500"></div>
                 <div className="relative flex items-center bg-[#1e293b]/80 border border-white/10 rounded-2xl p-2 shadow-2xl backdrop-blur-md">
-                    <Search className="text-slate-500 ml-4" />
+                    <Search className="text-slate-500 ml-4" aria-hidden="true" />
                     <input
                         type="text"
                         value={searchQuery}
@@ -78,22 +121,47 @@ export default function MarketplaceClient({ initialLawyers }) {
             </div>
 
             <div className="grid grid-cols-12 gap-8">
-                <div className="col-span-3 hidden lg:block">
-                    <div className="bg-[#0f172a] rounded-2xl p-6 shadow-xl border border-white/10 sticky top-28 text-left backdrop-blur-md">
-                        <div className="flex items-center justify-between mb-6 text-white font-bold">
-                            <div className="flex items-center gap-2"><Filter size={18} /> Filters</div>
-                            {(selectedSpecialization.length > 0 || selectedLocation.length > 0 || selectedExperience.length > 0) && (
-                                <button onClick={() => { setSelectedSpecialization([]); setSelectedLocation([]); setSelectedExperience([]); }} className="text-[10px] text-indigo-400 hover:text-white transition uppercase tracking-wider">Reset</button>
+                {/* SIDEBAR FILTERS */}
+                <div className="col-span-12 lg:col-span-3">
+                    <div className="bg-[#0f172a] rounded-2xl p-6 shadow-xl border border-white/10 sticky top-28 text-left backdrop-blur-md space-y-6">
+                        <div className="flex items-center justify-between text-white font-bold pb-2 border-b border-white/5">
+                            <div className="flex items-center gap-2"><Filter size={18} aria-hidden="true" /> Filters</div>
+                            {hasAnyActiveFilters && (
+                                <button 
+                                    onClick={() => { 
+                                        setSelectedSpecialization([]); 
+                                        setSelectedLocation([]); 
+                                        setSelectedExperience([]); 
+                                        setSelectedLanguage([]); 
+                                        setSelectedBudget([]); 
+                                    }} 
+                                    className="text-[10px] text-indigo-400 hover:text-white transition uppercase tracking-wider"
+                                >
+                                    Reset
+                                </button>
                             )}
                         </div>
                         <div className="space-y-6">
                             <FilterSection title="Practice Area" options={specializations} selected={selectedSpecialization} toggle={(val) => toggleFilter(setSelectedSpecialization, val)} />
                             <FilterSection title="Location" options={locations} selected={selectedLocation} toggle={(val) => toggleFilter(setSelectedLocation, val)} />
                             <FilterSection title="Experience" options={experienceLevels} selected={selectedExperience} toggle={(val) => toggleFilter(setSelectedExperience, val)} />
+                            <FilterSection title="Languages" options={languagesList} selected={selectedLanguage} toggle={(val) => toggleFilter(setSelectedLanguage, val)} />
+                            <FilterSection title="Budget Band" options={budgetBands} selected={selectedBudget} toggle={(val) => toggleFilter(setSelectedBudget, val)} />
+                        </div>
+
+                        {/* VERIFICATION CRITERIA LINK */}
+                        <div className="pt-4 border-t border-white/5">
+                            <button
+                                onClick={() => setShowVerificationModal(true)}
+                                className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-500/5 hover:bg-indigo-500/10 text-indigo-400 border border-indigo-500/10 rounded-xl text-xs font-bold transition-all"
+                            >
+                                <HelpCircle size={14} aria-hidden="true" /> What verification means
+                            </button>
                         </div>
                     </div>
                 </div>
 
+                {/* LAWYER CARDS GRID */}
                 <div className="col-span-12 lg:col-span-9">
                     {filteredLawyers.length === 0 ? (
                         <div className="text-center py-20 text-slate-500 italic bg-[#0f172a] rounded-2xl border border-white/10">
@@ -112,6 +180,78 @@ export default function MarketplaceClient({ initialLawyers }) {
                     )}
                 </div>
             </div>
+
+            {/* VERIFICATION EXPLAINER MODAL */}
+            <AnimatePresence>
+                {showVerificationModal && (
+                    <div className="fixed inset-0 bg-[#020617]/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-[#0f172a] border border-white/10 rounded-3xl p-8 w-full max-w-lg shadow-2xl relative"
+                        >
+                            <button 
+                                onClick={() => setShowVerificationModal(false)}
+                                className="absolute top-5 right-5 text-slate-500 hover:text-white transition"
+                                aria-label="Close Verification Info Modal"
+                            >
+                                <X size={20} aria-hidden="true" />
+                            </button>
+
+                            <div className="flex items-center gap-3 mb-6">
+                                <ShieldCheck className="text-indigo-400" size={28} aria-hidden="true" />
+                                <h3 className="text-2xl font-bold text-white tracking-tight">NyayNow Advocate Verification</h3>
+                            </div>
+
+                            <div className="space-y-6 text-sm text-slate-300 leading-relaxed">
+                                <p>
+                                    Every lawyer carrying the <strong className="text-indigo-400">Verified Badge</strong> on NyayNow has completed our rigorous compliance check to ensure authentic representation:
+                                </p>
+
+                                <div className="space-y-4">
+                                    <div className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <CheckCircle size={16} aria-hidden="true" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-white text-sm">Bar Registration Checks</h4>
+                                            <p className="text-xs text-slate-400 mt-1">Cross-referenced with the Bar Council of India (BCI) database and respective State Bar Councils to verify enrollment validity.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <CheckCircle size={16} aria-hidden="true" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-white text-sm">Identity & Credentials Auditing</h4>
+                                            <p className="text-xs text-slate-400 mt-1">DigiLocker integration verifies Aadhaar, digital COP (Certificate of Practice) card credentials, and professional identity markers.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <CheckCircle size={16} aria-hidden="true" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-white text-sm">Annual Renewal Schedule</h4>
+                                            <p className="text-xs text-slate-400 mt-1">Enrollment states and certifications are dynamically audited annually. Disciplinary cases result in immediate suspension.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={() => setShowVerificationModal(false)}
+                                className="w-full mt-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/20 text-xs uppercase tracking-wider"
+                            >
+                                Understood
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }
@@ -126,7 +266,7 @@ function FilterSection({ title, options, selected, toggle }) {
                     <label key={option} className="flex items-center gap-3 cursor-pointer group">
                         <input type="checkbox" className="hidden" onChange={() => toggle(option)} checked={selected.includes(option)} />
                         <div className={`w-4 h-4 rounded border transition flex items-center justify-center ${selected.includes(option) ? 'bg-indigo-600 border-indigo-600' : 'bg-black/20 border-slate-600 group-hover:border-indigo-500'}`}>
-                            {selected.includes(option) && <div className="w-2 h-2 bg-white rounded-sm" />}
+                            {selected.includes(option) && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                         </div>
                         <span className={`text-sm transition ${selected.includes(option) ? 'text-white font-bold' : 'text-slate-400 group-hover:text-white'}`}>
                             {option}
@@ -157,7 +297,7 @@ function LawyerCard({ lawyer }) {
                         <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">{lawyer.name}</h3>
                         <p className="text-sm font-medium text-slate-500 mb-1">{lawyer.specialization || "Legal Consultant"}</p>
                         <div className="flex items-center gap-1 text-xs font-bold text-slate-500">
-                            <MapPin size={12} /> {lawyer.location?.city || lawyer.city || "Online"}
+                            <MapPin size={12} aria-hidden="true" /> {lawyer.location?.city || lawyer.city || "Online"}
                         </div>
                     </div>
                 </Link>
@@ -172,8 +312,14 @@ function LawyerCard({ lawyer }) {
                 </div>
                 <div>
                     <p className="uppercase font-bold text-slate-500 mb-1">Fee</p>
-                    <p className="font-bold text-white">₹{lawyer.hourlyRate || 500}/hr</p>
+                    <p className="font-bold text-white">₹{lawyer.consultationFee || lawyer.hourlyRate || 500}/hr</p>
                 </div>
+                {lawyer.languages && lawyer.languages.length > 0 && (
+                    <div>
+                        <p className="uppercase font-bold text-slate-500 mb-1">Languages</p>
+                        <p className="font-bold text-white truncate max-w-[120px]">{lawyer.languages.slice(0, 2).join(", ")}</p>
+                    </div>
+                )}
             </div>
             <div className="flex gap-3 text-sm font-bold">
                 <Link href={`/lawyer/${lawyer._id}`} className="flex-1 py-3 text-center rounded-lg bg-white/5 text-white hover:bg-indigo-600 transition border border-white/10">

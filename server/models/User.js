@@ -152,6 +152,31 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.pre("save", async function (next) {
+  if (this.isModified("role")) {
+    try {
+      const AuditLog = require("./AuditLog");
+      let oldRole = null;
+      if (!this.isNew) {
+        const doc = await mongoose.model("User").findById(this._id).select("role");
+        if (doc) oldRole = doc.role;
+      }
+      await AuditLog.create({
+        userId: this._id,
+        action: this.isNew ? "role_created" : "role_changed",
+        oldRole,
+        newRole: this.role,
+        timestamp: new Date()
+      });
+      console.log(`🔒 Audit Log: Role updated for ${this._id} from ${oldRole} to ${this.role}`);
+    } catch (err) {
+      console.error("❌ Failed to create role change audit log:", err.message);
+    }
+  }
+  next();
+});
+
+
 const { syncLawyer, deleteRecord } = require("../utils/algolia");
 
 // userSchema.post("save", function (doc) {

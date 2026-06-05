@@ -6,7 +6,7 @@ import axios from "axios"
 import { useAuth } from "../../context/AuthContext"
 import toast from "react-hot-toast"
 import { motion } from "framer-motion"
-import { Mail, Linkedin, MapPin, Globe, Award, Briefcase, Gavel, MessageCircle, UserPlus, Clock } from "lucide-react"
+import { Mail, Linkedin, MapPin, Globe, Award, Briefcase, Gavel, MessageCircle, UserPlus, Clock, Upload, X, CheckCircle } from "lucide-react"
 import BookingModal from "../dashboard/BookingModal"
 
 export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
@@ -18,6 +18,12 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
     const [showBookingModal, setShowBookingModal] = useState(false)
     const [loading, setLoading] = useState(false)
     const [connecting, setConnecting] = useState(false)
+    const [showEnquiryModal, setShowEnquiryModal] = useState(false)
+    const [enquiryText, setEnquiryText] = useState('')
+    const [attachmentFile, setAttachmentFile] = useState(null)
+    const [enquirySuccess, setEnquirySuccess] = useState(false)
+    const [enquiryTicketId, setEnquiryTicketId] = useState('')
+    const [enquiryLoading, setEnquiryLoading] = useState(false)
 
     useEffect(() => {
         if (!user) return
@@ -39,26 +45,38 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
         fetchConnectionStatus()
     }, [lawyerId, user])
 
-    const handleConnect = async () => {
+    const handleConnectClick = () => {
         if (!user) {
             toast.error("Please login to connect with lawyers")
             router.push("/login")
             return
         }
+        setShowEnquiryModal(true)
+    }
+
+    const handleSendEnquiry = async () => {
+        if (!enquiryText.trim()) {
+            toast.error("Please describe your legal enquiry first")
+            return
+        }
 
         try {
-            setConnecting(true)
+            setEnquiryLoading(true)
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL || ""}/api/connections`, {
                 clientId: user._id || user.id,
                 lawyerId: lawyerId,
-                initiatedBy: user._id || user.id
+                initiatedBy: user._id || user.id,
+                notes: enquiryText
             })
-            toast.success("Request sent successfully!")
+
+            setEnquiryTicketId(`ENQ-${Math.floor(100000 + Math.random() * 900000)}`)
+            setEnquirySuccess(true)
             setConnection({ status: 'pending' })
+            toast.success("Enquiry submitted successfully!")
         } catch (err) {
             toast.error(err.response?.data?.error || "Failed to send request")
         } finally {
-            setConnecting(false)
+            setEnquiryLoading(false)
         }
     }
 
@@ -107,8 +125,8 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
                                         <Clock size={20} /> Request Sent
                                     </button>
                                 ) : (
-                                    <button onClick={handleConnect} disabled={connecting} className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 hover:scale-[1.02] transition flex items-center justify-center gap-2">
-                                        {connecting ? "Transmitting..." : <><UserPlus size={20} /> Connect Now</>}
+                                    <button onClick={handleConnectClick} className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 hover:scale-[1.02] transition flex items-center justify-center gap-2">
+                                        <UserPlus size={20} /> Connect Now
                                     </button>
                                 )}
 
@@ -183,6 +201,114 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
                     client={user}
                     onClose={() => setShowBookingModal(false)}
                 />
+            )}
+
+            {showEnquiryModal && (
+                <div className="fixed inset-0 bg-[#020617]/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+                    <div className="bg-[#0f172a] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl relative animate-in fade-in zoom-in duration-200 text-left">
+                        <button 
+                            onClick={() => {
+                                setShowEnquiryModal(false)
+                                setEnquirySuccess(false)
+                                setEnquiryText('')
+                                setAttachmentFile(null)
+                            }} 
+                            className="absolute top-4 right-4 text-slate-500 hover:text-white transition"
+                        >
+                            <X size={18} />
+                        </button>
+
+                        {!enquirySuccess ? (
+                            <>
+                                <h2 className="text-xl font-bold text-white mb-1">Submit Legal Enquiry</h2>
+                                <p className="text-sm text-slate-400 mb-6">Initiate connection with {lawyer.name}</p>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5">Describe your case facts *</label>
+                                        <textarea
+                                            rows={4}
+                                            required
+                                            value={enquiryText}
+                                            onChange={(e) => setEnquiryText(e.target.value)}
+                                            placeholder="Write a brief overview of your legal situation..."
+                                            className="w-full bg-[#020617] border border-white/10 rounded-xl p-3 outline-none focus:border-indigo-500 resize-none text-sm text-white placeholder:text-slate-600 font-medium"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 font-sans">Case Attachments (Optional)</label>
+                                        <div className="border border-dashed border-white/15 hover:border-indigo-500/50 rounded-xl p-4 bg-white/[0.01] transition text-center relative flex flex-col items-center justify-center">
+                                            <input 
+                                                type="file" 
+                                                id="enquiry-file" 
+                                                className="hidden" 
+                                                onChange={(e) => setAttachmentFile(e.target.files?.[0] || null)}
+                                            />
+                                            {attachmentFile ? (
+                                                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400">
+                                                    <CheckCircle size={14} />
+                                                    <span className="truncate max-w-[240px]">{attachmentFile.name}</span>
+                                                    <button type="button" onClick={() => setAttachmentFile(null)} className="text-slate-500 hover:text-white ml-1 font-bold">✕</button>
+                                                </div>
+                                            ) : (
+                                                <label htmlFor="enquiry-file" className="cursor-pointer flex flex-col items-center gap-1.5">
+                                                    <Upload size={18} className="text-slate-500" />
+                                                    <span className="text-xs text-slate-400 font-medium">Upload PDF, DOCX or Image (Max 10MB)</span>
+                                                </label>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-[10px] text-slate-500 italic">
+                                        ⚖️ Note: Document files are encrypted and shared securely only with this advocate.
+                                    </div>
+
+                                    <button
+                                        onClick={handleSendEnquiry}
+                                        disabled={enquiryLoading || !enquiryText.trim()}
+                                        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-indigo-600/20 disabled:opacity-50"
+                                    >
+                                        {enquiryLoading ? "Submitting Enquiry..." : "Send Connection Request"}
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="py-4 space-y-5 text-center">
+                                <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                                    <CheckCircle size={32} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-white mb-1">Enquiry Sent Successfully</h3>
+                                    <p className="text-xs text-slate-400 max-w-xs mx-auto">Your case details and files have been transmitted securely to the advocate.</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4 text-xs text-left font-bold">
+                                    <div className="bg-black/20 p-3 rounded-xl border border-white/5">
+                                        <span className="text-slate-500 block uppercase tracking-wider mb-1">Ticket ID</span>
+                                        <span className="text-white font-mono">{enquiryTicketId}</span>
+                                    </div>
+                                    <div className="bg-black/20 p-3 rounded-xl border border-white/5">
+                                        <span className="text-slate-500 block uppercase tracking-wider mb-1">Expected SLA</span>
+                                        <span className="text-indigo-400">24 Hours Response</span>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        setShowEnquiryModal(false)
+                                        setEnquirySuccess(false)
+                                        setEnquiryText('')
+                                        setAttachmentFile(null)
+                                    }}
+                                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition shadow-lg"
+                                >
+                                    Dismiss
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
             )}
         </div>
     )

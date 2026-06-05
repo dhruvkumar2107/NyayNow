@@ -42,12 +42,12 @@ export default function HeroSection() {
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-3xl md:text-6xl lg:text-[85px] font-bold text-white mb-8 leading-[1.1] tracking-[-0.04em]"
+                        className="text-3xl md:text-6xl lg:text-[75px] font-bold text-white mb-8 leading-[1.15] tracking-[-0.04em]"
                     >
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">
-                             Expert Legal Help <br />
+                             Instant legal answers in your language. <br />
                         </span>
-                        <span className="text-shimmer italic inline-block mt-4">In Your Language.</span>
+                        <span className="text-shimmer italic inline-block mt-4">Connect with verified lawyers.</span>
                     </motion.h1>
 
                     <motion.div
@@ -56,8 +56,8 @@ export default function HeroSection() {
                         transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
                         className="max-w-3xl mx-auto space-y-6"
                     >
-                        <p className="text-lg md:text-2xl text-slate-400 font-medium leading-relaxed tracking-tight">
-                            Find case law, draft professional legal notices, and connect with expert lawyers — quickly and affordably. NyayNow bridges the gap between legalese and your fundamental rights.
+                        <p className="text-lg md:text-xl text-slate-400 font-medium leading-relaxed tracking-tight">
+                            Ask questions, draft documents, and prep arguments with AI trained on India’s new legal codes.
                         </p>
                         <p className="text-blue-400/80 text-[10px] font-black uppercase tracking-[0.4em] pb-4">
                             Grounded in Real-Time Supreme Court & High Court Data
@@ -74,12 +74,10 @@ export default function HeroSection() {
                 >
                     <MagneticButton>
                         <Link
-                            href={!user ? "/register" : "/client/dashboard"}
+                            href="/assistant"
                             className="group relative w-full sm:w-auto px-10 py-5 rounded-2xl bg-white text-[#020617] font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_20px_40px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2 overflow-hidden"
                         >
-                            <span className="relative z-10">
-                                {!user ? "Enter System" : "Command Center"}
-                            </span>
+                            <span className="relative z-10">Try AI free</span>
                             <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                         </Link>
@@ -87,17 +85,23 @@ export default function HeroSection() {
 
                     <MagneticButton>
                         <Link
-                            href="/legal-sos"
-                            className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-[#0F172A] border border-white/10 text-white font-bold text-lg hover:bg-white/5 hover:border-red-500/50 transition-all duration-300 flex items-center justify-center gap-3 active:scale-[0.98] group"
+                            href="/marketplace"
+                            className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-[#0F172A] border border-white/10 text-white font-bold text-lg hover:bg-white/5 hover:border-blue-500/50 transition-all duration-300 flex items-center justify-center gap-3 active:scale-[0.98] group"
                         >
-                            <div className="relative flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
-                            </div>
-                            <span>Activate Legal SOS</span>
+                            <span>Find a lawyer</span>
                         </Link>
                     </MagneticButton>
                 </motion.div>
+
+                {/* MICRO-TRUST LINE */}
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1, delay: 0.8 }}
+                    className="text-slate-500 text-xs mt-6 font-medium"
+                >
+                    AI guidance, not legal advice. Verified advocates available.
+                </motion.p>
 
                 {/* TRUST & PARTNERS ROW */}
                 <motion.div
@@ -132,11 +136,6 @@ export default function HeroSection() {
                     <div className="flex items-center gap-2 group cursor-default hover:text-emerald-400 transition-colors">
                         <ShieldCheck size={12} />
                         <span>BCI Guidelines Compliant</span>
-                    </div>
-                    <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-slate-800" />
-                    <div className="flex items-center gap-2 group cursor-default hover:text-amber-400 transition-colors">
-                        <span className="text-sm leading-none italic font-serif">ISO</span>
-                        <span>27001 Certified System</span>
                     </div>
                 </motion.div>
             </div>

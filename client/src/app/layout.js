@@ -71,6 +71,7 @@ import EliteCursor from '../components/EliteCursor'
 import ScrollProgress from '../components/ScrollProgress'
 import CookieConsent from '../components/CookieConsent'
 import Footer from '../components/Footer'
+import OfflineNotice from '../components/OfflineNotice'
 
 export default function RootLayout({ children }) {
     const schemaMarkup = {
@@ -125,6 +126,7 @@ export default function RootLayout({ children }) {
                     <Toaster position="bottom-right" />
                     <AIAssistant />
                     <CookieConsent />
+                    <OfflineNotice />
                 </Providers>
             </body>
         </html>

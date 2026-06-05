@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { motion, AnimatePresence } from "framer-motion";
-import { UploadCloud, Shield } from "lucide-react";
+import { UploadCloud, Shield, Eye, EyeOff, ShieldCheck } from "lucide-react";
 
 const INDIAN_CITIES = [
   "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata", "Pune", "Jaipur", "Surat",
@@ -36,21 +36,39 @@ export default function Register() {
     specialization: "",
     experience: "",
     barCouncilId: "",
-    // NEW FIELDS
     isStudent: false,
     studentRollNumber: "",
     verified: false,
-    consent: false,
+    consentTerms: false,
+    consentPrivacy: false,
+    consentMarketing: false,
     idCardImage: ""
   });
 
-
-  // Custom City Dropdown State
   const [selectedCity, setSelectedCity] = useState("");
   const [citySearch, setCitySearch] = useState("");
   const [showCityDropdown, setShowCityDropdown] = useState(false);
-
   const [loading, setLoading] = useState(false);
+
+  // Password Visibility Toggle
+  const [showPassword, setShowPassword] = useState(false);
+
+  // OTP State
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpCooldown, setOtpCooldown] = useState(0);
+  const [otpRetries, setOtpRetries] = useState(3);
+
+  // OTP Timer countdown
+  useEffect(() => {
+    if (otpCooldown > 0) {
+      const timer = setInterval(() => {
+        setOtpCooldown(prev => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [otpCooldown]);
 
   // Filter Cities
   const filteredCities = useMemo(() => {
@@ -61,13 +79,82 @@ export default function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Password Strength Evaluator
+  const passwordStrength = useMemo(() => {
+    const pwd = formData.password;
+    if (!pwd) return { score: 0, text: "", color: "bg-transparent" };
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd)) score++;
+    if (/[0-9]/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+    if (score <= 1) return { score, text: "Weak", color: "bg-red-500" };
+    if (score <= 3) return { score, text: "Medium", color: "bg-yellow-500" };
+    return { score, text: "Strong", color: "bg-emerald-500" };
+  }, [formData.password]);
+
+  // Send OTP Function
+  const handleSendOTP = async () => {
+    if (!PHONE_REGEX.test(formData.phone)) {
+      return toast.error("Invalid Indian Phone Number. Please check format.");
+    }
+    if (otpRetries <= 0) {
+      return toast.error("Too many OTP requests. Please wait or contact support.");
+    }
+
+    setLoading(true);
+    try {
+      // Simulate/trigger server OTP endpoint
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+      await axios.post(`${apiUrl}/whatsapp/send-otp`, { phone: formData.phone });
+      
+      setOtpSent(true);
+      setOtpCooldown(60);
+      setOtpRetries(prev => prev - 1);
+      toast.success("OTP verification code sent to your phone.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to send OTP code. Please retry.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Verify OTP Function
+  const handleVerifyOTP = async () => {
+    if (!otpCode || otpCode.length < 4) {
+      return toast.error("Please enter a valid OTP code.");
+    }
+    setLoading(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+      const res = await axios.post(`${apiUrl}/whatsapp/verify-otp`, { 
+        phone: formData.phone,
+        code: otpCode
+      });
+      if (res.data.success) {
+        setOtpVerified(true);
+        toast.success("Phone verified successfully!");
+      } else {
+        toast.error("Invalid OTP code.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("OTP verification failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleRegister = async () => {
-    const { name, email, password, confirmPassword, phone, role, specialization, experience, barCouncilId, age, sex } = formData;
+    const { name, email, password, confirmPassword, phone, role } = formData;
 
     if (!name || !email || !password || !phone) return toast.error("Please fill all required fields");
     if (password !== confirmPassword) return toast.error("Passwords do not match");
-    if (!formData.consent) return toast.error("Please acknowledge the legal disclosure to continue.");
-    if (!PHONE_REGEX.test(phone)) return toast.error("Invalid Indian Phone Number");
+    if (!formData.consentTerms) return toast.error("Please accept the Terms of Service to continue.");
+    if (!formData.consentPrivacy) return toast.error("Please agree to the Privacy Policy to continue.");
+    if (!otpVerified) return toast.error("Please verify your phone number via OTP first.");
 
     if (role === "lawyer") {
       if (!selectedCity && !formData.location) return toast.error("Please select a city");
@@ -106,7 +193,9 @@ export default function Register() {
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
-    if (!formData.consent) return toast.error("Please acknowledge the legal disclosure to continue.");
+    if (!formData.consentTerms || !formData.consentPrivacy) {
+      return toast.error("Please accept the Terms and Privacy Policy before continuing with Google.");
+    }
     setLoading(true);
     try {
       const res = await axios.post("/api/auth/google", {
@@ -131,13 +220,10 @@ export default function Register() {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1505664194779-8beaceb9300d?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-midnight-950/90 via-midnight-950/80 to-midnight-900/40"></div>
 
-        {/* Animated Gold Orbs */}
         <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-gold-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-royal-600/20 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="relative z-10">
-          {/* LOGO REMOVED TO PREVENT DUPLICATION WITH GLOBAL NAVBAR */}
-        </div>
+        <div className="relative z-10"></div>
 
         <div className="relative z-10 space-y-6 max-w-2xl">
           <h1 className="text-6xl font-display font-bold leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 drop-shadow-sm">
@@ -160,48 +246,171 @@ export default function Register() {
 
       {/* RIGHT: FORM */}
       <div className="flex flex-col justify-center p-6 lg:p-12 bg-midnight-900 relative overflow-hidden">
-        {/* Mobile Background Texture */}
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none"></div>
 
         <div className="w-full max-w-xl mx-auto space-y-8 relative z-10 my-10">
-
           <div className="text-center lg:text-left">
             <h2 className="text-3xl font-display font-bold text-white">Create Account</h2>
             <p className="text-slate-400 text-sm mt-1">Access enterprise-grade legal artificial intelligence.</p>
           </div>
 
-          {/* ROLE SELECTION TOGGLE */}
-          <div className="flex p-1 bg-midnight-950/50 rounded-2xl border border-white/5 backdrop-blur-sm shadow-inner">
-            <button
-                type="button"
-                onClick={() => setFormData({ ...formData, role: 'client' })}
-                className={`flex-1 py-3 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 ${formData.role === 'client' ? 'bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 shadow-lg shadow-gold-500/20' : 'text-slate-500 hover:text-slate-300'}`}
-            >
-                Individual / Client
-            </button>
-            <button
-                type="button"
-                onClick={() => setFormData({ ...formData, role: 'lawyer' })}
-                className={`flex-1 py-3 text-xs font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500 ${formData.role === 'lawyer' ? 'bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 shadow-lg shadow-gold-500/20' : 'text-slate-500 hover:text-slate-300'}`}
-            >
-                Legal Professional
-            </button>
+          {/* GOOGLE SIGN IN ABOVE EMAIL FORM */}
+          <div className="space-y-4">
+            <div className="relative flex justify-center w-max mx-auto">
+              {(!formData.consentTerms || !formData.consentPrivacy) && (
+                <div 
+                  className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer rounded bg-black/75 backdrop-blur-sm border border-white/10 hover:border-gold-500/50 transition-all"
+                  onClick={() => toast.error("Accept the Terms & Privacy checkboxes first", { icon: "👆" })}
+                >
+                  <span className="text-[10px] font-black text-white px-3 py-1 uppercase tracking-widest text-center">Accept Consent Checkboxes First</span>
+                </div>
+              )}
+              <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} />
+            </div>
+
+            <div className="relative py-2">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+              <div className="relative flex justify-center text-xs uppercase font-bold text-slate-500 bg-[#0f172a] px-4">Or sign up with email</div>
+            </div>
           </div>
 
-
+          {/* ROLE SELECTION (Semantic HTML5 Radio Buttons) */}
+          <div className="space-y-3">
+            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Select Account Type</label>
+            <div className="flex gap-4">
+              <label className={`flex-1 flex items-center justify-center gap-3 py-4 px-6 rounded-2xl border cursor-pointer transition-all duration-300 ${formData.role === 'client' ? 'bg-gold-500/10 border-gold-500 text-gold-400' : 'bg-white/5 border-white/5 text-slate-500 hover:text-slate-300'}`}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="client"
+                  checked={formData.role === 'client'}
+                  onChange={() => setFormData({ ...formData, role: 'client' })}
+                  className="w-4 h-4 text-gold-500 border-white/10 bg-white/5 focus:ring-gold-500/50"
+                />
+                <span className="text-xs font-black uppercase tracking-wider select-none">Client / Individual</span>
+              </label>
+              
+              <label className={`flex-1 flex items-center justify-center gap-3 py-4 px-6 rounded-2xl border cursor-pointer transition-all duration-300 ${formData.role === 'lawyer' ? 'bg-gold-500/10 border-gold-500 text-gold-400' : 'bg-white/5 border-white/5 text-slate-500 hover:text-slate-300'}`}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="lawyer"
+                  checked={formData.role === 'lawyer'}
+                  onChange={() => setFormData({ ...formData, role: 'lawyer' })}
+                  className="w-4 h-4 text-gold-500 border-white/10 bg-white/5 focus:ring-gold-500/50"
+                />
+                <span className="text-xs font-black uppercase tracking-wider select-none">Legal Advocate</span>
+              </label>
+            </div>
+          </div>
 
           <form onSubmit={(e) => { e.preventDefault(); handleRegister(); }} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <InputGroup label="Full Name" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" />
-              <InputGroup label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} placeholder="+91 98765 43210" />
+              <InputGroup label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="john@example.com" />
             </div>
 
-            <InputGroup label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="john@example.com" />
+            {/* PHONE & OTP VERIFICATION */}
+            <div className="space-y-2">
+              <div className="flex gap-4 items-end">
+                <div className="flex-1">
+                  <InputGroup 
+                    label="Phone Number" 
+                    name="phone" 
+                    value={formData.phone} 
+                    onChange={handleChange} 
+                    placeholder="+91 98765 43210" 
+                    disabled={otpVerified}
+                  />
+                </div>
+                {!otpVerified && (
+                  <button
+                    type="button"
+                    onClick={handleSendOTP}
+                    disabled={loading || otpCooldown > 0}
+                    className="px-6 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-xs uppercase tracking-wider rounded-xl disabled:opacity-50"
+                  >
+                    {otpCooldown > 0 ? `Retry (${otpCooldown}s)` : "Send OTP"}
+                  </button>
+                )}
+              </div>
 
+              {otpSent && !otpVerified && (
+                <div className="flex gap-4 items-end p-4 bg-white/5 rounded-2xl border border-white/5">
+                  <div className="flex-1">
+                    <InputGroup 
+                      label="Enter OTP Code" 
+                      name="otpCode" 
+                      value={otpCode} 
+                      onChange={(e) => setOtpCode(e.target.value)} 
+                      placeholder="XXXX" 
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleVerifyOTP}
+                    disabled={loading}
+                    className="px-6 py-3.5 bg-gold-500 hover:bg-gold-600 text-midnight-950 font-bold text-xs uppercase tracking-wider rounded-xl"
+                  >
+                    Verify OTP
+                  </button>
+                </div>
+              )}
+
+              {otpVerified && (
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 px-1">
+                  <ShieldCheck size={14} /> Phone verified successfully
+                </div>
+              )}
+            </div>
+
+            {/* PASSWORD WITH VISIBILITY TOGGLE */}
             <div className="grid grid-cols-2 gap-4">
-              <InputGroup label="Password" type="password" name="password" value={formData.password} onChange={handleChange} placeholder="••••••••" />
-              <InputGroup label="Confirm Password" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="••••••••" />
+              <div className="relative">
+                <InputGroup 
+                  label="Password" 
+                  type={showPassword ? "text" : "password"} 
+                  name="password" 
+                  value={formData.password} 
+                  onChange={handleChange} 
+                  placeholder="••••••••" 
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-[34px] text-slate-500 hover:text-slate-300"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+
+              <InputGroup 
+                label="Confirm Password" 
+                type="password" 
+                name="confirmPassword" 
+                value={formData.confirmPassword} 
+                onChange={handleChange} 
+                placeholder="••••••••" 
+              />
             </div>
+
+            {/* Password Strength Indicator */}
+            {formData.password && (
+              <div className="space-y-1.5 px-1">
+                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider">
+                  <span className="text-slate-500">Password Strength</span>
+                  <span className={passwordStrength.score >= 3 ? "text-emerald-400" : passwordStrength.score >= 2 ? "text-yellow-500" : "text-red-500"}>
+                    {passwordStrength.text}
+                  </span>
+                </div>
+                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                  <div 
+                    className={`h-full transition-all duration-300 ${passwordStrength.color}`}
+                    style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
             {/* LAWYER SPECIFIC FIELDS */}
             <AnimatePresence>
@@ -236,7 +445,6 @@ export default function Register() {
                         <div className="relative h-24 rounded-xl border-2 border-dashed border-white/10 bg-white/5 flex flex-col items-center justify-center hover:border-gold-500/30 transition-all cursor-pointer overflow-hidden">
                             <UploadCloud className="text-slate-600 mb-1" size={20} />
                             <span className="text-[10px] font-bold text-slate-500 uppercase">Upload Certificate</span>
-                            {/* Hidden actual file input or simulated for now as per previous structure */}
                             <input 
                                 type="file" 
                                 className="absolute inset-0 opacity-0 cursor-pointer" 
@@ -255,16 +463,43 @@ export default function Register() {
               )}
             </AnimatePresence>
 
+            {/* SPLIT REQUIRED CONSENT CHECKBOXES & OPTIONAL MARKETING */}
+            <div className="space-y-3 pt-3 border-t border-white/5">
+              <label className="flex items-start gap-3 cursor-pointer group select-none">
+                <input 
+                  type="checkbox" 
+                  checked={formData.consentTerms} 
+                  onChange={(e) => setFormData({ ...formData, consentTerms: e.target.checked })}
+                  className="w-4 h-4 mt-0.5 rounded border-slate-600 bg-white/5 text-gold-500 focus:ring-gold-500/30" 
+                />
+                <span className="text-[11px] leading-relaxed text-slate-400 group-hover:text-slate-200">
+                  I accept the <Link href="/terms" className="text-white hover:text-gold-400 underline font-bold">Terms of Service</Link> (Required)
+                </span>
+              </label>
 
+              <label className="flex items-start gap-3 cursor-pointer group select-none">
+                <input 
+                  type="checkbox" 
+                  checked={formData.consentPrivacy} 
+                  onChange={(e) => setFormData({ ...formData, consentPrivacy: e.target.checked })}
+                  className="w-4 h-4 mt-0.5 rounded border-slate-600 bg-white/5 text-gold-500 focus:ring-gold-500/30" 
+                />
+                <span className="text-[11px] leading-relaxed text-slate-400 group-hover:text-slate-200">
+                  I agree to the <Link href="/privacy" className="text-white hover:text-gold-400 underline font-bold">Privacy Policy</Link> (Required)
+                </span>
+              </label>
 
-            {/* LEGAL CONSENT CHECKBOX */}
-            <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10 group cursor-pointer hover:bg-white/10 transition-all mt-4" onClick={() => setFormData({ ...formData, consent: !formData.consent })}>
-              <div className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border flex items-center justify-center transition-all ${formData.consent ? 'bg-gold-500 border-gold-500' : 'border-slate-600'}`}>
-                {formData.consent && <span className="text-midnight-950 text-xs font-bold">✓</span>}
-              </div>
-              <p className="text-[11px] leading-relaxed text-slate-400 group-hover:text-slate-200 select-none">
-                I understand this is an <span className="text-white font-bold">AI tool for information</span> and does not create an <span className="text-white font-bold">Attorney-Client relationship</span>.
-              </p>
+              <label className="flex items-start gap-3 cursor-pointer group select-none">
+                <input 
+                  type="checkbox" 
+                  checked={formData.consentMarketing} 
+                  onChange={(e) => setFormData({ ...formData, consentMarketing: e.target.checked })}
+                  className="w-4 h-4 mt-0.5 rounded border-slate-600 bg-white/5 text-gold-500 focus:ring-gold-500/30" 
+                />
+                <span className="text-[11px] leading-relaxed text-slate-500 group-hover:text-slate-300">
+                  Send me product updates and legal newsletter offers (Optional)
+                </span>
+              </label>
             </div>
 
             <button type="submit" disabled={loading} className="w-full py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 font-bold text-lg rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition-all duration-300 active:scale-[0.98] disabled:opacity-70 mt-6 relative overflow-hidden group">
@@ -274,25 +509,6 @@ export default function Register() {
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition duration-300" />
             </button>
           </form>
-
-          <div className="relative py-2">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
-            <div className="relative flex justify-center text-xs uppercase font-bold text-slate-500 bg-[#0f172a] px-4 backdrop-blur-3xl">Or continue with</div>
-          </div>
-
-          <div className="relative flex justify-center w-max mx-auto">
-            {!formData.consent && (
-               <div 
-                className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer rounded bg-black/60 backdrop-blur-sm border border-white/20 hover:border-gold-500/50 transition-all"
-                onClick={() => toast.error("Please click the tick button above to accept terms before registering with Google", { icon: "👆", duration: 4000 })}
-              >
-                  <span className="text-[10px] font-bold text-white px-2 py-1 uppercase tracking-widest text-center leading-tight">Tick Consent<br/>First</span>
-              </div>
-            )}
-            <div className={`transition duration-300 ${formData.consent ? 'opacity-100' : 'opacity-80'}`}>
-              <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} />
-            </div>
-          </div>
 
           <div className="mt-8 pt-8 border-t border-white/10 text-center">
             <p className="text-slate-400 text-sm mb-4">Already have an account?</p>
@@ -311,7 +527,7 @@ function InputGroup({ label, ...props }) {
   return (
     <div className="space-y-1.5">
       <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">{label}</label>
-      <input className="glass-input w-full rounded-xl px-4 py-3 placeholder-slate-600 focus:ring-1 focus:ring-gold-500/50 transition duration-300" {...props} />
+      <input className="glass-input w-full rounded-xl px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-slate-600 focus:ring-1 focus:ring-gold-500/50 outline-none transition duration-300 disabled:opacity-50" {...props} />
     </div>
   );
 }
