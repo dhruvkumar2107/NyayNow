@@ -19,7 +19,8 @@ async function getLawyers() {
 
 export default async function sitemap() {
     const baseUrl = 'https://nyaynow.in'
-    const lawyers = await getLawyers()
+    const lawyersResult = await getLawyers()
+    const lawyers = Array.isArray(lawyersResult) ? lawyersResult : (Array.isArray(lawyersResult?.lawyers) ? lawyersResult.lawyers : [])
 
     const lawyerUrls = lawyers.map((lawyer) => ({
         url: `${baseUrl}/lawyer/${lawyer._id}`,
