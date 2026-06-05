@@ -6,10 +6,10 @@ const verifyToken = require("../middleware/authMiddleware");
 const User = require("../models/User");
 
 /* -------------------- RAZORPAY INIT -------------------- */
-const razorpay = new Razorpay({
+const razorpay = process.env.RZP_KEY_ID ? new Razorpay({
   key_id: process.env.RZP_KEY_ID,
   key_secret: process.env.RZP_KEY_SECRET
-});
+}) : null;
 
 // Health check to verify Keys on server startup
 if (!process.env.RZP_KEY_ID) {
@@ -44,6 +44,10 @@ router.post("/create-order", verifyToken, async (req, res) => {
       receipt: `receipt_${Date.now()}_${req.userId.substring(0, 5)}`,
       notes: { plan, email: user.email, userId: req.userId }
     };
+
+    if (!razorpay) {
+      return res.status(500).json({ error: "Razorpay payment integration is not configured on this server instance." });
+    }
 
     const order = await razorpay.orders.create(orderOptions);
 
@@ -99,15 +103,48 @@ router.post("/verify", verifyToken, async (req, res) => {
     // 1. Upgrade User
     // NOTE: We have removed automatic verification on payment to ensure BCI compliance
     // and avoid consumer fraud risk. Verification is now a manual administrative action.
-    const updateData = {
-      plan: plan.toLowerCase()
-    };
+    let updatedUser;
+    const isCreditPack = plan.toLowerCase().startsWith("credits_");
+    const isAppointment = plan.toLowerCase().startsWith("appointment_");
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.userId,
-      updateData,
-      { new: true }
-    );
+    if (isAppointment) {
+      const parts = plan.split("_");
+      const appointmentId = parts[1];
+      const Appointment = require("../models/Appointment");
+      const updatedApt = await Appointment.findByIdAndUpdate(
+        appointmentId,
+        {
+          paymentStatus: "paid",
+          status: "confirmed",
+          paymentId: razorpay_payment_id
+        },
+        { new: true }
+      );
+      if (!updatedApt) {
+        return res.status(404).json({ error: "Appointment not found" });
+      }
+      updatedUser = await User.findById(req.userId);
+    } else if (isCreditPack) {
+      const parts = plan.split("_");
+      const creditsToAdd = parseInt(parts[1]) || 0;
+      
+      const userObj = await User.findById(req.userId);
+      if (!userObj) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      userObj.credits = (userObj.credits || 0) + creditsToAdd;
+      updatedUser = await userObj.save();
+    } else {
+      const updateData = {
+        plan: plan.toLowerCase()
+      };
+      updatedUser = await User.findByIdAndUpdate(
+        req.userId,
+        updateData,
+        { new: true }
+      );
+    }
 
     if (!updatedUser) {
       return res.status(404).json({ error: "User not found" });

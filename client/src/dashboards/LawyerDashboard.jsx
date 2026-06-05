@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
@@ -43,12 +43,12 @@ import {
   BookOpen
 } from "lucide-react";
 
-const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000", { transports: ['websocket'] });
 
 export default function LawyerDashboard() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const socketRef = useRef(null);
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "board");
   const [leads, setLeads] = useState([]);
   const [acceptedCases, setAcceptedCases] = useState([]);
@@ -88,6 +88,13 @@ export default function LawyerDashboard() {
         .catch(err => null)
         .finally(() => setLoading(false));
 
+      // Lazy socket init — only when user is ready
+      const socket = io(
+        process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000",
+        { transports: ['websocket'], reconnectionAttempts: 3 }
+      );
+      socketRef.current = socket;
+
       socket.emit("join_room", uId);
       socket.emit("join_lawyer_pool");
 
@@ -107,11 +114,13 @@ export default function LawyerDashboard() {
             <div className="flex gap-2">
               <button
                 onClick={() => {
-                  socket.emit("accept_consult", {
-                    lawyerId: uId,
-                    clientId: payload.clientId,
-                    lawyerName: user.name
-                  });
+                  if (socketRef.current) {
+                    socketRef.current.emit("accept_consult", {
+                      lawyerId: uId,
+                      clientId: payload.clientId,
+                      lawyerName: user.name
+                    });
+                  }
                   toast.dismiss(t.id);
                 }}
                 className="bg-indigo-600 text-white px-3 py-1 rounded text-[10px] font-bold uppercase"
@@ -139,6 +148,8 @@ export default function LawyerDashboard() {
         socket.off("dashboard_alert");
         socket.off("incoming_lead");
         socket.off("consult_start");
+        socket.disconnect();
+        socketRef.current = null;
       }
     }
   }, [user]);
@@ -581,32 +592,35 @@ export default function LawyerDashboard() {
 
             {activeTab === 'leads' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                <h3 className="font-bold text-lg text-white mb-2">Available Professionals</h3>
-                {lawyers.map(lawyer => (
-                  <div key={lawyer._id} className="bg-[#0f172a] border border-white/10 rounded-2xl p-6 hover:shadow-lg hover:border-indigo-500/50 transition group relative overflow-hidden">
+                <h3 className="font-bold text-lg text-white mb-2">Legal Matter Lead Pool</h3>
+                {leads.map(lead => (
+                  <div key={lead._id} className="bg-[#0f172a] border border-white/10 rounded-2xl p-6 hover:shadow-lg hover:border-indigo-500/50 transition group relative overflow-hidden">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold">
-                          {lawyer.name?.[0]}
+                          ⚖️
                         </div>
                         <div>
-                          <h4 className="font-bold text-lg text-white group-hover:text-indigo-400 transition">{lawyer.name}</h4>
-                          <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{lawyer.specialization || "Legal Expert"}</p>
+                          <h4 className="font-bold text-lg text-white group-hover:text-indigo-400 transition">{lead.title}</h4>
+                          <span className="px-2.5 py-0.5 bg-indigo-500/10 text-indigo-400 rounded-full text-[10px] font-bold uppercase tracking-wider border border-indigo-500/20">
+                            {lead.category || "General"}
+                          </span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-white">₹{lawyer.consultationFee || "0"}/hr</div>
-                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{lawyer.location?.city || "Remote"}</span>
+                        <div className="text-lg font-bold text-white">{lead.budget ? `Budget: ${lead.budget}` : "Budget: Negotiable"}</div>
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{lead.location || "Remote"}</span>
                       </div>
                     </div>
-                    <p className="text-slate-400 text-sm mb-4 bg-black/20 p-3 rounded-lg border border-white/5 line-clamp-2">{lawyer.bio || "Secure professional profile data."}</p>
+                    <p className="text-slate-300 text-sm mb-4 bg-black/20 p-4 rounded-xl border border-white/5">{lead.desc || "No description provided."}</p>
                     <div className="flex gap-3">
-                      <button onClick={() => router.push(`/messages?chatId=${lawyer._id}`)} className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Connect</button>
-                      <button onClick={() => router.push(`/lawyer/${lawyer._id}`)} className="flex-1 bg-white/5 border border-white/10 text-slate-300 py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-white/10 transition">View Dossier</button>
+                      <button onClick={() => acceptLead(lead._id)} className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">
+                        Accept Lead & Contact Client
+                      </button>
                     </div>
                   </div>
                 ))}
-                {lawyers.length === 0 && <p className="text-center text-slate-500 py-10">No professional entities found in the vault.</p>}
+                {leads.length === 0 && <p className="text-center text-slate-500 py-10">No open legal matters found in the lead pool.</p>}
               </motion.div>
             )}
 

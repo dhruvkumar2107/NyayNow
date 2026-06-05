@@ -28,7 +28,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-indigo-500/30">
       <Helmet>
         <title>NyayNow | AI Legal Intelligence & Lawyer Marketplace</title>
-        <meta name="description" content="NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal advice and connect with expert lawyers." />
+        <meta name="description" content="NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal information and connect with expert lawyers." />
       </Helmet>
       {/* ══════════════════════════════════════════════════════
           NEW HERO ENTRANCE — "JUSTICE SHOULDN'T BE A LUXURY"

@@ -44,11 +44,19 @@ router.get("/", async (req, res) => {
             query.specialization = { $regex: category, $options: "i" };
         }
 
-        // REMOVED PLAN BOOSTER: BCI forbids paid/sponsored boosting.
-        // Sorting is now strictly by verification status and date joined.
+        // Sorting is by listing subscription (isFeatured), verification status and date joined.
+        const sortOptions = { isFeatured: -1, verified: -1, createdAt: -1 };
+
+        if (req.query.all === "true") {
+            const lawyers = await User.find(query)
+                .sort(sortOptions)
+                .select("-password -otp");
+            return res.json(lawyers);
+        }
+
         const pipeline = [
             { $match: query },
-            { $sort: { verified: -1, createdAt: -1 } },
+            { $sort: sortOptions },
             { $skip: (page - 1) * limit },
             { $limit: limit },
             { $project: { password: 0, otp: 0 } } // Clean up

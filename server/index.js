@@ -317,6 +317,8 @@ loadRoute("/api/posts", "./routes/posts");
 loadRoute("/api/topics", "./routes/topics");
 loadRoute("/api/appointments", "./routes/appointments"); // NEW
 loadRoute("/api/connections", "./routes/connections"); // FIXED: Missing Route
+loadRoute("/api/chats", "./routes/chats"); // NEW CHAT HISTORY PERSISTENCE
+loadRoute("/api/whatsapp", "./routes/whatsapp"); // NEW TWILIO WHATSAPP WEBHOOK
 loadRoute("/api/invoices", "./routes/invoices"); // NEW
 loadRoute("/api/crm", "./routes/crm"); // NEW
 loadRoute("/api/notifications", "./routes/notifications"); // NEW
@@ -423,7 +425,7 @@ if (fs.existsSync(clientDist)) {
 
       // DEFAULT META
       let title = "NyayNow | AI Legal Intelligence";
-      let description = "NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal advice and connect with expert lawyers.";
+      let description = "NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal information and connect with expert lawyers.";
       let ogImage = "https://nyaynow.com/og-image.jpg";
       let url = `https://nyaynow.in${req.originalUrl}`;
 
@@ -441,7 +443,7 @@ if (fs.existsSync(clientDist)) {
           // Fallback to default if DB fails or ID invalid
         }
       } else if (req.originalUrl === "/find-lawyers") {
-        title = "Lawyer Marketplace | Find Top Legal Experts - NyayNow";
+        title = "Lawyer Directory | Find Verified Advocates - NyayNow";
         description = "Browse and connect with verified lawyers across India. Filter by specialization, location, and experience.";
       } else if (req.originalUrl === "/assistant") {
         title = "AI Legal Assistant | Instant Legal Guidance - NyayNow";

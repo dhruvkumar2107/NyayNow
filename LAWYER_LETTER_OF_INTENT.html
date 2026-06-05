@@ -183,14 +183,24 @@
 
     .sig-meta {
       font-family: 'Inter', sans-serif;
-      font-size: 7.5pt;
-      color: #444;
-      line-height: 1.9;
+      font-size: 8.5pt;
+      color: #666;
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .sig-meta span {
-      display: inline-block;
-      border-bottom: 1px solid #bbb;
-      min-width: 130px;
+    .sig-meta-row {
+      display: flex;
+      align-items: flex-end;
+    }
+    .sig-meta-row .label {
+      margin-right: 6px;
+      line-height: 1;
+    }
+    .sig-meta-row .fill-line {
+      width: 220px;
+      border-bottom: 1px solid #aaa;
     }
 
     /* ── FOOTER ── */
@@ -238,7 +248,7 @@
     <!-- Header -->
     <div class="top">
       <div>
-        <img src="client/public/logo.png" alt="NyayNow" style="height:52px; width:auto; display:block;" />
+        <img src="https://nyaynow.in/logo.png" alt="NyayNow" style="height:52px; width:auto; display:block;" />
       </div>
       <div class="top-center">
         NyayNow
@@ -283,16 +293,30 @@
 
     <!-- Signature -->
     <div class="sig-section">
-      <span class="sig-label">Advocate's Signature</span>
+      <span class="sig-label">Advocate's Signature & Stamp</span>
       <div class="sig-line"></div>
+      
       <div class="sig-meta">
-        Name:&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        &emsp;&emsp;
-        Bar Council No.:&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
-        Phone:&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        &emsp;&emsp;
-        City:&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br/>
-        Date:&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <div class="sig-meta-row">
+          <div class="label">Name:</div>
+          <div class="fill-line"></div>
+        </div>
+        <div class="sig-meta-row">
+          <div class="label">Bar Council No.:</div>
+          <div class="fill-line"></div>
+        </div>
+        <div class="sig-meta-row">
+          <div class="label">Phone:</div>
+          <div class="fill-line"></div>
+        </div>
+        <div class="sig-meta-row">
+          <div class="label">City:</div>
+          <div class="fill-line"></div>
+        </div>
+        <div class="sig-meta-row">
+          <div class="label">Date:</div>
+          <div class="fill-line"></div>
+        </div>
       </div>
     </div>
 

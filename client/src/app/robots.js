@@ -3,8 +3,8 @@ export default function robots() {
         rules: {
             userAgent: '*',
             allow: '/',
-            disallow: ['/admin/', '/api/', '/client/dashboard/', '/lawyer/dashboard/'],
+            disallow: ['/admin/', '/api/', '/client/dashboard/', '/lawyer/dashboard/', '/meet/', '/messages/', '/settings/'],
         },
-        sitemap: 'https://nyaynow.com/sitemap.xml',
+        sitemap: 'https://nyaynow.in/sitemap.xml',
     }
 }

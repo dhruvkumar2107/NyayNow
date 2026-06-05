@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "../../src/context/AuthContext";
 import toast from "react-hot-toast";
+import BookingModal from "../../src/components/dashboard/BookingModal";
 
 import { motion } from "framer-motion";
 import { Mail, Linkedin, MapPin, Globe, Award, Briefcase, Gavel, Star, MessageCircle, UserPlus, Clock } from "lucide-react";
@@ -18,6 +19,7 @@ export default function LawyerProfile() {
     const [connection, setConnection] = useState(null);
     const [loading, setLoading] = useState(true);
     const [connecting, setConnecting] = useState(false);
+    const [showBookingModal, setShowBookingModal] = useState(false);
 
     useEffect(() => {
         if (!user) {
@@ -142,7 +144,7 @@ export default function LawyerProfile() {
                                     )}
 
                                     {user?.role !== 'lawyer' && (
-                                        <button onClick={() => toast("Calendar Module Syncing...")} className="w-full py-4 bg-transparent border border-white/20 text-white rounded-xl font-bold hover:bg-white/5 transition">
+                                        <button onClick={() => setShowBookingModal(true)} className="w-full py-4 bg-transparent border border-white/20 text-white rounded-xl font-bold hover:bg-white/5 transition">
                                             Book Consultation
                                         </button>
                                     )}
@@ -255,6 +257,13 @@ export default function LawyerProfile() {
                     </div>
                 </div>
             </div>
+            {showBookingModal && (
+                <BookingModal
+                    lawyer={lawyer}
+                    client={user}
+                    onClose={() => setShowBookingModal(false)}
+                />
+            )}
             <div className="pb-20" />
         </main>
     );

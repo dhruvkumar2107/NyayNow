@@ -38,8 +38,8 @@ const CookieConsent = () => {
 
                             <div className="flex-1">
                                 <h3 className="text-white font-bold text-sm mb-1">Privacy Preference</h3>
-                                <p className="text-slate-400 text-xs leading-relaxed">
-                                    We use cookies to enhance your experience and analyze our traffic. By clicking "Accept", you consent to our use of cookies as described in our <a href="/privacy" className="text-blue-500 hover:underline">Privacy Policy</a>.
+                                <p className="text-slate-400 text-[11px] leading-relaxed">
+                                     We use cookies to enhance your experience. Your data is strictly secured and <span className="text-white font-bold">never used for AI training</span>. Read our <a href="/privacy" className="text-blue-500 hover:underline">Privacy Policy</a>.
                                 </p>
                             </div>
 

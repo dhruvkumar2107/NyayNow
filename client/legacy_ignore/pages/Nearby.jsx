@@ -295,10 +295,24 @@ export default function Nearby() {
       {/* LOCATE BUTTON */}
       <button
         onClick={() => {
-          navigator.geolocation.getCurrentPosition(pos => {
-            setUserLocation([pos.coords.latitude, pos.coords.longitude]);
-            toast.success("Recalibrating Coordinates...");
-          })
+          if (!navigator.geolocation) {
+            toast.error("Geolocation not supported on this device.");
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(
+            pos => {
+              setUserLocation([pos.coords.latitude, pos.coords.longitude]);
+              toast.success("Recalibrating Coordinates...");
+            },
+            (err) => {
+              if (err.code === 1) {
+                toast.error("Location access denied. Please allow location in browser settings.");
+              } else {
+                toast.error("Unable to get location. Using current map position.");
+              }
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+          )
         }}
         className="fixed bottom-10 right-10 z-[500] bg-indigo-600 text-white p-4 rounded-2xl shadow-2xl hover:bg-indigo-500 transition active:scale-95 border border-indigo-400/50"
       >

@@ -24,7 +24,7 @@ const TermsOfService = () => {
                             <Shield size={16} /> Important Legal Disclaimer
                         </p>
                         <p className="text-white text-base leading-relaxed font-bold">
-                            The use of NyayNow AI and its secondary features DOES NOT create an attorney-client relationship. All AI-generated outputs are for informational purposes and should not be treated as professional legal advice.
+                            The use of NyayNow AI and its secondary features DOES NOT create an attorney-client relationship. All AI-generated outputs are for informational purposes and should not be treated as professional legal advice (only legal information).
                         </p>
                     </section>
 
@@ -34,7 +34,7 @@ const TermsOfService = () => {
                             1. Nature of Service
                         </h2>
                         <p className="leading-relaxed">
-                            NyayNow is a legal technology platform. The AI-generated content provided, including but not limited to legal analysis, case summaries, and draft documents, is for <span className="text-white font-bold italic underline">informational purposes only</span>. NyayNow AI is not a registered advocate and does not provide legal advice. Use of this service does not create an attorney-client relationship.
+                            NyayNow is a legal technology platform. The AI-generated content provided, including but not limited to legal analysis, case summaries, and draft documents, is for <span className="text-white font-bold italic underline">informational purposes only</span>. NyayNow AI is not a registered advocate and does not provide legal advice (only legal information). Use of this service does not create an attorney-client relationship.
                         </p>
                     </section>
 

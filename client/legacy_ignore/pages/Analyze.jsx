@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import Link from "next/link";
 
+import { useAuth } from "../../src/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Scale, BookOpen, CheckCircle, Zap, ArrowRight, Shield, Brain, Sparkles, MessageSquare, ChevronRight } from "lucide-react";
 

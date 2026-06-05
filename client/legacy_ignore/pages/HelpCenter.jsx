@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 const FAQS = [
     {
-        q: "Is the legal advice provided by NyayNow AI binding?",
+        q: "Is the legal information provided by NyayNow AI binding?",
         a: "No. NyayNow's AI provides 'legal information' and outcome predictions based on historical data. It is a powerful research and drafting tool, but it is NOT a substitute for a licensed attorney. Always consult a qualified lawyer for important legal decisions."
     },
     {

@@ -199,7 +199,7 @@ export default function LegalConfessionBooth() {
                                     onChange={e => setForm(p => ({ ...p, body: e.target.value }))}
                                     rows={5}
                                     maxLength={2000}
-                                    placeholder="Describe your situation in detail. Include relevant dates, amounts, or key events. The more context you give, the better the legal advice..."
+                                    placeholder="Describe your situation in detail. Include relevant dates, amounts, or key events. The more context you give, the better the legal information..."
                                     className="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/60 transition resize-none"
                                 />
 

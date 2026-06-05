@@ -5,7 +5,7 @@ async function getLawyers() {
         return []
     }
     try {
-        const res = await fetch(`${apiUrl}/api/users?role=lawyer`, { cache: 'no-store' })
+        const res = await fetch(`${apiUrl}/api/lawyers?all=true`, { cache: 'no-store' })
         if (!res.ok) return []
         return res.json()
     } catch (error) {
@@ -18,7 +18,7 @@ async function getLawyers() {
 }
 
 export default async function sitemap() {
-    const baseUrl = 'https://nyaynow.com'
+    const baseUrl = 'https://nyaynow.in'
     const lawyers = await getLawyers()
 
     const lawyerUrls = lawyers.map((lawyer) => ({
@@ -28,26 +28,30 @@ export default async function sitemap() {
         priority: 0.8,
     }))
 
-    const staticUrls = [
-        {
-            url: baseUrl,
-            lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 1,
-        },
-        {
-            url: `${baseUrl}/marketplace`,
-            lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/legal-sos`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.7,
-        },
+    const routes = [
+        "",
+        "/marketplace",
+        "/legal-sos",
+        "/about",
+        "/contact",
+        "/pricing",
+        "/privacy",
+        "/terms",
+        "/disclaimer",
+        "/refund",
+        "/assistant",
+        "/drafting",
+        "/judge-ai",
+        "/research",
+        "/ecourts"
     ]
+
+    const staticUrls = routes.map(route => ({
+        url: `${baseUrl}${route}`,
+        lastModified: new Date(),
+        changeFrequency: route === "" || route === "/marketplace" ? 'daily' : 'monthly',
+        priority: route === "" ? 1.0 : route === "/marketplace" ? 0.9 : 0.7,
+    }))
 
     return [...staticUrls, ...lawyerUrls]
 }

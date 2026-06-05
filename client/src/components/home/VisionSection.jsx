@@ -53,7 +53,7 @@ export default function VisionSection() {
                     <FeatureCard
                         icon={MessageSquare}
                         title="Expert Consultation"
-                        description="Consult securely with verified lawyers for legal advice tailored to your needs."
+                        description="Consult securely with verified lawyers for legal information and guidance tailored to your needs."
                         forWho="Universal"
                         delay={0.2}
                     />

@@ -11,7 +11,7 @@ async function getLawyers() {
     }
 
     try {
-        const res = await fetch(`${apiUrl}/api/users?role=lawyer`, { next: { revalidate: 3600 } })
+        const res = await fetch(`${apiUrl}/api/lawyers?all=true`, { next: { revalidate: 3600 } })
         if (!res.ok) return []
         return res.json()
     } catch (error) {

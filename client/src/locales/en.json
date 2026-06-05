@@ -1,0 +1,23 @@
+{
+  "brand": "NyayNow",
+  "tagline": "The Elite Legal Network",
+  "subtitle": "Connect with India's top legal minds. Verified, vetted, and ready to represent you.",
+  "find_experts": "Find Experts",
+  "search_placeholder": "Search expertise...",
+  "navbar": {
+    "intelligence": "Intelligence",
+    "enterprise": "Enterprise",
+    "signin": "Sign in",
+    "get_started": "Get Started",
+    "signout": "Sign Out",
+    "dashboard": "Dashboard",
+    "settings": "Settings"
+  },
+  "pricing": {
+    "title": "Transparent, Predictable Pricing",
+    "subtitle": "Select a plan tailored to your legal requirements. Upgrade or cancel at any time.",
+    "free_tier": "Free",
+    "pro_tier": "Pro",
+    "firm_tier": "Firm"
+  }
+}

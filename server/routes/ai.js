@@ -83,6 +83,7 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       4. **CROSS-REFERENCE**: Mention IPC equivalents for BNS sections helpfully.
       5. **STRATEGY**: Provide actionable next steps (FIR, Writ, Notice).
       6. **DISCLAIMER**: Remind the user this is information, not a substitute for a physical lawyer.
+      7. **LANGUAGE**: You MUST output the entire response (FACTS, ANSWER, QUESTIONS, disclaimers) in the requested language: ${language || "English"}.
       
       REQUIRED OUTPUT FORMAT:
       [FACTS]
@@ -116,7 +117,7 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     const jsonResponse = {
       answer: answer,
       related_questions: related_questions,
-      intent: "legal_advice",
+      intent: "legal_information",
       disclaimer: "NyayNow AI provides legal information grounded in BNS (2024) and Indian laws. This is not a substitute for professional legal advice from a registered lawyer."
     };
 
@@ -324,10 +325,23 @@ router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res)
 });
 
 /* ---------------- JUDGE AI (CASE PREDICTOR) ---------------- */
-router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
   try {
     const { caseTitle, caseDescription, caseType, oppositionDetails, assignedJudge } = req.body;
     console.log(`📑 /predict-outcome requested for: ${caseTitle || "Unnamed Case"}`);
+
+    const user = req.user; // checkAiLimit already fetches and attaches this
+    if (!user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const isPremium = ["pro", "firm", "silver", "gold", "diamond"].includes(user.plan?.toLowerCase());
+    if (!isPremium) {
+      return res.status(403).json({
+        error: "Case outcome prediction is a paid premium feature. Please upgrade to Pro/Firm!",
+        code: "PREMIUM_REQUIRED"
+      });
+    }
 
     const prompt = `
       ACT AS A JUDICIAL PREDICTOR (INDIA).
@@ -368,11 +382,39 @@ router.post("/predict-outcome", verifyTokenOptional, checkAiLimit, async (req, r
         parsed.case_id = `NYAY-${Math.floor(Math.random() * 100000)}`;
     }
 
+    // Save prediction history
+    const CasePrediction = require("../models/CasePrediction");
+    const predictionRecord = new CasePrediction({
+      user: req.userId,
+      caseTitle: caseTitle || "Unnamed Case",
+      caseDescription: caseDescription || "",
+      winProbability: parsed.win_probability || 0,
+      riskLevel: parsed.risk_level || "Low",
+      precedentCount: parsed.precedent_count || 0,
+      strategy: parsed.strategy || [],
+      riskAnalysis: parsed.risk_analysis || [],
+      relevantPrecedent: parsed.relevant_precedent || "",
+      confidencePercentage: parsed.confidence_percentage || 0
+    });
+    await predictionRecord.save();
+
     res.json(parsed);
 
   } catch (err) {
     console.error("Judge AI Error:", err.message);
     res.status(500).json({ error: "Failed to predict outcome. Try again.", details: err.message });
+  }
+});
+
+// GET /api/ai/prediction-history
+router.get("/prediction-history", verifyToken, async (req, res) => {
+  try {
+    const CasePrediction = require("../models/CasePrediction");
+    const history = await CasePrediction.find({ user: req.userId }).sort({ createdAt: -1 });
+    res.json(history);
+  } catch (err) {
+    console.error("Fetch Prediction History Error:", err);
+    res.status(500).json({ error: "Failed to fetch prediction history" });
   }
 });
 
@@ -756,7 +798,7 @@ router.post("/legal-sos", verifyTokenOptional, async (req, res) => {
 });
 
 /* ---------------- FIR GENERATOR (EMERGENCY DRAFT) ---------------- */
-router.post("/fir-generator", verifyTokenOptional, async (req, res) => {
+router.post("/fir-generator", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { situation, emergencyType, language, complaintDetails, rights } = req.body;
     if (!situation) return res.status(400).json({ error: "Situation required" });
@@ -968,7 +1010,7 @@ function extractSections(text) {
    INSTANT LEGAL NOTICE GENERATOR
    POST /api/ai/legal-notice
 ──────────────────────────────────────────────────────── */
-router.post("/legal-notice", verifyToken, async (req, res) => {
+router.post("/legal-notice", verifyToken, checkAiLimit, async (req, res) => {
   try {
     const {
       noticeType,        // e.g. "Demand Notice", "Eviction Notice", "Cheque Bounce"

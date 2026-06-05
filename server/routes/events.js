@@ -1,4 +1,7 @@
+const express = require('express');
+const router = express.Router();
 const Appointment = require('../models/Appointment');
+const Event = require('../models/Event');
 const verifyToken = require('../middleware/authMiddleware');
 
 // GET EVENTS (Unified: Custom Events + Appointments)

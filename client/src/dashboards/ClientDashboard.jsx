@@ -19,13 +19,14 @@ import toast from "react-hot-toast";
 import PremiumLoader from "../components/PremiumLoader";
 import { hasAccess } from "../utils/planBorders";
 import PaywallModal from "../components/PaywallModal";
+import { useRef } from "react";
 
-const socket = io(process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000", { transports: ['websocket'] });
 
 export default function ClientDashboard() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const socketRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [activeCases, setActiveCases] = useState([]);
   const [invoices, setInvoices] = useState([]);
@@ -65,8 +66,15 @@ export default function ClientDashboard() {
       fetchConnections(uId);
       fetchNotifications(uId);
 
+      // Lazy socket init — only connect when user is authenticated
+      const socket = io(
+        process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000",
+        { transports: ['websocket'], reconnectionAttempts: 3 }
+      );
+      socketRef.current = socket;
+
       socket.emit("join_room", uId);
-      setLoading(false); // Move to non-blocking load
+      setLoading(false);
 
       socket.on("dashboard_alert", (notif) => {
         setNotifications(prev => [notif, ...prev]);
@@ -83,6 +91,8 @@ export default function ClientDashboard() {
       return () => {
         socket.off("dashboard_alert");
         socket.off("consult_start");
+        socket.disconnect();
+        socketRef.current = null;
       }
     }
   }, [user]);
@@ -138,7 +148,7 @@ export default function ClientDashboard() {
 
   const fetchSuggestedLawyers = async () => {
     try {
-      const res = await axios.get("/api/users?role=lawyer");
+      const res = await axios.get("/api/lawyers?all=true");
       setSuggestedLawyers(res.data.slice(0, 4));
     } catch (err) { console.error(err); }
   }
@@ -189,6 +199,104 @@ export default function ClientDashboard() {
     }
   };
 
+  const handlePayAppointment = async (apt) => {
+    const toastId = toast.loading("Initiating payment...");
+    try {
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+      const loadScript = (src) => {
+        return new Promise((resolve) => {
+          if (document.querySelector(`script[src="${src}"]`)) return resolve(true);
+          const script = document.createElement("script");
+          script.src = src;
+          script.onload = () => resolve(true);
+          script.onerror = () => resolve(false);
+          document.body.appendChild(script);
+        });
+      };
+
+      const sdkLoaded = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+      if (!sdkLoaded) {
+        toast.error("Razorpay SDK failed to load.", { id: toastId });
+        return;
+      }
+
+      const _envBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+      const API_BASE = _envBase.endsWith('/api') ? _envBase : `${_envBase}/api`;
+
+      const orderRes = await fetch(`${API_BASE}/payments/create-order`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` })
+        },
+        body: JSON.stringify({ amount_rupees: apt.fee, plan: `appointment_${apt._id}` })
+      });
+
+      if (!orderRes.ok) {
+        const errText = await orderRes.text();
+        throw new Error(`Failed to create order: ${orderRes.status} ${errText}`);
+      }
+
+      const orderData = await orderRes.json();
+
+      const options = {
+        key: orderData.key,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "NyayNow",
+        description: `Consultation Booking Payment`,
+        order_id: orderData.orderId,
+        handler: async function (paymentResponse) {
+          toast.loading("Verifying payment...", { id: toastId });
+          try {
+            const verifyRes = await fetch(`${API_BASE}/payments/verify`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` })
+              },
+              body: JSON.stringify({
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+                plan: `appointment_${apt._id}`,
+                amount: apt.fee
+              })
+            });
+
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              toast.success(`Appointment confirmed and paid!`, { id: toastId, duration: 5000 });
+              fetchAppointments();
+            } else {
+              toast.error("Payment verification failed", { id: toastId });
+            }
+          } catch (err) {
+            console.error("Verification Error:", err);
+            toast.error("Error verifying payment", { id: toastId });
+          }
+        },
+        prefill: {
+          name: user?.name || "",
+          email: user?.email || "",
+          contact: user?.phone || ""
+        },
+        theme: {
+          color: "#6366f1"
+        }
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+      toast.dismiss(toastId);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Payment initiation failed", { id: toastId });
+    }
+  };
+
   const handlePostCase = async () => {
     try {
       await axios.post("/api/cases", {
@@ -204,11 +312,13 @@ export default function ClientDashboard() {
   };
 
   const handleInstantConsult = () => {
-    socket.emit("request_instant_consult", {
-      clientId: user._id || user.id,
-      clientName: user.name,
-      category: "General Legal"
-    });
+    if (socketRef.current) {
+      socketRef.current.emit("request_instant_consult", {
+        clientId: user._id || user.id,
+        clientName: user.name,
+        category: "General Legal"
+      });
+    }
     setShowInstantModal(true);
   };
 
@@ -487,14 +597,21 @@ export default function ClientDashboard() {
                             <p className="text-sm font-bold text-white">{apt.lawyerName || apt.lawyerId?.name || "Legal Counsel"}</p>
                             <p className="text-xs text-slate-500">{apt.slot}</p>
                           </div>
-                          {/* {(apt.status === 'confirmed' || apt.status === 'active') && (
+                          {apt.paymentStatus === 'unpaid' && (apt.fee || 0) > 0 ? (
+                            <button
+                              onClick={() => handlePayAppointment(apt)}
+                              className="px-3 py-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-[10px] font-bold uppercase hover:bg-amber-600 hover:text-white transition"
+                            >
+                              Pay & Confirm
+                            </button>
+                          ) : (apt.status === 'confirmed' || apt.status === 'completed' || (apt.fee || 0) === 0) && (
                             <button
                               onClick={() => router.push(`/meet/${apt._id}`)}
-                              className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px] font-bold uppercase hover:bg-emerald-500 hover:text-white transition"
+                              className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px] font-bold uppercase hover:bg-emerald-600 hover:text-white transition"
                             >
-                              Join
+                              Join Call
                             </button>
-                          )} */}
+                          )}
                         </div>
                       ))
                     )}

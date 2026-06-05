@@ -16,6 +16,7 @@ import {
     Globe,
     Zap,
     Scale
+} from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 const Footer = () => {
@@ -118,7 +119,16 @@ const Footer = () => {
 
                     <FooterColumn title="Compliance">
                         <FooterLink href="/privacy">Privacy Policy</FooterLink>
+                        <FooterLink href="/disclaimer">Disclaimer</FooterLink>
+                        <FooterLink href="/refund">Refund Policy</FooterLink>
                     </FooterColumn>
+                </div>
+
+                {/* GLOBAL LEGAL DISCLAIMER STRIP */}
+                <div className="pt-8 pb-8 border-t border-white/5 text-center">
+                    <p className="text-[11px] text-slate-500 max-w-3xl mx-auto leading-relaxed">
+                        ⚖️ Disclaimer: NyayNow provides AI-generated legal information grounded in BNS (2024), not professional legal advice. Always verify case details and drafts with a qualified advocate before taking legal action.
+                    </p>
                 </div>
 
                 {/* BOTTOM BAR */}

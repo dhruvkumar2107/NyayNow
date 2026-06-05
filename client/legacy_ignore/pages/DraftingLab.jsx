@@ -228,8 +228,11 @@ const DraftingLab = () => {
                                             <option className="bg-[#0f172a] text-slate-200">Legal Service Proposal</option>
                                             <option className="bg-[#0f172a] text-slate-200">Employment Contract</option>
                                             <option className="bg-[#0f172a] text-slate-200">Rental Agreement</option>
+                                            <option className="bg-[#0f172a] text-slate-200">Power of Attorney</option>
+                                            <option className="bg-[#0f172a] text-slate-200">Will / Testament</option>
                                             <option className="bg-[#0f172a] text-slate-200">Freelance Service Agreement</option>
                                             <option className="bg-[#0f172a] text-slate-200">Legal Notice</option>
+                                            <option className="bg-[#0f172a] text-slate-200">FIR Draft</option>
                                         </select>
                                     </div>
                                     <div className="space-y-2">

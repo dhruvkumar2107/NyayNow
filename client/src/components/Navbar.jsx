@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Scale, BookOpen, FileText, Briefcase, Gavel,
@@ -14,6 +15,7 @@ import Image from "next/image";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -77,7 +79,7 @@ export default function Navbar() {
             <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center group-hover:scale-105 transition duration-300">
               <Image src="/logo.png" alt="NyayNow Logo" width={24} height={24} className="object-contain" />
             </div>
-            <span className="text-xl font-bold tracking-[-0.03em] text-white group-hover:text-blue-400 transition-colors duration-300">NyayNow</span>
+            <span className="text-xl font-bold tracking-[-0.03em] text-white group-hover:text-blue-400 transition-colors duration-300">{t("brand")}</span>
           </Link>
 
           {/* DESKTOP NAV - CENTERED */}
@@ -134,14 +136,30 @@ export default function Navbar() {
 
           {/* RIGHT ACTIONS */}
           <div className="flex items-center gap-4 relative z-50 shrink-0">
+            {/* Language Switcher */}
+            <div className="relative">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="bg-[#0b0f19] border border-white/10 rounded-full px-3 py-1.5 text-xs text-slate-300 outline-none hover:bg-white/5 cursor-pointer transition font-bold"
+              >
+                <option value="en">English</option>
+                <option value="hi">हिंदी (HI)</option>
+                <option value="ta">தமிழ் (TA)</option>
+                <option value="te">తెలుగు (TE)</option>
+                <option value="kn">ಕನ್ನಡ (KN)</option>
+                <option value="mr">मराठी (MR)</option>
+              </select>
+            </div>
+
             {!user ? (
               <div className="flex items-center gap-4">
                 <Link href="/login" className="hidden sm:block font-bold text-[13px] text-slate-400 hover:text-white transition-all duration-300 px-4">
-                  Sign in
+                  {t("navbar.signin")}
                 </Link>
                 <Link href="/register">
                   <button className="px-6 py-2.5 bg-white text-slate-950 font-bold text-[13px] rounded-full hover:bg-blue-600 hover:text-white transition-all duration-500 shadow-xl shadow-white/5 active:scale-95">
-                    Get Started
+                    {t("navbar.get_started")}
                   </button>
                 </Link>
               </div>

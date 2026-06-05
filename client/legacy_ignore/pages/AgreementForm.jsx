@@ -78,9 +78,9 @@ export default function AgreementForm() {
                                     { name: "Rent Agreement", icon: <FileText size={28} />, desc: "Residential or commercial lease terms." },
                                     { name: "NDA", icon: <Lock size={28} />, desc: "Confidentiality & Non-Disclosure." },
                                     { name: "Employment Contract", icon: <Briefcase size={28} />, desc: "Offer letters and role definitions." },
-                                    { name: "Sale Deed", icon: <Scroll size={28} />, desc: "Property & asset transfer proof." },
+                                    { name: "Power of Attorney", icon: <Scroll size={28} />, desc: "Authorize representation rights." },
+                                    { name: "Will / Testament", icon: <Scroll size={28} />, desc: "Asset inheritance & distribution Will." },
                                     { name: "Freelance Agreement", icon: <ExternalLink size={28} />, desc: "Client-Contractor scope of work." },
-                                    { name: "Custom", icon: <Sparkles size={28} />, desc: "Tailor-made for specific needs." },
                                 ].map(t => (
                                     <button
                                         key={t.name}

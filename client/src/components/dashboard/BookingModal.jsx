@@ -21,22 +21,124 @@ export default function BookingModal({ lawyer, client, onClose }) {
         }
     }, [date, lawyer._id]);
 
+    const loadScript = (src) => {
+        return new Promise((resolve) => {
+            if (document.querySelector(`script[src="${src}"]`)) {
+                return resolve(true);
+            }
+            const script = document.createElement("script");
+            script.src = src;
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
     const handleBook = async () => {
         if (!date || !slot) return toast.error("Please select date and time");
 
         setLoading(true);
         try {
-            await axios.post("/api/appointments", {
+            const token = localStorage.getItem("token");
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+            // 1. Create pending appointment
+            const res = await axios.post("/api/appointments", {
                 clientId: client._id || client.id,
                 lawyerId: lawyer._id,
                 date,
                 slot,
                 notes
-            });
-            toast.success(`Appointment requested with ${lawyer.name}!`);
-            onClose();
+            }, { headers });
+
+            const appointment = res.data;
+            const feeAmount = appointment.fee || 0;
+
+            if (feeAmount > 0) {
+                // 2. Launch Razorpay payment
+                const sdkLoaded = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+                if (!sdkLoaded) {
+                    toast.error("Razorpay SDK failed to load.");
+                    setLoading(false);
+                    return;
+                }
+
+                const _envBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+                const API_BASE = _envBase.endsWith('/api') ? _envBase : `${_envBase}/api`;
+
+                // Create Razorpay order
+                const orderRes = await fetch(`${API_BASE}/payments/create-order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && { Authorization: `Bearer ${token}` })
+                    },
+                    body: JSON.stringify({ amount_rupees: feeAmount, plan: `appointment_${appointment._id}` })
+                });
+
+                if (!orderRes.ok) {
+                    const errText = await orderRes.text();
+                    throw new Error(`Failed to create order: ${orderRes.status} ${errText}`);
+                }
+
+                const orderData = await orderRes.json();
+
+                const options = {
+                    key: orderData.key,
+                    amount: orderData.amount,
+                    currency: orderData.currency,
+                    name: "NyayNow",
+                    description: `Consultation Booking with ${lawyer.name}`,
+                    order_id: orderData.orderId,
+                    handler: async function (paymentResponse) {
+                        toast.loading("Verifying payment...", { id: "payment-toast" });
+                        try {
+                            const verifyRes = await fetch(`${API_BASE}/payments/verify`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    ...(token && { Authorization: `Bearer ${token}` })
+                                },
+                                body: JSON.stringify({
+                                    razorpay_order_id: paymentResponse.razorpay_order_id,
+                                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                                    razorpay_signature: paymentResponse.razorpay_signature,
+                                    plan: `appointment_${appointment._id}`,
+                                    amount: feeAmount
+                                })
+                            });
+
+                            const verifyData = await verifyRes.json();
+                            if (verifyData.success) {
+                                toast.success(`Appointment confirmed and paid!`, { id: "payment-toast", duration: 5000 });
+                                onClose();
+                            } else {
+                                toast.error("Payment verification failed", { id: "payment-toast" });
+                            }
+                        } catch (err) {
+                            console.error("Verification Error:", err);
+                            toast.error("Error verifying payment", { id: "payment-toast" });
+                        }
+                    },
+                    prefill: {
+                        name: client?.name || "",
+                        email: client?.email || "",
+                        contact: client?.phone || ""
+                    },
+                    theme: {
+                        color: "#6366f1"
+                    }
+                };
+
+                const paymentObject = new window.Razorpay(options);
+                paymentObject.open();
+            } else {
+                toast.success(`Appointment requested with ${lawyer.name}!`);
+                onClose();
+            }
         } catch (err) {
-            toast.error(err.response?.data?.error || "Booking failed");
+            console.error(err);
+            toast.error(err.response?.data?.error || err.message || "Booking failed");
         } finally {
             setLoading(false);
         }

@@ -5,6 +5,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import posthog from 'posthog-js'
 import * as Sentry from '@sentry/react'
 import { AuthProvider } from '../context/AuthContext'
+import { LanguageProvider } from '../context/LanguageContext'
 
 export default function Providers({ children }) {
     useEffect(() => {
@@ -38,7 +39,9 @@ export default function Providers({ children }) {
     return (
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
             <AuthProvider>
-                {children}
+                <LanguageProvider>
+                    {children}
+                </LanguageProvider>
             </AuthProvider>
         </GoogleOAuthProvider>
     )

@@ -12,7 +12,11 @@ const AppointmentSchema = new mongoose.Schema(
             default: "pending"
         },
         notes: { type: String },
-        meetingLink: { type: String } // For auto-generated video links
+        meetingLink: { type: String }, // For auto-generated video links
+        fee: { type: Number, default: 0 },
+        commission: { type: Number, default: 0 }, // Platform commission (e.g. 15%)
+        paymentStatus: { type: String, enum: ["unpaid", "paid", "refunded"], default: "unpaid" },
+        paymentId: { type: String }
     },
     { timestamps: true }
 );

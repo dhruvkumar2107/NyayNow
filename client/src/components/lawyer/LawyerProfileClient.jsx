@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext"
 import toast from "react-hot-toast"
 import { motion } from "framer-motion"
 import { Mail, Linkedin, MapPin, Globe, Award, Briefcase, Gavel, MessageCircle, UserPlus, Clock } from "lucide-react"
+import BookingModal from "../dashboard/BookingModal"
 
 export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
     const router = useRouter()
@@ -14,6 +15,7 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
 
     const [lawyer] = useState(initialLawyer)
     const [connection, setConnection] = useState(null)
+    const [showBookingModal, setShowBookingModal] = useState(false)
     const [loading, setLoading] = useState(false)
     const [connecting, setConnecting] = useState(false)
 
@@ -109,6 +111,12 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
                                         {connecting ? "Transmitting..." : <><UserPlus size={20} /> Connect Now</>}
                                     </button>
                                 )}
+
+                                {user?.role !== 'lawyer' && (
+                                    <button onClick={() => setShowBookingModal(true)} className="w-full py-4 bg-transparent border border-white/20 text-white rounded-xl font-bold hover:bg-white/5 transition flex items-center justify-center gap-2">
+                                        Book Consultation
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </motion.div>
@@ -169,6 +177,13 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
                     </motion.div>
                 </div>
             </div>
+            {showBookingModal && (
+                <BookingModal
+                    lawyer={lawyer}
+                    client={user}
+                    onClose={() => setShowBookingModal(false)}
+                />
+            )}
         </div>
     )
 }

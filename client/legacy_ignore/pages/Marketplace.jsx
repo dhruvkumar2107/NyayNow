@@ -32,7 +32,7 @@ const MarketplaceContent = () => {
 
   const fetchLawyers = async () => {
     try {
-      const { data } = await axios.get("/api/users?role=lawyer");
+      const { data } = await axios.get("/api/lawyers?all=true");
       setLawyers(data);
     } catch (error) {
       console.error("Failed to fetch lawyers", error);

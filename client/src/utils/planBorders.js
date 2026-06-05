@@ -8,7 +8,9 @@
 export const PLAN_LEVELS = {
   free: 0,
   silver: 1,
+  pro: 1,
   gold: 2,
+  firm: 2,
   diamond: 3
 };
 
@@ -18,19 +20,19 @@ export const FEATURE_LIMITS = {
   MARKETPLACE_ACCESS: { level: 'free' },
   BASIC_TEMPLATES: { level: 'free' },
   
-  // Pro Features (Level 1 / silver)
-  UNLIMITED_AI_CHAT: { level: 'silver' },
-  DOCUMENT_DRAFTING: { level: 'silver', limit: 10 },
-  LEGAL_RESEARCH: { level: 'silver' },
-  FIR_GENERATOR: { level: 'silver' },
-  NYAY_VOICE: { level: 'silver' },
+  // Pro Features (Level 1)
+  UNLIMITED_AI_CHAT: { level: 'pro' },
+  DOCUMENT_DRAFTING: { level: 'pro', limit: 10 },
+  LEGAL_RESEARCH: { level: 'pro' },
+  FIR_GENERATOR: { level: 'pro' },
+  NYAY_VOICE: { level: 'pro' },
   
-  // Premium Features (Level 2 / gold)
-  LAWYER_CONSULTATION: { level: 'gold', limit: 1 },
-  AGREEMENT_REVIEW: { level: 'gold' },
-  NYAY_COURT: { level: 'gold' },
-  DEVILS_ADVOCATE: { level: 'gold' },
-  VIDEO_CALLS: { level: 'gold' }
+  // Firm Features (Level 2)
+  LAWYER_CONSULTATION: { level: 'firm', limit: 1 },
+  AGREEMENT_REVIEW: { level: 'firm' },
+  NYAY_COURT: { level: 'firm' },
+  DEVILS_ADVOCATE: { level: 'firm' },
+  VIDEO_CALLS: { level: 'firm' }
 };
 
 export const hasAccess = (userPlan, featureName, usageCount = 0) => {

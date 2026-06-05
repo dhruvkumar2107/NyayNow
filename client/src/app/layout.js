@@ -8,12 +8,16 @@ const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakart
 
 export const metadata = {
     metadataBase: new URL('https://nyaynow.in'),
+    icons: {
+        icon: '/logo.png',
+        apple: '/logo.png',
+    },
     title: {
         default: 'NyayNow | AI Legal Intelligence & Lawyer Marketplace',
         template: '%s | NyayNow'
     },
-    description: 'NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal advice, draft documents, and connect with expert lawyers.',
-    keywords: ['legal assistant', 'AI lawyer', 'Indian law', 'legal advice', 'lawyer marketplace', 'legal document drafting'],
+    description: 'NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal information, draft documents, and connect with expert lawyers.',
+    keywords: ['legal assistant', 'AI lawyer', 'Indian law', 'legal information', 'lawyer marketplace', 'legal document drafting'],
     authors: [{ name: 'NyayNow Team' }],
     creator: 'NyayNow',
     publisher: 'NyayNow',
@@ -24,7 +28,7 @@ export const metadata = {
     },
     openGraph: {
         title: 'NyayNow | AI Legal Intelligence & Lawyer Marketplace',
-        description: 'NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal advice and connect with expert lawyers.',
+        description: 'NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal information and connect with expert lawyers.',
         url: 'https://nyaynow.in',
         siteName: 'NyayNow',
         images: [
@@ -69,8 +73,47 @@ import CookieConsent from '../components/CookieConsent'
 import Footer from '../components/Footer'
 
 export default function RootLayout({ children }) {
+    const schemaMarkup = {
+        "@context": "https://schema.org",
+        "@type": "LegalService",
+        "name": "NyayNow",
+        "image": "https://nyaynow.in/logo.png",
+        "url": "https://nyaynow.in",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "New Delhi",
+            "addressRegion": "Delhi",
+            "postalCode": "110001",
+            "addressCountry": "IN"
+        },
+        "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+        },
+        "sameAs": [
+            "https://twitter.com/nyaynow",
+            "https://www.linkedin.com/company/nyaynow"
+        ]
+    };
+
     return (
         <html lang="en">
+            <head>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+                />
+            </head>
             <body className={`${inter.variable} ${jakarta.variable} font-sans relative`}>
                 <div className="noise-overlay" />
                 <Providers>

@@ -102,7 +102,7 @@ Return JSON with these exact keys:
 {{
   "summary": "Brief summary of the legal situation",
   "laws": ["List of relevant acts/sections (e.g. IPC Section 420, Contract Act)"],
-  "advice": "Actionable legal advice or next steps"
+  "advice": "Actionable legal information or next steps"
 }}
 
 User Situation:

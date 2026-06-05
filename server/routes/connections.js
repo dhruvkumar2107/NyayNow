@@ -1,3 +1,5 @@
+const express = require("express");
+const router = express.Router();
 const Connection = require("../models/Connection");
 const User = require("../models/User");
 const Notification = require("../models/Notification");

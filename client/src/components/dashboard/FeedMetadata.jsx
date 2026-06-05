@@ -29,10 +29,10 @@ export const lawyerFeed = [
         category: "Property Dispute",
         tier: "gold", // Requires Gold
         budget: "₹15k - ₹25k",
-        description: "Seeking legal advice for a property succession certificate. Family dispute involved.",
+        description: "Seeking legal information/assistance for a property succession certificate. Family dispute involved.",
         time: "10m ago",
         title: "Property Succession Certificate",
-        desc: "Seeking legal advice for a property succession certificate. Family dispute involved.",
+        desc: "Seeking legal information/assistance for a property succession certificate. Family dispute involved.",
         location: "Mumbai",
         postedAt: new Date().toISOString()
     },

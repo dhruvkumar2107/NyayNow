@@ -194,6 +194,9 @@ const DevilsAdvocate = () => {
                     </motion.div>
 
                 </div>
+                <p className="text-[10px] text-slate-600 italic text-center mt-8">
+                    ⚖️ This is AI-generated information. Verify with a qualified lawyer.
+                </p>
             </div>
             <Footer />
         </div>

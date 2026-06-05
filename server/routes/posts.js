@@ -53,6 +53,16 @@ router.post("/", upload.single("file"), async (req, res) => {
 
         await newPost.save();
 
+        if (req.io) {
+            req.io.emit("dashboard_alert", {
+                _id: newPost._id,
+                message: `Legal Update: ${content.substring(0, 60)}${content.length > 60 ? "..." : ""}`,
+                type: "news",
+                link: "/dashboard?tab=feed",
+                createdAt: new Date()
+            });
+        }
+
         // Return populated post for immediate UI update
         const populatedPost = await Post.findById(newPost._id).populate("author", "name role");
         res.json(populatedPost);

@@ -1,13 +1,15 @@
 'use client'
 import { useState, useRef, useEffect } from "react";
-import { Copy, ThumbsUp, ThumbsDown, Send, Paperclip, Mic, Plus } from "lucide-react";
+import { Copy, ThumbsUp, ThumbsDown, Send, Paperclip, Mic, Plus, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Navbar from "../../src/components/Navbar";
+import { useLanguage } from "../../src/context/LanguageContext";
 
 export default function Assistant() {
+  const { language } = useLanguage();
   const [messages, setMessages] = useState([
     {
       role: "model",
@@ -16,6 +18,8 @@ export default function Assistant() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [chatSessions, setChatSessions] = useState([]);
+  const [activeChatId, setActiveChatId] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -26,7 +30,51 @@ export default function Assistant() {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    fetchChatSessions();
+  }, []);
+
+  const fetchChatSessions = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const { data } = await axios.get("/api/chats", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setChatSessions(data);
+    } catch (err) {
+      console.error("Failed to fetch chat sessions:", err);
+    }
+  };
+
+  const handleSelectChat = (chat) => {
+    setActiveChatId(chat._id);
+    setMessages(chat.messages.map(m => ({
+      role: m.role,
+      text: m.text
+    })));
+  };
+
+  const handleDeleteChat = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      await axios.delete(`/api/chats/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success("Chat deleted");
+      if (activeChatId === id) {
+        handleNewChat();
+      }
+      fetchChatSessions();
+    } catch (err) {
+      console.error("Delete chat error:", err);
+      toast.error("Failed to delete chat session");
+    }
+  };
+
   const handleNewChat = () => {
+    setActiveChatId(null);
     setMessages([
       {
         role: "model",
@@ -47,7 +95,8 @@ export default function Assistant() {
     if (!input.trim() || isLoading) return;
 
     const userMessage = { role: "user", text: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
     const currentInput = input;
     const currentHistory = messages;
     setInput("");
@@ -58,6 +107,7 @@ export default function Assistant() {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const { data } = await axios.post("/api/ai/assistant", {
         question: currentInput,
+        language: language,
         history: currentHistory.map(m => ({
           role: m.role === "model" ? "assistant" : "user",
           content: m.text
@@ -65,7 +115,25 @@ export default function Assistant() {
       }, { headers });
 
       const assistantMessage = { role: "model", text: data.answer || data.message };
-      setMessages((prev) => [...prev, assistantMessage]);
+      const finalMessages = [...newMessages, assistantMessage];
+      setMessages(finalMessages);
+
+      if (token) {
+        if (!activeChatId) {
+          const title = currentInput.slice(0, 30) + (currentInput.length > 30 ? "..." : "");
+          const createRes = await axios.post("/api/chats", {
+            title,
+            messages: finalMessages
+          }, { headers });
+          setActiveChatId(createRes.data._id);
+          fetchChatSessions();
+        } else {
+          await axios.put(`/api/chats/${activeChatId}`, {
+            messages: finalMessages
+          }, { headers });
+          fetchChatSessions();
+        }
+      }
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data?.message || "Assistant is busy. Try again.");
@@ -79,7 +147,7 @@ export default function Assistant() {
       <div className="flex flex-1 overflow-hidden">
 
         {/* SIDEBAR HISTORY */}
-        <aside className="w-80 border-r border-white/5 bg-midnight-950/50 hidden md:flex flex-col">
+        <aside className="w-80 border-r border-white/5 bg-[#0a0f1d] hidden md:flex flex-col">
           <div className="p-6">
             <button
               onClick={handleNewChat}
@@ -88,12 +156,35 @@ export default function Assistant() {
               <Plus size={18} /> New Chat
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto px-4 pb-4">
+          <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-1">
             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 px-2">Recent Inquiries</p>
-            <HistoryItem label="Property Dispute Delhi" onClick={() => handleRecentInquiry("Property Dispute Delhi")} />
-            <HistoryItem label="Draft Lease Agreement" onClick={() => handleRecentInquiry("Draft Lease Agreement")} />
-            <HistoryItem label="IPC 420 Analysis" onClick={() => handleRecentInquiry("IPC 420 Analysis")} />
-            <HistoryItem label="Divorce Proceedings" onClick={() => handleRecentInquiry("Divorce Proceedings")} />
+            {chatSessions.length > 0 ? (
+              chatSessions.map((chat) => (
+                <div
+                  key={chat._id}
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium cursor-pointer transition truncate group ${activeChatId === chat._id ? 'bg-white/10 text-white shadow-sm border border-white/5' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
+                >
+                  <span className="truncate flex-1" onClick={() => handleSelectChat(chat)}>{chat.title}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteChat(chat._id);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 hover:text-red-400 p-1 transition"
+                    title="Delete Conversation"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))
+            ) : (
+              <>
+                <HistoryItem label="Property Dispute Delhi" onClick={() => handleRecentInquiry("Property Dispute Delhi")} />
+                <HistoryItem label="Draft Lease Agreement" onClick={() => handleRecentInquiry("Draft Lease Agreement")} />
+                <HistoryItem label="IPC 420 Analysis" onClick={() => handleRecentInquiry("IPC 420 Analysis")} />
+                <HistoryItem label="Divorce Proceedings" onClick={() => handleRecentInquiry("Divorce Proceedings")} />
+              </>
+            )}
           </div>
           <div className="p-4 border-t border-white/5">
             <div className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 cursor-pointer transition">

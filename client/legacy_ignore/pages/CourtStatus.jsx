@@ -7,6 +7,7 @@ import { useAuth } from '../../src/context/AuthContext';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Gavel, Scale, Calendar, FileText, Activity } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const CourtStatus = () => {
     const { user } = useAuth();
@@ -23,15 +24,123 @@ const CourtStatus = () => {
         setCaseData(null);
 
         try {
-            // Real API Call
-            const res = await axios.get(`/api/ecourts/search?query=${query}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
-            setCaseData(res.data);
+            const token = localStorage.getItem('token');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+            const payload = {};
+            if (query.trim().match(/^[A-Za-z0-9]{16}$/)) {
+                payload.cnr = query.trim();
+            } else {
+                payload.partyName = query.trim();
+            }
+
+            const res = await axios.post('/api/ecourts/status', payload, { headers });
+
+            const raw = res.data;
+            const parsed = {
+                court: raw.status?.courtName || raw.court || "District Court",
+                cnr: raw.caseInfo?.cnr || raw.cnr || query,
+                status: raw.status?.currentStatus || raw.status || "Pending",
+                caseNumber: raw.caseInfo?.caseNumber || raw.caseNumber || "N/A",
+                filingDate: raw.caseInfo?.filingDate || raw.filingDate || "N/A",
+                nextHearing: raw.status?.nextHearingDate || raw.nextHearing || "N/A",
+                judge: raw.status?.judgeAssigned || raw.judge || "Hon'ble Judge",
+                stage: raw.status?.stageOfCase || raw.stage || "Arguments",
+                petitioner: raw.caseInfo?.partyName?.split(/\bvs\b|\bVersus\b/i)[0]?.trim() || raw.petitioner || "Petitioner",
+                respondent: raw.caseInfo?.partyName?.split(/\bvs\b|\bVersus\b/i)[1]?.trim() || raw.respondent || "Respondent",
+                acts: raw.acts || ["Civil Procedure Code", "Indian Penal Code"],
+                history: (raw.history || []).map(h => ({
+                    action: h.purpose || h.action || "Hearing",
+                    outcome: h.outcome || "Hearing Conducted",
+                    date: h.date || "N/A"
+                }))
+            };
+            setCaseData(parsed);
         } catch (err) {
-            setError("Case record not found. Please verify CNR number.");
+            console.error(err);
+            setError(err.response?.data?.error || "Case record not found. Please verify CNR/Query details.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleExportICS = () => {
+        if (!caseData || !caseData.nextHearing) return;
+        const title = `Court Hearing: ${caseData.petitioner} vs ${caseData.respondent}`;
+        const desc = `CNR: ${caseData.cnr}\\nCourt: ${caseData.court}\\nStage: ${caseData.stage}`;
+        const dateStr = caseData.nextHearing;
+
+        if (!dateStr || dateStr === 'null' || dateStr === 'N/A') {
+            return toast.error("No valid next hearing date available for calendar sync.");
+        }
+
+        const dateObj = new Date(dateStr);
+        if (isNaN(dateObj.getTime())) {
+            return toast.error("Invalid hearing date format.");
+        }
+
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+
+        const startStr = `${year}${month}${day}T100000`;
+        const endStr = `${year}${month}${day}T110000`;
+
+        const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//NyayNow//Court Tracker//EN
+BEGIN:VEVENT
+UID:${caseData.cnr || Date.now()}@nyaynow.in
+DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z
+DTSTART:${startStr}
+DTEND:${endStr}
+SUMMARY:${title}
+DESCRIPTION:${desc}
+LOCATION:${caseData.court}
+END:VEVENT
+END:VCALENDAR`;
+
+        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `court_hearing_${caseData.cnr || 'case'}.ics`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast.success("iCal (.ics) exported successfully!");
+    };
+
+    const handleAddToDashboardCalendar = async () => {
+        if (!user) {
+            return toast.error("Please log in to add this to your NyayNow calendar.");
+        }
+        try {
+            const title = `Court Hearing: ${caseData.petitioner} vs ${caseData.respondent}`;
+            const desc = `CNR: ${caseData.cnr} | Stage: ${caseData.stage}`;
+
+            const dateObj = new Date(caseData.nextHearing);
+            if (isNaN(dateObj.getTime())) {
+                return toast.error("Invalid next hearing date.");
+            }
+
+            const startStr = `${caseData.nextHearing}T10:00:00`;
+            const endStr = `${caseData.nextHearing}T11:00:00`;
+
+            await axios.post('/api/events', {
+                title,
+                desc,
+                start: new Date(startStr),
+                end: new Date(endStr),
+                type: 'hearing',
+            }, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+            toast.success("Hearing added to your NyayNow Dashboard Calendar!");
+        } catch (err) {
+            console.error("Dashboard Calendar Error:", err);
+            toast.error("Failed to add hearing to dashboard calendar.");
         }
     };
 
@@ -170,6 +279,24 @@ const CourtStatus = () => {
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* CALENDAR SYNC & REMINDERS */}
+                                {caseData.nextHearing && caseData.nextHearing !== 'N/A' && caseData.nextHearing !== 'null' && (
+                                    <div className="bg-gradient-to-tr from-amber-500/10 to-orange-500/10 p-8 rounded-3xl border border-amber-500/20 mb-8 flex flex-col md:flex-row justify-between items-center gap-6 text-left">
+                                        <div>
+                                            <h4 className="text-lg font-bold text-white mb-1">Calendar & Reminder Integration</h4>
+                                            <p className="text-sm text-slate-400">Sync this hearing date ({caseData.nextHearing}) with your devices or NyayNow Dashboard.</p>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button onClick={handleExportICS} className="px-5 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-xl hover:bg-amber-400 transition text-xs uppercase tracking-wider">
+                                                Export ICS (Google/Apple)
+                                            </button>
+                                            <button onClick={handleAddToDashboardCalendar} className="px-5 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl transition text-xs uppercase tracking-wider">
+                                                Add to Dashboard
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* TIMELINE */}
                                 <div className="bg-black/20 rounded-[2rem] p-8 border border-white/5">

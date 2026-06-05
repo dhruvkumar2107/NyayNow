@@ -1,4 +1,11 @@
+const express = require('express');
+const router = express.Router();
 const verifyToken = require('../middleware/authMiddleware');
+const Case = require('../models/Case');
+const Appointment = require('../models/Appointment');
+const Event = require('../models/Event');
+const Post = require('../models/Post');
+const Invoice = require('../models/Invoice');
 
 // GET /api/crm/insights
 router.get('/insights', verifyToken, async (req, res) => {

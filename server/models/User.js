@@ -44,8 +44,13 @@ const userSchema = new mongoose.Schema(
 
     plan: {
       type: String,
-      enum: ["free", "silver", "gold", "diamond"],
+      enum: ["free", "silver", "gold", "diamond", "pro", "firm"],
       default: "free",
+    },
+
+    credits: {
+      type: Number,
+      default: 5,
     },
 
     aiUsage: {
@@ -100,6 +105,16 @@ const userSchema = new mongoose.Schema(
       profileViews: { type: Number, default: 0 },
       searchAppearances: { type: Number, default: 0 },
       yearsExperience: { type: Number, default: 0 }
+    },
+
+    listingTier: {
+      type: String,
+      enum: ["free", "standard", "premium"],
+      default: "free"
+    },
+    isFeatured: {
+      type: Boolean,
+      default: false
     },
 
     // VERIFICATION SYSTEM

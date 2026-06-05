@@ -1,4 +1,7 @@
+const express = require("express");
+const router = express.Router();
 const User = require("../models/User");
+const Appointment = require("../models/Appointment");
 const Notification = require("../models/Notification");
 const verifyToken = require("../middleware/authMiddleware");
 
@@ -27,12 +30,23 @@ router.post("/", verifyToken, async (req, res) => {
             return res.status(400).json({ error: "Slot already booked" });
         }
 
+        const lawyer = await User.findById(lawyerId);
+        if (!lawyer) {
+            return res.status(404).json({ error: "Lawyer not found" });
+        }
+        const fee = lawyer.consultationFee || lawyer.hourlyRate || 500;
+        const commission = Math.round(fee * 0.15); // 15% platform commission
+
         const appointment = new Appointment({
             clientId,
             lawyerId,
             date,
             slot,
-            notes
+            notes,
+            fee,
+            commission,
+            paymentStatus: "unpaid",
+            status: "pending"
         });
 
         await appointment.save();

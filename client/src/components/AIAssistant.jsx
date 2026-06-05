@@ -107,6 +107,11 @@ export default function AIAssistant() {
                                         : 'bg-white/5 text-slate-200 border border-white/10 rounded-bl-none'
                                         }`}>
                                         {msg.content}
+                                        {msg.role === 'system' && (
+                                            <div className="text-[9px] text-slate-500 mt-2 pt-2 border-t border-white/5 flex items-center gap-1.5 font-medium leading-tight">
+                                                ⚖️ This is AI-generated information. Verify with a qualified lawyer.
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}
