@@ -46,7 +46,7 @@ export default function Navbar() {
   const navItems = [
     { name: "AI Assistant", href: "/assistant" },
     { name: "Find a Lawyer", href: "/marketplace" },
-    { name: "For Professionals", href: "/pricing" },
+    { name: "For Professionals", href: "/professionals" },
     { name: "Pricing", href: "/pricing" }
   ];
 
