@@ -46,4 +46,10 @@ CaseSchema.post("findOneAndDelete", function (doc) {
   }
 });
 
+
+// ---- Performance Indexes ----
+CaseSchema.index({ postedBy: 1, createdAt: -1 });
+CaseSchema.index({ lawyerId: 1 });
+CaseSchema.index({ status: 1 });
+
 module.exports = mongoose.model('Case', CaseSchema);

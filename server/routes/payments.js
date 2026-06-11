@@ -62,8 +62,7 @@ router.post("/create-order", verifyToken, async (req, res) => {
     res.status(500).json({ 
       error: "Order creation failed", 
       details: err.message || "Unknown error string",
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-      rawError: err
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
 });
@@ -164,6 +163,74 @@ router.post("/verify", verifyToken, async (req, res) => {
   } catch (err) {
     console.error("Verify error:", err);
     res.status(500).json({ error: "Payment verification failed" });
+  }
+});
+
+/* -------------------- RAZORPAY WEBHOOK -------------------- */
+/**
+ * POST /api/payments/webhook
+ * Razorpay sends events here. Must be registered in the Razorpay Dashboard.
+ * NOTE: This route must receive the RAW body - do NOT add express.json() before this route.
+ */
+router.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
+  try {
+    const webhookSecret = process.env.RZP_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      console.error("❌ RZP_WEBHOOK_SECRET is not set. Rejecting webhook.");
+      return res.status(500).json({ error: "Webhook secret not configured" });
+    }
+
+    const signature = req.headers["x-razorpay-signature"];
+    if (!signature) {
+      return res.status(400).json({ error: "Missing Razorpay signature header" });
+    }
+
+    // Verify HMAC-SHA256 signature
+    const expectedSignature = crypto
+      .createHmac("sha256", webhookSecret)
+      .update(req.body) // raw Buffer
+      .digest("hex");
+
+    if (expectedSignature !== signature) {
+      console.warn("⚠️  Razorpay webhook signature mismatch - possible forgery");
+      return res.status(400).json({ error: "Invalid webhook signature" });
+    }
+
+    const event = JSON.parse(req.body.toString());
+    const eventType = event.event;
+
+    console.log(`[Webhook] Received Razorpay event: ${eventType}`);
+
+    // Handle payment.captured and subscription.charged
+    if (eventType === "payment.captured" || eventType === "subscription.charged") {
+      let notes;
+      if (eventType === "payment.captured") {
+        notes = event.payload?.payment?.entity?.notes || {};
+      } else {
+        // subscription.charged - notes live on the subscription
+        notes = event.payload?.subscription?.entity?.notes || {};
+      }
+
+      const { userId, plan } = notes;
+
+      if (userId && plan) {
+        const cleanPlan = plan.toLowerCase();
+        // Only upgrade subscription plans, not credit packs or appointment payments
+        if (!cleanPlan.startsWith("credits_") && !cleanPlan.startsWith("appointment_")) {
+          await User.findByIdAndUpdate(userId, { plan: cleanPlan }, { new: true });
+          console.log(`[Webhook] Upgraded user ${userId} to plan: ${cleanPlan}`);
+        }
+      } else {
+        console.warn(`[Webhook] ${eventType} missing userId or plan in notes:`, notes);
+      }
+    }
+
+    // Always return 200 so Razorpay doesn't retry
+    return res.status(200).json({ received: true });
+  } catch (err) {
+    console.error("[Webhook] Error processing Razorpay webhook:", err);
+    // Still return 200 to prevent Razorpay from retrying on our internal errors
+    return res.status(200).json({ received: true });
   }
 });
 

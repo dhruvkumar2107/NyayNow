@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Search, MapPin, ShieldCheck, Filter, X, HelpCircle, CheckCircle } from "lucide-react"
 import Image from "next/image"
 import VerifiedBadge from "../VerifiedBadge"
+import FeaturedBadge from "../FeaturedBadge"
 
 export default function MarketplaceClient({ initialLawyers }) {
     const rawLawyers = Array.isArray(initialLawyers) 
@@ -304,8 +305,9 @@ function LawyerCard({ lawyer }) {
                         </div>
                     </div>
                 </Link>
-                <div className="flex flex-col items-end gap-1">
+                <div className="flex flex-col items-end gap-1.5">
                     <VerifiedBadge plan={lawyer.plan} verified={lawyer.verified} verificationStatus={lawyer.verificationStatus} />
+                    <FeaturedBadge tier={lawyer.listingTier} />
                 </div>
             </div>
             <div className="flex items-center gap-6 mb-6 p-4 bg-black/20 rounded-xl border border-white/5 text-xs">

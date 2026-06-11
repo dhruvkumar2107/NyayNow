@@ -5,6 +5,7 @@ import { MessageSquare, X, Send, Sparkles, User, Anchor, ShieldAlert, ArrowRight
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
+import UpgradeModal from "./UpgradeModal";
 
 export default function AIAssistant() {
     const { user } = useAuth();
@@ -19,6 +20,7 @@ export default function AIAssistant() {
     // Guest counter
     const [guestQueries, setGuestQueries] = useState(0);
     const [showSignupModal, setShowSignupModal] = useState(false);
+    const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
 
     useEffect(() => {
         if (!user) {
@@ -82,7 +84,11 @@ export default function AIAssistant() {
             }]);
         } catch (error) {
             console.error(error);
-            setMessages(prev => [...prev, { role: "system", content: "I am currently experiencing high traffic. Please try again in a moment." }]);
+            if (error.response?.status === 403 && error.response?.data?.code === "LIMIT_REACHED") {
+                setIsUpgradeModalOpen(true);
+            } else {
+                setMessages(prev => [...prev, { role: "system", content: "I am currently experiencing high traffic. Please try again in a moment." }]);
+            }
         } finally {
             setIsTyping(false);
         }
@@ -270,6 +276,12 @@ export default function AIAssistant() {
                     </div>
                 )}
             </AnimatePresence>
+            {/* UPGRADE MODAL INTERCEPT */}
+            <UpgradeModal 
+                isOpen={isUpgradeModalOpen} 
+                onClose={() => setIsUpgradeModalOpen(false)} 
+                feature="AI Queries" 
+            />
         </>
     );
 }

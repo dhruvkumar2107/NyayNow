@@ -21,4 +21,9 @@ const AppointmentSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
+
+// ---- Performance Indexes ----
+AppointmentSchema.index({ lawyerId: 1, date: 1 });
+AppointmentSchema.index({ clientId: 1 });
+
 module.exports = mongoose.model("Appointment", AppointmentSchema);

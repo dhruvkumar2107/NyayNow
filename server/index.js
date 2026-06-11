@@ -65,7 +65,6 @@ app.use(helmet({
       scriptSrc: [
         "'self'",
         "'unsafe-inline'",
-        "'unsafe-eval'",          // Required by Next.js
         "https://checkout.razorpay.com",
         "https://*.sentry.io",
         "https://cdn.razorpay.com",
@@ -120,33 +119,34 @@ app.use(helmet({
 }));
 
 
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000,
-//   max: 300,
-//   standardHeaders: true,
-//   legacyHeaders: false,
-// });
-// app.use(limiter);
+// 🛡️ GLOBAL LIMITER
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 
-// // 🛡️ AUTH LIMITER (Brute-force protection)
-// const authLimiter = rateLimit({
-//   windowMs: 60 * 60 * 1000, // 1 hour
-//   max: 10, // 10 attempts per hour
-//   message: { error: "Too many login attempts. Try again in an hour." },
-//   standardHeaders: true,
-//   legacyHeaders: false,
-// });
-// app.use("/api/auth", authLimiter);
+// 🛡️ AUTH LIMITER (Brute-force protection)
+const authLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // 10 attempts per hour
+  message: { error: "Too many login attempts. Try again in an hour." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use("/api/auth", authLimiter);
 
-// // 🛡️ AI LIMITER (Cost overflow protection)
-// const aiLimiter = rateLimit({
-//   windowMs: 15 * 60 * 1000,
-//   max: 50, // 50 AI requests per 15 min
-//   message: { error: "AI capacity limit reached. Please wait a moment." },
-//   standardHeaders: true,
-//   legacyHeaders: false,
-// });
-// app.use("/api/ai", aiLimiter);
+// 🛡️ AI LIMITER (Cost overflow protection)
+const aiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50, // 50 AI requests per 15 min
+  message: { error: "AI capacity limit reached. Please wait a moment." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use("/api/ai", aiLimiter);
 
 app.use(cors({
   origin: allowedOrigins,
@@ -161,6 +161,20 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+
+/* ================= ENV VALIDATION ================= */
+const REQUIRED_ENV_VARS = [
+  "JWT_SECRET",
+  "MONGO_URI",
+  "RZP_KEY_ID",
+  "RZP_KEY_SECRET",
+  "GOOGLE_CLIENT_ID",
+];
+REQUIRED_ENV_VARS.forEach((key) => {
+  if (!process.env[key]) {
+    console.warn(`⚠️  Missing critical env var: ${key}`);
+  }
+});
 
 /* ================= ENV ================= */
 const PORT = process.env.PORT || 4000;
@@ -247,7 +261,6 @@ io.on("connection", (socket) => {
     });
 
     console.log(`Consult started: ${meetingId}`);
-    console.log(`Consult started: ${meetingId}`);
   });
 
   // ---------------- SCHEDULED CALLS (NEW) ----------------
@@ -289,7 +302,21 @@ io.on("connection", (socket) => {
 
 /* ================= HEALTH ================= */
 app.get("/healthz", (req, res) => {
-  res.json({ ok: true });
+  const dbState = mongoose.connection.readyState;
+  // 0=disconnected, 1=connected, 2=connecting, 3=disconnecting
+  const dbStateMap = { 0: "disconnected", 1: "connected", 2: "connecting", 3: "disconnecting" };
+  const memUsage = process.memoryUsage();
+  res.json({
+    ok: dbState === 1,
+    db: dbStateMap[dbState] || "unknown",
+    uptime: Math.floor(process.uptime()),
+    memory: {
+      heapUsedMB: Math.round(memUsage.heapUsed / 1024 / 1024),
+      heapTotalMB: Math.round(memUsage.heapTotal / 1024 / 1024),
+      rssMB: Math.round(memUsage.rss / 1024 / 1024)
+    },
+    timestamp: new Date().toISOString()
+  });
 });
 
 /* ================= ROUTE LOADER ================= */
@@ -329,7 +356,9 @@ loadRoute("/api/contact", "./routes/contact"); // NEW CONTACT ROUTE
 loadRoute("/api/docusign", "./routes/docusign"); // NEW DOCUSIGN ROUTE
 loadRoute("/api/verification", "./routes/verification"); // REAL DIGILOCKER ROUTE
 loadRoute("/api/confessions", "./routes/confessions"); // ANONYMOUS CONFESSION BOOTH
-loadRoute("/api/ecourts", "./routes/ecourts"); // NEW ECOURTS INTEGRATION
+loadRoute("/api/ecourts", "./routes/ecourts"); // ECOURTS INTEGRATION
+loadRoute("/api/subscriptions", "./routes/subscriptions"); // 💰 RECURRING SUBSCRIPTIONS
+loadRoute("/api/leads", "./routes/leads"); // 💰 PAY-PER-LEAD SYSTEM
 
 // Custom Sentry Error Handler (Compatible with all versions)
 app.use((err, req, res, next) => {
@@ -389,6 +418,51 @@ if (fs.existsSync(clientDist)) {
           <loc>${baseUrl}/contact</loc>
           <changefreq>monthly</changefreq>
           <priority>0.5</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/assistant</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.8</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/judge-ai</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.8</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/professionals</loc>
+          <changefreq>daily</changefreq>
+          <priority>0.8</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/courtroom-battle</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.7</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/voice-assistant</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.7</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/research</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.7</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/drafting</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.7</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/legal-sos</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.8</priority>
+        </url>
+        <url>
+          <loc>${baseUrl}/blog</loc>
+          <changefreq>daily</changefreq>
+          <priority>0.6</priority>
         </url>`;
 
       lawyers.forEach(lawyer => {

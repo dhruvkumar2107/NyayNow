@@ -279,7 +279,10 @@ export default function LawyerDashboard() {
       toast.success("Lead Accepted! Client has been notified.");
       fetchLeads();
       fetchAcceptedCases(uId);
-    } catch (err) { toast.error("Failed to accept lead."); }
+    } catch (err) { 
+      const errMsg = err.response?.data?.error || "Failed to accept lead.";
+      toast.error(errMsg); 
+    }
   };
 
   if (loading || !user) return <PremiumLoader text="Initializing Command Center..." />;

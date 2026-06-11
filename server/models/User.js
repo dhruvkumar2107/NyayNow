@@ -116,6 +116,22 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    listingEndDate: { type: Date, default: null },
+
+    // ─── SUBSCRIPTION TRACKING ───────────────────────────────
+    subscriptionId: { type: String, default: null },
+    subscriptionStatus: {
+      type: String,
+      enum: ["inactive", "active", "cancelled", "past_due"],
+      default: "inactive"
+    },
+    subscriptionEndDate: { type: Date, default: null },
+    lastPaymentId: { type: String, default: null },
+
+    // ─── REFERRAL SYSTEM ─────────────────────────────────────
+    referralCode: { type: String, unique: true, sparse: true },
+    referredBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    referralCount: { type: Number, default: 0 },
 
     // VERIFICATION SYSTEM
     barCouncilId: { type: String, default: "" }, // e.g. MAH/2345/2020
@@ -216,5 +232,22 @@ userSchema.post("findOneAndDelete", async function (doc) {
     }
   }
 });
+
+// ─── INDEXES ─────────────────────────────────────────────────────────────────
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1, verificationStatus: 1 });
+userSchema.index({ 'location.lat': 1, 'location.lng': 1 });
+userSchema.index({ plan: 1 });
+userSchema.index({ isFeatured: -1, listingTier: 1 });
+userSchema.index({ referralCode: 1 }, { sparse: true });
+userSchema.index({ subscriptionStatus: 1, subscriptionEndDate: 1 });
+
+
+// ---- Performance Indexes ----
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ role: 1, verificationStatus: 1 });
+userSchema.index({ 'location.lat': 1, 'location.lng': 1 });
+userSchema.index({ plan: 1 });
+userSchema.index({ isFeatured: 1, listingTier: 1 });
 
 module.exports = mongoose.model("User", userSchema);

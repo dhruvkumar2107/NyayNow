@@ -102,7 +102,6 @@ router.post("/register", async (req, res) => {
       idCardImage
     } = req.body;
 
-    console.log("REGISTER BODY:", req.body);
 
     // Construct dynamic query to avoid matching everything with empty object
     const criteria = [{ email }];
@@ -149,7 +148,6 @@ router.post("/register", async (req, res) => {
       verificationStatus: isVerified ? "verified" : "pending"
     });
 
-    console.log("USER SAVED:", user._id);
 
     const token = jwt.sign(
       { id: user._id, role: user.role, plan: user.plan },
@@ -165,7 +163,19 @@ router.post("/register", async (req, res) => {
 });
 
 /* ================= OTP AUTH ================= */
-const OTP_STORE = new Map();
+// TTL-based OTP store — entries auto-expire after 10 minutes
+const OTP_STORE = new Map(); // phone -> { otp, expiresAt }
+const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
+
+// Cleanup stale OTP entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [phone, entry] of OTP_STORE.entries()) {
+    if (now > entry.expiresAt) {
+      OTP_STORE.delete(phone);
+    }
+  }
+}, 5 * 60 * 1000);
 
 const { sendSMS } = require("../utils/sms");
 
@@ -176,13 +186,13 @@ router.post("/send-otp", async (req, res) => {
   }
 
   const otp = Math.floor(1000 + Math.random() * 9000).toString();
-  OTP_STORE.set(phone, otp);
+  OTP_STORE.set(phone, { otp, expiresAt: Date.now() + OTP_TTL_MS });
 
   // Send via Twilio
   // If keys are missing, it will log mock SMS to console automatically
   await sendSMS(phone, `Your NyayNow verification code is: ${otp}. Valid for 10 minutes.`);
 
-  console.log(`[OTP LOG] ${phone} → ${otp}`);
+  console.log(`[OTP LOG] ${phone} → [SENT]`);
 
   res.json({ message: "OTP sent via SMS" });
 });
@@ -191,7 +201,15 @@ router.post("/verify-otp", async (req, res) => {
   try {
     const { phone, otp } = req.body;
 
-    if (OTP_STORE.get(phone) !== otp) {
+    const entry = OTP_STORE.get(phone);
+    if (!entry) {
+      return res.status(400).json({ message: "OTP not found or already used" });
+    }
+    if (Date.now() > entry.expiresAt) {
+      OTP_STORE.delete(phone);
+      return res.status(400).json({ message: "OTP has expired. Please request a new one." });
+    }
+    if (entry.otp !== otp) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 

@@ -17,7 +17,7 @@ export const metadata = {
         template: '%s | NyayNow'
     },
     description: 'NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal information, draft documents, and connect with expert lawyers.',
-    keywords: ['legal assistant', 'AI lawyer', 'Indian law', 'legal information', 'lawyer marketplace', 'legal document drafting'],
+    keywords: ['legal assistant', 'AI lawyer', 'Indian law', 'legal information', 'lawyer marketplace', 'legal document drafting', 'NyayNow', 'online legal help India', 'IPC sections', 'Supreme Court judgments', 'free legal advice', 'vakeel online', 'kanoon AI', 'legal chatbot India', 'hire lawyer online'],
     authors: [{ name: 'NyayNow Team' }],
     creator: 'NyayNow',
     publisher: 'NyayNow',
@@ -33,10 +33,10 @@ export const metadata = {
         siteName: 'NyayNow',
         images: [
             {
-                url: '/logo.png',
+                url: '/og-image.png',
                 width: 1200,
                 height: 630,
-                alt: 'NyayNow Legal AI',
+                alt: 'NyayNow — AI Legal Intelligence & Lawyer Marketplace for India',
             },
         ],
         locale: 'en_IN',
@@ -46,7 +46,7 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'NyayNow | AI Legal Intelligence',
         description: 'NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India.',
-        images: ['/logo.png'],
+        images: ['/og-image.png'],
         creator: '@nyaynow',
     },
     robots: {
