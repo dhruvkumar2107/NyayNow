@@ -1,0 +1,31 @@
+# robots.txt for NyayNow (https://nyaynow.in)
+# Generated: June 2026
+
+User-agent: *
+
+# Allow crawling of public content
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /pricing
+Allow: /blog
+Allow: /career
+Allow: /professionals
+Allow: /marketplace
+
+# Disallow crawling of authenticated dashboards and private pages
+Disallow: /client
+Disallow: /messages
+Disallow: /calendar
+Disallow: /analytics
+Disallow: /settings
+Disallow: /payment
+Disallow: /admin
+Disallow: /setup-profile
+Disallow: /digilocker-verify
+Disallow: /verification-pending
+Disallow: /api/
+
+# Host and sitemap locations
+Host: https://nyaynow.in
+Sitemap: https://nyaynow.in/sitemap.xml
