@@ -29,6 +29,15 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
+
   const handleLogout = () => {
     logout();
     router.push("/");
@@ -80,9 +89,9 @@ export default function Navbar() {
           </div>
 
           {/* RIGHT ACTIONS */}
-          <div className="flex items-center gap-4 relative z-50 shrink-0">
+          <div className="flex items-center gap-2 md:gap-4 relative z-50 shrink-0">
             {/* Language Switcher */}
-            <div className="relative">
+            <div className="relative hidden sm:block">
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
@@ -98,12 +107,12 @@ export default function Navbar() {
             </div>
 
             {!user ? (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <Link href="/login" className="hidden sm:block font-bold text-[13px] text-slate-400 hover:text-white transition-all duration-300 px-4">
                   {t("navbar.signin")}
                 </Link>
                 <Link href="/register">
-                  <button className="px-6 py-2.5 bg-white text-slate-950 font-bold text-[13px] rounded-full hover:bg-blue-600 hover:text-white transition-all duration-500 shadow-xl shadow-white/5 active:scale-95">
+                  <button className="px-4 sm:px-6 py-2 sm:py-2.5 bg-white text-slate-950 font-bold text-[12px] sm:text-[13px] rounded-full hover:bg-blue-600 hover:text-white transition-all duration-500 shadow-xl shadow-white/5 active:scale-95">
                     {t("navbar.get_started")}
                   </button>
                 </Link>

@@ -276,20 +276,20 @@ export default function ProfessionalsPage() {
 
 
       {/* ─── INTERACTIVE FEATURE TABS ──────────────────────── */}
-      <section className="py-28 border-t border-white/5 bg-white/[0.01]">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-16 md:py-28 border-t border-white/5 bg-white/[0.01]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-5xl font-black text-white tracking-tighter mb-4">Deep Dive into Features</h2>
+            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tighter mb-4">Deep Dive into Features</h2>
             <p className="text-slate-400 text-lg font-light">Explore every capability designed for legal professionals.</p>
           </motion.div>
 
-          {/* Tab navigation */}
-          <div className="flex flex-wrap justify-center gap-3 mb-14">
+          {/* Tab navigation - horizontally scrollable on mobile */}
+          <div className="flex overflow-x-auto no-scrollbar lg:flex-wrap lg:justify-center gap-3 mb-14 pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6">
             {featureTabs.map(({ id, label, icon: Icon }) => (
               <motion.button
                 key={id}
@@ -348,9 +348,9 @@ export default function ProfessionalsPage() {
 
 
       {/* ─── HOW IT WORKS ──────────────────────────────────── */}
-      <section className="py-28 border-t border-white/5 bg-white/[0.01]">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-20">
+      <section className="py-16 md:py-28 border-t border-white/5 bg-white/[0.01]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-20">
             <div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

@@ -24,6 +24,8 @@ export default function MarketplaceClient({ initialLawyers }) {
     
     // Verification criteria modal state
     const [showVerificationModal, setShowVerificationModal] = useState(false)
+    // Mobile filter panel toggle
+    const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
     // Derive Filters
     const specializations = useMemo(() => [...new Set(lawyers.map(l => l.specialization).filter(Boolean))], [lawyers])
@@ -124,9 +126,22 @@ export default function MarketplaceClient({ initialLawyers }) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-8">
+            {/* MOBILE FILTER TOGGLE */}
+            <div className="flex items-center justify-between mb-4 lg:hidden">
+                <span className="text-slate-400 text-sm font-bold">{filteredLawyers.length} lawyers found</span>
+                <button
+                    onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-bold text-sm transition-all ${mobileFiltersOpen ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'}`}
+                >
+                    <Filter size={16} />
+                    {mobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}
+                    {hasAnyActiveFilters && <span className="w-2 h-2 bg-indigo-400 rounded-full ml-1" />}
+                </button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
                 {/* SIDEBAR FILTERS */}
-                <div className="col-span-12 lg:col-span-3">
+                <div className={`col-span-1 lg:col-span-3 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
                     <div className="bg-[#0f172a] rounded-2xl p-6 shadow-xl border border-white/10 sticky top-28 text-left backdrop-blur-md space-y-6">
                         <div className="flex items-center justify-between text-white font-bold pb-2 border-b border-white/5">
                             <div className="flex items-center gap-2"><Filter size={18} aria-hidden="true" /> Filters</div>
@@ -166,7 +181,7 @@ export default function MarketplaceClient({ initialLawyers }) {
                 </div>
 
                 {/* LAWYER CARDS GRID */}
-                <div className="col-span-12 lg:col-span-9">
+                <div className="col-span-1 lg:col-span-9">
                     {filteredLawyers.length === 0 ? (
                         <div className="text-center py-20 text-slate-500 italic bg-[#0f172a] rounded-2xl border border-white/10">
                             <p>No lawyers found matching your criteria.</p>

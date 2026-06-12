@@ -1,15 +1,10 @@
 'use client'
 
-import React from "react"
-import Link from "next/link"
-import Navbar from "../../components/Navbar"
-import Footer from "../../components/Footer"
 import { Shield, Lock, Server, FileText, CheckCircle } from "lucide-react"
 
 export default function SecurityCompliance() {
     return (
         <div className="min-h-screen bg-[#020617] text-slate-300 font-sans flex flex-col pt-24">
-            <Navbar />
 
             <main className="flex-1 max-w-4xl mx-auto px-6 py-16 w-full relative z-10">
                 <div className="absolute top-0 inset-x-0 h-[300px] bg-[radial-gradient(ellipse_at_top,_rgba(59,130,246,0.05),_transparent_70%)] pointer-events-none" />
@@ -97,7 +92,6 @@ export default function SecurityCompliance() {
                 </div>
             </main>
 
-            <Footer />
         </div>
     )
 }

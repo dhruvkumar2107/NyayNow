@@ -63,6 +63,7 @@ export default function LawyerDashboard() {
   const [newInvoice, setNewInvoice] = useState({ clientId: "", amount: "", description: "" });
   const [connections, setConnections] = useState([]);
   const [lawyers, setLawyers] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const tab = searchParams.get("tab");
@@ -153,6 +154,15 @@ export default function LawyerDashboard() {
       }
     }
   }, [user]);
+
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [sidebarOpen]);
 
   const fetchNotifications = async (uId) => {
     try {
@@ -295,7 +305,7 @@ export default function LawyerDashboard() {
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
 
       {/* SIDEBAR NAVIGATION (Fixed Left) */}
-      <aside className="fixed left-0 top-0 h-screen w-64 bg-[#0f172a] border-r border-white/5 flex flex-col z-50">
+      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#0f172a] border-r border-white/5 flex flex-col z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6">
           <div className="flex items-center gap-3 mb-10">
             <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/20">
@@ -362,18 +372,33 @@ export default function LawyerDashboard() {
         </div>
       </aside>
 
+      {/* Mobile Sidebar Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* MAIN CONTENT AREA */}
-      <main className="pl-64 pt-6 pr-6 pb-6 min-h-screen">
+      <main className="lg:pl-64 pt-6 px-4 sm:px-6 pb-6 min-h-screen">
 
         {/* HEADER */}
-        <header className="flex justify-between items-center mb-8 px-6">
+        <header className="flex justify-between items-center mb-8 px-2 sm:px-6">
+          {/* MOBILE MENU TOGGLE */}
+          <button
+            className="lg:hidden fixed top-4 left-4 z-[60] p-2.5 bg-[#0f172a] border border-white/10 rounded-xl text-slate-400 hover:text-white transition shadow-xl"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            {sidebarOpen ? '✕' : '☰'}
+          </button>
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <h1 className="text-3xl font-black text-white tracking-tight">
+            <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight">
               Command <span className="text-indigo-500">Center</span>.
             </h1>
           </motion.div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {/* VIDEO CALL BUTTON */}
             {/* <button
               onClick={() => router.push('/video-call')}
@@ -432,7 +457,7 @@ export default function LawyerDashboard() {
 
             <div className="h-10 w-px bg-white/10 mx-2" />
 
-            <div className="text-right">
+            <div className="text-right hidden sm:block">
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-0.5">Revenue Net</p>
               <p className="text-xl font-black text-white tracking-tighter">₹{invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
             </div>
@@ -440,16 +465,16 @@ export default function LawyerDashboard() {
         </header>
 
         {/* BENTO GRID LAYOUT */}
-        <div className="grid grid-cols-12 gap-6 px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 px-2 sm:px-4">
 
           {/* PRIMARY CONTENT (8 COLS) */}
-          <div className="col-span-8 space-y-6">
+          <div className="col-span-1 lg:col-span-8 space-y-6">
 
             {activeTab === 'board' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
 
                 {/* PRACTICE OVERVIEW CARDS */}
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <StatCard
                     label="Active Matters"
                     value={acceptedCases.length}
@@ -509,7 +534,7 @@ export default function LawyerDashboard() {
                 </div>
 
                 {/* INTELLIGENCE PANEL */}
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {crmData ? (
                     <>
                       <WorkloadMonitor workload={crmData.workload} />
@@ -631,21 +656,21 @@ export default function LawyerDashboard() {
 
           {/* LEGAL NOTICE GENERATOR — Full Width */}
           {activeTab === 'notices' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-12">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-12">
               <LegalNoticeGenerator />
             </motion.div>
           )}
 
           {/* LEGAL RESEARCH HUB — Full Width */}
           {activeTab === 'research' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-12">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-12">
               <LegalResearchHub />
             </motion.div>
           )}
 
           {/* RIGHT SIDEBAR (4 COLS) — Hidden on full-width tabs */}
           {(activeTab !== 'notices' && activeTab !== 'research') && (
-            <div className="col-span-4 space-y-6">
+            <div className="col-span-1 lg:col-span-4 space-y-6">
               
               {/* eCourts Integration */}
               <ECourtsWidget />

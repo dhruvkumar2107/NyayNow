@@ -7,15 +7,15 @@ import { ShieldAlert, Zap, Lock, ChevronRight, Phone } from "lucide-react"
 
 export function LegalSOSSection() {
     return (
-        <section className="relative py-40 overflow-hidden bg-[#020617]">
+        <section className="relative py-20 md:py-40 overflow-hidden bg-[#020617]">
             {/* AMBIENT EMERGENCY GLOW */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-600/5 rounded-full blur-[160px] animate-pulse" />
                 <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.03]" />
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <div className="grid lg:grid-cols-2 gap-24 items-center">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+                <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
                     <motion.div
                         initial={{ opacity: 0, x: -40 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -27,7 +27,7 @@ export function LegalSOSSection() {
                             <span className="text-red-500 font-black text-[10px] tracking-[0.3em] uppercase">Emergency Response AI</span>
                         </div>
 
-                        <h2 className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tighter leading-[1.1]">
+                        <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-8 tracking-tighter leading-[1.1]">
                             The Unique <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500">Legal SOS Game-Changer.</span>
                         </h2>
@@ -107,7 +107,7 @@ function SOSCard({ step, title, desc, color, delay }) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
-            className="relative flex items-start gap-8 p-8 rounded-3xl bg-[#030712] border border-white/5 hover:border-red-500/30 transition-all duration-700 shadow-2xl group z-10"
+            className="relative flex flex-col sm:flex-row items-start gap-4 sm:gap-8 p-5 sm:p-8 rounded-3xl bg-[#030712] border border-white/5 hover:border-red-500/30 transition-all duration-700 shadow-2xl group z-10"
         >
             <div className={`w-12 h-12 rounded-2xl ${color}/10 border border-${color}/20 flex items-center justify-center text-xl font-black text-${color}/80 group-hover:scale-110 transition-transform duration-500 shrink-0`}>
                 {step}

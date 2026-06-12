@@ -17,10 +17,10 @@ export function BentoGrid() {
                     >
                         Elite Ecosystem
                     </motion.div>
-                    <h2 className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tighter">Everything Law. <br /><span className="text-white/40">In one place.</span></h2>
+                    <h2 className="text-4xl md:text-7xl font-bold text-white mb-8 tracking-tighter">Everything Law. <br /><span className="text-white/40">In one place.</span></h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[220px]">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-auto md:auto-rows-[220px]">
                     <BentoCard
                         title="NyayCourt Simulator"
                         desc="Neural AI Judges that evaluate every nuance of your oral arguments in a simulated trial."
@@ -123,7 +123,7 @@ function BentoCard({ title, desc, icon, color, href, badge, className, isLarge }
                     rotateY: rotate.y
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className={`relative group bg-[#020617]/50 border border-white/5 rounded-[32px] ${isLarge ? 'p-12 md:p-16' : 'p-8'} overflow-hidden hover:border-blue-500/20 transition-all duration-700 flex flex-col h-full focus:outline-none focus:ring-2 focus:ring-blue-500/50 hover-perspective`}
+                className={`relative group bg-[#020617]/50 border border-white/5 rounded-[32px] ${isLarge ? 'p-6 sm:p-12 md:p-16' : 'p-6 sm:p-8'} overflow-hidden hover:border-blue-500/20 transition-all duration-700 flex flex-col h-full focus:outline-none focus:ring-2 focus:ring-blue-500/50 hover-perspective`}
             >
                 {/* SPOTLIGHT */}
                 <div

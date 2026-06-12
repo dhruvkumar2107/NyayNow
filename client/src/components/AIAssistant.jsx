@@ -112,7 +112,7 @@ export default function AIAssistant() {
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        className="fixed bottom-24 right-8 w-96 h-[570px] bg-[#020617] border border-white/10 rounded-2xl shadow-2xl flex flex-col z-[9999] overflow-hidden"
+                        className="fixed bottom-24 right-4 left-4 sm:left-auto sm:right-8 sm:w-96 h-[calc(100vh-140px)] sm:h-[570px] max-h-[570px] bg-[#020617] border border-white/10 rounded-2xl shadow-2xl flex flex-col z-[9999] overflow-hidden"
                     >
                         {/* Header */}
                         <div className="p-4 bg-gradient-to-r from-indigo-900 via-midnight-950 to-indigo-900 flex justify-between items-center text-white border-b border-white/5">
@@ -225,7 +225,7 @@ export default function AIAssistant() {
                 onClick={() => setIsOpen(!isOpen)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-full shadow-[0_0_20px_rgba(79,70,229,0.5)] flex items-center justify-center text-white z-[9998] border border-white/20"
+                className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-full shadow-[0_0_20px_rgba(79,70,229,0.5)] flex items-center justify-center text-white z-[9998] border border-white/20"
             >
                 <AnimatePresence mode="wait">
                     {isOpen ? (

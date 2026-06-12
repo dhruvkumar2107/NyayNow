@@ -27,7 +27,7 @@ const Footer = () => {
     if (isDashboard) return null
 
     return (
-        <footer className="bg-[#020617] border-t border-white/5 text-slate-400 font-sans pt-32 pb-12 relative overflow-hidden">
+        <footer className="bg-[#020617] border-t border-white/5 text-slate-400 font-sans pt-16 md:pt-32 pb-12 relative overflow-hidden">
             {/* ULTRA-PREMIUM MESH GRADIENT */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
                 <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[120px]" />
@@ -35,10 +35,10 @@ const Footer = () => {
                 <div className="absolute top-[20%] left-[30%] w-[30%] h-[30%] bg-blue-400/5 rounded-full blur-[140px]" />
             </div>
 
-            <div className="container mx-auto px-6 max-w-[1400px] relative z-10">
+            <div className="container mx-auto px-4 sm:px-6 max-w-[1400px] relative z-10">
 
                 {/* TOP SECTION: BRAND & NEWSLETTER */}
-                <div className="grid lg:grid-cols-12 gap-16 mb-24">
+                <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 mb-16 lg:mb-24">
                     <div className="lg:col-span-5">
                         <Link href="/" className="inline-flex items-center gap-3 mb-8 group" aria-label="NyayNow Home">
                             <div className="relative">
@@ -89,7 +89,7 @@ const Footer = () => {
                 </div>
 
                 {/* LINKS GRID */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12 border-t border-white/5 pt-24 mb-24">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 sm:gap-12 border-t border-white/5 pt-12 sm:pt-24 mb-16 sm:mb-24">
                     <FooterColumn title="Sitemap">
                         <FooterLink href="/assistant">AI Assistant</FooterLink>
                         <FooterLink href="/marketplace">Find a Lawyer</FooterLink>

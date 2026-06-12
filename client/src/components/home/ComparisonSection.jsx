@@ -7,7 +7,7 @@ import { Brain, Gavel, ArrowRight, Shield, Lock } from "lucide-react"
 
 export function ComparisonSection() {
     return (
-        <section className="py-32 relative overflow-hidden bg-[#000000] border-y border-white/5">
+        <section className="py-16 md:py-32 relative overflow-hidden bg-[#000000] border-y border-white/5">
             <div className="absolute inset-0 pointer-events-none opacity-20">
                 <div className="absolute top-1/2 left-0 -translate-y-1/2 w-1/4 h-full bg-blue-500/20 blur-[140px] rounded-full" />
                 <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1/4 h-full bg-indigo-500/20 blur-[140px] rounded-full" />
@@ -26,7 +26,7 @@ export function ComparisonSection() {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tighter leading-tight"
+                        className="text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-8 tracking-tighter leading-tight"
                     >
                         One Purpose. <br /><span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">Comprehensive Legal Intelligence.</span>
                     </motion.h2>
@@ -40,7 +40,7 @@ export function ComparisonSection() {
                     className="grid lg:grid-cols-2 gap-8 lg:gap-px bg-white/5 border border-white/5 rounded-[40px] overflow-hidden"
                 >
                     {/* STRATEGIC MODULE */}
-                    <Link href="/judge-ai" className="group relative bg-[#010204] p-12 md:p-20 hover:bg-slate-900/40 transition-all duration-700 hover-perspective">
+                    <Link href="/judge-ai" className="group relative bg-[#010204] p-6 sm:p-12 md:p-20 hover:bg-slate-900/40 transition-all duration-700 hover-perspective">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                         <div className="relative z-10">
@@ -74,7 +74,7 @@ export function ComparisonSection() {
                     </Link>
 
                     {/* ASSISTANT MODULE */}
-                    <Link href="/assistant" className="group relative bg-[#010204] p-12 md:p-20 hover:bg-slate-900/40 transition-all duration-700 border-t lg:border-t-0 lg:border-l border-white/5 hover-perspective">
+                    <Link href="/assistant" className="group relative bg-[#010204] p-6 sm:p-12 md:p-20 hover:bg-slate-900/40 transition-all duration-700 border-t lg:border-t-0 lg:border-l border-white/5 hover-perspective">
                         <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-indigo-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                         <div className="relative z-10">

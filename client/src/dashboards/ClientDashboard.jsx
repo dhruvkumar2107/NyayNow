@@ -52,6 +52,16 @@ export default function ClientDashboard() {
   const [showInstantModal, setShowInstantModal] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallFeature, setPaywallFeature] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [sidebarOpen]);
 
   useEffect(() => {
     if (user) {
@@ -330,7 +340,7 @@ export default function ClientDashboard() {
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
 
       {/* SIDEBAR NAVIGATION (Fixed Left) */}
-      <aside className="fixed left-0 top-0 h-screen w-72 bg-[#020617] border-r border-white/5 flex flex-col z-50">
+      <aside className={`fixed left-0 top-0 h-screen w-72 bg-[#020617] border-r border-white/5 flex flex-col z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-8">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative">
@@ -400,18 +410,33 @@ export default function ClientDashboard() {
         </div>
       </aside>
 
+      {/* Mobile Sidebar Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* MAIN CONTENT AREA */}
-      <main className="pl-72 pt-8 pr-8 pb-8 min-h-screen">
+      <main className="lg:pl-72 pt-8 px-4 sm:px-6 lg:pr-8 pb-8 min-h-screen">
 
         {/* HEADER */}
         <header className="flex justify-between items-end mb-10 px-4 relative">
+          {/* MOBILE MENU TOGGLE */}
+          <button
+            className="lg:hidden fixed top-4 left-4 z-[60] p-2.5 bg-[#0f172a] border border-white/10 rounded-xl text-slate-400 hover:text-white transition shadow-xl"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            {sidebarOpen ? '✕' : '☰'}
+          </button>
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
             <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-3">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-            <h1 className="text-4xl font-bold text-white leading-tight">
+            <h1 className="text-2xl sm:text-4xl font-bold text-white leading-tight">
               Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-white to-cyan-400">{user.name?.split(' ')[0]}</span>
             </h1>
           </motion.div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 sm:gap-6">
             {/* VIDEO CALL BUTTON (PRO) */}
             {/* <button
               onClick={handleInstantConsult}
@@ -472,19 +497,19 @@ export default function ClientDashboard() {
 
             <button
               onClick={() => setShowPostModal(true)}
-              className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-indigo-500 transition flex items-center gap-2 shadow-lg shadow-indigo-500/20 border border-indigo-500/50"
+              className="bg-indigo-600 text-white px-3 sm:px-6 py-3 rounded-xl font-bold text-sm hover:bg-indigo-500 transition flex items-center gap-2 shadow-lg shadow-indigo-500/20 border border-indigo-500/50"
             >
-              <span>+</span> New Legal Matter
+              <span>+</span> <span className="hidden sm:inline">New Legal Matter</span><span className="sm:hidden">New</span>
             </button>
           </div>
         </header>
 
         {/* BENTO GRID LAYOUT */}
-        <div className="grid grid-cols-12 gap-6 px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 px-2 sm:px-4">
 
           {/* PRIMARY CONTENT (8 COLS) */}
           {activeTab === 'overview' && (
-            <div className="col-span-8 space-y-6">
+            <div className="col-span-1 lg:col-span-8 space-y-6">
 
               {/* HERO CARD: ACTIVE CASE */}
               <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl relative overflow-hidden group">
@@ -515,7 +540,7 @@ export default function ClientDashboard() {
                       <TrustTimeline stage={activeCase.stage || 'New Lead'} />
                     </div>
                   ) : (
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => setShowPostModal(true)}>
                         <div className="text-2xl mb-2 group-hover:scale-110 transition">📝</div>
                         <div className="font-bold text-sm text-white">Draft Contract</div>
@@ -542,7 +567,7 @@ export default function ClientDashboard() {
               <LegalReels />
 
               {/* SECONDARY ROW: FEED & STATS */}
-              <div className="grid grid-cols-2 gap-6 mt-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
                 {/* FEED SUMMARY */}
                 <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg h-[400px] overflow-y-auto custom-scrollbar">
                   <div className="flex justify-between items-center mb-4 sticky top-0 bg-[#0f172a] pb-2 border-b border-white/10 z-10">
@@ -623,7 +648,7 @@ export default function ClientDashboard() {
           )}
 
           {activeTab === 'cases' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-8 space-y-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-8 space-y-6">
               <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
                 <h3 className="font-bold text-2xl text-white mb-8">Active Case Files</h3>
                 <div className="space-y-4">
@@ -653,7 +678,7 @@ export default function ClientDashboard() {
           )}
 
           {activeTab === 'feed' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-8 space-y-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-8 space-y-6">
               <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
                 <div className="flex justify-between items-center mb-8">
                   <h3 className="font-bold text-2xl text-white tracking-tight">Legal Pulse</h3>
@@ -707,7 +732,7 @@ export default function ClientDashboard() {
           )}
 
           {activeTab === 'invoices' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-8 space-y-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-8 space-y-6">
               <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full -mr-20 -mt-20 pointer-events-none"></div>
 
@@ -771,7 +796,7 @@ export default function ClientDashboard() {
           {/* CONFESSION BOOTH — Full Width */}
           {
             activeTab === 'confessions' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-12">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-12">
                 <LegalConfessionBooth />
               </motion.div>
             )
@@ -780,7 +805,7 @@ export default function ClientDashboard() {
           {/* RIGHT SIDEBAR (4 COLS) — hidden on confession tab */}
           {
             activeTab !== 'confessions' && (
-              <div className="col-span-4 space-y-6">
+              <div className="col-span-1 lg:col-span-4 space-y-6">
                 {/* CALENDAR */}
                 <div className="bg-[#0f172a] rounded-3xl p-4 border border-white/10 shadow-lg">
                   <CalendarWidget user={user} />

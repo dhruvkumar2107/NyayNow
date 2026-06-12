@@ -396,12 +396,11 @@ export default function CourtroomBattle() {
 
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-blue-500/10 relative overflow-hidden flex flex-col">
-            <Navbar />
 
-            <main className="flex-1 relative z-10 pt-32 pb-32">
+            <main className="flex-1 relative z-10 pt-20 sm:pt-32 pb-16 sm:pb-32">
                 <div className="absolute top-0 inset-x-0 h-[600px] bg-[radial-gradient(ellipse_at_top,_rgba(59,130,246,0.1),_transparent_70%)] pointer-events-none" />
 
-                <div className="max-w-4xl mx-auto px-6 relative">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 relative">
                     <AnimatePresence mode="wait">
 
                         {/* PHASE: INPUT */}
@@ -429,7 +428,7 @@ export default function CourtroomBattle() {
                                     </p>
                                 </div>
 
-                                <div className="p-10 rounded-[48px] bg-white/5 border border-white/10 backdrop-blur-3xl shadow-2xl space-y-8">
+                                <div className="p-5 sm:p-10 rounded-[32px] sm:rounded-[48px] bg-white/5 border border-white/10 backdrop-blur-3xl shadow-2xl space-y-8">
                                     <div>
                                         <label className="block text-white font-black text-[10px] uppercase tracking-[0.4em] mb-4">Case Category</label>
                                         <div className="flex flex-wrap gap-2">
@@ -815,7 +814,6 @@ export default function CourtroomBattle() {
                     </AnimatePresence>
                 </div>
             </main>
-            <Footer />
         </div>
     );
 }
