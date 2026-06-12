@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NyayNow — Platform Technical Document</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #050810;
+      --bg2: #0a0e1a;
+      --bg3: #0f1628;
+      --card: rgba(255,255,255,0.04);
+      --card-border: rgba(255,255,255,0.08);
+      --gold: #f5c842;
+      --gold2: #e8a820;
+      --green: #22c55e;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --cyan: #06b6d4;
+      --red: #ef4444;
+      --orange: #f97316;
+      --text: #f1f5f9;
+      --text2: #94a3b8;
+      --text3: #64748b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.5;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 800px; height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,200,66,0.12) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -60%);
+      pointer-events: none;
+    }
+
+    .hero-glow2 {
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+      bottom: 0; right: 10%;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(245,200,66,0.1);
+      border: 1px solid rgba(245,200,66,0.3);
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 12px; font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .badge-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    .hero h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, #fff 0%, #f5c842 40%, #fff 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: var(--text2);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      font-weight: 400;
+    }
+
+    .hero-meta {
+      display: flex; flex-wrap: wrap;
+      gap: 1.5rem; justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .hero-meta a {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .hero-meta a:hover { color: var(--gold); }
+
+    .hero-stats {
+      display: flex; flex-wrap: wrap;
+      gap: 2px; justify-content: center;
+    }
+
+    .stat-pill {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      padding: 8px 20px;
+      font-size: 13px;
+      color: var(--text2);
+    }
+    .stat-pill strong { color: var(--text); }
+
+    /* ─── NAV ─── */
+    .toc {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(5,8,16,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0 2rem;
+      display: flex; gap: 0; overflow-x: auto;
+    }
+
+    .toc a {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 14px 20px;
+      color: var(--text3);
+      text-decoration: none;
+      font-size: 13px; font-weight: 500;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .toc a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* ─── SECTIONS ─── */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-header {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 3rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .section-num {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700; font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .section-desc {
+      color: var(--text2);
+      font-size: 15px;
+      margin-top: 4px;
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--card-border), transparent);
+      margin: 0;
+    }
+
+    /* ─── GRID CARDS ─── */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--card-border); border-radius: 16px; overflow: hidden; border: 1px solid var(--card-border); }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--card-border); border-radius: 16px; overflow: hidden; border: 1px solid var(--card-border); }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--card-border); border-radius: 16px; overflow: hidden; border: 1px solid var(--card-border); }
+
+    .card {
+      background: var(--bg2);
+      padding: 1.5rem;
+    }
+
+    .card-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    .card-route {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--cyan);
+      background: rgba(6,182,212,0.08);
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ─── SITEMAP CATEGORY ─── */
+    .sitemap-group { margin-bottom: 2.5rem; }
+
+    .group-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 1rem;
+    }
+
+    .group-title span {
+      display: inline-block;
+      width: 32px; height: 2px;
+      background: var(--card-border);
+      flex-shrink: 0;
+    }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+    }
+
+    .route-card {
+      background: var(--bg2);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      transition: all 0.2s;
+    }
+    .route-card:hover {
+      border-color: rgba(245,200,66,0.3);
+      background: rgba(245,200,66,0.04);
+    }
+
+    .route-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--cyan);
+      margin-bottom: 4px;
+    }
+
+    .route-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .route-desc {
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    /* ─── TECH STACK ─── */
+    .stack-section { margin-bottom: 3rem; }
+
+    .stack-category {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 1rem;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .tech-card {
+      background: var(--bg2);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex; align-items: flex-start; gap: 12px;
+      transition: all 0.2s;
+    }
+    .tech-card:hover {
+      border-color: rgba(255,255,255,0.15);
+      transform: translateY(-1px);
+    }
+
+    .tech-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+
+    .tech-info { flex: 1; min-width: 0; }
+
+    .tech-name {
+      font-size: 13px; font-weight: 600;
+      color: var(--text);
+    }
+
+    .tech-version {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: var(--text3);
+      margin-left: 6px;
+    }
+
+    .tech-purpose {
+      font-size: 11px; color: var(--text2);
+      margin-top: 2px;
+    }
+
+    /* ─── DEPLOYMENT ─── */
+    .deploy-diagram {
+      background: var(--bg2);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 2;
+      overflow-x: auto;
+    }
+
+    .deploy-diagram .highlight { color: var(--gold); }
+    .deploy-diagram .green { color: var(--green); }
+    .deploy-diagram .blue { color: var(--blue); }
+    .deploy-diagram .purple { color: var(--purple); }
+    .deploy-diagram .cyan { color: var(--cyan); }
+    .deploy-diagram .orange { color: var(--orange); }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+    }
+
+    .service-card {
+      background: var(--bg2);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      display: flex; gap: 1rem; align-items: flex-start;
+    }
+
+    .service-icon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+
+    .service-info { flex: 1; }
+
+    .service-name {
+      font-size: 14px; font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .service-platform {
+      font-size: 11px; color: var(--text3); margin-bottom: 4px;
+    }
+
+    .service-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--cyan);
+      word-break: break-all;
+    }
+
+    .service-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 10px; font-weight: 700; color: var(--green);
+      margin-top: 6px;
+    }
+
+    .status-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    /* ─── API TABLE ─── */
+    .api-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+
+    .api-table thead {
+      background: rgba(255,255,255,0.04);
+    }
+
+    .api-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--text3);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .api-table td {
+      padding: 12px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      vertical-align: top;
+    }
+
+    .api-table tr:last-child td { border-bottom: none; }
+    .api-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .api-table tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
+
+    .method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 4px;
+      display: inline-block; margin-right: 4px; margin-bottom: 3px;
+    }
+    .get { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .post { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .put { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .del { background: rgba(239,68,68,0.15); color: #f87171; }
+
+    .endpoint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--cyan);
+    }
+
+    /* ─── VERSION TIMELINE ─── */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+      padding-left: 1.5rem;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -1.85rem; top: 4px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--gold);
+      flex-shrink: 0;
+    }
+
+    .timeline-dot.current {
+      background: var(--gold);
+      box-shadow: 0 0 12px rgba(245,200,66,0.5);
+    }
+
+    .timeline-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--gold);
+      font-weight: 600; margin-bottom: 4px;
+    }
+
+    .timeline-title {
+      font-size: 15px; font-weight: 700;
+      color: var(--text); margin-bottom: 4px;
+    }
+
+    .timeline-commit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--text3);
+    }
+
+    /* ─── SECURITY ─── */
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .security-card {
+      background: var(--bg2);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .security-icon {
+      font-size: 24px; margin-bottom: 0.75rem;
+    }
+
+    .security-name {
+      font-size: 14px; font-weight: 700;
+      color: var(--text); margin-bottom: 6px;
+    }
+
+    .security-detail {
+      font-size: 12px; color: var(--text2);
+      line-height: 1.6;
+    }
+
+    /* ─── DB MODELS ─── */
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+    }
+
+    .model-pill {
+      background: var(--bg2);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px; font-weight: 600;
+      color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .model-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      border-top: 1px solid var(--card-border);
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text3);
+      font-size: 13px;
+    }
+
+    .footer strong { color: var(--gold); }
+
+    /* ─── SCROLL TOP ─── */
+    .scroll-top {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+      width: 44px; height: 44px;
+      background: var(--gold);
+      border: none; border-radius: 12px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 20px rgba(245,200,66,0.4);
+      transition: all 0.2s;
+    }
+    .scroll-top:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,200,66,0.5); }
+
+    /* ─── ANIMATIONS ─── */
+    .fade-in {
+      opacity: 0; transform: translateY(20px);
+      animation: fadeIn 0.6s ease forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .toc { gap: 0; }
+      .toc a { padding: 12px 12px; font-size: 12px; }
+      .hero h1 { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="badge"><span class="badge-dot"></span> Live Platform · v2.0.0</div>
+  <h1>NyayNow</h1>
+  <p class="hero-sub">AI Legal Intelligence &amp; Lawyer Marketplace for India — Technical Platform Document</p>
+  <div class="hero-meta">
+    <a href="https://nyaynow.in" target="_blank">🌐 nyaynow.in</a>
+    <a href="https://github.com/dhruvkumar2107/NyayNow" target="_blank">⎇ GitHub Repository</a>
+    <a href="https://nyaysathi-main.onrender.com/healthz" target="_blank">💚 API Health</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-pill"><strong>50+</strong> Pages</div>
+    <div class="stat-pill"><strong>28</strong> API Endpoints</div>
+    <div class="stat-pill"><strong>17</strong> DB Models</div>
+    <div class="stat-pill"><strong>3</strong> Deployment Platforms</div>
+    <div class="stat-pill"><strong>12+</strong> Indian Languages</div>
+    <div class="stat-pill"><strong>Gemini 2.5 Flash</strong> AI Engine</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ NAV ═══════════════════════════════════ -->
+<nav class="toc">
+  <a href="#sitemap">🗺️ Site Map</a>
+  <a href="#techstack">🏗️ Tech Stack</a>
+  <a href="#deployment">🚀 Deployment</a>
+  <a href="#api">🔌 API Routes</a>
+  <a href="#database">🗄️ Database</a>
+  <a href="#security">🔒 Security</a>
+  <a href="#versions">🏷️ Versions</a>
+</nav>
+
+<!-- ═══════════════════════════════════ SITE MAP ═══════════════════════════════════ -->
+<section class="section" id="sitemap">
+  <div class="section-header fade-in">
+    <div class="section-num" style="background:rgba(245,200,66,0.1);color:var(--gold);">01</div>
+    <div>
+      <div class="section-title">Site Map</div>
+      <div class="section-desc">All 50+ pages across the NyayNow platform, organised by function</div>
+    </div>
+  </div>
+
+  <!-- PUBLIC -->
+  <div class="sitemap-group">
+    <div class="group-title"><span></span> Public Pages <span></span></div>
+    <div class="route-grid">
+      <div class="route-card"><div class="route-path">/</div><div class="route-name">Home</div><div class="route-desc">Landing page, hero, bento grid</div></div>
+      <div class="route-card"><div class="route-path">/about</div><div class="route-name">About Us</div><div class="route-desc">Mission, team, company story</div></div>
+      <div class="route-card"><div class="route-path">/contact</div><div class="route-name">Contact</div><div class="route-desc">Contact form with email</div></div>
+      <div class="route-card"><div class="route-path">/pricing</div><div class="route-name">Pricing</div><div class="route-desc">Subscription tiers</div></div>
+      <div class="route-card"><div class="route-path">/blog</div><div class="route-name">Blog</div><div class="route-desc">Legal news & articles</div></div>
+      <div class="route-card"><div class="route-path">/career</div><div class="route-name">Careers</div><div class="route-desc">Job openings</div></div>
+      <div class="route-card"><div class="route-path">/professionals</div><div class="route-name">For Professionals</div><div class="route-desc">Luxury lawyer feature showcase</div></div>
+      <div class="route-card"><div class="route-path">/case-studies</div><div class="route-name">Case Studies</div><div class="route-desc">Real platform impact stories</div></div>
+      <div class="route-card"><div class="route-path">/methodology</div><div class="route-name">Methodology</div><div class="route-desc">How NyayNow AI works</div></div>
+      <div class="route-card"><div class="route-path">/security-and-compliance</div><div class="route-name">Security & Compliance</div><div class="route-desc">DPDP, privacy, legal compliance</div></div>
+    </div>
+  </div>
+
+  <!-- AI TOOLS -->
+  <div class="sitemap-group">
+    <div class="group-title"><span></span> AI-Powered Tools <span></span></div>
+    <div class="route-grid">
+      <div class="route-card"><div class="route-path">/assistant</div><div class="route-name">NyaySathi AI</div><div class="route-desc">Main AI legal chatbot</div></div>
+      <div class="route-card"><div class="route-path">/judge-ai</div><div class="route-name">Judge AI</div><div class="route-desc">Case outcome predictor</div></div>
+      <div class="route-card"><div class="route-path">/judge-pro</div><div class="route-name">Judge Pro</div><div class="route-desc">Advanced analysis for lawyers</div></div>
+      <div class="route-card"><div class="route-path">/research</div><div class="route-name">Legal Research</div><div class="route-desc">AI case law & statute search</div></div>
+      <div class="route-card"><div class="route-path">/drafting</div><div class="route-name">Document Drafting</div><div class="route-desc">AI contract generator</div></div>
+      <div class="route-card"><div class="route-path">/analyze</div><div class="route-name">Document Analyzer</div><div class="route-desc">Upload & analyse legal PDFs</div></div>
+      <div class="route-card"><div class="route-path">/nyayvoice</div><div class="route-name">NyayVoice</div><div class="route-desc">Multilingual voice assistant</div></div>
+      <div class="route-card"><div class="route-path">/voice-assistant</div><div class="route-name">Voice Assistant</div><div class="route-desc">Browser-based voice interface</div></div>
+      <div class="route-card"><div class="route-path">/courtroom-battle</div><div class="route-name">Courtroom Battle</div><div class="route-desc">AI vs AI legal simulation</div></div>
+      <div class="route-card"><div class="route-path">/moot-court</div><div class="route-name">Moot Court</div><div class="route-desc">Argumentation practice tool</div></div>
+      <div class="route-card"><div class="route-path">/nyaycourt-simulator</div><div class="route-name">NyayCourt Simulator</div><div class="route-desc">Full courtroom simulation</div></div>
+      <div class="route-card"><div class="route-path">/devils-advocate</div><div class="route-name">Devil's Advocate</div><div class="route-desc">Counter-argument generator</div></div>
+    </div>
+  </div>
+
+  <!-- MARKETPLACE -->
+  <div class="sitemap-group">
+    <div class="group-title"><span></span> Lawyer & Marketplace <span></span></div>
+    <div class="route-grid">
+      <div class="route-card"><div class="route-path">/marketplace</div><div class="route-name">Lawyer Marketplace</div><div class="route-desc">Find & filter verified lawyers</div></div>
+      <div class="route-card"><div class="route-path">/lawyer/:id</div><div class="route-name">Lawyer Profile</div><div class="route-desc">Individual lawyer public page</div></div>
+      <div class="route-card"><div class="route-path">/legal-sos</div><div class="route-name">Legal SOS</div><div class="route-desc">Emergency legal help, 24/7</div></div>
+      <div class="route-card"><div class="route-path">/nearby</div><div class="route-name">Nearby Services</div><div class="route-desc">AI map: courts, lawyers, police</div></div>
+      <div class="route-card"><div class="route-path">/ecourts</div><div class="route-name">eCourts</div><div class="route-desc">Live Indian court case status</div></div>
+      <div class="route-card"><div class="route-path">/meet</div><div class="route-name">Video Meet</div><div class="route-desc">Secure Jitsi consultation</div></div>
+      <div class="route-card"><div class="route-path">/video-call</div><div class="route-name">Video Call</div><div class="route-desc">Instant call with lawyers</div></div>
+      <div class="route-card"><div class="route-path">/agreements</div><div class="route-name">Agreements</div><div class="route-desc">AI contract management</div></div>
+      <div class="route-card"><div class="route-path">/rent-agreement</div><div class="route-name">Rent Agreement</div><div class="route-desc">Automated rent agreement builder</div></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARDS -->
+  <div class="sitemap-group">
+    <div class="group-title"><span></span> Dashboards (Authenticated) <span></span></div>
+    <div class="route-grid">
+      <div class="route-card"><div class="route-path">/client</div><div class="route-name">Client Dashboard</div><div class="route-desc">Cases, appointments, invoices</div></div>
+      <div class="route-card"><div class="route-path">/messages</div><div class="route-name">Messages</div><div class="route-desc">Real-time Socket.io chat</div></div>
+      <div class="route-card"><div class="route-path">/calendar</div><div class="route-name">Calendar</div><div class="route-desc">Appointments & court date sync</div></div>
+      <div class="route-card"><div class="route-path">/analytics</div><div class="route-name">Analytics</div><div class="route-desc">Personal usage dashboard</div></div>
+      <div class="route-card"><div class="route-path">/settings</div><div class="route-name">Settings</div><div class="route-desc">Profile & account management</div></div>
+      <div class="route-card"><div class="route-path">/payment</div><div class="route-name">Payment</div><div class="route-desc">Razorpay payment gateway</div></div>
+      <div class="route-card"><div class="route-path">/compliances</div><div class="route-name">Compliances</div><div class="route-desc">DPDP compliance tracker</div></div>
+    </div>
+  </div>
+
+  <!-- AUTH + LEGAL -->
+  <div class="sitemap-group">
+    <div class="group-title"><span></span> Auth & Legal Pages <span></span></div>
+    <div class="route-grid">
+      <div class="route-card"><div class="route-path">/login</div><div class="route-name">Login</div><div class="route-desc">Email + Google OAuth</div></div>
+      <div class="route-card"><div class="route-path">/register</div><div class="route-name">Register</div><div class="route-desc">New user with role selection</div></div>
+      <div class="route-card"><div class="route-path">/forgot-password</div><div class="route-name">Forgot Password</div><div class="route-desc">Password reset flow</div></div>
+      <div class="route-card"><div class="route-path">/setup-profile</div><div class="route-name">Setup Profile</div><div class="route-desc">Lawyer onboarding</div></div>
+      <div class="route-card"><div class="route-path">/digilocker-verify</div><div class="route-name">DigiLocker Verify</div><div class="route-desc">Bar Council ID verification</div></div>
+      <div class="route-card"><div class="route-path">/privacy</div><div class="route-name">Privacy Policy</div><div class="route-desc">DPDP-compliant policy</div></div>
+      <div class="route-card"><div class="route-path">/terms</div><div class="route-name">Terms of Service</div><div class="route-desc">Platform usage terms</div></div>
+      <div class="route-card"><div class="route-path">/refund</div><div class="route-name">Refund Policy</div><div class="route-desc">Subscription refund rules</div></div>
+      <div class="route-card"><div class="route-path">/admin</div><div class="route-name">Admin Panel</div><div class="route-desc">Platform analytics & user mgmt</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════ TECH STACK ═══════════════════════════════════ -->
+<section class="section" id="techstack">
+  <div class="section-header fade-in">
+    <div class="section-num" style="background:rgba(59,130,246,0.1);color:var(--blue);">02</div>
+    <div>
+      <div class="section-title">Tech Stack</div>
+      <div class="section-desc">Every library and service powering the platform, with versions</div>
+    </div>
+  </div>
+
+  <!-- FRONTEND -->
+  <div class="stack-section">
+    <div class="stack-category">⚡ Frontend</div>
+    <div class="tech-grid">
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(0,0,0,0.4)">▲</div><div class="tech-info"><div class="tech-name">Next.js <span class="tech-version">14.1.0</span></div><div class="tech-purpose">SSR/SSG React framework</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(56,189,248,0.1)">🎨</div><div class="tech-info"><div class="tech-name">Tailwind CSS <span class="tech-version">3.4.3</span></div><div class="tech-purpose">Utility-first styling</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(139,92,246,0.1)">🎭</div><div class="tech-info"><div class="tech-name">Framer Motion <span class="tech-version">12.33.0</span></div><div class="tech-purpose">Page & micro-animations</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(34,197,94,0.1)">🗺️</div><div class="tech-info"><div class="tech-name">React Leaflet <span class="tech-version">4.2.1</span></div><div class="tech-purpose">Interactive maps — Nearby page</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,158,11,0.1)">📊</div><div class="tech-info"><div class="tech-name">Recharts <span class="tech-version">2.12.2</span></div><div class="tech-purpose">Analytics dashboards</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(6,182,212,0.1)">🔍</div><div class="tech-info"><div class="tech-name">Algolia InstantSearch <span class="tech-version">7.23.2</span></div><div class="tech-purpose">Lawyer marketplace search</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(59,130,246,0.1)">🔐</div><div class="tech-info"><div class="tech-name">@react-oauth/google <span class="tech-version">0.13.4</span></div><div class="tech-purpose">Google One Tap login</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,200,66,0.1)">⚡</div><div class="tech-info"><div class="tech-name">Socket.io Client <span class="tech-version">4.7.5</span></div><div class="tech-purpose">Real-time chat & Legal Uber</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(239,68,68,0.1)">🔔</div><div class="tech-info"><div class="tech-name">React Hot Toast <span class="tech-version">2.4.1</span></div><div class="tech-purpose">Toast notification alerts</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(139,92,246,0.1)">📄</div><div class="tech-info"><div class="tech-name">jsPDF + AutoTable <span class="tech-version">4.2.0</span></div><div class="tech-purpose">Client-side PDF export</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(34,197,94,0.1)">✍️</div><div class="tech-info"><div class="tech-name">React Signature Canvas <span class="tech-version">1.0.6</span></div><div class="tech-purpose">Document digital e-signing</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,158,11,0.1)">📝</div><div class="tech-info"><div class="tech-name">React Markdown <span class="tech-version">9.0.1</span></div><div class="tech-purpose">AI response rendering</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(239,68,68,0.1)">🛰️</div><div class="tech-info"><div class="tech-name">Sentry React <span class="tech-version">8.26.0</span></div><div class="tech-purpose">Frontend error monitoring</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,200,66,0.1)">📈</div><div class="tech-info"><div class="tech-name">PostHog <span class="tech-version">1.131.4</span></div><div class="tech-purpose">Product & user analytics</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(6,182,212,0.1)">🌊</div><div class="tech-info"><div class="tech-name">Lenis <span class="tech-version">1.3.17</span></div><div class="tech-purpose">Smooth scroll engine</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(255,255,255,0.05)">🔤</div><div class="tech-info"><div class="tech-name">Google Fonts</div><div class="tech-purpose">Inter + Plus Jakarta Sans</div></div></div>
+    </div>
+  </div>
+
+  <!-- BACKEND -->
+  <div class="stack-section">
+    <div class="stack-category">🖥️ Backend</div>
+    <div class="tech-grid">
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(34,197,94,0.1)">🟢</div><div class="tech-info"><div class="tech-name">Node.js <span class="tech-version">≥18.0</span></div><div class="tech-purpose">JavaScript server runtime</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,158,11,0.1)">🚂</div><div class="tech-info"><div class="tech-name">Express.js <span class="tech-version">4.18.2</span></div><div class="tech-purpose">REST API framework</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,200,66,0.1)">⚡</div><div class="tech-info"><div class="tech-name">Socket.io <span class="tech-version">4.8.3</span></div><div class="tech-purpose">WebSocket server — chat & Legal Uber</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(139,92,246,0.1)">🔑</div><div class="tech-info"><div class="tech-name">JWT <span class="tech-version">9.0.3</span></div><div class="tech-purpose">Stateless auth tokens</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(59,130,246,0.1)">🔒</div><div class="tech-info"><div class="tech-name">bcryptjs <span class="tech-version">3.0.3</span></div><div class="tech-purpose">Password salted hashing</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,200,66,0.1)">💰</div><div class="tech-info"><div class="tech-name">Razorpay <span class="tech-version">2.9.6</span></div><div class="tech-purpose">Indian payment gateway</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(239,68,68,0.1)">📱</div><div class="tech-info"><div class="tech-name">Twilio <span class="tech-version">5.12.1</span></div><div class="tech-purpose">WhatsApp & SMS alerts</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(6,182,212,0.1)">✉️</div><div class="tech-info"><div class="tech-name">Nodemailer <span class="tech-version">8.0.1</span></div><div class="tech-purpose">Transactional emails</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(34,197,94,0.1)">📤</div><div class="tech-info"><div class="tech-name">Multer + Cloudinary <span class="tech-version">1.4.5</span></div><div class="tech-purpose">File upload to cloud storage</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,158,11,0.1)">📋</div><div class="tech-info"><div class="tech-name">pdf-parse <span class="tech-version">2.4.5</span></div><div class="tech-purpose">Extract text from PDFs</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(139,92,246,0.1)">🖊️</div><div class="tech-info"><div class="tech-name">DocuSign <span class="tech-version">8.6.0</span></div><div class="tech-purpose">Legal document e-signing</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(239,68,68,0.1)">🛡️</div><div class="tech-info"><div class="tech-name">Helmet.js <span class="tech-version">8.1.0</span></div><div class="tech-purpose">HTTP security headers (CSP, HSTS)</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,200,66,0.1)">🚦</div><div class="tech-info"><div class="tech-name">express-rate-limit <span class="tech-version">8.2.1</span></div><div class="tech-purpose">Rate limiting & DDoS protection</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(239,68,68,0.1)">🛰️</div><div class="tech-info"><div class="tech-name">Sentry Node <span class="tech-version">10.32.1</span></div><div class="tech-purpose">Backend error + performance</div></div></div>
+    </div>
+  </div>
+
+  <!-- DATABASE & AI -->
+  <div class="stack-section">
+    <div class="stack-category">🗄️ Database & AI</div>
+    <div class="tech-grid">
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(34,197,94,0.1)">🍃</div><div class="tech-info"><div class="tech-name">MongoDB Atlas <span class="tech-version">Cloud</span></div><div class="tech-purpose">Primary NoSQL database</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(34,197,94,0.1)">📦</div><div class="tech-info"><div class="tech-name">Mongoose <span class="tech-version">7.8.8</span></div><div class="tech-purpose">MongoDB object modeling (ODM)</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,200,66,0.1)">🧠</div><div class="tech-info"><div class="tech-name">Google Gemini 2.5 Flash</div><div class="tech-purpose">AI legal assistant, Judge AI, research</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(6,182,212,0.1)">🔍</div><div class="tech-info"><div class="tech-name">Algolia Search</div><div class="tech-purpose">Lawyer marketplace full-text search</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,200,66,0.1)">📖</div><div class="tech-info"><div class="tech-name">Indian Kanoon Grounding</div><div class="tech-purpose">Real case law citations in AI responses</div></div></div>
+    </div>
+  </div>
+
+  <!-- DEVOPS -->
+  <div class="stack-section">
+    <div class="stack-category">⚙️ DevOps & Testing</div>
+    <div class="tech-grid">
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(255,255,255,0.05)">⎇</div><div class="tech-info"><div class="tech-name">Git + GitHub</div><div class="tech-purpose">Version control & source code</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(245,200,66,0.1)">🤖</div><div class="tech-info"><div class="tech-name">GitHub Actions</div><div class="tech-purpose">CI/CD pipeline</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(59,130,246,0.1)">🐳</div><div class="tech-info"><div class="tech-name">Docker</div><div class="tech-purpose">Local development containers</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(139,92,246,0.1)">🎭</div><div class="tech-info"><div class="tech-name">Playwright</div><div class="tech-purpose">End-to-end browser testing</div></div></div>
+      <div class="tech-card"><div class="tech-icon" style="background:rgba(34,197,94,0.1)">🧪</div><div class="tech-info"><div class="tech-name">Jest / Vitest</div><div class="tech-purpose">Unit and integration tests</div></div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════ DEPLOYMENT ═══════════════════════════════════ -->
+<section class="section" id="deployment">
+  <div class="section-header fade-in">
+    <div class="section-num" style="background:rgba(34,197,94,0.1);color:var(--green);">03</div>
+    <div>
+      <div class="section-title">Deployment Architecture</div>
+      <div class="section-desc">Where every piece of the platform lives in production</div>
+    </div>
+  </div>
+
+  <div class="deploy-diagram">
+<pre>
+                     ┌──────────────────────────────────────────┐
+                     │           USERS  (Browser / Mobile)       │
+                     └──────────────────┬───────────────────────┘
+                                        │  HTTPS
+                     ┌──────────────────┼───────────────────────┐
+                     │                                          │
+         ┌───────────▼───────────┐              ┌──────────────▼──────────────┐
+         │  <span class="highlight">FRONTEND</span>               │              │  <span class="green">BACKEND API</span>                 │
+         │  <span class="highlight">Vercel</span>                 │              │  <span class="green">Render.com</span>                  │
+         │  nyaynow.in            │◄──REST───────│  nyaysathi-main             │
+         │  Next.js 14 SSR        │◄──WebSocket──│  .onrender.com              │
+         │  Global Edge CDN       │              │  Node.js + Express + WS     │
+         │  Auto HTTPS / TLS      │              │  Port 4000                  │
+         └───────────────────────┘              └──────────────┬──────────────┘
+                                                               │
+                   ┌───────────────────────────────────────────┤
+                   │                   │                        │
+       ┌───────────▼──────┐  ┌─────────▼────────┐  ┌──────────▼───────────┐
+       │  <span class="blue">MongoDB Atlas</span>    │  │  <span class="orange">Cloudinary</span>       │  │  <span class="purple">Google Gemini AI</span>     │
+       │  Cloud Database  │  │  File Storage    │  │  Gemini 2.5 Flash    │
+       │  cluster0.iofqvq │  │  Images & PDFs   │  │  AI Legal Engine     │
+       └──────────────────┘  └──────────────────┘  └──────────────────────┘
+
+              ┌────────────────────────────────────────────────────────────┐
+              │                THIRD-PARTY INTEGRATIONS                    │
+              │                                                            │
+              │  <span class="highlight">Razorpay</span>      Payments & Subscriptions                      │
+              │  <span class="cyan">Algolia</span>       Lawyer search & ranking                        │
+              │  <span class="green">Twilio</span>        WhatsApp alerts & SMS                         │
+              │  <span class="blue">DocuSign</span>      Legal document e-signing                       │
+              │  <span class="orange">Jitsi Meet</span>    Secure video consultations                    │
+              │  <span class="purple">Sentry</span>        Error monitoring (frontend + backend)          │
+              │  <span class="highlight">PostHog</span>       Product analytics & user behaviour            │
+              │  DigiLocker    Bar Council ID verification                 │
+              └────────────────────────────────────────────────────────────┘
+</pre>
+  </div>
+
+  <!-- SERVICE CARDS -->
+  <div class="service-grid">
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(0,0,0,0.5)">▲</div>
+      <div class="service-info">
+        <div class="service-name">Frontend</div>
+        <div class="service-platform">Platform: Vercel (Edge Network)</div>
+        <div class="service-url">https://nyaynow.in</div>
+        <div class="service-status"><span class="status-dot"></span> Live</div>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(34,197,94,0.1)">🖥️</div>
+      <div class="service-info">
+        <div class="service-name">Backend API + WebSocket</div>
+        <div class="service-platform">Platform: Render.com (Web Service)</div>
+        <div class="service-url">https://nyaysathi-main.onrender.com</div>
+        <div class="service-status"><span class="status-dot"></span> Live</div>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(34,197,94,0.1)">🍃</div>
+      <div class="service-info">
+        <div class="service-name">Database</div>
+        <div class="service-platform">Platform: MongoDB Atlas (Free M0 Cluster)</div>
+        <div class="service-url">cluster0.iofqvq2.mongodb.net</div>
+        <div class="service-status"><span class="status-dot"></span> Connected</div>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(245,200,66,0.1)">🧠</div>
+      <div class="service-info">
+        <div class="service-name">AI Engine</div>
+        <div class="service-platform">Provider: Google AI Studio</div>
+        <div class="service-url">Gemini 2.5 Flash API</div>
+        <div class="service-status"><span class="status-dot"></span> Active</div>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(249,115,22,0.1)">☁️</div>
+      <div class="service-info">
+        <div class="service-name">File Storage</div>
+        <div class="service-platform">Provider: Cloudinary</div>
+        <div class="service-url">res.cloudinary.com</div>
+        <div class="service-status"><span class="status-dot"></span> Active</div>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(245,200,66,0.1)">💳</div>
+      <div class="service-info">
+        <div class="service-name">Payments</div>
+        <div class="service-platform">Provider: Razorpay</div>
+        <div class="service-url">checkout.razorpay.com</div>
+        <div class="service-status"><span class="status-dot"></span> Active</div>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(239,68,68,0.1)">🛰️</div>
+      <div class="service-info">
+        <div class="service-name">Error Monitoring</div>
+        <div class="service-platform">Provider: Sentry (Frontend + Backend)</div>
+        <div class="service-url">sentry.io</div>
+        <div class="service-status"><span class="status-dot"></span> Active</div>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(245,200,66,0.1)">⎇</div>
+      <div class="service-info">
+        <div class="service-name">Source Code</div>
+        <div class="service-platform">Platform: GitHub</div>
+        <div class="service-url">github.com/dhruvkumar2107/NyayNow</div>
+        <div class="service-status"><span class="status-dot"></span> Public</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════ API ═══════════════════════════════════ -->
+<section class="section" id="api">
+  <div class="section-header fade-in">
+    <div class="section-num" style="background:rgba(6,182,212,0.1);color:var(--cyan);">04</div>
+    <div>
+      <div class="section-title">API Route Catalogue</div>
+      <div class="section-desc">All 28 backend endpoints · Base URL: <code style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan)">https://nyaysathi-main.onrender.com</code></div>
+    </div>
+  </div>
+
+  <table class="api-table">
+    <thead>
+      <tr>
+        <th>Endpoint</th>
+        <th>Methods</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="endpoint">/healthz</td><td><span class="method get">GET</span></td><td>Server health — DB status, uptime, memory</td></tr>
+      <tr><td class="endpoint">/api/auth</td><td><span class="method post">POST</span></td><td>Register, login, Google OAuth, password reset</td></tr>
+      <tr><td class="endpoint">/api/ai</td><td><span class="method post">POST</span></td><td>Gemini AI — assistant, judge, research, drafting, voice</td></tr>
+      <tr><td class="endpoint">/api/lawyers</td><td><span class="method get">GET</span><span class="method post">POST</span><span class="method put">PUT</span></td><td>Lawyer listing, profiles, search</td></tr>
+      <tr><td class="endpoint">/api/users</td><td><span class="method get">GET</span><span class="method put">PUT</span><span class="method del">DEL</span></td><td>User profile CRUD</td></tr>
+      <tr><td class="endpoint">/api/messages</td><td><span class="method get">GET</span><span class="method post">POST</span></td><td>Real-time messages (REST + Socket.io)</td></tr>
+      <tr><td class="endpoint">/api/chats</td><td><span class="method get">GET</span><span class="method post">POST</span></td><td>AI chat history persistence</td></tr>
+      <tr><td class="endpoint">/api/appointments</td><td><span class="method get">GET</span><span class="method post">POST</span><span class="method put">PUT</span></td><td>Book and manage appointments</td></tr>
+      <tr><td class="endpoint">/api/payments</td><td><span class="method post">POST</span></td><td>Razorpay order creation & verification</td></tr>
+      <tr><td class="endpoint">/api/subscriptions</td><td><span class="method get">GET</span><span class="method post">POST</span><span class="method del">DEL</span></td><td>Recurring subscription management</td></tr>
+      <tr><td class="endpoint">/api/leads</td><td><span class="method get">GET</span><span class="method post">POST</span></td><td>Pay-per-lead system for lawyers</td></tr>
+      <tr><td class="endpoint">/api/cases</td><td><span class="method get">GET</span><span class="method post">POST</span><span class="method put">PUT</span></td><td>Case file management</td></tr>
+      <tr><td class="endpoint">/api/agreements</td><td><span class="method get">GET</span><span class="method post">POST</span></td><td>AI-generated legal contracts</td></tr>
+      <tr><td class="endpoint">/api/invoices</td><td><span class="method get">GET</span><span class="method post">POST</span></td><td>Lawyer billing & invoices</td></tr>
+      <tr><td class="endpoint">/api/notifications</td><td><span class="method get">GET</span><span class="method post">POST</span></td><td>In-app notification system</td></tr>
+      <tr><td class="endpoint">/api/connections</td><td><span class="method get">GET</span><span class="method post">POST</span><span class="method put">PUT</span></td><td>Follow/connect between users</td></tr>
+      <tr><td class="endpoint">/api/posts</td><td><span class="method get">GET</span><span class="method post">POST</span><span class="method del">DEL</span></td><td>Community feed posts</td></tr>
+      <tr><td class="endpoint">/api/events</td><td><span class="method get">GET</span><span class="method post">POST</span><span class="method put">PUT</span></td><td>Calendar events & court dates</td></tr>
+      <tr><td class="endpoint">/api/crm</td><td><span class="method get">GET</span><span class="method post">POST</span><span class="method put">PUT</span></td><td>Lawyer CRM — client management</td></tr>
+      <tr><td class="endpoint">/api/nearby</td><td><span class="method get">GET</span></td><td>AI-powered nearby courts, lawyers, police</td></tr>
+      <tr><td class="endpoint">/api/ecourts</td><td><span class="method get">GET</span></td><td>Live Indian court case status</td></tr>
+      <tr><td class="endpoint">/api/uploads</td><td><span class="method post">POST</span></td><td>File upload to Cloudinary</td></tr>
+      <tr><td class="endpoint">/api/verification</td><td><span class="method get">GET</span><span class="method post">POST</span></td><td>DigiLocker Bar Council verification</td></tr>
+      <tr><td class="endpoint">/api/docusign</td><td><span class="method post">POST</span></td><td>E-signature via DocuSign</td></tr>
+      <tr><td class="endpoint">/api/whatsapp</td><td><span class="method post">POST</span></td><td>Twilio WhatsApp webhook receiver</td></tr>
+      <tr><td class="endpoint">/api/contact</td><td><span class="method post">POST</span></td><td>Contact form — sends email via Nodemailer</td></tr>
+      <tr><td class="endpoint">/api/admin</td><td><span class="method get">GET</span></td><td>Admin analytics & user management</td></tr>
+      <tr><td class="endpoint">/api/confessions</td><td><span class="method get">GET</span><span class="method post">POST</span></td><td>Anonymous legal confession booth</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════ DATABASE ═══════════════════════════════════ -->
+<section class="section" id="database">
+  <div class="section-header fade-in">
+    <div class="section-num" style="background:rgba(34,197,94,0.1);color:var(--green);">05</div>
+    <div>
+      <div class="section-title">Database Schema</div>
+      <div class="section-desc">17 MongoDB collections powering all platform data</div>
+    </div>
+  </div>
+
+  <div class="model-grid">
+    <div class="model-pill"><span class="model-dot" style="background:#f5c842"></span>User</div>
+    <div class="model-pill"><span class="model-dot" style="background:#3b82f6"></span>Case</div>
+    <div class="model-pill"><span class="model-dot" style="background:#22c55e"></span>Appointment</div>
+    <div class="model-pill"><span class="model-dot" style="background:#8b5cf6"></span>Message</div>
+    <div class="model-pill"><span class="model-dot" style="background:#06b6d4"></span>ChatHistory</div>
+    <div class="model-pill"><span class="model-dot" style="background:#f97316"></span>Connection</div>
+    <div class="model-pill"><span class="model-dot" style="background:#ef4444"></span>Agreement</div>
+    <div class="model-pill"><span class="model-dot" style="background:#f5c842"></span>Invoice</div>
+    <div class="model-pill"><span class="model-dot" style="background:#3b82f6"></span>Payment</div>
+    <div class="model-pill"><span class="model-dot" style="background:#22c55e"></span>Notification</div>
+    <div class="model-pill"><span class="model-dot" style="background:#8b5cf6"></span>Post</div>
+    <div class="model-pill"><span class="model-dot" style="background:#06b6d4"></span>Topic</div>
+    <div class="model-pill"><span class="model-dot" style="background:#f97316"></span>Event</div>
+    <div class="model-pill"><span class="model-dot" style="background:#ef4444"></span>CRMClient</div>
+    <div class="model-pill"><span class="model-dot" style="background:#f5c842"></span>CasePrediction</div>
+    <div class="model-pill"><span class="model-dot" style="background:#3b82f6"></span>AuditLog</div>
+    <div class="model-pill"><span class="model-dot" style="background:#22c55e"></span>Confession</div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════ SECURITY ═══════════════════════════════════ -->
+<section class="section" id="security">
+  <div class="section-header fade-in">
+    <div class="section-num" style="background:rgba(239,68,68,0.1);color:var(--red);">06</div>
+    <div>
+      <div class="section-title">Security Infrastructure</div>
+      <div class="section-desc">Multi-layer security protecting the platform and user data</div>
+    </div>
+  </div>
+
+  <div class="security-grid">
+    <div class="security-card">
+      <div class="security-icon">🔑</div>
+      <div class="security-name">JWT Authentication</div>
+      <div class="security-detail">Stateless signed tokens (jsonwebtoken 9.0.3). Tokens verified on every protected API call.</div>
+    </div>
+    <div class="security-card">
+      <div class="security-icon">🔒</div>
+      <div class="security-name">Password Hashing</div>
+      <div class="security-detail">bcryptjs with salted hashing. Plain-text passwords never stored or logged.</div>
+    </div>
+    <div class="security-card">
+      <div class="security-icon">🛡️</div>
+      <div class="security-name">HTTP Security Headers</div>
+      <div class="security-detail">Helmet.js enforces CSP, HSTS (1yr + preload), XSS protection, and CORS policy.</div>
+    </div>
+    <div class="security-card">
+      <div class="security-icon">🚦</div>
+      <div class="security-name">Rate Limiting</div>
+      <div class="security-detail">Global: 300 req/15min · Auth: 10 attempts/hr · AI: 50 req/15min. Prevents brute-force & DDoS.</div>
+    </div>
+    <div class="security-card">
+      <div class="security-icon">🌐</div>
+      <div class="security-name">CORS Whitelist</div>
+      <div class="security-detail">Strict origin whitelist: nyaynow.in, www.nyaynow.in, localhost only. All others rejected.</div>
+    </div>
+    <div class="security-card">
+      <div class="security-icon">🛰️</div>
+      <div class="security-name">Error Sanitization</div>
+      <div class="security-detail">Sentry strips passwords & tokens before logging. No sensitive data in error reports.</div>
+    </div>
+    <div class="security-card">
+      <div class="security-icon">🔐</div>
+      <div class="security-name">WebSocket Auth</div>
+      <div class="security-detail">Socket.io enforces JWT handshake middleware. Unauthenticated connections are rejected.</div>
+    </div>
+    <div class="security-card">
+      <div class="security-icon">📋</div>
+      <div class="security-name">DPDP Compliance</div>
+      <div class="security-detail">India's Digital Personal Data Protection Act 2023. DPDP-compliant privacy policy and data handling.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════ VERSIONS ═══════════════════════════════════ -->
+<section class="section" id="versions">
+  <div class="section-header fade-in">
+    <div class="section-num" style="background:rgba(245,200,66,0.1);color:var(--gold);">07</div>
+    <div>
+      <div class="section-title">Version History</div>
+      <div class="section-desc">Tagged releases on GitHub — every major milestone preserved</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-tag">v1.0.0-initial</div>
+      <div class="timeline-title">Initial Deploy</div>
+      <div class="timeline-commit">commit 95b3c4a · Basic NyayNow platform, authentication, UI skeleton</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-tag">v1.1.0-auth</div>
+      <div class="timeline-title">Google Authentication</div>
+      <div class="timeline-commit">commit fd71597 · Google OAuth login & signup, role selection modal</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-tag">v1.2.0-features</div>
+      <div class="timeline-title">Core Feature Suite</div>
+      <div class="timeline-commit">commit 617d253 · Judge AI, Legal Uber, LawyerOS, Video Calls, Socket.io</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-tag">v1.3.0-monetization</div>
+      <div class="timeline-title">Monetization & Compliance</div>
+      <div class="timeline-commit">commit 020b87e · Razorpay payments, DPDP compliance, 12 Indian languages, court date sync</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-tag">v1.4.0-startup-upgrades</div>
+      <div class="timeline-title">Startup-Grade Security & Billing</div>
+      <div class="timeline-commit">commit 0015dd4 · Security hardening, subscription billing, rate limits, UI polish</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot current"></div>
+      <div class="timeline-tag">v2.0.0-professionals ← CURRENT</div>
+      <div class="timeline-title">Professionals Page — Luxury Redesign</div>
+      <div class="timeline-commit">commit 6846b87 · Interactive tabs, luxury UI, AI assistant overhaul, dashboard upgrades</div>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem;padding:1.25rem 1.5rem;background:var(--bg2);border:1px solid var(--card-border);border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text2);">
+    <span style="color:var(--gold)">$</span> git tag -l<br>
+    <span style="color:var(--text3)">→ v1.0.0-initial · v1.1.0-auth · v1.2.0-features · v1.3.0-monetization · v1.4.0-startup-upgrades · v2.0.0-professionals</span><br><br>
+    <span style="color:var(--gold)">$</span> <a href="https://github.com/dhruvkumar2107/NyayNow/tags" target="_blank" style="color:var(--cyan);text-decoration:none">github.com/dhruvkumar2107/NyayNow/tags</a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ FOOTER ═══════════════════════════════════ -->
+<footer class="footer">
+  <p>Built with ❤️ by <strong>NyayNow Team</strong> · <a href="https://nyaynow.in" style="color:var(--gold);text-decoration:none">nyaynow.in</a> · <a href="https://github.com/dhruvkumar2107/NyayNow" style="color:var(--cyan);text-decoration:none">GitHub</a></p>
+  <p style="margin-top:8px">Platform v2.0.0 · Document generated June 2026</p>
+</footer>
+
+<script>
+  // Smooth fade-in on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.section-header, .route-card, .tech-card, .service-card, .security-card, .timeline-item').forEach(el => {
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
