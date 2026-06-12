@@ -1,12 +1,12 @@
-# NyayNow — Technical Overview
+# NyayNow -- Technical Overview
 ### AI Legal Intelligence & Lawyer Marketplace for India
-**Domain:** [nyaynow.in](https://nyaynow.in) &nbsp;|&nbsp; **GitHub:** [dhruvkumar2107/NyayNow](https://github.com/dhruvkumar2107/NyayNow) &nbsp;|&nbsp; **Version:** 2.0.0
+**Domain:** [nyaynow.in](https://nyaynow.in) | **GitHub:** [dhruvkumar2107/NyayNow](https://github.com/dhruvkumar2107/NyayNow) | **Version:** 2.0.0
 
 ---
 
-## 1. 🗺️ SITE MAP
+## 1. SITE MAP
 
-### 🏠 Public Pages
+### Public Pages
 | Route | Page | Description |
 |-------|------|-------------|
 | `/` | Home | Landing page with Bento grid, comparison section, Legal SOS |
@@ -20,7 +20,7 @@
 | `/methodology` | Methodology | How NyayNow AI works |
 | `/security-and-compliance` | Security & Compliance | DPDP, privacy, legal compliance |
 
-### 🤖 AI-Powered Tools
+### AI-Powered Tools
 | Route | Page | Description |
 |-------|------|-------------|
 | `/assistant` | NyaySathi AI | Main AI legal assistant chatbot |
@@ -36,7 +36,7 @@
 | `/nyaycourt-simulator` | NyayCourt Simulator | Full courtroom simulation |
 | `/devils-advocate` | Devil's Advocate | Counter-argument generator |
 
-### ⚖️ Lawyer & Marketplace
+### Lawyer & Marketplace
 | Route | Page | Description |
 |-------|------|-------------|
 | `/marketplace` | Lawyer Marketplace | Find & filter verified lawyers (Algolia search) |
@@ -49,7 +49,7 @@
 | `/agreements` | Agreements | AI contract generator & management |
 | `/rent-agreement` | Rent Agreement | Automated rent agreement builder |
 
-### 📊 Dashboards (Authenticated)
+### Dashboards (Authenticated)
 | Route | Page | Description |
 |-------|------|-------------|
 | `/client` | Client Dashboard | Cases, appointments, invoices, messages |
@@ -60,7 +60,7 @@
 | `/payment` | Payment | Razorpay payment gateway |
 | `/compliances` | Compliances | DPDP compliance tracker |
 
-### 🏛️ Lawyer-Only (Authenticated)
+### Lawyer-Only (Authenticated)
 | Route | Page | Description |
 |-------|------|-------------|
 | `/judge-profile` | Judge Profile | Judicial profile management |
@@ -68,14 +68,14 @@
 | `/digilocker-verify` | DigiLocker Verify | Bar Council ID verification |
 | `/verification-pending` | Verification Pending | Status page during verification |
 
-### 🔐 Auth Pages
+### Auth Pages
 | Route | Page | Description |
 |-------|------|-------------|
 | `/login` | Login | Email + Google OAuth login |
 | `/register` | Register | New user registration with role selection |
 | `/forgot-password` | Forgot Password | Password reset flow |
 
-### 📋 Legal & Compliance
+### Legal & Compliance
 | Route | Page | Description |
 |-------|------|-------------|
 | `/privacy` | Privacy Policy | DPDP-compliant privacy policy |
@@ -83,7 +83,7 @@
 | `/disclaimer` | Disclaimer | Legal disclaimer |
 | `/refund` | Refund Policy | Subscription refund policy |
 
-### 🛠️ Admin & System
+### Admin & System
 | Route | Page | Description |
 |-------|------|-------------|
 | `/admin` | Admin Panel | Platform analytics, user management |
@@ -91,7 +91,7 @@
 
 ---
 
-## 2. 🏗️ TECH STACK
+## 2. TECH STACK
 
 ### Frontend
 | Layer | Technology | Version | Purpose |
@@ -100,29 +100,29 @@
 | **Language** | JavaScript (JSX) | ES2022 | Component logic |
 | **Styling** | Tailwind CSS | 3.4.3 | Utility-first CSS |
 | **Animations** | Framer Motion | 12.33.0 | Page & micro animations |
-| **Smooth Scroll** | Lenis | 1.3.17 | Buttery smooth scrolling |
+| **Smooth Scroll** | Lenis | 1.3.17 | Smooth scrolling engine |
 | **Icons** | Lucide React | 0.344.0 | Icon library |
 | **Maps** | React Leaflet | 4.2.1 | Interactive maps (Nearby page) |
 | **Charts** | Recharts | 2.12.2 | Analytics dashboards |
 | **Search** | Algolia InstantSearch | 7.23.2 | Lawyer marketplace search |
 | **Auth (Google)** | @react-oauth/google | 0.13.4 | Google One Tap login |
-| **Real-time** | Socket.io Client | 4.7.5 | Live chat & Legal Uber |
+| **Real-time** | Socket.io Client | 4.7.5 | Live chat & Emergency SOS |
 | **Notifications** | React Hot Toast | 2.4.1 | Toast alerts |
 | **PDF Generation** | jsPDF + AutoTable | 4.2.0 | Client-side PDF export |
 | **E-Signing** | React Signature Canvas | 1.0.6 | Document digital signing |
 | **Markdown** | React Markdown | 9.0.1 | AI response rendering |
-| **Confetti** | Canvas Confetti | 1.9.2 | Celebration animations |
-| **Counter** | React CountUp | 6.5.0 | Animated stat counters |
-| **Fonts** | Google Fonts (Inter, Plus Jakarta Sans) | — | Premium typography |
+| **Confetti** | Canvas Confetti | 1.9.2 | Completion animations |
+| **Counter** | React CountUp | 6.5.0 | Animated statistics counters |
+| **Fonts** | Google Fonts (Inter, Plus Jakarta Sans) | -- | Platform typography |
 | **Error Tracking** | Sentry React | 8.26.0 | Frontend error monitoring |
 | **Analytics** | PostHog | 1.131.4 | Product analytics |
 
 ### Backend
 | Layer | Technology | Version | Purpose |
 |-------|-----------|---------|---------|
-| **Runtime** | Node.js | ≥18.0.0 | JavaScript server runtime |
+| **Runtime** | Node.js | >=18.0.0 | JavaScript server runtime |
 | **Framework** | Express.js | 4.18.2 | REST API server |
-| **Real-time** | Socket.io | 4.8.3 | WebSocket server (chat, Legal Uber) |
+| **Real-time** | Socket.io | 4.8.3 | WebSocket server (chat, Emergency SOS) |
 | **Authentication** | JWT (jsonwebtoken) | 9.0.3 | Stateless auth tokens |
 | **Password** | bcryptjs | 3.0.3 | Password hashing |
 | **OAuth** | google-auth-library | 10.5.0 | Google token verification |
@@ -149,7 +149,7 @@
 #### Database Models (17 Collections)
 | Model | Purpose |
 |-------|---------|
-| `User` | Clients, lawyers, judges — all roles |
+| `User` | Clients, lawyers, judges -- all roles |
 | `Case` | Legal case records and status |
 | `Appointment` | Booking and scheduling data |
 | `Message` | Real-time chat messages |
@@ -178,7 +178,7 @@
 
 ### Infrastructure & DevOps
 | Layer | Technology | Purpose |
-|-------|-----------|---------|
+|---------|----------|---------|
 | **CI/CD** | GitHub Actions | Auto-test and deploy pipeline |
 | **Containerization** | Docker | Local development containers |
 | **Testing** | Playwright + Jest/Vitest | E2E and unit tests |
@@ -188,7 +188,7 @@
 
 ---
 
-## 3. 🚀 DEPLOYMENT ARCHITECTURE
+## 3. DEPLOYMENT ARCHITECTURE
 
 ```
                         ┌─────────────────────────────────┐
@@ -196,12 +196,12 @@
                         └──────────────┬──────────────────┘
                                        │
                     ┌──────────────────┼──────────────────┐
-                    │                                      │
+                    │                                     │
           ┌─────────▼──────────┐             ┌────────────▼────────────┐
           │   FRONTEND          │             │      BACKEND API         │
           │   Vercel            │             │      Render.com          │
-          │   nyaynow.in        │◄───REST─────│   nyaysathi-main         │
-          │   Next.js 14 SSR    │◄───WSS──────│   .onrender.com          │
+          │   nyaynow.in        │<---REST-----│   nyaysathi-main         │
+          │   Next.js 14 SSR    │<---WSS------│   .onrender.com          │
           │   Global CDN        │             │   Node.js + Express      │
           │   Auto-HTTPS        │             │   Socket.io              │
           └────────────────────┘             └────────────┬────────────┘
@@ -216,10 +216,10 @@
                     │
           ┌─────────▼──────────────────────────────────────────────┐
           │              THIRD-PARTY INTEGRATIONS                   │
-          │  Razorpay (Payments) │ Twilio (WhatsApp/SMS)           │
-          │  Algolia (Search)    │ DocuSign (E-Signing)            │
-          │  Sentry (Errors)     │ PostHog (Analytics)             │
-          │  Jitsi (Video Calls) │ DigiLocker (Verification)       │
+          │  Razorpay (Payments) | Twilio (WhatsApp/SMS)           │
+          │  Algolia (Search)    | DocuSign (E-Signing)            │
+          │  Sentry (Errors)     | PostHog (Analytics)             │
+          │  Jitsi (Video Calls) | DigiLocker (Verification)       │
           └────────────────────────────────────────────────────────┘
 ```
 
@@ -242,7 +242,7 @@
 
 ---
 
-## 4. 🔌 API ROUTE CATALOGUE
+## 4. API ROUTE CATALOGUE
 
 ### Base URL: `https://nyaysathi-main.onrender.com`
 
@@ -250,7 +250,7 @@
 |-------|---------|-------------|
 | `GET /healthz` | GET | Server health check (DB status, memory, uptime) |
 | `/api/auth` | POST | Register, login, Google OAuth, password reset |
-| `/api/ai` | POST | Gemini AI — assistant, judge, research, drafting, voice |
+| `/api/ai` | POST | Gemini AI -- assistant, judge, research, drafting, voice |
 | `/api/lawyers` | GET, POST, PUT | Lawyer listing, profile, search |
 | `/api/users` | GET, PUT, DELETE | User profile CRUD |
 | `/api/messages` | GET, POST | Real-time messages (REST + Socket.io) |
@@ -280,14 +280,14 @@
 
 ---
 
-## 5. 🔒 SECURITY INFRASTRUCTURE
+## 5. SECURITY INFRASTRUCTURE
 
 | Layer | Implementation |
 |-------|---------------|
 | **Auth** | JWT tokens (9.0.3) with signed secrets |
 | **Password Storage** | bcryptjs salted hashing |
 | **HTTP Headers** | Helmet.js (CSP, HSTS, XSS protection) |
-| **Rate Limiting** | Global: 300 req/15min · Auth: 10/hr · AI: 50/15min |
+| **Rate Limiting** | Global: 300 req/15min | Auth: 10/hr | AI: 50/15min |
 | **CORS** | Strict whitelist (nyaynow.in, localhost only) |
 | **Input Validation** | Express JSON body limit: 10MB |
 | **Proxy Trust** | `trust proxy = 1` (Render/Vercel compatible) |
@@ -297,11 +297,11 @@
 
 ---
 
-## 6. 🏷️ VERSION HISTORY
+## 6. VERSION HISTORY
 
 | Version Tag | Description | Commit |
 |-------------|-------------|--------|
-| `v1.0.0-initial` | Initial Deploy — basic NyayNow platform | `95b3c4a` |
+| `v1.0.0-initial` | Initial Deploy -- basic NyayNow platform | `95b3c4a` |
 | `v1.1.0-auth` | Google Authentication, Login & Signup | `fd71597` |
 | `v1.2.0-features` | Judge AI, Legal Uber, LawyerOS complete | `617d253` |
 | `v1.3.0-monetization` | Razorpay payments, DPDP, regional languages, court sync | `020b87e` |
@@ -312,7 +312,7 @@
 
 ---
 
-## 7. 🌐 ENVIRONMENT VARIABLES
+## 7. ENVIRONMENT VARIABLES
 
 ### Frontend (`client/.env`)
 | Variable | Value | Purpose |
