@@ -269,330 +269,11 @@ export default function ProfessionalsPage() {
   return (
     <div ref={containerRef} className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-indigo-500/30 overflow-x-hidden">
 
-      {/* ─── HERO SECTION ──────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 md:pt-24">
 
-        {/* Background gradients */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[700px] bg-gradient-radial from-indigo-500/15 via-violet-500/5 to-transparent blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-[600px] h-[400px] bg-gradient-radial from-cyan-500/10 to-transparent blur-3xl" />
-          <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-gradient-radial from-purple-500/10 to-transparent blur-3xl" />
-        </div>
 
-        {/* Animated grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.03)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
-        {/* Particles */}
-        <div className="absolute inset-0 pointer-events-none">
-          {particles.map((p, i) => (
-            <Particle key={i} style={{ left: p.left, top: p.top }} />
-          ))}
-        </div>
 
-        <motion.div
-          style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 text-center px-4 sm:px-6 max-w-6xl mx-auto"
-        >
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-black uppercase tracking-[0.3em] mb-8"
-          >
-            <Sparkles size={12} className="text-indigo-400 animate-pulse" />
-            Built for Legal Professionals
-            <Sparkles size={12} className="text-indigo-400 animate-pulse" />
-          </motion.div>
 
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-6xl md:text-8xl font-black text-white tracking-tighter leading-none mb-6"
-          >
-            The Legal
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 via-fuchsia-400 to-cyan-400">
-              Operating System
-            </span>
-            of India.
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed mb-12 font-light"
-          >
-            NyayNow gives advocates, firms, and legal professionals an unfair advantage — with AI-powered case strategy, automated document generation, live court data, and a complete practice management suite.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-wrap items-center justify-center gap-4"
-          >
-            <Link href="/register">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-3 px-8 sm:px-10 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-black text-sm rounded-2xl shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow duration-300"
-              >
-                <Gavel size={18} />
-                Start Free Trial
-                <ArrowRight size={16} />
-              </motion.button>
-            </Link>
-            <Link href="/pricing">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-3 px-8 sm:px-10 py-4 bg-white/5 border border-white/10 text-white font-black text-sm rounded-2xl hover:bg-white/10 hover:border-indigo-500/30 transition duration-300"
-              >
-                View Pricing
-                <ChevronRight size={16} />
-              </motion.button>
-            </Link>
-          </motion.div>
-
-          {/* Trust line */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="flex flex-wrap items-center justify-center gap-6 md:gap-8 mt-14 text-slate-500"
-          >
-            {[
-              { icon: Shield, text: 'Bar Council Compliant' },
-              { icon: Lock, text: 'AES-256 Encrypted' },
-              { icon: CheckCircle, text: 'DPDP 2023 Certified' },
-              { icon: Globe, text: '6 Indian Languages' },
-            ].map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
-                <Icon size={13} className="text-indigo-500" />
-                {text}
-              </div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-          <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-600">Explore</p>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-5 h-8 rounded-full border-2 border-white/10 flex items-start justify-center pt-1.5"
-          >
-            <div className="w-1 h-2 bg-indigo-500 rounded-full" />
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ─── STATS ROW ─────────────────────────────────────── */}
-      <section className="py-12 md:py-20 border-y border-white/5 bg-white/[0.01]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { value: '50000', suffix: '+', label: 'Legal Professionals', color: 'text-indigo-400' },
-              { value: '2500000', suffix: '+', label: 'AI Queries Resolved', color: 'text-violet-400' },
-              { value: '98', suffix: '%', label: 'Accuracy Rate', color: 'text-cyan-400' },
-              { value: '6', suffix: '', label: 'Indian Languages', color: 'text-emerald-400' },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center"
-              >
-                <p className={`text-3xl sm:text-5xl font-black ${stat.color} tracking-tighter mb-2`}>
-                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                </p>
-                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-500">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── BENTO FEATURE GRID ────────────────────────────── */}
-      <section className="py-16 md:py-28 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
-            <span className="inline-block text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-full mb-6">
-              Platform Overview
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tighter mb-4">
-              Everything a modern lawyer needs.
-            </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg font-light">
-              One unified platform for AI assistance, case management, client CRM, and courtroom preparation.
-            </p>
-          </motion.div>
-
-          {/* Bento Grid */}
-          <div className="grid grid-cols-12 gap-6">
-
-            {/* Large hero card */}
-            <BentoCard className="col-span-12 lg:col-span-7 p-8 sm:p-10 min-h-[320px]" delay={0}>
-              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[80px] rounded-full" />
-              <div className="relative z-10 h-full flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="p-3 bg-indigo-500/20 rounded-2xl">
-                      <Brain size={28} className="text-indigo-400" />
-                    </div>
-                    <span className="text-xs font-black uppercase tracking-widest text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full">
-                      Core AI Engine
-                    </span>
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">Judge AI™ — Case Outcome Prediction</h3>
-                  <p className="text-slate-400 max-w-lg leading-relaxed text-sm sm:text-base">Upload case files and receive an AI-generated dossier with win probability scores, risk factors, judicial temperament analysis, and counterstrategy playbooks. Grounded in real-time judgement databases.</p>
-                </div>
-                <div className="flex flex-wrap items-center gap-6 mt-8">
-                  <Link href="/judge-ai">
-                    <button className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">
-                      <Scale size={14} /> Try Judge AI
-                    </button>
-                  </Link>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                    Live & Grounded
-                  </div>
-                </div>
-              </div>
-            </BentoCard>
-
-            {/* Stacked side cards */}
-            <div className="col-span-12 lg:col-span-5 space-y-6">
-              <BentoCard className="p-6 sm:p-8" delay={0.1}>
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-cyan-500/20 rounded-2xl flex-shrink-0">
-                    <Swords size={22} className="text-cyan-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-black text-lg mb-1 tracking-tight">NyayCourt™ Battle Simulator</h4>
-                    <p className="text-slate-400 text-sm leading-relaxed">Adversarial AI courtroom simulator where Prosecution vs Defence battle in real-time with live scoring, objections, and judicial rulings.</p>
-                    <Link href="/courtroom-battle">
-                      <span className="mt-3 inline-flex items-center gap-1 text-cyan-400 text-xs font-black uppercase tracking-widest hover:underline">
-                        Launch Simulator <ArrowRight size={11} />
-                      </span>
-                    </Link>
-                  </div>
-                </div>
-              </BentoCard>
-
-              <BentoCard className="p-6 sm:p-8" delay={0.2}>
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-violet-500/20 rounded-2xl flex-shrink-0">
-                    <Mic size={22} className="text-violet-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-black text-lg mb-1 tracking-tight">NyayVoice™ — Multilingual AI</h4>
-                    <p className="text-slate-400 text-sm leading-relaxed">Speak legal queries in Hindi, Tamil, Telugu, Kannada, Marathi or English. Get instant voice responses grounded in Indian law.</p>
-                    <Link href="/voice-assistant">
-                      <span className="mt-3 inline-flex items-center gap-1 text-violet-400 text-xs font-black uppercase tracking-widest hover:underline">
-                        Try Voice AI <ArrowRight size={11} />
-                      </span>
-                    </Link>
-                  </div>
-                </div>
-              </BentoCard>
-            </div>
-
-            {/* Second row */}
-            <BentoCard className="col-span-12 md:col-span-4 p-6 sm:p-8" delay={0.15}>
-              <div className="p-3 bg-emerald-500/20 rounded-2xl mb-5 w-fit">
-                <Globe size={22} className="text-emerald-400" />
-              </div>
-              <h4 className="text-white font-black text-lg mb-2 tracking-tight">eCourts Live Integration</h4>
-              <p className="text-slate-400 text-sm leading-relaxed mb-4">Real-time case status from eCourts.gov.in. Track hearings, orders, and disposals directly inside your dashboard.</p>
-              <div className="flex items-center gap-2 text-emerald-400 text-xs font-black uppercase tracking-widest">
-                <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" /> Live Data Feed
-              </div>
-            </BentoCard>
-
-            <BentoCard className="col-span-12 md:col-span-4 p-6 sm:p-8" delay={0.2}>
-              <div className="p-3 bg-amber-500/20 rounded-2xl mb-5 w-fit">
-                <FileText size={22} className="text-amber-400" />
-              </div>
-              <h4 className="text-white font-black text-lg mb-2 tracking-tight">AI Legal Notice Generator</h4>
-              <p className="text-slate-400 text-sm leading-relaxed mb-4">Auto-generate Section 80 notices, demand letters, and RTI applications in minutes. Choose from 20+ notice templates.</p>
-              <div className="flex flex-wrap gap-2">
-                {['Section 80', 'RTI', 'Demand', 'FIR'].map(t => (
-                  <span key={t} className="text-[9px] font-black uppercase tracking-widest px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg">{t}</span>
-                ))}
-              </div>
-            </BentoCard>
-
-            <BentoCard className="col-span-12 md:col-span-4 p-6 sm:p-8" delay={0.25}>
-              <div className="p-3 bg-fuchsia-500/20 rounded-2xl mb-5 w-fit">
-                <Brain size={22} className="text-fuchsia-400" />
-              </div>
-              <h4 className="text-white font-black text-lg mb-2 tracking-tight">Devil's Advocate Critique</h4>
-              <p className="text-slate-400 text-sm leading-relaxed mb-4">Submit your legal argument and receive AI-powered opposition critique, exposing weaknesses before you enter the courtroom.</p>
-              <Link href="/devils-advocate">
-                <span className="inline-flex items-center gap-1 text-fuchsia-400 text-xs font-black uppercase tracking-widest hover:underline">
-                  Challenge Your Case <ArrowRight size={11} />
-                </span>
-              </Link>
-            </BentoCard>
-
-            {/* Wide bottom card - CRM */}
-            <BentoCard className="col-span-12 p-8 sm:p-10" delay={0.3}>
-              <div className="absolute top-0 left-0 w-96 h-96 bg-violet-500/5 blur-[100px] rounded-full" />
-              <div className="relative z-10 grid md:grid-cols-2 gap-10">
-                <div>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="p-3 bg-violet-500/20 rounded-2xl">
-                      <LayoutDashboard size={24} className="text-violet-400" />
-                    </div>
-                    <span className="text-xs font-black uppercase tracking-widest text-violet-400">Practice Management</span>
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">NyayDash™ Command Center</h3>
-                  <p className="text-slate-400 leading-relaxed mb-6 text-sm sm:text-base">Your complete legal practice operating system. Kanban case pipeline, client CRM, financial ledger, appointment calendar, and real-time analytics — all unified in one command center built for India's advocates.</p>
-                  <Link href="/register">
-                    <button className="flex items-center gap-2 px-6 py-3 bg-violet-600 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-violet-500 transition shadow-lg shadow-violet-500/20">
-                      <LayoutDashboard size={14} /> Open Dashboard
-                    </button>
-                  </Link>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {[
-                    { icon: Users, label: 'Client CRM', color: 'text-violet-400 bg-violet-500/10' },
-                    { icon: TrendingUp, label: 'Revenue Analytics', color: 'text-indigo-400 bg-indigo-500/10' },
-                    { icon: Clock, label: 'Smart Calendar', color: 'text-cyan-400 bg-cyan-500/10' },
-                    { icon: Layers, label: 'Kanban Pipeline', color: 'text-emerald-400 bg-emerald-500/10' },
-                    { icon: Bell, label: 'Live Alerts', color: 'text-amber-400 bg-amber-500/10' },
-                    { icon: RefreshCw, label: 'Sync Automation', color: 'text-rose-400 bg-rose-500/10' },
-                  ].map(({ icon: Icon, label, color }) => (
-                    <div key={label} className="flex items-center gap-3 p-3 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition">
-                      <div className={`p-2 rounded-xl ${color.split(' ')[1]}`}>
-                        <Icon size={16} className={color.split(' ')[0]} />
-                      </div>
-                      <span className="text-xs font-bold text-slate-300">{label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </BentoCard>
-          </div>
-        </div>
-      </section>
 
       {/* ─── INTERACTIVE FEATURE TABS ──────────────────────── */}
       <section className="py-16 md:py-28 border-t border-white/5 bg-white/[0.01]">
@@ -604,7 +285,7 @@ export default function ProfessionalsPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tighter mb-4">Deep Dive into Features</h2>
-            <p className="text-slate-400 text-base sm:text-lg font-light">Explore every capability designed for legal professionals.</p>
+            <p className="text-slate-400 text-lg font-light">Explore every capability designed for legal professionals.</p>
           </motion.div>
 
           {/* Tab navigation - horizontally scrollable on mobile */}
@@ -638,8 +319,8 @@ export default function ProfessionalsPage() {
                 transition={{ duration: 0.4 }}
               >
                 <div className="text-center mb-12">
-                  <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">{featureDetails[activeFeatureTab].title}</h3>
-                  <p className="text-slate-400 text-sm sm:text-base">{featureDetails[activeFeatureTab].subtitle}</p>
+                  <h3 className="text-3xl font-black text-white tracking-tight mb-2">{featureDetails[activeFeatureTab].title}</h3>
+                  <p className="text-slate-400">{featureDetails[activeFeatureTab].subtitle}</p>
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {featureDetails[activeFeatureTab].features.map((f, i) => (
@@ -664,39 +345,7 @@ export default function ProfessionalsPage() {
         </div>
       </section>
 
-      {/* ─── ALL FEATURES GRID ─────────────────────────────── */}
-      <section className="py-16 md:py-28 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
-            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tighter mb-4">Every Tool You Need</h2>
-            <p className="text-slate-400 text-base sm:text-lg font-light max-w-2xl mx-auto">A complete arsenal of legal technology features — all in one subscription.</p>
-          </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <FeatureCard icon={Brain} title="Judge AI™" description="AI-powered case outcome prediction with win probability, risk analysis, and full strategic dossiers." badge="Core AI" color="indigo" delay={0} href="/judge-ai" />
-            <FeatureCard icon={Swords} title="NyayCourt™ Simulator" description="Real-time adversarial courtroom simulation — Prosecution vs Defence AI with live scoring and objections." badge="Exclusive" color="cyan" delay={0.05} href="/courtroom-battle" />
-            <FeatureCard icon={Mic} title="NyayVoice™" description="Multilingual AI voice assistant — get legal answers in Hindi, Tamil, Telugu, Kannada, Marathi & English." badge="6 Languages" color="violet" delay={0.1} href="/voice-assistant" />
-            <FeatureCard icon={FileText} title="AI Drafting Lab" description="Generate contracts, agreements, notices, and court-ready documents with AI clause-by-clause guidance." badge="New" color="amber" delay={0.15} href="/drafting" />
-            <FeatureCard icon={BookOpen} title="Precedent Engine" description="Search Supreme Court and High Court judgements with AI-powered summarization and cross-referencing." color="emerald" delay={0.2} href="/research" />
-            <FeatureCard icon={Brain} title="Devil's Advocate" description="AI stress-tests your arguments from the opposition perspective. Fix weaknesses before court." badge="Unique" color="rose" delay={0.25} href="/devils-advocate" />
-            <FeatureCard icon={Globe} title="eCourts Integration" description="Track case status from eCourts.gov.in in real-time — hearings, orders, and disposals at a glance." color="teal" delay={0.3} />
-            <FeatureCard icon={Video} title="Virtual Court Rooms" description="End-to-end encrypted video consultations with clients directly inside the platform." color="fuchsia" delay={0.35} />
-            <FeatureCard icon={Users} title="Client CRM" description="Complete practice CRM — manage leads, clients, connections, and case history in one place." color="indigo" delay={0.4} />
-            <FeatureCard icon={BarChart3} title="Revenue Analytics" description="Track earnings, invoice velocity, payment status, and practice growth with interactive charts." color="violet" delay={0.45} href="/analytics" />
-            <FeatureCard icon={Scale} title="Legal SOS Mode" description="Emergency legal assistance — 24/7 on-demand consultation routing to the nearest available advocate." badge="Emergency" color="rose" delay={0.5} href="/legal-sos" />
-            <FeatureCard icon={Lock} title="Compliance Hub" description="Stay compliant with automated BNS 2024, IPC cross-referencing, and regulatory updates." color="emerald" delay={0.55} href="/compliances" />
-            <FeatureCard icon={Layers} title="Kanban Case Board" description="Visual drag-and-drop pipeline for tracking every case stage from intake to closure and beyond." color="cyan" delay={0.6} />
-            <FeatureCard icon={TrendingUp} title="Smart Invoice Escrow" description="Generate invoices, track payments, and settle via Razorpay-powered escrow with blockchain ledger." color="amber" delay={0.65} />
-            <FeatureCard icon={Building2} title="Moot Court VR" description="Immersive moot court simulator with AI judges providing real-time structured feedback on arguments." badge="Firm Plan" color="fuchsia" delay={0.7} href="/moot-court" />
-            <FeatureCard icon={MessageSquare} title="Legal Feed & Network" description="Stay informed with real-time legal news, judgements, and connect with peer advocates in your network." color="teal" delay={0.75} />
-          </div>
-        </div>
-      </section>
 
       {/* ─── HOW IT WORKS ──────────────────────────────────── */}
       <section className="py-16 md:py-28 border-t border-white/5 bg-white/[0.01]">
@@ -712,10 +361,10 @@ export default function ProfessionalsPage() {
                 <span className="inline-block text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-full mb-6">
                   How It Works
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tighter mb-4">
+                <h2 className="text-4xl font-black text-white tracking-tighter mb-4">
                   Up and running in minutes, not months.
                 </h2>
-                <p className="text-slate-400 leading-relaxed text-sm sm:text-base">
+                <p className="text-slate-400 leading-relaxed">
                   NyayNow is designed to plug into your existing practice without disruption. From onboarding to first AI analysis — it takes under 10 minutes.
                 </p>
               </motion.div>
@@ -735,7 +384,7 @@ export default function ProfessionalsPage() {
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="bg-[#0d1526] border border-white/5 rounded-3xl p-6 sm:p-8 flex-1 relative overflow-hidden"
+                className="bg-[#0d1526] border border-white/5 rounded-3xl p-8 flex-1 relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 blur-[60px] rounded-full" />
                 <div className="relative z-10">
@@ -753,7 +402,7 @@ export default function ProfessionalsPage() {
                       { label: 'Pending Leads', value: '7', color: 'text-amber-400' },
                     ].map(({ label, value, color }) => (
                       <div key={label} className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                        <p className={`text-xl sm:text-2xl font-black ${color} tracking-tight`}>{value}</p>
+                        <p className={`text-2xl font-black ${color} tracking-tight`}>{value}</p>
                         <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mt-1">{label}</p>
                       </div>
                     ))}
@@ -766,7 +415,7 @@ export default function ProfessionalsPage() {
                       { name: 'Criminal Appeal — SC', status: 'Active', color: 'text-emerald-400 bg-emerald-500/10' },
                       { name: 'Arbitration Matter', status: 'Discovery', color: 'text-indigo-400 bg-indigo-500/10' },
                     ].map(({ name, status, color }) => (
-                      <div key={name} className="flex flex-wrap sm:flex-nowrap items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 gap-2">
+                      <div key={name} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
                         <span className="text-xs font-bold text-slate-300">{name}</span>
                         <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg ${color}`}>{status}</span>
                       </div>
@@ -781,7 +430,7 @@ export default function ProfessionalsPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
-                className="bg-gradient-to-br from-indigo-900/30 to-violet-900/20 border border-indigo-500/20 rounded-3xl p-6 sm:p-8"
+                className="bg-gradient-to-br from-indigo-900/30 to-violet-900/20 border border-indigo-500/20 rounded-3xl p-8"
               >
                 <div className="flex gap-1 mb-4">
                   {[...Array(5)].map((_, i) => <Star key={i} size={14} className="text-amber-400 fill-amber-400" />)}
@@ -802,174 +451,9 @@ export default function ProfessionalsPage() {
         </div>
       </section>
 
-      {/* ─── TESTIMONIALS ──────────────────────────────────── */}
-      <section className="py-16 md:py-28 px-4 sm:px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tighter mb-4">Trusted by India's Top Legal Minds</h2>
-            <p className="text-slate-400 text-sm sm:text-base font-light">Advocates across India's courts rely on NyayNow every day.</p>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-6">
-            <TestimonialCard
-              delay={0}
-              quote="The AI Drafting Lab saved me 3 hours per client intake. I generate Section 80 notices in under 2 minutes. This is the future of Indian law practice."
-              name="Adv. Priya Nair"
-              role="Civil & Family Law"
-              court="Kerala High Court"
-            />
-            <TestimonialCard
-              delay={0.1}
-              quote="NyayCourt simulator helped me prepare for a criminal appeal that I was nervous about. The AI's counter-arguments revealed weaknesses I hadn't noticed."
-              name="Adv. Sanjay Mehta"
-              role="Criminal Defence"
-              court="Bombay High Court"
-            />
-            <TestimonialCard
-              delay={0.2}
-              quote="The eCourts integration alone is worth the subscription. I no longer need to check 5 different portals. Everything is aggregated on one dashboard."
-              name="Adv. Lakshmi Devi"
-              role="Tax & Corporate Law"
-              court="Madras High Court"
-            />
-          </div>
-        </div>
-      </section>
 
-      {/* ─── PLANS TEASER ──────────────────────────────────── */}
-      <section className="py-16 md:py-28 border-t border-white/5 bg-white/[0.01]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tighter mb-4">Start for Free. Scale as You Grow.</h2>
-            <p className="text-slate-400 text-base sm:text-lg font-light mb-14 max-w-2xl mx-auto">
-              Every Indian advocate gets free access. Unlock unlimited AI, advanced tools, and firm management with Pro or Firm plans.
-            </p>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-12">
-              {[
-                {
-                  name: 'Free', price: '₹0', period: 'forever',
-                  features: ['5 AI queries/day', 'Lawyer directory', 'Legal SOS', 'Basic drafting preview'],
-                  color: 'border-white/10', btn: 'bg-white/10 text-white', cta: 'Get Started'
-                },
-                {
-                  name: 'Pro', price: '₹499', period: 'month',
-                  features: ['Unlimited AI queries', 'Judge AI (10/mo)', 'Full drafting suite', 'NyayVoice', 'Precedent engine', 'Case calendar sync'],
-                  color: 'border-indigo-500/40', btn: 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25', cta: 'Start Pro', popular: true
-                },
-                {
-                  name: 'Firm', price: '₹4,999', period: 'month',
-                  features: ['Everything in Pro', 'Moot Court VR', "Devil's Advocate AI", 'Unlimited Judge AI', '5 team accounts', 'Dedicated CRM'],
-                  color: 'border-amber-500/30', btn: 'bg-gradient-to-r from-amber-400 to-amber-600 text-black font-black', cta: 'Go Firm'
-                }
-              ].map((plan) => (
-                <motion.div
-                  key={plan.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  whileHover={{ y: -6 }}
-                  className={`bg-[#0d1526] border ${plan.color} rounded-3xl p-6 sm:p-8 text-left relative ${plan.popular ? 'ring-1 ring-indigo-500/30' : ''}`}
-                >
-                  {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full text-white text-[9px] font-black uppercase tracking-widest shadow-lg">
-                      Most Popular
-                    </div>
-                  )}
-                  <h3 className="text-2xl font-black text-white mb-1">{plan.name}</h3>
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-3xl sm:text-4xl font-black text-white">{plan.price}</span>
-                    <span className="text-slate-500 text-sm">/{plan.period}</span>
-                  </div>
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map(f => (
-                      <li key={f} className="flex items-center gap-2.5 text-sm text-slate-300">
-                        <CheckCircle size={14} className="text-indigo-400 flex-shrink-0" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link href="/pricing">
-                    <button className={`w-full py-3.5 rounded-2xl font-black text-sm transition duration-300 ${plan.btn}`}>
-                      {plan.cta}
-                    </button>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
 
-            <Link href="/pricing" className="inline-flex items-center gap-2 text-indigo-400 font-black text-sm hover:text-white transition">
-              See full pricing breakdown <ArrowRight size={16} />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ─── FINAL CTA ─────────────────────────────────────── */}
-      <section className="py-20 md:py-32 px-4 sm:px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/5 to-transparent pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none" />
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="relative z-10 max-w-4xl mx-auto text-center"
-        >
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-black uppercase tracking-[0.3em] mb-8">
-            <Sparkles size={12} /> Join 50,000+ Legal Professionals
-          </div>
-          <h2 className="text-4xl sm:text-6xl font-black text-white tracking-tighter mb-6">
-            Your practice, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">supercharged.</span>
-          </h2>
-          <p className="text-lg sm:text-xl text-slate-400 font-light mb-12 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of Indian advocates who've made NyayNow their legal operating system. Start free, no credit card required.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link href="/register">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-3 px-10 sm:px-12 py-4 sm:py-5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-black text-sm rounded-2xl shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow"
-              >
-                <Gavel size={18} />
-                Start Free — No Card Needed
-                <ArrowRight size={16} />
-              </motion.button>
-            </Link>
-            <Link href="/marketplace">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-white/5 border border-white/10 text-white font-black text-sm rounded-2xl hover:bg-white/10 transition"
-              >
-                Browse Marketplace
-              </motion.button>
-            </Link>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 mt-14">
-            {[
-              { icon: Shield, text: 'No credit card required' },
-              { icon: RefreshCw, text: 'Cancel anytime' },
-              { icon: Lock, text: 'Data never shared' },
-            ].map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500">
-                <Icon size={12} className="text-indigo-500" />
-                {text}
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
 
     </div>
   );
