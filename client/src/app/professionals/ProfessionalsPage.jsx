@@ -271,33 +271,7 @@ export default function ProfessionalsPage() {
 
 
 
-      {/* ─── STATS ROW ─────────────────────────────────────── */}
-      <section className="py-20 border-y border-white/5 bg-white/[0.01]">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { value: '50000', suffix: '+', label: 'Legal Professionals', color: 'text-indigo-400' },
-              { value: '2500000', suffix: '+', label: 'AI Queries Resolved', color: 'text-violet-400' },
-              { value: '98', suffix: '%', label: 'Accuracy Rate', color: 'text-cyan-400' },
-              { value: '6', suffix: '', label: 'Indian Languages', color: 'text-emerald-400' },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center"
-              >
-                <p className={`text-5xl font-black ${stat.color} tracking-tighter mb-2`}>
-                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                </p>
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-500">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
 
 
