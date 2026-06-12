@@ -4,10 +4,12 @@ import React, { useRef, useState } from "react"
 import Link from "next/link"
 import { motion, useSpring, useMotionValue } from "framer-motion"
 import { useAuth } from "../../context/AuthContext"
+import { useLanguage } from "../../context/LanguageContext"
 import { ShieldCheck, ChevronRight, Lock } from "lucide-react"
 
 export default function HeroSection() {
     const { user } = useAuth()
+    const { t } = useLanguage()
 
     return (
         <section className="relative pt-32 md:pt-44 pb-16 lg:pb-24 overflow-hidden text-center bg-[#000000]">
@@ -31,7 +33,7 @@ export default function HeroSection() {
                     className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 text-[10px] font-black uppercase tracking-[0.4em] mb-12 backdrop-blur-3xl shadow-2xl hover:border-blue-500/30 transition-colors"
                 >
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                    <span>Secure. Trusted. Affordable.</span>
+                    <span>{t("hero.badge")}</span>
                     <span className="w-1 h-1 rounded-full bg-white/20 mx-1" />
                     <span className="text-white/20">v2.0 Beta</span>
                 </motion.div>
@@ -45,9 +47,9 @@ export default function HeroSection() {
                         className="text-3xl md:text-6xl lg:text-[75px] font-bold text-white mb-8 leading-[1.15] tracking-[-0.04em]"
                     >
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">
-                             Instant legal answers in your language. <br />
+                             {t("hero.title1")} <br />
                         </span>
-                        <span className="text-shimmer italic inline-block mt-4">Connect with verified lawyers.</span>
+                        <span className="text-shimmer italic inline-block mt-4">{t("hero.title2")}</span>
                     </motion.h1>
 
                     <motion.div
@@ -57,10 +59,10 @@ export default function HeroSection() {
                         className="max-w-3xl mx-auto space-y-6"
                     >
                         <p className="text-lg md:text-xl text-slate-400 font-medium leading-relaxed tracking-tight">
-                            Ask questions, draft documents, and prep arguments with AI trained on India’s new legal codes.
+                            {t("hero.subtitle")}
                         </p>
                         <p className="text-blue-400/80 text-[10px] font-black uppercase tracking-[0.4em] pb-4">
-                            Grounded in Real-Time Supreme Court & High Court Data
+                            {t("hero.grounded")}
                         </p>
                     </motion.div>
                 </div>
@@ -77,7 +79,7 @@ export default function HeroSection() {
                             href="/assistant"
                             className="group relative w-full sm:w-auto px-10 py-5 rounded-2xl bg-white text-[#020617] font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_20px_40px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2 overflow-hidden"
                         >
-                            <span className="relative z-10">Try AI free</span>
+                            <span className="relative z-10">{t("hero.try_ai")}</span>
                             <ChevronRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                         </Link>
@@ -88,7 +90,7 @@ export default function HeroSection() {
                             href="/marketplace"
                             className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-[#0F172A] border border-white/10 text-white font-bold text-lg hover:bg-white/5 hover:border-blue-500/50 transition-all duration-300 flex items-center justify-center gap-3 active:scale-[0.98] group"
                         >
-                            <span>Find a lawyer</span>
+                            <span>{t("hero.find_lawyer")}</span>
                         </Link>
                     </MagneticButton>
                 </motion.div>
@@ -100,7 +102,7 @@ export default function HeroSection() {
                     transition={{ duration: 1, delay: 0.8 }}
                     className="text-slate-500 text-xs mt-6 font-medium"
                 >
-                    AI guidance, not legal advice. Verified advocates available.
+                    {t("hero.disclaimer")}
                 </motion.p>
 
                 {/* TRUST & PARTNERS ROW */}
@@ -110,7 +112,7 @@ export default function HeroSection() {
                     transition={{ duration: 1.5, delay: 1 }}
                     className="mt-24 space-y-8"
                 >
-                    <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.4em]">Integrated with Trusted Legal Frameworks</p>
+                    <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.4em]">{t("hero.integrated")}</p>
                     <div className="flex flex-wrap items-center justify-center gap-x-6 md:gap-x-12 gap-y-6 grayscale opacity-30 invert hover:opacity-60 transition-opacity duration-500">
                         {['e-Courts', 'Bar Council Info', 'NALSA', 'NIC', 'Supreme Court Data'].map((partner) => (
                            <div key={partner} className="flex items-center gap-2">
@@ -130,12 +132,12 @@ export default function HeroSection() {
                 >
                     <div className="flex items-center gap-2 group cursor-default hover:text-blue-400 transition-colors">
                         <Lock size={12} />
-                        <span>AES-256 Encryption</span>
+                        <span>{t("hero.encryption")}</span>
                     </div>
                     <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-slate-800" />
                     <div className="flex items-center gap-2 group cursor-default hover:text-emerald-400 transition-colors">
                         <ShieldCheck size={12} />
-                        <span>BCI Guidelines Compliant</span>
+                        <span>{t("hero.bci")}</span>
                     </div>
                 </motion.div>
             </div>
