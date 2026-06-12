@@ -664,39 +664,7 @@ export default function ProfessionalsPage() {
         </div>
       </section>
 
-      {/* ─── ALL FEATURES GRID ─────────────────────────────── */}
-      <section className="py-28 px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
-            <h2 className="text-5xl font-black text-white tracking-tighter mb-4">Every Tool You Need</h2>
-            <p className="text-slate-400 text-lg font-light max-w-2xl mx-auto">A complete arsenal of legal technology features — all in one subscription.</p>
-          </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <FeatureCard icon={Brain} title="Judge AI™" description="AI-powered case outcome prediction with win probability, risk analysis, and full strategic dossiers." badge="Core AI" color="indigo" delay={0} href="/judge-ai" />
-            <FeatureCard icon={Swords} title="NyayCourt™ Simulator" description="Real-time adversarial courtroom simulation — Prosecution vs Defence AI with live scoring and objections." badge="Exclusive" color="cyan" delay={0.05} href="/courtroom-battle" />
-            <FeatureCard icon={Mic} title="NyayVoice™" description="Multilingual AI voice assistant — get legal answers in Hindi, Tamil, Telugu, Kannada, Marathi & English." badge="6 Languages" color="violet" delay={0.1} href="/voice-assistant" />
-            <FeatureCard icon={FileText} title="AI Drafting Lab" description="Generate contracts, agreements, notices, and court-ready documents with AI clause-by-clause guidance." badge="New" color="amber" delay={0.15} href="/drafting" />
-            <FeatureCard icon={BookOpen} title="Precedent Engine" description="Search Supreme Court and High Court judgements with AI-powered summarization and cross-referencing." color="emerald" delay={0.2} href="/research" />
-            <FeatureCard icon={Brain} title="Devil's Advocate" description="AI stress-tests your arguments from the opposition perspective. Fix weaknesses before court." badge="Unique" color="rose" delay={0.25} href="/devils-advocate" />
-            <FeatureCard icon={Globe} title="eCourts Integration" description="Track case status from eCourts.gov.in in real-time — hearings, orders, and disposals at a glance." color="teal" delay={0.3} />
-            <FeatureCard icon={Video} title="Virtual Court Rooms" description="End-to-end encrypted video consultations with clients directly inside the platform." color="fuchsia" delay={0.35} />
-            <FeatureCard icon={Users} title="Client CRM" description="Complete practice CRM — manage leads, clients, connections, and case history in one place." color="indigo" delay={0.4} />
-            <FeatureCard icon={BarChart3} title="Revenue Analytics" description="Track earnings, invoice velocity, payment status, and practice growth with interactive charts." color="violet" delay={0.45} href="/analytics" />
-            <FeatureCard icon={Scale} title="Legal SOS Mode" description="Emergency legal assistance — 24/7 on-demand consultation routing to the nearest available advocate." badge="Emergency" color="rose" delay={0.5} href="/legal-sos" />
-            <FeatureCard icon={Lock} title="Compliance Hub" description="Stay compliant with automated BNS 2024, IPC cross-referencing, and regulatory updates." color="emerald" delay={0.55} href="/compliances" />
-            <FeatureCard icon={Layers} title="Kanban Case Board" description="Visual drag-and-drop pipeline for tracking every case stage from intake to closure and beyond." color="cyan" delay={0.6} />
-            <FeatureCard icon={TrendingUp} title="Smart Invoice Escrow" description="Generate invoices, track payments, and settle via Razorpay-powered escrow with blockchain ledger." color="amber" delay={0.65} />
-            <FeatureCard icon={Building2} title="Moot Court VR" description="Immersive moot court simulator with AI judges providing real-time structured feedback on arguments." badge="Firm Plan" color="fuchsia" delay={0.7} href="/moot-court" />
-            <FeatureCard icon={MessageSquare} title="Legal Feed & Network" description="Stay informed with real-time legal news, judgements, and connect with peer advocates in your network." color="teal" delay={0.75} />
-          </div>
-        </div>
-      </section>
 
       {/* ─── HOW IT WORKS ──────────────────────────────────── */}
       <section className="py-28 border-t border-white/5 bg-white/[0.01]">
@@ -802,116 +770,7 @@ export default function ProfessionalsPage() {
         </div>
       </section>
 
-      {/* ─── TESTIMONIALS ──────────────────────────────────── */}
-      <section className="py-28 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-black text-white tracking-tighter mb-4">Trusted by India's Top Legal Minds</h2>
-            <p className="text-slate-400 font-light">Advocates across India's courts rely on NyayNow every day.</p>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-6">
-            <TestimonialCard
-              delay={0}
-              quote="The AI Drafting Lab saved me 3 hours per client intake. I generate Section 80 notices in under 2 minutes. This is the future of Indian law practice."
-              name="Adv. Priya Nair"
-              role="Civil & Family Law"
-              court="Kerala High Court"
-            />
-            <TestimonialCard
-              delay={0.1}
-              quote="NyayCourt simulator helped me prepare for a criminal appeal that I was nervous about. The AI's counter-arguments revealed weaknesses I hadn't noticed."
-              name="Adv. Sanjay Mehta"
-              role="Criminal Defence"
-              court="Bombay High Court"
-            />
-            <TestimonialCard
-              delay={0.2}
-              quote="The eCourts integration alone is worth the subscription. I no longer need to check 5 different portals. Everything is aggregated on one dashboard."
-              name="Adv. Lakshmi Devi"
-              role="Tax & Corporate Law"
-              court="Madras High Court"
-            />
-          </div>
-        </div>
-      </section>
 
-      {/* ─── PLANS TEASER ──────────────────────────────────── */}
-      <section className="py-28 border-t border-white/5 bg-white/[0.01]">
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-5xl font-black text-white tracking-tighter mb-4">Start for Free. Scale as You Grow.</h2>
-            <p className="text-slate-400 text-lg font-light mb-14 max-w-2xl mx-auto">
-              Every Indian advocate gets free access. Unlock unlimited AI, advanced tools, and firm management with Pro or Firm plans.
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-6 mb-12">
-              {[
-                {
-                  name: 'Free', price: '₹0', period: 'forever',
-                  features: ['5 AI queries/day', 'Lawyer directory', 'Legal SOS', 'Basic drafting preview'],
-                  color: 'border-white/10', btn: 'bg-white/10 text-white', cta: 'Get Started'
-                },
-                {
-                  name: 'Pro', price: '₹499', period: 'month',
-                  features: ['Unlimited AI queries', 'Judge AI (10/mo)', 'Full drafting suite', 'NyayVoice', 'Precedent engine', 'Case calendar sync'],
-                  color: 'border-indigo-500/40', btn: 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25', cta: 'Start Pro', popular: true
-                },
-                {
-                  name: 'Firm', price: '₹4,999', period: 'month',
-                  features: ['Everything in Pro', 'Moot Court VR', "Devil's Advocate AI", 'Unlimited Judge AI', '5 team accounts', 'Dedicated CRM'],
-                  color: 'border-amber-500/30', btn: 'bg-gradient-to-r from-amber-400 to-amber-600 text-black font-black', cta: 'Go Firm'
-                }
-              ].map((plan) => (
-                <motion.div
-                  key={plan.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  whileHover={{ y: -6 }}
-                  className={`bg-[#0d1526] border ${plan.color} rounded-3xl p-8 text-left relative ${plan.popular ? 'ring-1 ring-indigo-500/30' : ''}`}
-                >
-                  {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full text-white text-[9px] font-black uppercase tracking-widest shadow-lg">
-                      Most Popular
-                    </div>
-                  )}
-                  <h3 className="text-2xl font-black text-white mb-1">{plan.name}</h3>
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-4xl font-black text-white">{plan.price}</span>
-                    <span className="text-slate-500 text-sm">/{plan.period}</span>
-                  </div>
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map(f => (
-                      <li key={f} className="flex items-center gap-2.5 text-sm text-slate-300">
-                        <CheckCircle size={14} className="text-indigo-400 flex-shrink-0" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link href="/pricing">
-                    <button className={`w-full py-3.5 rounded-2xl font-black text-sm transition duration-300 ${plan.btn}`}>
-                      {plan.cta}
-                    </button>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-
-            <Link href="/pricing" className="inline-flex items-center gap-2 text-indigo-400 font-black text-sm hover:text-white transition">
-              See full pricing breakdown <ArrowRight size={16} />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
 
       {/* ─── FINAL CTA ─────────────────────────────────────── */}
       <section className="py-32 px-6 relative overflow-hidden">
