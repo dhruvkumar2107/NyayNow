@@ -42,4 +42,4 @@ jobs:
       working-directory: ./client
       run: |
         npm install
-        npm run build
+        npm run build > build_ci.log 2>&1 || (cat build_ci.log && exit 1)
