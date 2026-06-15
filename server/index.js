@@ -1,10 +1,21 @@
 require("dotenv").config();
 
+// Fail fast if JWT_SECRET is missing or uses a known-default value (except in test environment)
+const KNOWN_BAD_SECRETS = ['super_secret_key_change_later', 'secret', 'jwt_secret', 'changeme'];
+if (process.env.NODE_ENV !== 'test' && (!process.env.JWT_SECRET || KNOWN_BAD_SECRETS.includes(process.env.JWT_SECRET))) {
+  console.error('❌ FATAL: JWT_SECRET is missing or uses a known-insecure default. Refusing to start.');
+  process.exit(1);
+}
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const sanitizeMiddleware = require("./middleware/sanitize");
+const escapeHtml = require("./utils/escapeHtml");
+const errorHandler = require("./middleware/errorHandler");
 
 const http = require("http");
 const { Server } = require("socket.io");
@@ -14,14 +25,11 @@ app.set("trust proxy", 1); // Trust first proxy (Required for Render/Vercel)
 const server = http.createServer(app);
 
 const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-  "https://nyaysathi-8new.vercel.app",
+  "https://nyaynow.in",
+  "https://www.nyaynow.in",
   "https://nyaynow.com",
-  "https://nyaynow.in", // NEW
-  "https://www.nyaynow.in", // NEW
-  "https://ubiquitous-creponne-ef2464.netlify.app",
   process.env.CLIENT_URL,
+  ...(process.env.NODE_ENV !== 'production' ? ["http://localhost:3000", "http://localhost:5173"] : []),
 ].filter(Boolean);
 
 const io = new Server(server, {
@@ -43,13 +51,21 @@ Sentry.init({
   integrations: [
     nodeProfilingIntegration(),
   ],
-  tracesSampleRate: 1.0,
-  profilesSampleRate: 1.0,
+  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0,
+  profilesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
   beforeSend(event) {
-    if (event.request && event.request.data) {
-      if (typeof event.request.data === 'string') {
-        event.request.data = event.request.data.replace(/"password":".*?"/g, '"password":"[REDACTED]"');
-        event.request.data = event.request.data.replace(/"token":".*?"/g, '"token":"[REDACTED]"');
+    const PII_FIELDS = ['password', 'token', 'email', 'phone', 'idCardImage', 'otp', 'confession'];
+    if (event.request?.data) {
+      if (typeof event.request.data === 'object') {
+        for (const field of PII_FIELDS) {
+          if (field in event.request.data) event.request.data[field] = '[REDACTED]';
+        }
+      } else if (typeof event.request.data === 'string') {
+        for (const field of PII_FIELDS) {
+          event.request.data = event.request.data.replace(
+            new RegExp(`"${field}"\\s*:\\s*"[^"]*"`, 'gi'), `"${field}":"[REDACTED]"`
+          );
+        }
       }
     }
     return event;
@@ -64,7 +80,6 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: [
         "'self'",
-        "'unsafe-inline'",
         "https://checkout.razorpay.com",
         "https://*.sentry.io",
         "https://cdn.razorpay.com",
@@ -73,7 +88,7 @@ app.use(helmet({
         "'self'",
         "'unsafe-inline'",
         "https://fonts.googleapis.com",
-        "https://nyaysathi-main.onrender.com",
+        "https://nyaynow.in",
       ],
       imgSrc: [
         "'self'",
@@ -91,8 +106,8 @@ app.use(helmet({
         "https://*.posthog.com",
         "https://*.algolia.net",
         "https://*.algolianet.com",
-        "wss://nyaysathi-main.onrender.com",
-        "https://nyaysathi-main.onrender.com",
+        "wss://nyaynow.in",
+        "https://nyaynow.in",
         "https://api.razorpay.com",
         "https://lumberjack.razorpay.com",
       ],
@@ -161,6 +176,8 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(sanitizeMiddleware);
 
 /* ================= ENV VALIDATION ================= */
 const REQUIRED_ENV_VARS = [
@@ -201,7 +218,7 @@ const jwt = require("jsonwebtoken");
 
 // JWT Handshake Middleware for Socket.io
 io.use((socket, next) => {
-  const token = socket.handshake.auth.token || socket.handshake.query.token;
+  const token = socket.handshake.auth.token;
   if (!token) {
     return next(new Error("Authentication error: No token provided"));
   }
@@ -220,7 +237,7 @@ io.on("connection", (socket) => {
   // Join a personal room based on User ID
   socket.on("join_room", (room) => {
     // SECURITY: Users can only join their own room or a pool they have access to
-    if (room !== userId && room !== "lawyer_pool") {
+    if (room !== userId && (room === "lawyer_pool" && socket.user.role !== "lawyer")) {
       console.warn(`⚠️ User ${userId} attempted to join unauthorized room: ${room}`);
       return;
     }
@@ -239,6 +256,9 @@ io.on("connection", (socket) => {
   // Client requests a lawyer
   // payload: { clientId, clientName, category }
   socket.on("request_instant_consult", (payload) => {
+    if (socket.user.id !== payload.clientId) {
+      return console.warn(`⚠️ Unauthorized request_instant_consult sender: expected ${socket.user.id}, got ${payload.clientId}`);
+    }
     console.log(`Instant Consult Requested by ${payload.clientName}`);
     // Broadcast to all online lawyers
     socket.to("lawyer_pool").emit("incoming_lead", payload);
@@ -247,6 +267,12 @@ io.on("connection", (socket) => {
   // Lawyer accepts the extensive
   // payload: { lawyerId, clientId, lawyerName }
   socket.on("accept_consult", (payload) => {
+    if (socket.user.role !== "lawyer") {
+      return console.warn(`⚠️ User ${userId} attempted to accept consult but is not a lawyer`);
+    }
+    if (socket.user.id !== payload.lawyerId) {
+      return console.warn(`⚠️ Unauthorized accept_consult sender: expected ${socket.user.id}, got ${payload.lawyerId}`);
+    }
     const meetingId = `instant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     // Notify Lawyer (Success)
@@ -267,6 +293,9 @@ io.on("connection", (socket) => {
   // Lawyer starts a pre-booked appointment
   // payload: { appointmentId, clientId, lawyerName }
   socket.on("start_scheduled_meeting", (payload) => {
+    if (socket.user.role !== "lawyer") {
+      return console.warn(`⚠️ User ${userId} attempted to start scheduled meeting but is not a lawyer`);
+    }
     console.log(`Scheduled meeting started for client: ${payload.clientId}`);
     // Notify Client
     io.to(payload.clientId).emit("scheduled_meeting_start", {
@@ -524,20 +553,25 @@ if (fs.existsSync(clientDist)) {
         description = "Get instant answers to your legal queries with NyayNow's AI-powered assistant.";
       }
 
-      // INJECT META
+      // INJECT META (with XSS protection via HTML escaping)
+      const escapedTitle = escapeHtml(title);
+      const escapedDescription = escapeHtml(description);
+      const escapedUrl = escapeHtml(url);
+      const escapedOgImage = escapeHtml(ogImage);
+
       const metaHtml = `
-  <title>${title}</title>
-  <meta name="description" content="${description}" />
+  <title>${escapedTitle}</title>
+  <meta name="description" content="${escapedDescription}" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="${url}" />
-  <meta property="og:title" content="${title}" />
-  <meta property="og:description" content="${description}" />
-  <meta property="og:image" content="${ogImage}" />
+  <meta property="og:url" content="${escapedUrl}" />
+  <meta property="og:title" content="${escapedTitle}" />
+  <meta property="og:description" content="${escapedDescription}" />
+  <meta property="og:image" content="${escapedOgImage}" />
   <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="${url}" />
-  <meta property="twitter:title" content="${title}" />
-  <meta property="twitter:description" content="${description}" />
-  <meta property="twitter:image" content="${ogImage}" />
+  <meta property="twitter:url" content="${escapedUrl}" />
+  <meta property="twitter:title" content="${escapedTitle}" />
+  <meta property="twitter:description" content="${escapedDescription}" />
+  <meta property="twitter:image" content="${escapedOgImage}" />
       `;
 
       // Replace the placeholder or the existing meta tags
@@ -553,6 +587,8 @@ if (fs.existsSync(clientDist)) {
     }
   });
 }
+
+app.use(errorHandler);
 
 /* ================= START ================= */
 if (process.env.NODE_ENV !== 'test') {

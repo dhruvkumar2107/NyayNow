@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ShieldCheck, FileCheck, AlertCircle, Info, ArrowLeft, Loader2, CheckCircle2, ListChecks, Download, ExternalLink, Zap } from 'lucide-react'
 import Link from 'next/link'
 import axios from 'axios'
+import { API_BASE } from '../../config'
 
 export default function ComplianceHubPage() {
     const [activeTab, setActiveTab] = useState('posh')
@@ -22,7 +23,7 @@ export default function ComplianceHubPage() {
         setIsLoading(true)
         setChecklist(null)
         try {
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/ai/chat`, {
+            const res = await axios.post(`${API_BASE}/ai/chat`, {
                 message: `[COMPLIANCE HUB] Generate a 10-item legal compliance checklist for a mid-sized Indian startup regarding: ${category}. 
                 Format each item exactly with keys: "title" (string), "requirement" (string), and "riskLevel" (string: "Low", "Medium", "High"). 
                 RETURN ONLY A VALID JSON ARRAY. NO MARKDOWN FORMATTING, NO BACKTICKS, NO EXPLANATORY TEXT. START WITH [ AND END WITH ].`

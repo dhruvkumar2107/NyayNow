@@ -9,6 +9,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { motion, AnimatePresence } from "framer-motion";
 import { UploadCloud, Shield, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { API_BASE } from "../config";
 
 const INDIAN_CITIES = [
   "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata", "Pune", "Jaipur", "Surat",
@@ -105,9 +106,7 @@ export default function Register() {
 
     setLoading(true);
     try {
-      // Simulate/trigger server OTP endpoint
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-      await axios.post(`${apiUrl}/whatsapp/send-otp`, { phone: formData.phone });
+      await axios.post(`${API_BASE}/whatsapp/send-otp`, { phone: formData.phone });
       
       setOtpSent(true);
       setOtpCooldown(60);
@@ -128,8 +127,7 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-      const res = await axios.post(`${apiUrl}/whatsapp/verify-otp`, { 
+      const res = await axios.post(`${API_BASE}/whatsapp/verify-otp`, { 
         phone: formData.phone,
         code: otpCode
       });

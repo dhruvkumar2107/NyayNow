@@ -4,7 +4,7 @@ export const metadata = {
     openGraph: {
         title: 'Legal SOS | Emergency Legal AI Assistant',
         description: 'Arrested? Facing fraud? Activate Legal SOS for instant legal rights and FIR drafting.',
-        url: 'https://nyaynow.com/legal-sos',
+        url: 'https://nyaynow.in/legal-sos',
         type: 'website',
         images: ['/logo.png'],
     },

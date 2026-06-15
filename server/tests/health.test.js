@@ -11,6 +11,7 @@ describe('Sanity Check', () => {
     it('GET /healthz should return 200 OK', async () => {
         const res = await request(app).get('/healthz');
         expect(res.statusCode).toEqual(200);
-        expect(res.body).toHaveProperty('ok', true);
+        expect(res.body).toHaveProperty('ok');
+        expect(res.body).toHaveProperty('db');
     });
 });

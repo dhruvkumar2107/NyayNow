@@ -16,7 +16,7 @@ const confessionSchema = new mongoose.Schema(
 
         // Always anonymous — no author reference stored publicly
         // Stored only for moderation / abuse tracking (not returned to frontend)
-        _authorId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        _anonToken: { type: String, required: true, index: true },
 
         // AI preliminary analysis (auto-generated on post)
         aiAnalysis: { type: String, default: "" },

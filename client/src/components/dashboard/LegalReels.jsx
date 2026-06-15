@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
+import { API_HOST } from "../../config";
 
 export default function LegalReels() {
     const { user } = useAuth();
@@ -40,7 +41,7 @@ export default function LegalReels() {
                     <div key={v._id} className="min-w-[140px] max-w-[140px] group/item cursor-pointer">
                         <div className="h-56 bg-black/40 rounded-2xl relative overflow-hidden mb-3 border border-white/5 group-hover/item:border-indigo-500/30 transition-all duration-300 shadow-inner">
                             <video
-                                src={`${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${v.mediaUrl}`}
+                                src={`${API_HOST}${v.mediaUrl}`}
                                 className="w-full h-full object-cover opacity-60 group-hover/item:opacity-90 transition-opacity duration-500"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover/item:opacity-0 transition-opacity"></div>

@@ -12,6 +12,13 @@ const verifyToken = require("../middleware/authMiddleware");
 const verifyTokenOptional = require("../middleware/verifyTokenOptional");
 const checkAiLimit = require("../middleware/checkAiLimit");
 
+// Helper to sanitize user input to prevent prompt injection
+function sanitizeUserInput(text) {
+  if (typeof text !== 'string') return '';
+  return text.replace(/\[\/?(FACTS|ANSWER|QUESTIONS|MARKER|USER_QUERY|SYSTEM_INSTRUCTION)\]/gi, "")
+             .replace(/<\/?(USER_QUERY|SYSTEM_INSTRUCTION|CASE_CONTEXT|NOTICE_DETAILS|PROMPT|AGREEMENT_TEXT|CASE_FACTS)>/gi, "");
+}
+
 // Health check to verify AI config on server
 router.get("/health", (req, res) => {
   const hasKey = !!process.env.GEMINI_API_KEY;
@@ -72,7 +79,10 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       PREVIOUS CHAT SUMMARY:
       ${conversationHistory ? conversationHistory.substring(0, 500) : "None"} ...
       
-      CURRENT USER QUERY: "${question}"
+      CURRENT USER QUERY:
+      <USER_QUERY>
+      ${sanitizeUserInput(question)}
+      </USER_QUERY>
       
       INSTRUCTIONS:
       1. **FACT-GATING**: Begin by summarizing the core legal facts of the user's situation.
@@ -139,7 +149,9 @@ router.post("/agreement", verifyTokenOptional, checkAiLimit, async (req, res) =>
 
     const prompt = `
       Analyze this legal agreement text:
-      "${text.substring(0, 15000)}"
+      <AGREEMENT_TEXT>
+      ${sanitizeUserInput(text.substring(0, 15000))}
+      </AGREEMENT_TEXT>
       
       Provide a specific JSON output with the following keys:
       - "accuracyScore": Number (0-100) representing legal robustness.
@@ -158,8 +170,8 @@ router.post("/agreement", verifyTokenOptional, checkAiLimit, async (req, res) =>
     const rawText = response.text();
     const analysisData = safeJsonParse(rawText, "Agreement Analysis");
 
-    // PAYWALL LOGIC (Safe for guests)
-    if (req.user && req.user.plan === 'free') {
+    // PAYWALL LOGIC (Safe for guests and free users)
+    if (!req.user || req.user.plan === 'free') {
       analysisData.riskLevel = "🔒 Upgrade to Unlock";
       analysisData.missingClauses = ["🔒 Upgrade to view missing clauses"];
       analysisData.ambiguousClauses = ["🔒 Upgrade to view ambiguous clauses"];
@@ -193,7 +205,9 @@ router.post("/analyze-agreement-pdf", verifyTokenOptional, checkAiLimit, upload.
 
     const prompt = `
       Analyze this legal agreement text extracted from a PDF:
-      "${truncatedText}"
+      <AGREEMENT_TEXT>
+      ${sanitizeUserInput(truncatedText)}
+      </AGREEMENT_TEXT>
       
       Provide a specific JSON output with the following keys:
       - "accuracyScore": Number (0-100) representing legal robustness.
@@ -212,7 +226,7 @@ router.post("/analyze-agreement-pdf", verifyTokenOptional, checkAiLimit, upload.
     const rawText = response.text();
     const analysisData = safeJsonParse(rawText, "Agreement PDF Analysis");
 
-    if (req.user && req.user.plan === 'free') {
+    if (!req.user || req.user.plan === 'free') {
       analysisData.riskLevel = "🔒 Upgrade to Unlock";
       analysisData.missingClauses = ["🔒 Upgrade to view missing clauses"];
       analysisData.ambiguousClauses = ["🔒 Upgrade to view ambiguous clauses"];
@@ -857,7 +871,7 @@ router.post("/fir-generator", verifyTokenOptional, checkAiLimit, async (req, res
    The most powerful AI feature: 3 AI personas argue the user's
    real case against each other. Full trial in 60 seconds.
    ═══════════════════════════════════════════════════════════════ */
-router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
+router.post("/courtroom-battle", verifyTokenOptional, checkAiLimit, async (req, res) => {
   try {
     const { caseTitle, caseDescription, caseType, plaintiffSide, defenseSide } = req.body;
     if (!caseDescription) return res.status(400).json({ error: "Case description required" });
@@ -868,11 +882,16 @@ router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
     const JUDGE_PERSONA = `You are NyayNow AI Analysis Engine (Simulation Judge), a no-nonsense simulation judge with years of data-driven experience. You are neutral, deeply learned, and cut through weak arguments instantly. You ask piercing questions and give crisp judicial observations. You cite specific constitutional provisions. Courtroom diction only.`;
 
     const caseContext = `
-      CASE TITLE: "${caseTitle || "The Instant Case"}"
-      CASE TYPE: ${caseType || "General Civil/Criminal Matter"}
-      PLAINTIFF SIDE: ${plaintiffSide || "As described in facts"}
-      DEFENSE SIDE: ${defenseSide || "As described in facts"}
-      FACTS OF THE CASE: "${caseDescription}"
+      <CASE_CONTEXT>
+      CASE TITLE: "${sanitizeUserInput(caseTitle || "The Instant Case")}"
+      CASE TYPE: ${sanitizeUserInput(caseType || "General Civil/Criminal Matter")}
+      PLAINTIFF SIDE: ${sanitizeUserInput(plaintiffSide || "As described in facts")}
+      DEFENSE SIDE: ${sanitizeUserInput(defenseSide || "As described in facts")}
+      FACTS OF THE CASE:
+      <CASE_FACTS>
+      ${sanitizeUserInput(caseDescription)}
+      </CASE_FACTS>
+      </CASE_CONTEXT>
     `;
 
     async function callAgent(persona, role, instruction, priorTranscript) {
@@ -1000,12 +1019,6 @@ router.post("/courtroom-battle", verifyTokenOptional, async (req, res) => {
   }
 });
 
-// Helper to extract cited law sections from speech text
-function extractSections(text) {
-  const matches = text.match(/(?:Section|Article|Order|Rule)\s+[\w\s,\/]+(?:of\s+the\s+[\w\s]+)?/gi) || [];
-  return [...new Set(matches)].slice(0, 3);
-}
-
 /* ────────────────────────────────────────────────────────
    INSTANT LEGAL NOTICE GENERATOR
    POST /api/ai/legal-notice
@@ -1036,17 +1049,19 @@ router.post("/legal-notice", verifyToken, checkAiLimit, async (req, res) => {
 Generate a complete, professional, court-ready Legal Notice with the following structure and details:
 
 NOTICE DETAILS:
-- Notice Type: ${noticeType}
+<NOTICE_DETAILS>
+- Notice Type: ${sanitizeUserInput(noticeType)}
 - Date: ${today}
-- Sender (Advocate/Client): ${senderName}
-- Sender Address: ${senderAddress || "To be filled"}
-- Bar Council ID: ${senderBarCouncil || "N/A"}
-- Recipient: ${recipientName}
-- Recipient Address: ${recipientAddress || "To be filled"}
-- Facts of the Matter: ${facts}
-${amount ? `- Amount in Dispute: ₹${amount}` : ""}
+- Sender (Advocate/Client): ${sanitizeUserInput(senderName)}
+- Sender Address: ${sanitizeUserInput(senderAddress || "To be filled")}
+- Bar Council ID: ${sanitizeUserInput(senderBarCouncil || "N/A")}
+- Recipient: ${sanitizeUserInput(recipientName)}
+- Recipient Address: ${sanitizeUserInput(recipientAddress || "To be filled")}
+- Facts of the Matter: ${sanitizeUserInput(facts)}
+${amount ? `- Amount in Dispute: ₹${sanitizeUserInput(String(amount))}` : ""}
 - Compliance Period: ${complianceDays || 15} days
-${additionalClauses ? `- Additional Clauses: ${additionalClauses}` : ""}
+${additionalClauses ? `- Additional Clauses: ${sanitizeUserInput(additionalClauses)}` : ""}
+</NOTICE_DETAILS>
 
 FORMAT THE NOTICE EXACTLY AS FOLLOWS:
 
@@ -1114,5 +1129,4 @@ function extractSections(text) {
 }
 
 module.exports = router;
-
 

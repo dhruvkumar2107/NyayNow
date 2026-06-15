@@ -3,11 +3,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
-// Configure axios base URL
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-// We need the root URL for axios because calls include /api
-axios.defaults.baseURL = apiUrl.replace(/\/api$/, "");
+import { API_BASE, API_HOST } from "../config";
+axios.defaults.baseURL = API_HOST;
 axios.defaults.timeout = 60000; // Increased to 60s for heavy AI tasks
+axios.defaults.withCredentials = true; // Support httpOnly cookies across origins
 console.log("🔌 AUTH CONTEXT INITIALIZED. API BASE URL:", axios.defaults.baseURL);
 
 const AuthContext = createContext({
@@ -83,7 +82,12 @@ export function AuthProvider({ children }) {
     setUser(user);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await axios.post("/api/auth/logout");
+    } catch (e) {
+      console.error("Logout request failed:", e);
+    }
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     delete axios.defaults.headers.common["Authorization"];

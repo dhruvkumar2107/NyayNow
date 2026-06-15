@@ -5,15 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, Star, X, Zap, Loader2, Sparkles } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE } from "../config";
 
 export default function PaywallModal({ isOpen, onClose, title = "Upgrade to Access", feature = "premium tools" }) {
   const { user } = useAuth();
   const [loadingPack, setLoadingPack] = useState(null);
 
   if (!isOpen) return null;
-
-  const _envBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-  const API_BASE = _envBase.endsWith('/api') ? _envBase : `${_envBase}/api`;
 
   const loadScript = (src) => {
     return new Promise((resolve) => {

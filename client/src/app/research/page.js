@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Search, BookOpen, ExternalLink, Shield, Loader2, Filter, Sparkles, Scale, Info } from 'lucide-react'
 import Link from 'next/link'
 import axios from 'axios'
+import { API_BASE } from '../../config'
 
 export default function PrecedentEnginePage() {
     const [query, setQuery] = useState('')
@@ -21,7 +22,7 @@ export default function PrecedentEnginePage() {
         setResults([])
 
         try {
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/ai/chat`, {
+            const res = await axios.post(`${API_BASE}/ai/chat`, {
                 message: `[LEGAL RESEARCH ENGINE] Find and summarize 3 relevant Indian legal precedents or case laws for this topic: "${query}". 
                 Format the response as a JSON array of objects with keys: "caseName", "citation", "summary", "relevanceScore" (0-100). 
                 If you cannot find exact cases, generate relevant illustrative scenarios with their statutory basis.`

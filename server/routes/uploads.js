@@ -1,4 +1,4 @@
-﻿const express = require("express");
+const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
@@ -13,6 +13,19 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+const uploadLimits = { fileSize: 10 * 1024 * 1024 }; // 10MB max
+
+const fileFilter = (req, file, cb) => {
+  const allowed = /jpg|jpeg|png|pdf|doc|docx/;
+  const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+  const mime = allowed.test(file.mimetype);
+  if (ext && mime) {
+    cb(null, true);
+  } else {
+    cb(new Error('Invalid file type'));
+  }
+};
+
 let upload;
 
 // Use Cloudinary if keys are present (Production/Scalable)
@@ -24,7 +37,7 @@ if (process.env.CLOUDINARY_CLOUD_NAME) {
       allowed_formats: ["jpg", "png", "jpeg", "pdf", "doc", "docx"],
     },
   });
-  upload = multer({ storage: storage });
+  upload = multer({ storage: storage, limits: uploadLimits, fileFilter: fileFilter });
   console.log("☁️ Using Cloudinary for uploads");
 } else {
   // Fallback to local disk (Dev/Fallback)
@@ -35,10 +48,11 @@ if (process.env.CLOUDINARY_CLOUD_NAME) {
       cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
-      cb(null, Date.now() + "-" + file.originalname);
+      const ext = path.extname(file.originalname);
+      cb(null, `${Date.now()}-${require('crypto').randomBytes(8).toString('hex')}${ext}`);
     },
   });
-  upload = multer({ storage: storage });
+  upload = multer({ storage: storage, limits: uploadLimits, fileFilter: fileFilter });
   console.log("📂 Using Local Disk for uploads (Warning: Ephemeral on Serverless)");
 }
 

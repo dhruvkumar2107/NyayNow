@@ -1,2 +1,0 @@
-📂 CWD: C:\Users\DHRUV\Downloads\project
-❌ GEMINI_API_KEY not found in environment!

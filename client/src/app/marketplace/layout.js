@@ -4,7 +4,7 @@ export const metadata = {
     openGraph: {
         title: 'NyayNow Lawyer Directory',
         description: 'Connect with verified advocates across India. Browse listings by specialization, experience, and court jurisdiction.',
-        url: 'https://nyaynow.com/marketplace',
+        url: 'https://nyaynow.in/marketplace',
         type: 'website',
         images: ['/logo.png'],
     },

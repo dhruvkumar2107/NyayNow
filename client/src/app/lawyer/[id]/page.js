@@ -1,20 +1,20 @@
 import React from "react"
 import LawyerProfileClient from "../../../components/lawyer/LawyerProfileClient"
 
-async function getLawyer(id) {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+import { API_BASE } from "../../../config"
 
-    // Safety check for build-time fetches to localhost
-    if (typeof window === 'undefined' && apiUrl.includes('localhost') && process.env.NODE_ENV === 'production') {
+async function getLawyer(id) {
+    // Safety check for build-time fetches to localhost in production
+    if (typeof window === 'undefined' && API_BASE.includes('localhost') && process.env.NODE_ENV === 'production') {
         return null
     }
 
     try {
-        const res = await fetch(`${apiUrl}/api/users/public/${id}`, { next: { revalidate: 3600 } })
+        const res = await fetch(`${API_BASE}/users/public/${id}`, { next: { revalidate: 3600 } })
         if (!res.ok) return null
         return res.json()
     } catch (error) {
-        if (!apiUrl.includes('localhost')) {
+        if (!API_BASE.includes('localhost')) {
             console.error("Error fetching lawyer:", error)
         }
         return null

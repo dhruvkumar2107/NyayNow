@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { jsPDF } from 'jspdf';
+import { API_BASE } from '../../config';
 import {
     Gavel, Scale, Shield, ChevronRight, Loader2,
     BookOpen, Mic2, Star, RotateCcw, Sparkles, Download, BarChart2, CheckCircle2, AlertTriangle, ArrowRight
@@ -289,8 +290,7 @@ export default function CourtroomBattle() {
         if (!caseData.caseDescription.trim()) return;
         setPhase('loading');
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-            const { data } = await axios.post(`${apiUrl}/ai/courtroom-battle`, caseData);
+            const { data } = await axios.post(`${API_BASE}/ai/courtroom-battle`, caseData);
             setResult(data);
             setPhase('trial');
             setShownRounds([]);

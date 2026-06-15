@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+import { API_BASE } from "./config";
 
 /**
  * Helper to get Auth headers
@@ -23,6 +23,7 @@ export async function askAssistant(question) {
       "Content-Type": "application/json",
       ...getAuthHeader()
     },
+    credentials: "include",
     body: JSON.stringify({ question }),
   });
 
@@ -44,6 +45,7 @@ export async function analyzeIssue(text) {
       "Content-Type": "application/json",
       ...getAuthHeader()
     },
+    credentials: "include",
     body: JSON.stringify({ text }),
   });
 
@@ -65,6 +67,7 @@ export async function analyzeAgreement(text) {
       "Content-Type": "application/json",
       ...getAuthHeader()
     },
+    credentials: "include",
     body: JSON.stringify({ text }),
   });
 
@@ -123,7 +126,8 @@ export async function fetchNearby(lat, lng) {
  */
 export async function fetchMessages(otherUserId) {
   const res = await fetch(`${API_BASE}/messages/${otherUserId}`, {
-    headers: getAuthHeader()
+    headers: getAuthHeader(),
+    credentials: "include"
   });
 
   if (!res.ok) {
@@ -144,6 +148,7 @@ export async function sendMessage(recipientId, content) {
       "Content-Type": "application/json",
       ...getAuthHeader()
     },
+    credentials: "include",
     body: JSON.stringify({ recipientId, content }),
   });
 
@@ -169,6 +174,7 @@ export async function uploadFile(file) {
   const res = await fetch(`${API_BASE}/uploads`, {
     method: "POST",
     headers: getAuthHeader(),
+    credentials: "include",
     body: formData,
   });
 

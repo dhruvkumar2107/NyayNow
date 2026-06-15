@@ -20,6 +20,7 @@ import PremiumLoader from "../components/PremiumLoader";
 import { hasAccess } from "../utils/planBorders";
 import PaywallModal from "../components/PaywallModal";
 import { useRef } from "react";
+import { API_BASE, API_HOST } from "../config";
 
 
 export default function ClientDashboard() {
@@ -78,7 +79,7 @@ export default function ClientDashboard() {
 
       // Lazy socket init — only connect when user is authenticated
       const socket = io(
-        process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000",
+        API_HOST,
         { transports: ['websocket'], reconnectionAttempts: 3 }
       );
       socketRef.current = socket;
@@ -232,8 +233,7 @@ export default function ClientDashboard() {
         return;
       }
 
-      const _envBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-      const API_BASE = _envBase.endsWith('/api') ? _envBase : `${_envBase}/api`;
+
 
       const orderRes = await fetch(`${API_BASE}/payments/create-order`, {
         method: 'POST',
@@ -706,9 +706,9 @@ export default function ClientDashboard() {
                       {post.mediaUrl && (
                         <div className="rounded-xl overflow-hidden mb-4 border border-white/10 bg-black/40">
                           {post.type === 'reel' || post.mediaUrl.endsWith('.mp4') ? (
-                            <video src={`${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} controls className="w-full max-h-[400px] object-contain" />
+                            <video src={`${API_HOST}${post.mediaUrl}`} controls className="w-full max-h-[400px] object-contain" />
                           ) : (
-                            <img src={`${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000"}${post.mediaUrl}`} className="w-full object-cover" alt="Post media" />
+                            <img src={`${API_HOST}${post.mediaUrl}`} className="w-full object-cover" alt="Post media" />
                           )}
                         </div>
                       )}

@@ -62,8 +62,15 @@ router.post("/google", async (req, res) => {
     const jwtToken = jwt.sign(
       { id: user._id, role: user.role, plan: user.plan },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "24h" }
     );
+
+    res.cookie("token", jwtToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000
+    });
 
     res.json({
       token: jwtToken,
@@ -83,7 +90,7 @@ router.post("/google", async (req, res) => {
 });
 
 /* ================= REGISTER ================= */
-router.post("/register", async (req, res) => {
+router.post("/register", async (req, res, next) => {
   try {
     const {
       role,
@@ -95,12 +102,21 @@ router.post("/register", async (req, res) => {
       experience,
       location,
       phone,
-      // VERIFICATION FIELDS
       isStudent,
       studentRollNumber,
       barCouncilId,
       idCardImage
     } = req.body;
+
+    if (
+      (role && typeof role !== 'string') ||
+      (name && typeof name !== 'string') ||
+      (email && typeof email !== 'string') ||
+      (password && typeof password !== 'string') ||
+      (phone && typeof phone !== 'string')
+    ) {
+      return res.status(400).json({ message: "Invalid input types" });
+    }
 
 
     // Construct dynamic query to avoid matching everything with empty object
@@ -139,7 +155,6 @@ router.post("/register", async (req, res) => {
       specialization,
       experience,
       location,
-      // NEW FIELDS
       isStudent: !!isStudent,
       studentRollNumber: studentRollNumber || "",
       barCouncilId: barCouncilId || "",
@@ -152,41 +167,52 @@ router.post("/register", async (req, res) => {
     const token = jwt.sign(
       { id: user._id, role: user.role, plan: user.plan },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "24h" }
     );
 
-    res.json({ token, user });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      plan: user.plan,
+      phone: user.phone,
+      verified: user.verified,
+      verificationStatus: user.verificationStatus
+    };
+
+    res.json({ token, user: userResponse });
   } catch (err) {
-    console.error("REGISTER ERROR:", err);
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 });
 
 /* ================= OTP AUTH ================= */
-// TTL-based OTP store — entries auto-expire after 10 minutes
-const OTP_STORE = new Map(); // phone -> { otp, expiresAt }
+const OtpEntry = require("../models/OtpEntry");
 const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
-
-// Cleanup stale OTP entries every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [phone, entry] of OTP_STORE.entries()) {
-    if (now > entry.expiresAt) {
-      OTP_STORE.delete(phone);
-    }
-  }
-}, 5 * 60 * 1000);
 
 const { sendSMS } = require("../utils/sms");
 
 router.post("/send-otp", async (req, res) => {
   const { phone } = req.body;
-  if (!phone) {
-    return res.status(400).json({ message: "Phone number required" });
+  if (!phone || typeof phone !== 'string') {
+    return res.status(400).json({ message: "Phone number must be a string" });
   }
 
-  const otp = Math.floor(1000 + Math.random() * 9000).toString();
-  OTP_STORE.set(phone, { otp, expiresAt: Date.now() + OTP_TTL_MS });
+  const crypto = require("crypto");
+  const otp = crypto.randomInt(100000, 999999).toString();
+  await OtpEntry.findOneAndUpdate(
+    { phone },
+    { otp, expiresAt: new Date(Date.now() + OTP_TTL_MS) },
+    { upsert: true, new: true }
+  );
 
   // Send via Twilio
   // If keys are missing, it will log mock SMS to console automatically
@@ -197,23 +223,26 @@ router.post("/send-otp", async (req, res) => {
   res.json({ message: "OTP sent via SMS" });
 });
 
-router.post("/verify-otp", async (req, res) => {
+router.post("/verify-otp", async (req, res, next) => {
   try {
     const { phone, otp } = req.body;
+    if (!phone || typeof phone !== 'string' || !otp || typeof otp !== 'string') {
+      return res.status(400).json({ message: "Phone and OTP must be strings" });
+    }
 
-    const entry = OTP_STORE.get(phone);
+    const entry = await OtpEntry.findOne({ phone });
     if (!entry) {
       return res.status(400).json({ message: "OTP not found or already used" });
     }
-    if (Date.now() > entry.expiresAt) {
-      OTP_STORE.delete(phone);
+    if (new Date() > entry.expiresAt) {
+      await OtpEntry.deleteOne({ phone });
       return res.status(400).json({ message: "OTP has expired. Please request a new one." });
     }
     if (entry.otp !== otp) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    OTP_STORE.delete(phone);
+    await OtpEntry.deleteOne({ phone });
 
     let user = await User.findOne({ phone });
 
@@ -234,20 +263,39 @@ router.post("/verify-otp", async (req, res) => {
     const token = jwt.sign(
       { id: user._id, role: user.role, plan: user.plan },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "24h" }
     );
 
-    res.json({ token, user });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      plan: user.plan,
+      phone: user.phone,
+      verified: user.verified
+    };
+
+    res.json({ token, user: userResponse });
   } catch (err) {
-    console.error("OTP VERIFY ERROR:", err);
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 });
 
 /* ================= LOGIN ================= */
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   try {
     let { email, password } = req.body;
+    if (!email || typeof email !== 'string' || !password || typeof password !== 'string') {
+      return res.status(400).json({ message: "Email and password must be strings" });
+    }
     email = email.trim().toLowerCase();
     password = password.trim();
 
@@ -264,13 +312,28 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       { id: user._id, role: user.role, plan: user.plan },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "24h" }
     );
 
-    res.json({ token, user });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      plan: user.plan,
+      phone: user.phone
+    };
+
+    res.json({ token, user: userResponse });
   } catch (err) {
-    console.error("LOGIN ERROR:", err);
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 });
 
@@ -279,11 +342,17 @@ router.post("/login", async (req, res) => {
 const nodemailer = require("nodemailer");
 
 const sendResetEmail = async (email, token) => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.warn("⚠️ Nodemailer credentials missing. Reset token printed to server log.");
+    console.log(`[RESET LINK] ${email} -> ${process.env.CLIENT_URL || "http://localhost:5173"}/reset-password/${token}`);
+    return;
+  }
+
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.EMAIL_USER || "support@nyaynow.com", // Add to .env
-      pass: process.env.EMAIL_PASS || "your_app_password"
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
     }
   });
 
@@ -297,33 +366,37 @@ const sendResetEmail = async (email, token) => {
   });
 };
 
-router.post("/forgot-password", async (req, res) => {
+router.post("/forgot-password", async (req, res, next) => {
   try {
     const { email } = req.body;
+    if (!email || typeof email !== 'string') {
+      return res.status(400).json({ message: "Email must be a string" });
+    }
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      return res.json({ message: "If the account exists, a reset link was sent" });
+    }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
-
-    // In production, use real email service.
-    // console.log("Reset Link:", `http://localhost:5173/reset-password/${token}`);
+    const token = jwt.sign({ id: user._id, purpose: 'reset' }, process.env.JWT_SECRET, { expiresIn: "15m" });
 
     try {
       await sendResetEmail(email, token);
-      res.json({ message: "Reset link sent to email" });
     } catch (e) {
       console.log("Email failed:", e.message);
-      res.status(500).json({ message: "Failed to send reset email. Please try again later." });
     }
+    res.json({ message: "If the account exists, a reset link was sent" });
 
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 });
 
-router.post("/reset-password", async (req, res) => {
+router.post("/reset-password", async (req, res, next) => {
   try {
     const { token, newPassword } = req.body;
+    if (!token || typeof token !== 'string' || !newPassword || typeof newPassword !== 'string') {
+      return res.status(400).json({ message: "Token and newPassword must be strings" });
+    }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -331,7 +404,7 @@ router.post("/reset-password", async (req, res) => {
 
     res.json({ message: "Password updated successfully" });
   } catch (err) {
-    res.status(400).json({ message: "Invalid or expired token" });
+    next(err);
   }
 });
 
@@ -340,6 +413,16 @@ router.post("/reset-password", async (req, res) => {
 
 // [DELETED] Debug login route removed for production hardening.
 
+
+// POST /api/auth/logout
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+  });
+  res.json({ message: "Logged out successfully" });
+});
 
 // Update Profile handled by /api/users/me in users.js
 module.exports = router;

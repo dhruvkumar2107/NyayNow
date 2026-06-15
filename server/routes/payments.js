@@ -76,13 +76,15 @@ router.post("/verify", verifyToken, async (req, res) => {
     const {
       razorpay_order_id,
       razorpay_payment_id,
-      razorpay_signature,
-      plan,
-      amount // Expect amount passed from frontend for record keeping
+      razorpay_signature
     } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({ error: "Missing payment details" });
+    }
+
+    if (!razorpay) {
+      return res.status(500).json({ error: "Razorpay payment integration is not configured." });
     }
 
     // Verify signature
@@ -96,18 +98,62 @@ router.post("/verify", verifyToken, async (req, res) => {
       return res.status(400).json({ error: "Invalid signature" });
     }
 
+    // Fetch order server-side from Razorpay to prevent tampering
+    const order = await razorpay.orders.fetch(razorpay_order_id);
+    const verifiedPlan = order.notes?.plan;
+    const verifiedAmount = order.amount; // in paise
+    const verifiedUserId = order.notes?.userId;
+
+    if (!verifiedPlan) {
+      return res.status(400).json({ error: "Order missing plan metadata" });
+    }
+
+    // Verify the order belongs to the requesting user
+    if (verifiedUserId && verifiedUserId !== req.userId) {
+      return res.status(403).json({ error: "Order does not belong to this user" });
+    }
+
     const User = require("../models/User");
     const Payment = require("../models/Payment");
 
-    // 1. Upgrade User
-    // NOTE: We have removed automatic verification on payment to ensure BCI compliance
-    // and avoid consumer fraud risk. Verification is now a manual administrative action.
-    let updatedUser;
-    const isCreditPack = plan.toLowerCase().startsWith("credits_");
-    const isAppointment = plan.toLowerCase().startsWith("appointment_");
+    const normalizedPlan = verifiedPlan.toLowerCase();
+    const isCreditPack = normalizedPlan.startsWith("credits_");
+    const isAppointment = normalizedPlan.startsWith("appointment_");
+
+    // Price validation map
+    const PLAN_PRICES_PAISE = {
+      silver: 29900,
+      gold: 59900,
+      diamond: 99900,
+      credits_1: 9900,
+      credits_20: 19900
+    };
 
     if (isAppointment) {
-      const parts = plan.split("_");
+      const parts = verifiedPlan.split("_");
+      const appointmentId = parts[1];
+      const Appointment = require("../models/Appointment");
+      const appointment = await Appointment.findById(appointmentId);
+      if (!appointment || appointment.clientId.toString() !== req.userId) {
+        return res.status(403).json({ error: "Appointment not found or not yours" });
+      }
+      const expectedPaise = Math.round(appointment.fee * 100);
+      if (verifiedAmount !== expectedPaise) {
+        return res.status(400).json({ error: "Amount mismatch for appointment fee" });
+      }
+    } else if (PLAN_PRICES_PAISE[normalizedPlan]) {
+      if (verifiedAmount !== PLAN_PRICES_PAISE[normalizedPlan]) {
+        return res.status(400).json({ error: "Amount mismatch for plan" });
+      }
+    } else {
+      return res.status(400).json({ error: "Invalid or unrecognized plan" });
+    }
+
+    // 1. Upgrade User or Process Action
+    let updatedUser;
+
+    if (isAppointment) {
+      const parts = verifiedPlan.split("_");
       const appointmentId = parts[1];
       const Appointment = require("../models/Appointment");
       const updatedApt = await Appointment.findByIdAndUpdate(
@@ -124,7 +170,7 @@ router.post("/verify", verifyToken, async (req, res) => {
       }
       updatedUser = await User.findById(req.userId);
     } else if (isCreditPack) {
-      const parts = plan.split("_");
+      const parts = verifiedPlan.split("_");
       const creditsToAdd = parseInt(parts[1]) || 0;
       
       const userObj = await User.findById(req.userId);
@@ -136,7 +182,7 @@ router.post("/verify", verifyToken, async (req, res) => {
       updatedUser = await userObj.save();
     } else {
       const updateData = {
-        plan: plan.toLowerCase()
+        plan: normalizedPlan
       };
       updatedUser = await User.findByIdAndUpdate(
         req.userId,
@@ -155,8 +201,8 @@ router.post("/verify", verifyToken, async (req, res) => {
       paymentId: razorpay_payment_id,
       signature: razorpay_signature,
       user: updatedUser._id,
-      amount: amount || 0, // Fallback if not sent
-      plan: plan
+      amount: verifiedAmount / 100, // store in rupees
+      plan: verifiedPlan
     });
 
     res.json({ success: true, user: updatedUser });

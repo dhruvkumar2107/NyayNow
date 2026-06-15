@@ -21,6 +21,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import { API_HOST } from "../config";
 import PremiumLoader from "../components/PremiumLoader";
 import {
   LayoutDashboard,
@@ -91,7 +92,7 @@ export default function LawyerDashboard() {
 
       // Lazy socket init — only when user is ready
       const socket = io(
-        process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "") || "http://localhost:4000",
+        API_HOST,
         { transports: ['websocket'], reconnectionAttempts: 3 }
       );
       socketRef.current = socket;

@@ -9,6 +9,7 @@ import {
 import Link from 'next/link'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
+import { API_BASE } from '../../config'
 
 // Indian dialects and languages config
 const SUPPORTED_LANGUAGES = [
@@ -169,7 +170,7 @@ export default function NyayVoicePage() {
         setIsLoading(true)
         setResponse('')
         try {
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/ai/chat`, {
+            const res = await axios.post(`${API_BASE}/ai/chat`, {
                 message: `[VOICE CONSULTATION - LANG: ${language}] User asked: ${text}. Provide a concise, professional legal response in the same language of query if possible, suitable for voice playback.`
             })
             const aiText = res.data.response

@@ -1,32 +1,40 @@
 const User = require("../models/User");
+const GuestUsage = require("../models/GuestUsage");
 
-// Guest IP tracking (in-memory, resets on restart — acceptable for guests)
+// Guest IP tracking via MongoDB
 const GUEST_LIMIT = 3;
-const guestUsage = new Map();
 
 const checkAiLimit = async (req, res, next) => {
   try {
     // ── GUEST (unauthenticated) ──────────────────────────────
     if (!req.userId) {
-      const ip = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress || "unknown";
-      const usage = guestUsage.get(ip) || { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 };
+      const ip = req.ip || "unknown";
+      const now = new Date();
 
-      // Reset daily
-      if (Date.now() > usage.resetAt) {
-        usage.count = 0;
-        usage.resetAt = Date.now() + 24 * 60 * 60 * 1000;
-      }
+      let usage = await GuestUsage.findOne({ ip });
 
-      if (usage.count >= GUEST_LIMIT) {
-        return res.status(403).json({
-          error: "Sign in for more free queries. Guests get 3 free queries per day.",
-          code: "GUEST_LIMIT_REACHED",
-          requiresAuth: true
+      if (!usage) {
+        usage = await GuestUsage.create({
+          ip,
+          count: 1,
+          resetAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
         });
+      } else {
+        if (now > usage.resetAt) {
+          usage.count = 1;
+          usage.resetAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+          await usage.save();
+        } else if (usage.count >= GUEST_LIMIT) {
+          return res.status(403).json({
+            error: "Sign in for more free queries. Guests get 3 free queries per day.",
+            code: "GUEST_LIMIT_REACHED",
+            requiresAuth: true
+          });
+        } else {
+          usage.count += 1;
+          await usage.save();
+        }
       }
-
-      usage.count += 1;
-      guestUsage.set(ip, usage);
       return next();
     }
 

@@ -1,9 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('nyaynow.in loads correctly', async ({ page }) => {
-    // Go to your website
-    await page.goto('https://nyaynow.in/');
+    await page.goto('/');
 
-    // Check that the page loaded successfully
-    await expect(page).toHaveTitle(/.*Nyaynow.*/i);
+    await expect(page).toHaveTitle(/NyayNow/i);
 });

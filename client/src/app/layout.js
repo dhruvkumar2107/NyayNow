@@ -112,7 +112,7 @@ export default function RootLayout({ children }) {
             <head>
                 <script
                     type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup).replace(/</g, '\\u003c') }}
                 />
             </head>
             <body className={`${inter.variable} ${jakarta.variable} font-sans relative`}>

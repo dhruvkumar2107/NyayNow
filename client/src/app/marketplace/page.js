@@ -1,26 +1,26 @@
 import React from "react"
 import Image from "next/image"
 import MarketplaceClient from "../../components/marketplace/MarketplaceClient"
+import { API_BASE } from "../../config"
 
 async function getLawyers() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-
     // Safety check for build-time fetches to localhost
-    if (typeof window === 'undefined' && apiUrl.includes('localhost') && process.env.NODE_ENV === 'production') {
+    if (typeof window === 'undefined' && API_BASE.includes('localhost') && process.env.NODE_ENV === 'production') {
         return []
     }
 
     try {
-        const res = await fetch(`${apiUrl}/api/lawyers?all=true`, { next: { revalidate: 3600 } })
+        const res = await fetch(`${API_BASE}/lawyers?all=true`, { next: { revalidate: 3600 } })
         if (!res.ok) return []
         return res.json()
     } catch (error) {
-        if (!apiUrl.includes('localhost')) {
+        if (!API_BASE.includes('localhost')) {
             console.error("Failed to fetch lawyers for SSR", error)
         }
         return []
     }
 }
+
 
 export default async function MarketplacePage() {
     const lawyers = await getLawyers()

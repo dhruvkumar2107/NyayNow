@@ -1,5 +1,7 @@
 node_modules
 .env
+.env.*
+!.env.example
 .DS_Store
 dist
 build
@@ -9,3 +11,27 @@ package-lock.json
 *.log
 tmp
 brain
+
+# Virtual environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Scratch/debug files
+*.txt
+!README.txt
+*.bat
+test*.js
+!test/
+list_models.js
+compile_pdf.js
+check_all_routes.js
+nyaynow-test.js
+
+# IDE
+.idea/
+.vscode/
+
+# Uploads
+uploads/

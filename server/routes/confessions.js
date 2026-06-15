@@ -47,7 +47,7 @@ router.get("/", async (req, res) => {
         const sortField = sort === "top" ? { "upvotes": -1 } : { createdAt: -1 };
 
         const confessions = await Confession.find(filter)
-            .select("-_authorId") // Never expose author
+            .select("-_anonToken") // Never expose the token
             .sort(sortField)
             .limit(50)
             .populate("replies.responderId", "name role specialization profileImage")
@@ -86,7 +86,7 @@ router.post("/", verifyToken, async (req, res) => {
             body,
             category: category || "Other",
             tags: tags || [],
-            _authorId: req.user.id, // stored but not exposed
+            _anonToken: require('crypto').randomBytes(16).toString('hex'),
         });
 
         // Get AI analysis async (non-blocking save)
@@ -183,10 +183,16 @@ router.post("/:id/reply/:replyId/helpful", verifyToken, async (req, res) => {
 /* ─────────────── MARK RESOLVED ─────────────── */
 router.patch("/:id/resolve", verifyToken, async (req, res) => {
     try {
-        await Confession.findByIdAndUpdate(req.params.id, { status: "resolved" });
-        res.json({ message: "Marked as resolved" });
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ error: "Only admins can resolve confessions" });
+        }
+        const confession = await Confession.findByIdAndUpdate(
+            req.params.id, { status: "resolved" }, { new: true }
+        );
+        if (!confession) return res.status(404).json({ error: "Not found" });
+        res.json(confession);
     } catch (err) {
-        res.status(500).json({ error: "Failed" });
+        res.status(500).json({ error: "Failed to resolve confession" });
     }
 });
 

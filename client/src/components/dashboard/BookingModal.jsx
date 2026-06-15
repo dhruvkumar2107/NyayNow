@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_BASE } from "../../config";
 
 export default function BookingModal({ lawyer, client, onClose }) {
     const [date, setDate] = useState("");
@@ -63,8 +64,7 @@ export default function BookingModal({ lawyer, client, onClose }) {
                     return;
                 }
 
-                const _envBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-                const API_BASE = _envBase.endsWith('/api') ? _envBase : `${_envBase}/api`;
+
 
                 // Create Razorpay order
                 const orderRes = await fetch(`${API_BASE}/payments/create-order`, {

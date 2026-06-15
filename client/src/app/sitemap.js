@@ -1,21 +1,23 @@
+import { API_BASE } from "../config"
+
 async function getLawyers() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
     // Skip fetching during build if on localhost (backend won't be there)
-    if (typeof window === 'undefined' && apiUrl.includes('localhost') && process.env.NODE_ENV === 'production') {
+    if (typeof window === 'undefined' && API_BASE.includes('localhost') && process.env.NODE_ENV === 'production') {
         return []
     }
     try {
-        const res = await fetch(`${apiUrl}/api/lawyers?all=true`, { cache: 'no-store' })
+        const res = await fetch(`${API_BASE}/lawyers?all=true`, { cache: 'no-store' })
         if (!res.ok) return []
         return res.json()
     } catch (error) {
         // Only log error if not in a known build-time failure scenario
-        if (!apiUrl.includes('localhost')) {
+        if (!API_BASE.includes('localhost')) {
             console.error("Error fetching lawyers for sitemap:", error)
         }
         return []
     }
 }
+
 
 export default async function sitemap() {
     const baseUrl = 'https://nyaynow.in'
