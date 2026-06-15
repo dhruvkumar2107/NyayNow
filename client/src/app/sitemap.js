@@ -2,7 +2,7 @@ import { API_BASE } from "../config"
 
 async function getLawyers() {
     // Skip fetching during build if on localhost (backend won't be there)
-    if (typeof window === 'undefined' && API_BASE.includes('localhost') && process.env.NODE_ENV === 'production') {
+    if (typeof window === 'undefined' && API_BASE.includes('localhost')) {
         return []
     }
     try {

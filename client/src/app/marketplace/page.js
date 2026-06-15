@@ -5,7 +5,7 @@ import { API_BASE } from "../../config"
 
 async function getLawyers() {
     // Safety check for build-time fetches to localhost
-    if (typeof window === 'undefined' && API_BASE.includes('localhost') && process.env.NODE_ENV === 'production') {
+    if (typeof window === 'undefined' && API_BASE.includes('localhost')) {
         return []
     }
 
