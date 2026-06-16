@@ -20,7 +20,7 @@ Render allows you to deploy Node.js, Python, and Static sites in one place.
 6. **Start Command**: `node index.js`
 7. **Environment Variables** (Add these in Render):
    - `MONGO_URI`: `mongodb+srv://dhruvkumar21075_db_user:Dhruv%402107@cluster0.iofqvq2.mongodb.net/nyaynow?retryWrites=true&w=majority`
-   - `JWT_SECRET`: `super_secret_key_change_later`
+   - `JWT_SECRET`: (Set this to a secure, random string. Do NOT use "super_secret_key_change_later" as the production build blocks known-insecure secrets for safety. You can generate a random string using `openssl rand -hex 32` or type a long random string of letters and numbers.)
    - `GEMINI_API_KEY`: (Get a NEW key from https://aistudio.google.com/app/apikey)
    - `RZP_KEY_ID`: (Your Razorpay Test Key ID)
    - `RZP_KEY_SECRET`: (Your Razorpay Test Key Secret)
