@@ -12,7 +12,7 @@ async function getLawyer(id) {
     try {
         const res = await fetch(`${API_BASE}/users/public/${id}`, { next: { revalidate: 3600 } })
         if (!res.ok) return null
-        return res.json()
+        return await res.json()
     } catch (error) {
         if (!API_BASE.includes('localhost')) {
             console.error("Error fetching lawyer:", error)

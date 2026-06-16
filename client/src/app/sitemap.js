@@ -8,7 +8,7 @@ async function getLawyers() {
     try {
         const res = await fetch(`${API_BASE}/lawyers?all=true`, { cache: 'no-store' })
         if (!res.ok) return []
-        return res.json()
+        return await res.json()
     } catch (error) {
         // Only log error if not in a known build-time failure scenario
         if (!API_BASE.includes('localhost')) {

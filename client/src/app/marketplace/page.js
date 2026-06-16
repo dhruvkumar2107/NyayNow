@@ -12,7 +12,7 @@ async function getLawyers() {
     try {
         const res = await fetch(`${API_BASE}/lawyers?all=true`, { next: { revalidate: 3600 } })
         if (!res.ok) return []
-        return res.json()
+        return await res.json()
     } catch (error) {
         if (!API_BASE.includes('localhost')) {
             console.error("Failed to fetch lawyers for SSR", error)
