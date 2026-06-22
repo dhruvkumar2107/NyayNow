@@ -111,6 +111,10 @@ export default function RootLayout({ children }) {
         <html lang="en">
             <head>
                 <script
+                    src="https://js.sentry-cdn.com/9ac5e6983fa390facf59095ef4ee4ccf.min.js"
+                    crossOrigin="anonymous"
+                />
+                <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup).replace(/</g, '\\u003c') }}
                 />
