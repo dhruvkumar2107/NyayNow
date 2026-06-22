@@ -227,6 +227,15 @@ async function connectDB() {
     });
     console.log("✅ MongoDB connected");
     console.log("📦 Database:", mongoose.connection.name);
+
+    // Drop obsolete phone unique index on otpentries if it exists
+    try {
+      const db = mongoose.connection.db;
+      await db.collection("otpentries").dropIndex("phone_1");
+      console.log("Cleaned up obsolete phone unique index on otpentries collection");
+    } catch (indexErr) {
+      // Index didn't exist or collection wasn't created yet; ignore
+    }
   } catch (err) {
     console.error("❌ MongoDB connection failed:", err.message);
   }
