@@ -4,9 +4,8 @@ const mongoose = require('mongoose');
 const OtpEntry = require('../models/OtpEntry');
 const User = require('../models/User');
 
-describe('mTalkz OTP Authentication Flow', () => {
-    const testPhone = '9876543210';
-    const normalizedPhone = '919876543210';
+describe('Brevo Email OTP Authentication Flow', () => {
+    const testEmail = 'testuser@example.com';
     let capturedOtp = null;
     let originalLog;
 
@@ -22,7 +21,7 @@ describe('mTalkz OTP Authentication Flow', () => {
         console.log = (...args) => {
             originalLog(...args);
             const logStr = args.join(' ');
-            const match = logStr.match(/OTP for \d+: (\d{6})/);
+            const match = logStr.match(/with OTP: (\d{6})/);
             if (match) {
                 capturedOtp = match[1];
             }
@@ -35,8 +34,8 @@ describe('mTalkz OTP Authentication Flow', () => {
 
         // Clean up database entries
         try {
-            await OtpEntry.deleteMany({ phone: normalizedPhone });
-            await User.deleteOne({ phone: normalizedPhone });
+            await OtpEntry.deleteMany({ email: testEmail });
+            await User.deleteOne({ email: testEmail });
         } catch (err) {
             console.error("Cleanup error:", err);
         }
@@ -50,25 +49,25 @@ describe('mTalkz OTP Authentication Flow', () => {
         it('should send OTP and return success in mock mode', async () => {
             const res = await request(app)
                 .post('/api/auth/send-otp')
-                .send({ phone: testPhone });
+                .send({ email: testEmail });
 
             expect(res.status).toBe(200);
             expect(res.body).toEqual({
                 success: true,
-                message: 'OTP sent via SMS'
+                message: 'OTP sent via Email'
             });
 
             // Verify OtpEntry is created in database
-            const entry = await OtpEntry.findOne({ phone: normalizedPhone });
+            const entry = await OtpEntry.findOne({ email: testEmail });
             expect(entry).not.toBeNull();
-            expect(entry.sessionId).toMatch(/^mock_/);
+            expect(entry.otp).toMatch(/^\d{6}$/);
 
             // Verify OTP was logged and captured
             expect(capturedOtp).not.toBeNull();
             expect(capturedOtp).toHaveLength(6);
         });
 
-        it('should return 400 if phone is missing', async () => {
+        it('should return 400 if email is missing', async () => {
             const res = await request(app)
                 .post('/api/auth/send-otp')
                 .send({});
@@ -80,7 +79,7 @@ describe('mTalkz OTP Authentication Flow', () => {
         it('should fail with incorrect OTP', async () => {
             const res = await request(app)
                 .post('/api/auth/verify-otp')
-                .send({ phone: testPhone, otp: '000000' });
+                .send({ email: testEmail, otp: '000000' });
 
             expect(res.status).toBe(400);
             expect(res.body.success).toBe(false);
@@ -92,15 +91,15 @@ describe('mTalkz OTP Authentication Flow', () => {
 
             const res = await request(app)
                 .post('/api/auth/verify-otp')
-                .send({ phone: testPhone, otp: capturedOtp });
+                .send({ email: testEmail, otp: capturedOtp });
 
             expect(res.status).toBe(200);
             expect(res.body.success).toBe(true);
             expect(res.body).toHaveProperty('token');
-            expect(res.body.user.phone).toBe(normalizedPhone);
+            expect(res.body.user.email).toBe(testEmail);
 
             // Verify user was created in database
-            const user = await User.findOne({ phone: normalizedPhone });
+            const user = await User.findOne({ email: testEmail });
             expect(user).not.toBeNull();
             expect(user.role).toBe('client');
         });

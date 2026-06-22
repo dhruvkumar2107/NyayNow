@@ -14,7 +14,7 @@ export default function Login() {
   const [method, setMethod] = useState("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
+  const [otpEmail, setOtpEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [googleData, setGoogleData] = useState(null);
@@ -175,7 +175,7 @@ export default function Login() {
               Email
             </button>
             <button onClick={() => setMethod("mobile")} className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${method === "mobile" ? "bg-gradient-gold text-midnight-950 shadow-lg shadow-gold-500/20" : "text-slate-400 hover:text-white hover:bg-white/5"}`}>
-              Mobile
+              Email OTP
             </button>
           </div>
 
@@ -214,7 +214,7 @@ export default function Login() {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* LEGAL CONSENT CHECKBOX (Mobile) */}
+              {/* LEGAL CONSENT CHECKBOX (Email OTP) */}
               <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10 group cursor-pointer hover:bg-white/10 transition-all" onClick={() => setConsent(!consent)}>
                 <div className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border flex items-center justify-center transition-all ${consent ? 'bg-gold-500 border-gold-500' : 'border-slate-600'}`}>
                   {consent && <span className="text-midnight-950 text-xs font-bold">✓</span>}
@@ -227,25 +227,26 @@ export default function Login() {
               {!otpSent ? (
                 <>
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">Phone Number</label>
+                    <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">Email Address</label>
                     <input
-                      type="tel"
-                      value={phone}
-                      onChange={e => setPhone(e.target.value)}
+                      type="email"
+                      value={otpEmail}
+                      onChange={e => setOtpEmail(e.target.value)}
                       className="glass-input w-full rounded-xl px-4 py-3.5 placeholder-slate-600 focus:ring-1 focus:ring-gold-500/50 transition duration-300"
-                      placeholder="+91 98765 43210"
+                      placeholder="name@company.com"
                     />
                   </div>
                   <button
                     onClick={async () => {
                       if (!consent) return toast.error("Please acknowledge the legal disclosure to continue.");
-                      if (!phone || phone.length < 10) return toast.error("Please enter a valid phone number.");
+                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                      if (!otpEmail || !emailRegex.test(otpEmail)) return toast.error("Please enter a valid email address.");
                       setOtpLoading(true);
                       try {
-                        await axios.post('/api/auth/send-otp', { phone });
+                        await axios.post('/api/auth/send-otp', { email: otpEmail });
                         setOtpSent(true);
                         setOtpCooldown(60);
-                        toast.success("OTP sent to your phone!");
+                        toast.success("OTP sent to your email!");
                       } catch (err) {
                         toast.error(err?.response?.data?.message || "Failed to send OTP.");
                       } finally {
@@ -266,7 +267,7 @@ export default function Login() {
               ) : (
                 <>
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 px-1">
-                    <span>✓</span> OTP sent to {phone}
+                    <span>✓</span> OTP sent to {otpEmail}
                   </div>
                   <div className="space-y-1.5">
                     <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">Enter OTP Code</label>
@@ -284,7 +285,7 @@ export default function Login() {
                       if (!otpCode || otpCode.length < 4) return toast.error("Please enter a valid OTP code.");
                       setOtpLoading(true);
                       try {
-                        const res = await axios.post('/api/auth/verify-otp', { phone, otp: otpCode });
+                        const res = await axios.post('/api/auth/verify-otp', { email: otpEmail, otp: otpCode });
                         loginWithToken(res.data.user, res.data.token);
                         toast.success("Welcome back!");
                         const user = res.data.user;
@@ -315,14 +316,14 @@ export default function Login() {
                       onClick={() => { setOtpSent(false); setOtpCode(""); }}
                       className="text-xs font-bold text-slate-400 hover:text-white transition"
                     >
-                      ← Change Number
+                      ← Change Email
                     </button>
                     <button
                       onClick={async () => {
                         if (otpCooldown > 0) return;
                         setOtpLoading(true);
                         try {
-                          await axios.post('/api/auth/send-otp', { phone });
+                          await axios.post('/api/auth/send-otp', { email: otpEmail });
                           setOtpCooldown(60);
                           setOtpCode("");
                           toast.success("OTP resent!");

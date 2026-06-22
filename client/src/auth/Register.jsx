@@ -97,8 +97,9 @@ export default function Register() {
 
   // Send OTP Function
   const handleSendOTP = async () => {
-    if (!PHONE_REGEX.test(formData.phone)) {
-      return toast.error("Invalid Indian Phone Number. Please check format.");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      return toast.error("Invalid Email Address. Please check format.");
     }
     if (otpRetries <= 0) {
       return toast.error("Too many OTP requests. Please wait or contact support.");
@@ -106,12 +107,12 @@ export default function Register() {
 
     setLoading(true);
     try {
-      await axios.post(`/api/auth/send-otp`, { phone: formData.phone });
+      await axios.post(`/api/auth/send-otp`, { email: formData.email });
       
       setOtpSent(true);
       setOtpCooldown(60);
       setOtpRetries(prev => prev - 1);
-      toast.success("OTP verification code sent to your phone.");
+      toast.success("OTP verification code sent to your email.");
     } catch (err) {
       console.error(err);
       toast.error("Failed to send OTP code. Please retry.");
@@ -128,12 +129,12 @@ export default function Register() {
     setLoading(true);
     try {
       const res = await axios.post(`/api/auth/verify-otp`, { 
-        phone: formData.phone,
+        email: formData.email,
         otp: otpCode
       });
       if (res.data.success || res.data.token) {
         setOtpVerified(true);
-        toast.success("Phone verified successfully!");
+        toast.success("Email verified successfully!");
       } else {
         toast.error("Invalid OTP code.");
       }
@@ -152,7 +153,7 @@ export default function Register() {
     if (password !== confirmPassword) return toast.error("Passwords do not match");
     if (!formData.consentTerms) return toast.error("Please accept the Terms of Service to continue.");
     if (!formData.consentPrivacy) return toast.error("Please agree to the Privacy Policy to continue.");
-    if (!otpVerified) return toast.error("Please verify your phone number via OTP first.");
+    if (!otpVerified) return toast.error("Please verify your email address via OTP first.");
 
     if (role === "lawyer") {
       if (!selectedCity && !formData.location) return toast.error("Please select a city");
@@ -305,19 +306,20 @@ export default function Register() {
           <form onSubmit={(e) => { e.preventDefault(); handleRegister(); }} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <InputGroup label="Full Name" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" />
-              <InputGroup label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="john@example.com" />
+              <InputGroup label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} placeholder="+91 98765 43210" />
             </div>
 
-            {/* PHONE & OTP VERIFICATION */}
+            {/* EMAIL & OTP VERIFICATION */}
             <div className="space-y-2">
               <div className="flex gap-4 items-end">
                 <div className="flex-1">
                   <InputGroup 
-                    label="Phone Number" 
-                    name="phone" 
-                    value={formData.phone} 
+                    label="Email Address" 
+                    type="email"
+                    name="email" 
+                    value={formData.email} 
                     onChange={handleChange} 
-                    placeholder="+91 98765 43210" 
+                    placeholder="john@example.com" 
                     disabled={otpVerified}
                   />
                 </div>
@@ -341,7 +343,8 @@ export default function Register() {
                       name="otpCode" 
                       value={otpCode} 
                       onChange={(e) => setOtpCode(e.target.value)} 
-                      placeholder="XXXX" 
+                      placeholder="XXXXXX" 
+                      maxLength={6}
                     />
                   </div>
                   <button
@@ -357,7 +360,7 @@ export default function Register() {
 
               {otpVerified && (
                 <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 px-1">
-                  <ShieldCheck size={14} /> Phone verified successfully
+                  <ShieldCheck size={14} /> Email verified successfully
                 </div>
               )}
             </div>

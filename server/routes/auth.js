@@ -198,52 +198,41 @@ router.post("/register", async (req, res, next) => {
 const OtpEntry = require("../models/OtpEntry");
 const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
-const mtalkzOtp = require("../utils/mtalkzOtp");
-
-/**
- * Normalize phone: strip spaces, remove +91 / 91 prefix if present,
- * then prepend 91 for a clean MSISDN.
- */
-function normalizePhone(raw) {
-  let p = raw.replace(/[\s\-()]/g, "");
-  if (p.startsWith("+91")) p = p.slice(3);
-  else if (p.startsWith("91") && p.length === 12) p = p.slice(2);
-  if (p.length === 10) p = "91" + p;
-  return p;
-}
+const mail = require("../utils/mail");
 
 router.post("/send-otp", async (req, res) => {
   try {
-    const { phone } = req.body;
-    if (!phone || typeof phone !== 'string') {
-      return res.status(400).json({ success: false, message: "Phone number must be a string" });
+    const { email } = req.body;
+    if (!email || typeof email !== 'string') {
+      return res.status(400).json({ success: false, message: "Email must be a string" });
     }
 
-    const normalizedPhone = normalizePhone(phone);
+    const normalizedEmail = email.trim().toLowerCase();
 
-    const result = await mtalkzOtp.generateOTP(normalizedPhone);
+    // Generate random 6-digit OTP
+    const crypto = require("crypto");
+    const otp = crypto.randomInt(100000, 999999).toString();
+
+    // Send OTP via Brevo
+    const result = await mail.sendVerificationEmail(normalizedEmail, otp);
 
     if (!result.success) {
       return res.status(500).json({ success: false, message: "Failed to send OTP" });
     }
 
-    // Store a placeholder OTP and the sessionId for later verification
-    const crypto = require("crypto");
-    const placeholderOtp = crypto.randomInt(100000, 999999).toString();
-
+    // Store in DB
     await OtpEntry.findOneAndUpdate(
-      { phone: normalizedPhone },
+      { email: normalizedEmail },
       {
-        otp: placeholderOtp,
-        sessionId: result.sessionId || null,
+        otp,
         expiresAt: new Date(Date.now() + OTP_TTL_MS),
       },
       { upsert: true, new: true }
     );
 
-    console.log(`[OTP LOG] ${normalizedPhone} → [SENT] sessionId=${result.sessionId}`);
+    console.log(`[OTP LOG] ${normalizedEmail} → [SENT] otp=${otp}`);
 
-    res.json({ success: true, message: "OTP sent via SMS" });
+    res.json({ success: true, message: "OTP sent via Email" });
   } catch (err) {
     console.error("[send-otp] error:", err);
     res.status(500).json({ success: false, message: "Failed to send OTP" });
@@ -252,48 +241,39 @@ router.post("/send-otp", async (req, res) => {
 
 router.post("/verify-otp", async (req, res, next) => {
   try {
-    const { phone, otp } = req.body;
-    if (!phone || typeof phone !== 'string' || !otp || typeof otp !== 'string') {
-      return res.status(400).json({ success: false, message: "Phone and OTP must be strings" });
+    const { email, otp } = req.body;
+    if (!email || typeof email !== 'string' || !otp || typeof otp !== 'string') {
+      return res.status(400).json({ success: false, message: "Email and OTP must be strings" });
     }
 
-    const normalizedPhone = normalizePhone(phone);
+    const normalizedEmail = email.trim().toLowerCase();
 
-    const entry = await OtpEntry.findOne({ phone: normalizedPhone });
+    const entry = await OtpEntry.findOne({ email: normalizedEmail });
     if (!entry) {
       return res.status(400).json({ success: false, message: "OTP not found or already used" });
     }
     if (new Date() > entry.expiresAt) {
-      await OtpEntry.deleteOne({ phone: normalizedPhone });
+      await OtpEntry.deleteOne({ email: normalizedEmail });
       return res.status(400).json({ success: false, message: "OTP has expired. Please request a new one." });
     }
 
-    // Verify: use mTalkz sessionId if available, otherwise fall back to local comparison
-    let verified = false;
-    if (entry.sessionId) {
-      const result = await mtalkzOtp.verifyOTP(entry.sessionId, otp);
-      verified = result.success;
-    } else {
-      verified = entry.otp === otp;
-    }
-
-    if (!verified) {
+    if (entry.otp !== otp) {
       return res.status(400).json({ success: false, message: "Invalid OTP" });
     }
 
-    await OtpEntry.deleteOne({ phone: normalizedPhone });
+    await OtpEntry.deleteOne({ email: normalizedEmail });
 
-    let user = await User.findOne({ phone: normalizedPhone });
+    let user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
       user = await User.create({
         role: "client",
-        name: `User ${normalizedPhone.slice(-4)}`,
-        email: `${normalizedPhone}@mobile.user`,
-        phone: normalizedPhone,
+        name: normalizedEmail.split("@")[0],
+        email: normalizedEmail,
+        phone: "",
         password: await bcrypt.hash(Date.now().toString(), 10),
         plan: "free",
-        verified: false,
+        verified: true, // Verified since email is verified
       });
 
       console.log("OTP USER CREATED:", user._id);
