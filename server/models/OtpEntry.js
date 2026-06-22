@@ -4,6 +4,7 @@ const OtpEntrySchema = new mongoose.Schema(
     {
         phone: { type: String, required: true, unique: true, index: true },
         otp: { type: String, required: true },
+        sessionId: { type: String },
         expiresAt: { type: Date, required: true }
     },
     { timestamps: true }

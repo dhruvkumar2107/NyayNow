@@ -198,60 +198,99 @@ router.post("/register", async (req, res, next) => {
 const OtpEntry = require("../models/OtpEntry");
 const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
-const { sendSMS } = require("../utils/sms");
+const mtalkzOtp = require("../utils/mtalkzOtp");
+
+/**
+ * Normalize phone: strip spaces, remove +91 / 91 prefix if present,
+ * then prepend 91 for a clean MSISDN.
+ */
+function normalizePhone(raw) {
+  let p = raw.replace(/[\s\-()]/g, "");
+  if (p.startsWith("+91")) p = p.slice(3);
+  else if (p.startsWith("91") && p.length === 12) p = p.slice(2);
+  if (p.length === 10) p = "91" + p;
+  return p;
+}
 
 router.post("/send-otp", async (req, res) => {
-  const { phone } = req.body;
-  if (!phone || typeof phone !== 'string') {
-    return res.status(400).json({ message: "Phone number must be a string" });
+  try {
+    const { phone } = req.body;
+    if (!phone || typeof phone !== 'string') {
+      return res.status(400).json({ success: false, message: "Phone number must be a string" });
+    }
+
+    const normalizedPhone = normalizePhone(phone);
+
+    const result = await mtalkzOtp.generateOTP(normalizedPhone);
+
+    if (!result.success) {
+      return res.status(500).json({ success: false, message: "Failed to send OTP" });
+    }
+
+    // Store a placeholder OTP and the sessionId for later verification
+    const crypto = require("crypto");
+    const placeholderOtp = crypto.randomInt(100000, 999999).toString();
+
+    await OtpEntry.findOneAndUpdate(
+      { phone: normalizedPhone },
+      {
+        otp: placeholderOtp,
+        sessionId: result.sessionId || null,
+        expiresAt: new Date(Date.now() + OTP_TTL_MS),
+      },
+      { upsert: true, new: true }
+    );
+
+    console.log(`[OTP LOG] ${normalizedPhone} → [SENT] sessionId=${result.sessionId}`);
+
+    res.json({ success: true, message: "OTP sent via SMS" });
+  } catch (err) {
+    console.error("[send-otp] error:", err);
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
   }
-
-  const crypto = require("crypto");
-  const otp = crypto.randomInt(100000, 999999).toString();
-  await OtpEntry.findOneAndUpdate(
-    { phone },
-    { otp, expiresAt: new Date(Date.now() + OTP_TTL_MS) },
-    { upsert: true, new: true }
-  );
-
-  // Send via Twilio
-  // If keys are missing, it will log mock SMS to console automatically
-  await sendSMS(phone, `Your NyayNow verification code is: ${otp}. Valid for 10 minutes.`);
-
-  console.log(`[OTP LOG] ${phone} → [SENT]`);
-
-  res.json({ message: "OTP sent via SMS" });
 });
 
 router.post("/verify-otp", async (req, res, next) => {
   try {
     const { phone, otp } = req.body;
     if (!phone || typeof phone !== 'string' || !otp || typeof otp !== 'string') {
-      return res.status(400).json({ message: "Phone and OTP must be strings" });
+      return res.status(400).json({ success: false, message: "Phone and OTP must be strings" });
     }
 
-    const entry = await OtpEntry.findOne({ phone });
+    const normalizedPhone = normalizePhone(phone);
+
+    const entry = await OtpEntry.findOne({ phone: normalizedPhone });
     if (!entry) {
-      return res.status(400).json({ message: "OTP not found or already used" });
+      return res.status(400).json({ success: false, message: "OTP not found or already used" });
     }
     if (new Date() > entry.expiresAt) {
-      await OtpEntry.deleteOne({ phone });
-      return res.status(400).json({ message: "OTP has expired. Please request a new one." });
-    }
-    if (entry.otp !== otp) {
-      return res.status(400).json({ message: "Invalid OTP" });
+      await OtpEntry.deleteOne({ phone: normalizedPhone });
+      return res.status(400).json({ success: false, message: "OTP has expired. Please request a new one." });
     }
 
-    await OtpEntry.deleteOne({ phone });
+    // Verify: use mTalkz sessionId if available, otherwise fall back to local comparison
+    let verified = false;
+    if (entry.sessionId) {
+      const result = await mtalkzOtp.verifyOTP(entry.sessionId, otp);
+      verified = result.success;
+    } else {
+      verified = entry.otp === otp;
+    }
 
-    let user = await User.findOne({ phone });
+    if (!verified) {
+      return res.status(400).json({ success: false, message: "Invalid OTP" });
+    }
+
+    await OtpEntry.deleteOne({ phone: normalizedPhone });
+
+    let user = await User.findOne({ phone: normalizedPhone });
 
     if (!user) {
       user = await User.create({
         role: "client",
-        name: `User ${phone.slice(-4)}`,
-        email: `${phone}@mobile.user`,
-        phone,
+        name: `User ${normalizedPhone.slice(-4)}`,
+        email: `${normalizedPhone}@mobile.user`,
+        phone: normalizedPhone,
         password: await bcrypt.hash(Date.now().toString(), 10),
         plan: "free",
         verified: false,
@@ -283,7 +322,7 @@ router.post("/verify-otp", async (req, res, next) => {
       verified: user.verified
     };
 
-    res.json({ token, user: userResponse });
+    res.json({ success: true, token, user: userResponse });
   } catch (err) {
     next(err);
   }

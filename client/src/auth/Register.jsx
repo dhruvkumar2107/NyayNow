@@ -106,7 +106,7 @@ export default function Register() {
 
     setLoading(true);
     try {
-      await axios.post(`${API_BASE}/whatsapp/send-otp`, { phone: formData.phone });
+      await axios.post(`/api/auth/send-otp`, { phone: formData.phone });
       
       setOtpSent(true);
       setOtpCooldown(60);
@@ -127,11 +127,11 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      const res = await axios.post(`${API_BASE}/whatsapp/verify-otp`, { 
+      const res = await axios.post(`/api/auth/verify-otp`, { 
         phone: formData.phone,
-        code: otpCode
+        otp: otpCode
       });
-      if (res.data.success) {
+      if (res.data.success || res.data.token) {
         setOtpVerified(true);
         toast.success("Phone verified successfully!");
       } else {

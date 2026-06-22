@@ -19,6 +19,10 @@ export default function Login() {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [googleData, setGoogleData] = useState(null);
   const [consent, setConsent] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [otpCooldown, setOtpCooldown] = useState(0);
+  const [otpLoading, setOtpLoading] = useState(false);
 
   // ⚡ CRAZY PERFORMING OPTIMIZATION: Prefetch heavy dashboard routes instantly on load
   // so that when the user clicks 'Sign In', the transition is 0ms.
@@ -30,6 +34,14 @@ export default function Login() {
     // Wake up the legal engine (Render Cold Start mitigation)
     axios.get("/healthz").catch(() => {});
   }, [router]);
+
+  // OTP Cooldown Timer
+  useEffect(() => {
+    if (otpCooldown > 0) {
+      const timer = setInterval(() => setOtpCooldown(prev => prev - 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [otpCooldown]);
 
   const [authStatus, setAuthStatus] = useState("Sign In");
 
@@ -201,10 +213,133 @@ export default function Login() {
               </button>
             </div>
           ) : (
-            <div className="space-y-4 text-center text-slate-400 py-12 bg-white/5 rounded-3xl border border-dashed border-white/10">
-              <div className="w-12 h-12 bg-gold-500/10 text-gold-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">🚧</div>
-              <p className="font-display font-medium text-white text-lg">OTP Login Disabled</p>
-              <p className="text-sm px-8">We are upgrading our secure gateway. Please use email access.</p>
+            <div className="space-y-6">
+              {/* LEGAL CONSENT CHECKBOX (Mobile) */}
+              <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10 group cursor-pointer hover:bg-white/10 transition-all" onClick={() => setConsent(!consent)}>
+                <div className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border flex items-center justify-center transition-all ${consent ? 'bg-gold-500 border-gold-500' : 'border-slate-600'}`}>
+                  {consent && <span className="text-midnight-950 text-xs font-bold">✓</span>}
+                </div>
+                <p className="text-[11px] leading-relaxed text-slate-400 group-hover:text-slate-200 select-none">
+                  I understand this is an <span className="text-white font-bold">AI tool for information</span> and does not create an <span className="text-white font-bold">Attorney-Client relationship</span>.
+                </p>
+              </div>
+
+              {!otpSent ? (
+                <>
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={e => setPhone(e.target.value)}
+                      className="glass-input w-full rounded-xl px-4 py-3.5 placeholder-slate-600 focus:ring-1 focus:ring-gold-500/50 transition duration-300"
+                      placeholder="+91 98765 43210"
+                    />
+                  </div>
+                  <button
+                    onClick={async () => {
+                      if (!consent) return toast.error("Please acknowledge the legal disclosure to continue.");
+                      if (!phone || phone.length < 10) return toast.error("Please enter a valid phone number.");
+                      setOtpLoading(true);
+                      try {
+                        await axios.post('/api/auth/send-otp', { phone });
+                        setOtpSent(true);
+                        setOtpCooldown(60);
+                        toast.success("OTP sent to your phone!");
+                      } catch (err) {
+                        toast.error(err?.response?.data?.message || "Failed to send OTP.");
+                      } finally {
+                        setOtpLoading(false);
+                      }
+                    }}
+                    disabled={otpLoading}
+                    className="w-full py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 font-black text-lg rounded-xl hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] transition-all duration-200 active:scale-95 disabled:opacity-70 relative overflow-hidden group"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      {otpLoading ? (
+                        <><span className="w-4 h-4 border-2 border-midnight-950 border-t-transparent rounded-full animate-spin"></span> Sending OTP...</>
+                      ) : "Send OTP"}
+                    </span>
+                    <div className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-200 ease-out" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 px-1">
+                    <span>✓</span> OTP sent to {phone}
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider">Enter OTP Code</label>
+                    <input
+                      type="text"
+                      value={otpCode}
+                      onChange={e => setOtpCode(e.target.value)}
+                      className="glass-input w-full rounded-xl px-4 py-3.5 placeholder-slate-600 focus:ring-1 focus:ring-gold-500/50 transition duration-300 text-center text-2xl tracking-[0.5em] font-bold"
+                      placeholder="● ● ● ●"
+                      maxLength={6}
+                    />
+                  </div>
+                  <button
+                    onClick={async () => {
+                      if (!otpCode || otpCode.length < 4) return toast.error("Please enter a valid OTP code.");
+                      setOtpLoading(true);
+                      try {
+                        const res = await axios.post('/api/auth/verify-otp', { phone, otp: otpCode });
+                        loginWithToken(res.data.user, res.data.token);
+                        toast.success("Welcome back!");
+                        const user = res.data.user;
+                        if (user.role === 'lawyer' && (!user.specialization || !user.bio || !user.phone)) {
+                          toast.error("Please complete your professional profile first.");
+                          router.push("/settings");
+                        } else {
+                          router.push(user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard');
+                        }
+                      } catch (err) {
+                        toast.error(err?.response?.data?.message || "OTP verification failed.");
+                      } finally {
+                        setOtpLoading(false);
+                      }
+                    }}
+                    disabled={otpLoading}
+                    className="w-full py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-midnight-950 font-black text-lg rounded-xl hover:shadow-[0_0_30px_rgba(212,175,55,0.6)] transition-all duration-200 active:scale-95 disabled:opacity-70 relative overflow-hidden group"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      {otpLoading ? (
+                        <><span className="w-4 h-4 border-2 border-midnight-950 border-t-transparent rounded-full animate-spin"></span> Verifying...</>
+                      ) : "Verify & Sign In"}
+                    </span>
+                    <div className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-200 ease-out" />
+                  </button>
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => { setOtpSent(false); setOtpCode(""); }}
+                      className="text-xs font-bold text-slate-400 hover:text-white transition"
+                    >
+                      ← Change Number
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (otpCooldown > 0) return;
+                        setOtpLoading(true);
+                        try {
+                          await axios.post('/api/auth/send-otp', { phone });
+                          setOtpCooldown(60);
+                          setOtpCode("");
+                          toast.success("OTP resent!");
+                        } catch (err) {
+                          toast.error(err?.response?.data?.message || "Failed to resend OTP.");
+                        } finally {
+                          setOtpLoading(false);
+                        }
+                      }}
+                      disabled={otpCooldown > 0 || otpLoading}
+                      className="text-xs font-bold text-gold-400 hover:text-gold-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {otpCooldown > 0 ? `Resend in ${otpCooldown}s` : "Resend OTP"}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
