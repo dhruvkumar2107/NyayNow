@@ -357,14 +357,29 @@ io.on("connection", (socket) => {
   });
 });
 
+/* ================= SERVER IP (for Brevo IP whitelist setup) ================= */
+app.get("/server-ip", async (req, res) => {
+  try {
+    const fetch = require("node-fetch");
+    const r = await fetch("https://api.ipify.org?format=json");
+    const data = await r.json();
+    res.json({ serverPublicIP: data.ip, message: "Add this IP to Brevo authorized IPs" });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 /* ================= HEALTH ================= */
+
 app.get("/healthz", (req, res) => {
   const dbState = mongoose.connection.readyState;
   // 0=disconnected, 1=connected, 2=connecting, 3=disconnecting
   const dbStateMap = { 0: "disconnected", 1: "connected", 2: "connecting", 3: "disconnecting" };
   const memUsage = process.memoryUsage();
-  res.json({
-    ok: dbState === 1,
+  const isHealthy = dbState === 1;
+  const payload = {
+    ok: isHealthy,
+    status: isHealthy ? "healthy" : "degraded",
     db: dbStateMap[dbState] || "unknown",
     uptime: Math.floor(process.uptime()),
     memory: {
@@ -373,7 +388,9 @@ app.get("/healthz", (req, res) => {
       rssMB: Math.round(memUsage.rss / 1024 / 1024)
     },
     timestamp: new Date().toISOString()
-  });
+  };
+  // Return 503 when degraded so Uptime Robot correctly triggers alerts
+  res.status(isHealthy ? 200 : 503).json(payload);
 });
 
 /* ================= ROUTE LOADER ================= */

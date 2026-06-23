@@ -35,3 +35,7 @@ nyaynow-test.js
 
 # Uploads
 uploads/
+
+# Test reports/results
+playwright-report/
+test-results/
