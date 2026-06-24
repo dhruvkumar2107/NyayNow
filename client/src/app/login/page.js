@@ -1,7 +1,7 @@
 import Login from "../../auth/Login";
 
 export const metadata = {
-    title: 'Sign In to Your Account | NyayNow',
+    title: 'Sign In to Your Account',
     description: 'Sign in to access your NyayNow dashboard, consult verified advocates, predict case outcomes, and manage legal cases.',
     alternates: {
         canonical: 'https://nyaynow.in/login',

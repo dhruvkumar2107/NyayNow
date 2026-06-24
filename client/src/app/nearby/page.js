@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 
 export const metadata = {
-    title: 'Nearby Legal Assets Radar | NyayNow',
+    title: 'Nearby Legal Assets Radar',
     description: 'Locate nearby police stations, judicial courts, and verified legal advocates in real-time. Navigate local legal support across India.',
     alternates: {
         canonical: 'https://nyaynow.in/nearby',

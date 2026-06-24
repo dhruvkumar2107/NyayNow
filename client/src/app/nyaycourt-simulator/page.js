@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 
 export const metadata = {
-    title: 'NyayCourt Simulator — AI Trial Simulation | NyayNow',
+    title: 'NyayCourt Simulator — AI Trial Simulation',
     description: 'Simulate a full courtroom trial with AI legal agents arguing both sides of your case. Powered by Indian law and real judicial precedents.',
     alternates: {
         canonical: 'https://nyaynow.in/nyaycourt-simulator',

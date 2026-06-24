@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 
 export const metadata = {
-    title: 'AI Legal Document Drafting | NyayNow',
+    title: 'AI Legal Document Drafting',
     description: 'Draft legal notices, agreements, and contracts with AI assistance. Instant, lawyer-reviewed templates for Indian law.',
     alternates: {
         canonical: 'https://nyaynow.in/drafting',

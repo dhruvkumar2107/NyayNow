@@ -1,7 +1,7 @@
 import AboutUs from "../../../legacy_ignore/pages/AboutUs";
 
 export const metadata = {
-    title: 'About Us | NyayNow',
+    title: 'About Us',
     description: 'Learn about NyayNow\'s mission to democratize legal intelligence through institutional-grade AI and connect citizens with top legal professionals in India.',
     alternates: {
         canonical: 'https://nyaynow.in/about',

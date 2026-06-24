@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 
 export const metadata = {
-    title: 'NyayVoice — Multilingual AI Legal Voice Assistant | NyayNow',
+    title: 'NyayVoice — Multilingual AI Legal Voice Assistant',
     description: 'Ask legal questions in your native Indian language by voice. NyayVoice supports Hindi, Tamil, Telugu, Bengali, and 11 more languages with instant AI responses.',
     alternates: {
         canonical: 'https://nyaynow.in/nyayvoice',

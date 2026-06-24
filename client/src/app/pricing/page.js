@@ -1,7 +1,7 @@
 import Pricing from "../../../legacy_ignore/pages/Pricing";
 
 export const metadata = {
-    title: 'Pricing Plans & Subscriptions | NyayNow',
+    title: 'Pricing Plans & Subscriptions',
     description: 'Explore NyayNow subscription plans: Free, Pro, and Firm. Get access to AI legal assistance, document drafting, and lawyer marketplace integrations.',
     alternates: {
         canonical: 'https://nyaynow.in/pricing',

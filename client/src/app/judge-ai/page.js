@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 
 export const metadata = {
-    title: 'Judge AI — Predict Case Outcomes | NyayNow',
+    title: 'Judge AI — Predict Case Outcomes',
     description: 'Use AI to predict case outcomes, analyze judicial trends, and prepare stronger legal arguments based on Indian court data.',
     alternates: {
         canonical: 'https://nyaynow.in/judge-ai',

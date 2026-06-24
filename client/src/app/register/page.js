@@ -1,7 +1,7 @@
 import Register from "../../auth/Register";
 
 export const metadata = {
-    title: 'Create an Account | NyayNow',
+    title: 'Create an Account',
     description: 'Register for a NyayNow account to consult verified advocates, draft legal documents, and access AI-powered legal assistance in India.',
     alternates: {
         canonical: 'https://nyaynow.in/register',
