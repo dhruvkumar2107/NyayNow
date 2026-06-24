@@ -6,8 +6,6 @@ import ReactMarkdown from 'react-markdown';
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PaywallModal from "../../src/components/PaywallModal";
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
 import { useAuth } from "../../src/context/AuthContext";
 // Duplicate import removed
 import { motion, AnimatePresence } from "framer-motion";
@@ -66,7 +64,6 @@ export default function Agreements() {
 
   return (
     <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-indigo-500/30">
-      <Navbar />
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
       <div className="pt-24 md:pt-32 pb-20 px-6 max-w-7xl mx-auto">
@@ -206,7 +203,6 @@ export default function Agreements() {
 
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

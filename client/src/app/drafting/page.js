@@ -1,10 +1,17 @@
+import dynamic from 'next/dynamic';
+
 export const metadata = {
     title: 'AI Legal Document Drafting | NyayNow',
     description: 'Draft legal notices, agreements, and contracts with AI assistance. Instant, lawyer-reviewed templates for Indian law.',
-    alternates: { canonical: 'https://nyaynow.in/drafting' },
+    alternates: {
+        canonical: 'https://nyaynow.in/drafting',
+    },
+    openGraph: {
+        title: 'AI Legal Document Drafting | NyayNow',
+        description: 'Draft legal notices, agreements, and contracts with AI assistance. Instant, lawyer-reviewed templates for Indian law.',
+        url: 'https://nyaynow.in/drafting',
+    }
 }
-
-import dynamic from 'next/dynamic';
 
 const DraftingLab = dynamic(() => import("../../../legacy_ignore/pages/DraftingLab"), {
     ssr: false,

@@ -349,7 +349,7 @@ export default function Login() {
             <div className="relative flex justify-center text-xs uppercase font-bold text-slate-500 bg-midnight-900 px-4 tracking-widest">Or Continue With</div>
           </div>
 
-          <div className="relative flex justify-center w-max mx-auto">
+          <div className="relative flex justify-center w-[240px] min-h-[44px] mx-auto">
             {!consent && (
               <div 
                 className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer rounded-full bg-black/60 backdrop-blur-sm border border-white/20 hover:border-gold-500/50 transition-all"
@@ -358,8 +358,8 @@ export default function Login() {
                  <span className="text-[9px] font-bold text-white uppercase tracking-widest text-center">Tick Consent<br/>First</span>
               </div>
             )}
-            <div className={`p-1 rounded-full border transition duration-300 bg-midnight-950/50 ${consent ? 'border-white/20 hover:border-gold-500/50' : 'border-white/5 opacity-80'}`}>
-              <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} shape="circle" size="large" theme="filled_black" />
+            <div className={`p-1 w-full rounded-full border transition duration-300 bg-midnight-950/50 ${consent ? 'border-white/20 hover:border-gold-500/50' : 'border-white/5 opacity-80'}`}>
+              <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} shape="circle" size="large" theme="filled_black" width="230" />
             </div>
           </div>
 

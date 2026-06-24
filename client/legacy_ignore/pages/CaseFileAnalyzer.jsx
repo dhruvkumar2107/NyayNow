@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useAuth } from "../../src/context/AuthContext";
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileText, Calendar, AlertTriangle, Shield, CheckCircle, Search, Scale } from 'lucide-react';
 
@@ -74,7 +72,6 @@ const CaseFileAnalyzer = () => {
 
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
-            <Navbar />
 
             <div className="max-w-[1400px] mx-auto px-6 pt-40 pb-20">
                 <header className="text-center mb-16">
@@ -240,7 +237,6 @@ const CaseFileAnalyzer = () => {
 
                 </div>
             </div>
-            <Footer />
         </div>
     );
 };

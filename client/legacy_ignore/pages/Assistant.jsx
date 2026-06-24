@@ -6,7 +6,6 @@ import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Navbar from "../../src/components/Navbar";
 import { useLanguage } from "../../src/context/LanguageContext";
 import { useAuth } from "../../src/context/AuthContext";
 import { jsPDF } from "jspdf";
@@ -297,7 +296,6 @@ export default function Assistant() {
 
   return (
     <div className="flex flex-col h-screen bg-[#0c1220] text-slate-200 font-sans overflow-hidden pt-20 md:pt-24 relative">
-      <Navbar />
 
       {/* STICKY ALWAYS-ON DISCLAIMER BAR */}
       <div className="bg-[#dc2626]/10 border-b border-[#dc2626]/20 py-2.5 px-6 text-center text-xs text-red-400 font-bold flex items-center justify-center gap-2 relative z-10">

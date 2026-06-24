@@ -255,7 +255,7 @@ export default function Register() {
 
           {/* GOOGLE SIGN IN ABOVE EMAIL FORM */}
           <div className="space-y-4">
-            <div className="relative flex justify-center w-max mx-auto">
+            <div className="relative flex justify-center w-[200px] min-h-[40px] mx-auto">
               {(!formData.consentTerms || !formData.consentPrivacy) && (
                 <div 
                   className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer rounded bg-black/75 backdrop-blur-sm border border-white/10 hover:border-gold-500/50 transition-all"
@@ -264,7 +264,7 @@ export default function Register() {
                   <span className="text-[10px] font-black text-white px-3 py-1 uppercase tracking-widest text-center">Accept Consent Checkboxes First</span>
                 </div>
               )}
-              <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} />
+              <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => toast.error("Google Failed")} width="200" />
             </div>
 
             <div className="relative py-2">

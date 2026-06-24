@@ -3,7 +3,6 @@ import React from 'react';
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Clock, MessageCircle, ShieldAlert, CheckCircle, Mail, ArrowRight } from "lucide-react";
-import Navbar from '../../src/components/Navbar';
 
 const STEPS = [
     {
@@ -29,7 +28,6 @@ const STEPS = [
 export default function VerificationPending() {
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-amber-500/30">
-            <Navbar />
 
             <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-6">
                 <motion.div

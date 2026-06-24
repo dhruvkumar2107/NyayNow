@@ -55,7 +55,7 @@ export default function LegalSOSClient() {
         if (!situation.trim() || !emergencyType) return
         setLoading(true)
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/ai/legal-sos`, {
+            const { data } = await axios.post(`/api/ai/legal-sos`, {
                 situation,
                 emergencyType,
                 language,
@@ -72,7 +72,7 @@ export default function LegalSOSClient() {
     const generateFIR = async () => {
         setFirLoading(true)
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/ai/fir-generator`, {
+            const { data } = await axios.post(`/api/ai/fir-generator`, {
                 situation,
                 emergencyType,
                 language,

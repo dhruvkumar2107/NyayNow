@@ -1,7 +1,5 @@
 'use client'
 import React, { useState } from 'react';
-import Navbar from '../../src/components/Navbar';
-import Footer from '../../src/components/Footer';
 import axios from 'axios';
 import { useAuth } from '../../src/context/AuthContext';
 import Link from 'next/link';
@@ -146,7 +144,6 @@ END:VCALENDAR`;
 
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
-            <Navbar />
 
             {/* HEADER HERO */}
             <div className="relative pt-32 pb-32 px-6 overflow-hidden border-b border-white/5">
@@ -324,7 +321,6 @@ END:VCALENDAR`;
                     )}
                 </AnimatePresence>
             </div>
-            <Footer />
         </div>
     );
 };

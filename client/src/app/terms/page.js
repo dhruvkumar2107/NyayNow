@@ -6,6 +6,11 @@ export const metadata = {
     alternates: {
         canonical: 'https://nyaynow.in/terms',
     },
+    openGraph: {
+        title: 'Terms of Service | NyayNow',
+        description: 'Terms of Service for NyayNow.',
+        url: 'https://nyaynow.in/terms',
+    }
 }
 
 export default function TermsPage() {

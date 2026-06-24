@@ -2,9 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import ReactMarkdown from 'react-markdown';
-import Navbar from "../../src/components/Navbar";
 import { useAuth } from "../../src/context/AuthContext";
-import Footer from "../../src/components/Footer";
 import PaywallModal from "../../src/components/PaywallModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Lock, Briefcase, Scroll, ExternalLink, Sparkles, Printer, Edit2, ArrowLeft } from "lucide-react";
@@ -44,7 +42,6 @@ export default function AgreementForm() {
 
     return (
         <div className="min-h-screen bg-[#020617] text-slate-400 font-sans selection:bg-indigo-500/30 pb-20 overflow-hidden relative">
-            <Navbar />
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} />
 
             {/* PROGRESS READER */}

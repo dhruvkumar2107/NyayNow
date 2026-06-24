@@ -6,6 +6,11 @@ export const metadata = {
     alternates: {
         canonical: 'https://nyaynow.in/disclaimer',
     },
+    openGraph: {
+        title: 'Legal Disclaimer | NyayNow',
+        description: 'Legal Disclaimer for NyayNow AI.',
+        url: 'https://nyaynow.in/disclaimer',
+    }
 }
 
 export default function DisclaimerPage() {

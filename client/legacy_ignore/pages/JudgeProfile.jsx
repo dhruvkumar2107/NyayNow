@@ -1,6 +1,5 @@
 'use client'
 import React, { useState } from 'react';
-import Navbar from '../../src/components/Navbar';
 import { useAuth } from '../../src/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
@@ -18,7 +17,6 @@ const JudgeProfile = () => {
     if (user && user.plan !== 'diamond') {
         return (
             <div className="min-h-screen bg-[#020617] flex items-center justify-center relative overflow-hidden font-sans selection:bg-amber-500/30">
-                <Navbar />
                 {/* Background FX */}
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 hidden"></div>
                 <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
@@ -93,7 +91,6 @@ const JudgeProfile = () => {
 
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400">
-            <Navbar />
 
             {/* HEADER */}
             <div className="relative pt-40 pb-32 px-6 overflow-hidden">

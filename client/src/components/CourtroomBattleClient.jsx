@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { jsPDF } from 'jspdf';
-import { API_BASE } from '../../config';
+import { API_BASE } from '../config';
 import {
     Gavel, Scale, Shield, ChevronRight, Loader2,
     BookOpen, Mic2, Star, RotateCcw, Sparkles, Download, BarChart2, CheckCircle2, AlertTriangle, ArrowRight
@@ -145,7 +145,7 @@ function RoundCard({ round, index, isActive, onDone }) {
 }
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
-export default function CourtroomBattle() {
+export default function CourtroomBattleClient() {
     const [phase, setPhase] = useState('input'); // input | loading | trial | verdict
     const [caseData, setCaseData] = useState({
         caseTitle: '',

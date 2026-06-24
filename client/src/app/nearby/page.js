@@ -1,5 +1,18 @@
 import dynamic from 'next/dynamic';
 
+export const metadata = {
+    title: 'Nearby Legal Assets Radar | NyayNow',
+    description: 'Locate nearby police stations, judicial courts, and verified legal advocates in real-time. Navigate local legal support across India.',
+    alternates: {
+        canonical: 'https://nyaynow.in/nearby',
+    },
+    openGraph: {
+        title: 'Nearby Legal Assets Radar | NyayNow',
+        description: 'Locate nearby police stations, judicial courts, and verified legal advocates in real-time.',
+        url: 'https://nyaynow.in/nearby',
+    }
+}
+
 const Nearby = dynamic(() => import("../../../legacy_ignore/pages/Nearby"), {
     ssr: false,
     loading: () => (

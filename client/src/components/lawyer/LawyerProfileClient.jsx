@@ -30,7 +30,7 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
 
         const fetchConnectionStatus = async () => {
             try {
-                const connRes = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || ""}/api/connections?userId=${user._id || user.id}&status=all`)
+                const connRes = await axios.get(`/api/connections?userId=${user._id || user.id}&status=all`)
                 const myConnection = connRes.data.find(c => c.lawyerId === lawyerId || c._id === lawyerId)
                 if (myConnection) {
                     setConnection({
@@ -62,7 +62,7 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
 
         try {
             setEnquiryLoading(true)
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL || ""}/api/connections`, {
+            await axios.post(`/api/connections`, {
                 clientId: user._id || user.id,
                 lawyerId: lawyerId,
                 initiatedBy: user._id || user.id,

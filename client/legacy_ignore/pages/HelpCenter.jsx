@@ -2,8 +2,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown, MessageCircle, FileText, Shield, Zap, BookOpen, Users, ArrowRight, Star } from 'lucide-react';
-import Navbar from '../../src/components/Navbar';
-import Footer from '../../src/components/Footer';
 import Link from 'next/link';
 
 const FAQS = [
@@ -58,7 +56,6 @@ export default function HelpCenter() {
 
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
-            <Navbar />
 
             {/* HERO SEARCH */}
             <section className="relative pt-36 pb-20 px-6 text-center border-b border-white/5 overflow-hidden">
@@ -170,8 +167,6 @@ export default function HelpCenter() {
                     </div>
                 </div>
             </section>
-
-            <Footer />
         </div>
     );
 }

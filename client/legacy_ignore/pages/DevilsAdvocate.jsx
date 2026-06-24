@@ -1,12 +1,9 @@
 'use client'
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
-import Navbar from '../../src/components/Navbar';
-import Footer from '../../src/components/Footer';
 import { useAuth } from '../../src/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DevilsAdvocate = () => {
@@ -58,7 +55,6 @@ const DevilsAdvocate = () => {
 
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-white selection:bg-red-900/50 pb-20">
-            <Navbar />
             <Toaster />
 
             <div className="pt-28 pb-12 px-6 max-w-[1600px] mx-auto">
@@ -198,7 +194,6 @@ const DevilsAdvocate = () => {
                     ⚖️ This is AI-generated information. Verify with a qualified lawyer.
                 </p>
             </div>
-            <Footer />
         </div>
     );
 };

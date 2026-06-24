@@ -1,8 +1,6 @@
 'use client'
 import React from 'react';
 import { motion } from 'framer-motion';
-import Navbar from "../../src/components/Navbar";
-import Footer from "../../src/components/Footer";
 import { Briefcase, MapPin, Clock, ArrowRight, Sparkles, Zap, Heart, Globe, Coffee, TrendingUp } from 'lucide-react';
 
 const JOBS = [
@@ -62,7 +60,6 @@ const LEVEL_COLOR = {
 export default function Careers() {
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
-            <Navbar />
 
             {/* HERO */}
             <div className="pt-40 pb-20 px-6 text-center relative overflow-hidden">
@@ -160,8 +157,6 @@ export default function Careers() {
                     </div>
                 </motion.div>
             </section>
-
-            <Footer />
         </div>
     );
 }

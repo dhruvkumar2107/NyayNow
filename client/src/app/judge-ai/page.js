@@ -1,10 +1,17 @@
+import dynamic from 'next/dynamic';
+
 export const metadata = {
     title: 'Judge AI — Predict Case Outcomes | NyayNow',
     description: 'Use AI to predict case outcomes, analyze judicial trends, and prepare stronger legal arguments based on Indian court data.',
-    alternates: { canonical: 'https://nyaynow.in/judge-ai' },
+    alternates: {
+        canonical: 'https://nyaynow.in/judge-ai',
+    },
+    openGraph: {
+        title: 'Judge AI — Predict Case Outcomes | NyayNow',
+        description: 'Use AI to predict case outcomes, analyze judicial trends, and prepare stronger legal arguments based on Indian court data.',
+        url: 'https://nyaynow.in/judge-ai',
+    }
 }
-
-import dynamic from 'next/dynamic';
 
 const JudgeAI = dynamic(() => import("../../components/dashboard/lawyer/JudgeAI"), {
     ssr: false,
