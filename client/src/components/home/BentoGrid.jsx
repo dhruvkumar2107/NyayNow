@@ -26,7 +26,7 @@ export function BentoGrid() {
                         desc="Neural AI Judges that evaluate every nuance of your oral arguments in a simulated trial."
                         icon={<Scale className="text-white" size={20} />}
                         color="from-blue-600 via-indigo-600 to-indigo-500"
-                        href="/courtroom-battle"
+                        href="/nyaycourt-simulator"
                         badge="Flagship"
                         className="md:col-span-8 md:row-span-2"
                         isLarge={true}
@@ -36,7 +36,7 @@ export function BentoGrid() {
                         desc="Democratizing law in 14+ Indian dialects. Breaking the English barrier for 1.4B people."
                         icon={<Mic className="text-white" size={20} />}
                         color="from-cyan-500 via-blue-500 to-indigo-500"
-                        href="/voice-assistant"
+                        href="/nyayvoice"
                         badge="Every Language"
                         className="md:col-span-4 md:row-span-1"
                     />

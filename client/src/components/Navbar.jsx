@@ -21,6 +21,8 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const timeoutRef = useRef(null);
 
   useEffect(() => {
@@ -52,8 +54,17 @@ export default function Navbar() {
     timeoutRef.current = setTimeout(() => setHoveredIndex(null), 200);
   };
 
+  const services = [
+    { name: "AI Legal Assistant", desc: "Instant answers grounded in BNS & IPC", href: "/assistant", icon: Sparkles, color: "text-blue-400" },
+    { name: "Smart Document Drafting", desc: "Draft legal agreements & notices", href: "/drafting", icon: FileText, color: "text-emerald-400" },
+    { name: "Outcome Predictor (Judge AI)", desc: "Predict win probabilities & analyze risk", href: "/judge-ai", icon: Gavel, color: "text-indigo-400" },
+    { name: "Courtroom Simulator", desc: "Simulate a live AI trial argument", href: "/nyaycourt-simulator", icon: Scale, color: "text-violet-400" },
+    { name: "Multilingual Voice Assist", desc: "Voice search in 14+ Indian languages", href: "/nyayvoice", icon: Mic, color: "text-cyan-400" },
+    { name: "Nearby Radar Map", desc: "Find nearest police, courts & advocates", href: "/nearby", icon: MapPin, color: "text-amber-400" },
+    { name: "Legal Precedent Search", desc: "Search through 1.2M court judgments", href: "/research", icon: Search, color: "text-pink-400" }
+  ];
+
   const navItems = [
-    { name: "AI Assistant", href: "/assistant" },
     { name: "Find a Lawyer", href: "/marketplace" },
     { name: "For Professionals", href: "/professionals" },
     { name: "Pricing", href: "/pricing" }
@@ -76,16 +87,66 @@ export default function Navbar() {
           </Link>
 
           {/* DESKTOP NAV - CENTERED */}
-          <div className="hidden lg:flex items-center gap-6 h-full absolute left-1/2 -translate-x-1/2">
-            {user?.role !== 'admin' && navItems.map((item, idx) => (
-              <Link
-                key={idx}
-                href={item.href}
-                className="text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5"
-              >
-                {item.name}
-              </Link>
-            ))}
+          <div className="hidden lg:flex items-center gap-4 h-full absolute left-1/2 -translate-x-1/2">
+            {user?.role !== 'admin' && (
+              <>
+                {/* Services Dropdown */}
+                <div 
+                  className="relative h-full flex items-center"
+                  onMouseEnter={() => setServicesOpen(true)}
+                  onMouseLeave={() => setServicesOpen(false)}
+                >
+                  <button className="flex items-center gap-1.5 text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5 outline-none cursor-pointer">
+                    Services
+                    <ChevronDown size={14} className={`transition-transform duration-300 ${servicesOpen ? 'rotate-180 text-white' : ''}`} />
+                  </button>
+                  
+                  <AnimatePresence>
+                    {servicesOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-[70%] left-0 w-[420px] bg-[#030712]/95 border border-white/10 rounded-[28px] p-4 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.9)] backdrop-blur-3xl grid grid-cols-1 gap-1 z-[99999]"
+                      >
+                        <div className="px-3 py-1 border-b border-white/5 mb-2">
+                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">Legal AI Services</p>
+                        </div>
+                        {services.map((item) => {
+                          const Icon = item.icon;
+                          return (
+                            <Link
+                              key={item.name}
+                              href={item.href}
+                              className="flex items-start gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all duration-300 group"
+                            >
+                              <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-blue-500/20 group-hover:scale-105 transition-all duration-300 shrink-0 ${item.color}`}>
+                                <Icon size={18} />
+                              </div>
+                              <div className="text-left">
+                                <p className="text-white font-bold text-[13px] tracking-tight group-hover:text-blue-400 transition-colors">{item.name}</p>
+                                <p className="text-slate-400 text-[11px] mt-0.5 font-medium leading-normal">{item.desc}</p>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {navItems.map((item, idx) => (
+                  <Link
+                    key={idx}
+                    href={item.href}
+                    className="text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5 whitespace-nowrap"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </>
+            )}
           </div>
 
           {/* RIGHT ACTIONS */}
@@ -183,8 +244,49 @@ export default function Navbar() {
           >
             <div className="max-w-lg mx-auto space-y-10">
               <div className="space-y-4">
-                <p className="text-blue-500 font-black text-[10px] uppercase tracking-[0.4em] px-2">Navigation</p>
+                <p className="text-blue-500 font-black text-[10px] uppercase tracking-[0.4em] px-2 text-left">Navigation</p>
                 <div className="grid grid-cols-1 gap-2">
+                  
+                  {/* Collapsible Services */}
+                  <div>
+                    <button
+                      onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                      className="flex items-center justify-between w-full p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all text-white font-bold text-[14px] active:scale-[0.98]"
+                    >
+                      <span>Services</span>
+                      <ChevronDown size={16} className={`transition-transform duration-300 ${mobileServicesOpen ? 'rotate-180 text-white' : 'text-slate-400'}`} />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {mobileServicesOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-hidden pl-4 pr-2 py-2 grid grid-cols-1 gap-2 mt-1 bg-white/[0.02] border border-white/5 rounded-2xl text-left"
+                        >
+                          {services.map((item) => {
+                            const Icon = item.icon;
+                            return (
+                              <Link
+                                key={item.name}
+                                href={item.href}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 text-slate-300 hover:text-white transition-all"
+                              >
+                                <div className={`w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 ${item.color}`}>
+                                  <Icon size={16} />
+                                </div>
+                                <span className="font-bold text-[13px]">{item.name}</span>
+                              </Link>
+                            );
+                          })}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
                   {navItems.map((item, idx) => (
                     <motion.div
                       key={idx}
