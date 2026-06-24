@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NyayNow – Funding & Monetization Roadmap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── RESET & BASE ── */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 0;
+      font-family: 'Inter', sans-serif;
+      color: #1e293b;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── CONTROLS ── */
+    .controls {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+    }
+    .btn {
+      padding: 10px 24px;
+      background: #1e3a8a;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    /* ── A4 SHEET (210mm x 297mm) ── */
+    .a4 {
+      width: 210mm;
+      height: 297mm;
+      background: #ffffff;
+      box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      padding: 18mm 20mm 15mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Top decorative border */
+    .a4::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%);
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .brand-logo {
+      height: 38px;
+      width: auto;
+    }
+
+    .brand-text h1 {
+      font-size: 18pt;
+      font-weight: 800;
+      color: #1e3a8a;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-text p {
+      font-size: 7.5pt;
+      font-weight: 600;
+      color: #b45309;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .doc-meta {
+      text-align: right;
+      font-size: 8pt;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    /* ── CONTENT SECTION ── */
+    .title-block {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .title-block h2 {
+      font-size: 14pt;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .title-block p {
+      font-size: 9pt;
+      color: #64748b;
+      font-style: italic;
+    }
+
+    /* ── GRID LAYOUT FOR ROADMAP ── */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      flex-grow: 1;
+    }
+
+    .section-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .section-card.full-width {
+      grid-column: span 2;
+    }
+
+    .section-title {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #1e3a8a;
+      border-left: 3px solid #3b82f6;
+      padding-left: 8px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .section-card p {
+      font-size: 8.5pt;
+      line-height: 1.5;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .bullet-list {
+      list-style-type: none;
+      font-size: 8.5pt;
+      color: #334155;
+    }
+
+    .bullet-list li {
+      position: relative;
+      padding-left: 12px;
+      margin-bottom: 5px;
+      line-height: 1.45;
+    }
+
+    .bullet-list li::before {
+      content: "▪";
+      position: absolute;
+      left: 0;
+      color: #3b82f6;
+      font-size: 9pt;
+    }
+
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 8px;
+    }
+
+    .tag {
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 7.5pt;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .tag.green {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    
+    .tag.amber {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 10px;
+      margin-top: 14px;
+      text-align: center;
+      font-size: 7pt;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer span:nth-child(2) {
+      font-weight: 600;
+    }
+
+    /* ── PRINT RULES ── */
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .controls {
+        display: none;
+      }
+      .a4 {
+        box-shadow: none;
+        padding: 18mm 20mm 15mm;
+        width: 210mm;
+        height: 297mm;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn" onclick="window.print()">🖨️ Print / Save to PDF</button>
+  </div>
+
+  <!-- A4 Sheet Container -->
+  <div class="a4">
+    
+    <!-- Header -->
+    <div class="header">
+      <div class="brand">
+        <img class="brand-logo" src="https://nyaynow.in/logo.png" alt="NyayNow" onerror="this.style.display='none'" />
+        <div class="brand-text">
+          <h1>NyayNow</h1>
+          <p>The AI Legal Operating System of India</p>
+        </div>
+      </div>
+      <div class="doc-meta">
+        <strong>Strategic Document</strong><br />
+        Status: Ready for Pitching<br />
+        Website: <a href="https://nyaynow.in" style="color:#1e3a8a; text-decoration:none;">nyaynow.in</a>
+      </div>
+    </div>
+
+    <!-- Title Block -->
+    <div class="title-block">
+      <h2>Financing & Monetization Roadmap</h2>
+      <p>A strategic guide to securing grants, attracting investment, and launching operations</p>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid">
+      
+      <!-- Section: Executive Summary -->
+      <div class="section-card full-width">
+        <div class="section-title">Project Positioning & Value Proposition</div>
+        <p>
+          NyayNow addresses India's acute justice deficit by providing citizens with 17 AI-backed diagnostic tools (including automated BNS 2024 compliance, local statutory mappings, and FIR document generators) and advocates with a secure practice console. Having verified 91.4% BNS intent classification accuracy across 500 advocate-reviewed cases, the platform is ready for commercialization and seed financing.
+        </p>
+        <div class="tag-container">
+          <span class="tag">Access to Justice</span>
+          <span class="tag">AI Generative Cascade</span>
+          <span class="tag">LegalTech SaaS</span>
+          <span class="tag">BNS/IPC Compliant</span>
+        </div>
+      </div>
+
+      <!-- Section: Grants & Social Impact -->
+      <div class="section-card">
+        <div class="section-title">1. Equity-Free Grants & Prizes</div>
+        <p>Due to the platform's social impact potential, pursue non-dilutive financing first:</p>
+        <ul class="bullet-list">
+          <li><strong>HiiL Justice Accelerator:</strong> Hague-based program offering €10,000 to €20,000 equity-free grants and global mentorship.</li>
+          <li><strong>Agami Prize (India):</strong> Premier Indian legal innovation ecosystem offering ₹5L - ₹10L in grants and advocacy partnerships.</li>
+          <li><strong>Samanway Foundation:</strong> Focuses on open-source, civic-tech tooling integrations in India.</li>
+        </ul>
+        <div class="tag-container">
+          <span class="tag green">HiiL Challenge</span>
+          <span class="tag green">Agami Co-Lab</span>
+        </div>
+      </div>
+
+      <!-- Section: Accelerators & VCs -->
+      <div class="section-card">
+        <div class="section-title">2. Accelerators & Seed VCs</div>
+        <p>To scale engineering and geographic expansion, target equity partners:</p>
+        <ul class="bullet-list">
+          <li><strong>Startup India Seed Fund:</strong> Up to ₹20 Lakhs for prototyping and ₹50 Lakhs for commercial scaling.</li>
+          <li><strong>Academic Incubators:</strong> Target host institutions (e.g., IIT Madras Incubation Cell, IIMB NSRCEL) for workspace and capital.</li>
+          <li><strong>Y Combinator & Antler India:</strong> Pitch the tech stack during cohorts. YC supports vertical legal SaaS; Antler provides $100K - $150K.</li>
+        </ul>
+        <div class="tag-container">
+          <span class="tag amber">Startup India</span>
+          <span class="tag amber">Y Combinator</span>
+        </div>
+      </div>
+
+      <!-- Section: Monetization Engine -->
+      <div class="section-card">
+        <div class="section-title">3. Revenue & Monetization Models</div>
+        <p>Build sustainability while complying with Bar Council rules on fee sharing:</p>
+        <ul class="bullet-list">
+          <li><strong>SaaS for Advocates:</strong> Monthly premium tiers (₹999/mo) for the <em>Devil's Advocate</em>, <em>Case Timeline Analyser</em>, and practice management tools.</li>
+          <li><strong>Academic Licensing:</strong> SaaS subscriptions for Law Universities to run the AI <em>Moot Court Evaluator</em>.</li>
+          <li><strong>Convenience Fee:</strong> Flat matchmaking fees for clients booking consults, bypassing percent commissions.</li>
+        </ul>
+        <div class="tag-container">
+          <span class="tag">B2B SaaS</span>
+          <span class="tag">University Licensing</span>
+        </div>
+      </div>
+
+      <!-- Section: Launch & Traction -->
+      <div class="section-card">
+        <div class="section-title">4. Visibility & Launch Roadmap</div>
+        <p>Optimize organic acquisition channels to collect usage metrics:</p>
+        <ul class="bullet-list">
+          <li><strong>Hacker News (Show HN):</strong> Target engineers and VCs by highlighting your RAG and prompt cascade paper.</li>
+          <li><strong>Product Hunt & Peerlist:</strong> Launch to the tech community for reviews and initial directory exposure.</li>
+          <li><strong>Signed LOIs (Advocate Pilot):</strong> Distribute your Letter of Intent to secure 10+ active advocate pilot signups.</li>
+        </ul>
+        <div class="tag-container">
+          <span class="tag">Product Hunt</span>
+          <span class="tag">Peerlist</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <span>NyayNow Strategic Roadmap • Confidential</span>
+      <span>nyaynow.in</span>
+      <span>Generated 2026</span>
+    </div>
+
+  </div>
+
+</body>
+</html>

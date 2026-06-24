@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NyayNow: Official User & Operational Manual (www.nyaynow.in)</title>
+  <!-- Google Fonts for elite, premium styling -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ----------------------------------------------------
+       CORE DESIGN SYSTEM (Premium Dark-Slate & Gold Theme)
+       ---------------------------------------------------- */
+    :root {
+      --bg-dark: #020617;
+      --bg-card: #0f172a;
+      --bg-card-hover: #1e293b;
+      --primary: #3b82f6;      /* Vibrant Blue */
+      --accent: #f59e0b;       /* Gold */
+      --secondary: #10b981;    /* Emerald Green */
+      --text-main: #f1f5f9;
+      --text-muted: #64748b;
+      --border: #1e293b;
+      --font-title: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      font-size: 13.5px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-title);
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .page-break {
+      page-break-before: always !important;
+      break-before: page !important;
+    }
+
+    /* ----------------------------------------------------
+       PAGINATION & PRINT STYLES
+       ---------------------------------------------------- */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+      }
+      .page-break {
+        page-break-before: always !important;
+        break-before: page !important;
+      }
+      .card, .step-block, .ai-badge, .code-matrix, .toc-container {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+      }
+      h1, h2, h3, h4 {
+        color: #0f172a !important;
+        page-break-after: avoid !important;
+      }
+      p, li, td, th, span {
+        color: #334155 !important;
+      }
+      .cover-page {
+        height: 100vh !important;
+        background: #0f172a !important;
+        color: #ffffff !important;
+      }
+      .cover-page h1, .cover-page h2, .cover-page p, .cover-page .logo-glow {
+        color: #ffffff !important;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 15mm;
+      }
+    }
+
+    /* ----------------------------------------------------
+       LAYOUT CONTAINER
+       ---------------------------------------------------- */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Cover Page Styling */
+    .cover-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+      padding: 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    .logo-glow {
+      font-size: 64px;
+      font-weight: 800;
+      color: var(--primary);
+      font-family: var(--font-title);
+      letter-spacing: 2px;
+      text-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .cover-title {
+      font-size: 32px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      line-height: 1.2;
+      max-width: 800px;
+      margin-top: 20px;
+      margin-bottom: 15px;
+    }
+
+    .cover-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin-bottom: 50px;
+      font-weight: 300;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+      max-width: 700px;
+      border-top: 1px solid var(--border);
+      padding-top: 25px;
+      margin-top: auto;
+    }
+
+    .meta-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .meta-val {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* Section & Chapter Headings */
+    .chapter-header {
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 8px;
+      margin-bottom: 25px;
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .chapter-num {
+      background: var(--primary);
+      color: var(--text-main);
+      font-family: var(--font-title);
+      font-weight: 800;
+      font-size: 14px;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .chapter-title {
+      font-size: 20px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    p {
+      color: var(--text-main);
+      font-size: 13.5px;
+      margin-bottom: 16px;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .intro-paragraph {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .alert {
+      background: rgba(59, 130, 246, 0.04);
+      border-left: 4px solid var(--primary);
+      padding: 15px;
+      border-radius: 0 6px 6px 0;
+      margin: 20px 0;
+    }
+
+    .alert h4 {
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .alert p {
+      margin-bottom: 0;
+      font-size: 12.5px;
+    }
+
+    /* Step Blocks */
+    .step-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .step-badge {
+      background: rgba(59, 130, 246, 0.08);
+      color: var(--primary);
+      font-family: var(--font-title);
+      font-weight: 800;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .step-url {
+      font-family: monospace;
+      color: var(--accent);
+      font-size: 11px;
+      margin-left: auto;
+    }
+
+    .field-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 11.5px;
+    }
+
+    .field-table th, .field-table td {
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    .field-table th {
+      background: rgba(15, 23, 42, 0.6);
+      color: var(--primary);
+    }
+
+    .field-type {
+      font-family: monospace;
+      color: var(--secondary);
+    }
+
+    .code-matrix {
+      background: #010409;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 10.5px;
+      color: #58a6ff;
+      overflow-x: auto;
+      margin-top: 20px;
+      line-height: 1.4;
+    }
+
+    .toc-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 30px;
+    }
+
+    .toc-title {
+      font-size: 15px;
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 5px;
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .toc-link {
+      font-size: 12.5px;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       COVER PAGE
+       ========================================== -->
+  <div class="cover-page">
+    <div class="logo-container">
+      <div class="logo-glow">⚖ NyayNow</div>
+    </div>
+    <h1 class="cover-title">Official Web App User Manual</h1>
+    <h2 class="cover-subtitle">100% Codebase-Accurate Operating Guide for Clients & advocates at www.nyaynow.in</h2>
+    
+    <div class="meta-grid">
+      <div class="meta-item">
+        <div class="meta-label">Manual Type</div>
+        <div class="meta-val">Official User Manual</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Live Platform URL</div>
+        <div class="meta-val">www.nyaynow.in</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">BNS Revision</div>
+        <div class="meta-val">BNS 2026 Core (v1.0)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ==========================================
+       TABLE OF CONTENTS & INTRO
+       ========================================== -->
+  <div class="container">
+    <div class="toc-container">
+      <div class="toc-title">Table of Chapters</div>
+      <div class="toc-grid">
+        <div class="toc-link">1. <a href="#chapter-landing">Chapter 1: The Core Web Ecosystem (Bento Ecosystem)</a></div>
+        <div class="toc-link">2. <a href="#chapter-client">Chapter 2: Client Cockpit & Triage Workspace</a></div>
+        <div class="toc-link">3. <a href="#chapter-lawyer">Chapter 3: Lawyer Command Center & Lead Pipeline</a></div>
+        <div class="toc-link">4. <a href="#chapter-endpoints">Chapter 4: Technical Endpoint & Code Routing Matrix</a></div>
+      </div>
+    </div>
+
+    <div class="alert" style="margin-top: 30px;">
+      <h4>Strictly Accurate Codebase Grounding</h4>
+      <p>
+        This manual is compiled directly from the live React pages under <code>client/src/app/*</code> and <code>client/legacy_ignore/pages/*</code>, alongside the Node.js Express controllers in <code>server/routes/*</code>. It contains the exact inputs, data parameters, SpeechRecognition voice triggers, and WebRTC websocket rooms actually deployed on <strong>www.nyaynow.in</strong>. No generic or simulated features are listed.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       CHAPTER 1: THE BENTO ECOSYSTEM
+       ========================================== -->
+  <div class="page-break"></div>
+  <div class="container" id="chapter-landing">
+    
+    <div class="chapter-header">
+      <div class="chapter-num">CH 01</div>
+      <h2 class="chapter-title">The Bento Ecosystem (Homepage Core Features)</h2>
+    </div>
+
+    <p class="intro-paragraph">
+      The landing page at <strong>www.nyaynow.in</strong> highlights four flagship AI legal applications inside an interactive bento grid. This chapter details their exact operational interfaces and parameters.
+    </p>
+
+    <!-- Bento 1: NyayCourt Simulator -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-badge">Flagship Module</span>
+        <h3 class="step-title">NyayCourt Simulator (Neural Trial Engine)</h3>
+        <span class="step-url">www.nyaynow.in/courtroom-battle</span>
+      </div>
+      <p>
+        This module simulates a multi-round courtroom trial between three AI legal agents—Prosecution, Defense, and the Bench—to stress-test case facts.
+      </p>
+      <p><strong>Actual Inputs & Controls:</strong></p>
+      <table class="field-table">
+        <thead>
+          <tr>
+            <th>Field Name</th>
+            <th>Type</th>
+            <th>Description & Voice Option</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Case Category</td>
+            <td class="field-type">Button Selector</td>
+            <td>Options: Civil, Criminal, Property, Family, Consumer, Corporate</td>
+          </tr>
+          <tr>
+            <td>Case Facts & Context</td>
+            <td class="field-type">Textarea (Speech-to-Text)</td>
+            <td>Primary facts. Built-in **Voice Entry** utilizes SpeechRecognition API.</td>
+          </tr>
+          <tr>
+            <td>Prosecution Position</td>
+            <td class="field-type">Textarea</td>
+            <td>Description of demand.</td>
+          </tr>
+          <tr>
+            <td>Defense Position</td>
+            <td class="field-type">Textarea</td>
+            <td>Opposition parameters.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>The Operational Process:</strong></p>
+      <ol style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>Submit facts. Click <strong>"Initialize AI Trial"</strong> (POST payload maps to <code>/api/ai/courtroom-battle</code>).</li>
+        <li>Rounds reveal progressively using an active typewriter effect. Color bars represent speakers: Prosecution (Amber), Defense (Indigo), Judge (Rose/Red).</li>
+        <li>**Verdict Reveal:** Displays a final ruling by *Hon. Justice R.K. Krishnamurthy*, win-probability split chart, decider factors, cited Indian Kanoon precedents, and the final Court Order.</li>
+      </ol>
+    </div>
+
+    <!-- Bento 2: NyayVoice AI -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-badge">Accessibility Module</span>
+        <h3 class="step-title">NyayVoice AI Dialect Consultant</h3>
+        <span class="step-url">www.nyaynow.in/voice-assistant</span>
+      </div>
+      <p>
+        A voice-to-voice consultation interface translating lay narratives into structured legal responses, breaking linguistic barriers.
+      </p>
+      <p><strong>Actual Controls & Dialect Support:</strong></p>
+      <ul style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>**Language Selection Dropdown:** English (India) [<code>en-IN</code>], Hindi (हिन्दी) [<code>hi-IN</code>], Bengali (বাংলা) [<code>bn-IN</code>], Tamil (தமிழ்) [<code>ta-IN</code>].</li>
+        <li>**Interactive Mic Button:** Toggles continuous recording via web speech browser interface.</li>
+        <li>**Voice Synthesis Feedback:** Speaks back the AI response in the selected dialect utilizing `window.speechSynthesis`.</li>
+      </ul>
+    </div>
+
+    <!-- Bento 3: Smart Drafting Lab -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-badge">Draft & Risk Lab</span>
+        <h3 class="step-title">Smart Drafting & Risk Analysis Lab</h3>
+        <span class="step-url">www.nyaynow.in/drafting</span>
+      </div>
+      <p>
+        Features two major active tabs to draft NDAs and scan agreement PDF files for hidden contractual risks.
+      </p>
+      <p><strong>Tab 1: Smart Draft</strong></p>
+      <ul style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>**Document Type Dropdown:** NDA, Legal Service Proposal, Employment Contract, Rent Agreement, Freelance Agreement, Legal Notice.</li>
+        <li>**Parties Involved & Key Terms:** Textarea with voice entry. Click **"Generate Document"** (POST request to <code>/api/ai/draft-contract</code>) to render markdown contract text.</li>
+        <li>**DocuSign e-Sign Integration:** Click **"e-Sign"** to send the contract base64 string to <code>/api/docusign/sign</code>, launching a secure signing envelope in a new tab.</li>
+      </ul>
+      <p><strong>Tab 2: Risk Analysis</strong></p>
+      <ul style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>**PDF Uploader & Text Input:** Securely upload a contract `.pdf` file (POST to <code>/api/ai/analyze-agreement-pdf</code>) or paste raw text.</li>
+        <li>**Structured AI Output:** Renders a numeric **Clarity Score** (e.g., 85/100), **Risk Assessment Level** (High/Medium/Low), bulleted lists of **Critical Loopholes** (missing clauses), and **Ambiguous Terms**.</li>
+      </ul>
+    </div>
+
+    <!-- Bento 4: Precedent Engine -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-badge">Semantic Research</span>
+        <h3 class="step-title">Precedent Engine (Semantic Precedent Finder)</h3>
+        <span class="step-url">www.nyaynow.in/research</span>
+      </div>
+      <p>
+        A search console utilizing neural embeddings to locate active legal precedents from court records.
+      </p>
+      <p><strong>Operational Action Guide:</strong></p>
+      <ol style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>Type a query (e.g. <i>"Right to privacy under Article 21"</i>) and click **Search**.</li>
+        <li>The backend issues a query to the model chat handler, parsing out a structured JSON block containing: Case Name, Official Citation, detailed precedent Summary, and calculated Relevance Score percentage.</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       CHAPTER 2: CLIENT COCKPIT & TRIAGE
+       ========================================== -->
+  <div class="page-break"></div>
+  <div class="container" id="chapter-client">
+    
+    <div class="chapter-header">
+      <div class="chapter-num">CH 02</div>
+      <h2 class="chapter-title">Client Cockpit & Triage Workspace</h2>
+    </div>
+
+    <p class="intro-paragraph">
+      This chapter outlines the operational client cockpit interface (configured in <code>ClientDashboard.jsx</code>) where litigants manage active cases and request consultations.
+    </p>
+
+    <!-- Client Dashboard Overview -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-badge">Dashboard Tab 1</span>
+        <h3 class="step-title">Dashboard Overview & Legal Reels</h3>
+        <span class="step-url">www.nyaynow.in/client/dashboard?tab=overview</span>
+      </div>
+      <p>
+        The central client control center displays case timelines, invoicing ledgers, appointments, and connections.
+      </p>
+      <p><strong>Actual Workflows:</strong></p>
+      <ol style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>**Active Cases Timeline:** Displays case listings dynamically fetched from <code>/api/cases?postedBy=phone</code>. Renders case progressions visually using a dedicated `CaseTimeline` component.</li>
+        <li>**Legal Reels:** Renders a short-form video reels console (`LegalReels`) built using dynamic React imports to educate users on regional rights.</li>
+        <li>**Suggested Lawyers list:** Automatically displays cards of top registered advocates. Click **"Connect"** to hit <code>POST /api/connections</code>.</li>
+      </ol>
+    </div>
+
+    <!-- P2P WebSocket Consultations -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-badge">WebSocket Room</span>
+        <h3 class="step-title">Instant WebSocket Consultation & Video Meet Rooms</h3>
+        <span class="step-url">www.nyaynow.in/meet/:meetingId</span>
+      </div>
+      <p>
+        The platform implements direct socket events for real-time consultation dispatch.
+      </p>
+      <p><strong>The WebSocket Dispatch Loop:</strong></p>
+      <ol style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>Client clicks **"Request Instant Consultation"**. The client node emits `join_room` and notifies the server pool.</li>
+        <li>The server broadcasts `incoming_lead` to all online advocates subscribed via WebSocket `join_lawyer_pool`.</li>
+        <li>Upon advocate acceptance, the socket broadcasts `consult_start` with a generated unique `meetingId`.</li>
+        <li>Both client and advocate are instantly redirected to <strong>www.nyaynow.in/meet/:meetingId</strong>, launching WebRTC video consultation panels.</li>
+      </ol>
+    </div>
+
+    <!-- Anonymous Confession Booth -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-badge">Confession Booth</span>
+        <h3 class="step-title">Anonymous Confession Booth</h3>
+        <span class="step-url">www.nyaynow.in/client/dashboard?tab=feed</span>
+      </div>
+      <p>
+        An anonymous advice forum allowing citizens to post legal worries and receive AI diagnostics without storing user logs.
+      </p>
+      <p><strong>Operational Action Guide:</strong></p>
+      <ol style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>Navigate to the feed tab. Submit an intake form describing a grievance.</li>
+        <li>The database router <code>/api/confessions</code> intercepts the payload, redacts user details using query projection boundaries, and asynchronously attaches AI-generated statutory diagnostics to the post.</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       CHAPTER 3: LAWYER COMMAND CENTER
+       ========================================== -->
+  <div class="page-break"></div>
+  <div class="container" id="chapter-lawyer">
+    
+    <div class="chapter-header">
+      <div class="chapter-num">CH 03</div>
+      <h2 class="chapter-title">Lawyer Command Center & Lead Pipeline</h2>
+    </div>
+
+    <p class="intro-paragraph">
+      This chapter details the advocate operations dashboard (<code>LawyerDashboard.jsx</code>) where legal professionals manage clients, verify credentials, and invoice fees.
+    </p>
+
+    <!-- Onboarding verification -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-badge">Bar Onboarding</span>
+        <h3 class="step-title">DigiLocker Bar Verification</h3>
+        <span class="step-url">www.nyaynow.in/digilocker-verify</span>
+      </div>
+      <p>
+        The platform enforces strict practitioner verification. Simple payments do not verify an advocate.
+      </p>
+      <p><strong>Operational Action Guide:</strong></p>
+      <ol style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>Go to `www.nyaynow.in/digilocker-verify`. Select your State Bar Council and input your Bar Council registration number.</li>
+        <li>The system triggers a secure government gateway handshake contract. Upon successful callback verification of your credentials, the database sets user status to `verified: true` and unlocks bidding rights on the Lead Pool.</li>
+      </ol>
+    </div>
+
+    <!-- Active CRM & Kanban Workload -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-badge">Practice Tabs</span>
+        <h3 class="step-title">Kanban Workload & Client CRM Insights</h3>
+        <span class="step-url">www.nyaynow.in/lawyer/dashboard?tab=board</span>
+      </div>
+      <p>
+        Advocates organize active matters using advanced workflow tools.
+      </p>
+      <p><strong>Key Workspace Tabs:</strong></p>
+      <ol style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>**Kanban Board (board):** A task widget (`KanbanBoard`) where advocates drag-and-drop client milestones (e.g. "Written Statement", "Evidence Filing").</li>
+        <li>**Client CRM (crm):** Displays a client relationship analytics console (`ClientCRM`) dynamically synced with backend insights from <code>/api/crm/insights</code>.</li>
+        <li>**Notice Generator (notices):** Includes an integrated notices drafter (`LegalNoticeGenerator`) to compile pre-litigation notices based on form parameters.</li>
+      </ol>
+    </div>
+
+    <!-- Billing and Invoicing -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-badge">Escrow Ledger</span>
+        <h3 class="step-title">Milestone Escrow Invoicing & Payment Gates</h3>
+        <span class="step-url">www.nyaynow.in/payment</span>
+      </div>
+      <p>
+        Advocates secure and track their consulting and retainer fees utilizing Razorpay payment gateways and secure escrow ledger slots.
+      </p>
+      <p><strong>Operational Action Guide:</strong></p>
+      <ol style="margin-left: 20px; margin-bottom: 12px; font-size: 13px;">
+        <li>In the billing panel, click <strong>"Create Milestone Invoice"</strong>.</li>
+        <li>Fill in the fields: Client ID (dropdown), Amount, and Milestone Description. Click send.</li>
+        <li>The system writes the record to the `Invoice` collection (POST payload to <code>/api/invoices</code>). When paid, the funds are held in secure escrow until the case milestone is verified and released.</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       CHAPTER 4: ENDPOINT & ROUTE MATRIX
+       ========================================== -->
+  <div class="page-break"></div>
+  <div class="container" id="chapter-endpoints">
+    
+    <div class="chapter-header">
+      <div class="chapter-num">CH 04</div>
+      <h2 class="chapter-title">Technical Endpoint & Code Routing Matrix</h2>
+    </div>
+
+    <p class="intro-paragraph">
+      This technical index maps the user interface guides directly to the underlying React files and Express API server routes.
+    </p>
+
+    <div class="code-matrix">
+  ==========================================================================================
+  NYAYNOW PRODUCTION SYSTEM CORE ROUTE MATRIX
+  ==========================================================================================
+
+  [1] FLAGSHIP BENTO ECOSYSTEM CHANNELS
+  * NyayCourt Simulator:
+    - Frontend Page: client/src/app/courtroom-battle/page.js
+    - Backend API:   POST server/routes/ai.js  -->  /api/ai/courtroom-battle
+  * NyayVoice Assistant:
+    - Frontend Page: client/src/app/voice-assistant/page.js
+    - Backend API:   POST server/routes/ai.js  -->  /api/ai/chat
+  * Smart Drafting Lab:
+    - Frontend Page: client/legacy_ignore/pages/DraftingLab.jsx (dynamically imported)
+    - Backend API:   POST server/routes/ai.js  -->  /api/ai/draft-contract
+    - Risk PDF API:  POST server/routes/ai.js  -->  /api/ai/analyze-agreement-pdf
+    - e-Sign API:    POST server/routes/docusign.js  -->  /api/docusign/sign
+  * Precedent Engine:
+    - Frontend Page: client/src/app/research/page.js
+    - Backend API:   POST server/routes/ai.js  -->  /api/ai/chat
+
+  [2] CLIENT COCKPIT CHANNELS (client/src/dashboards/ClientDashboard.jsx)
+  * Load Active Cases:  GET server/routes/cases.js  -->  /api/cases?postedBy=:phone
+  * Create Case:        POST server/routes/cases.js  -->  /api/cases
+  * Load Invoices:      GET server/routes/invoices.js  -->  /api/invoices?clientId=:uId
+  * Confession Booth:   POST server/routes/confessions.js  -->  /api/confessions
+
+  [3] ADVOCATE COMMAND CHANNELS (client/src/dashboards/LawyerDashboard.jsx)
+  * Bar Verification:   POST server/routes/verification.js  -->  /api/verification
+  * Load Leads:         GET server/routes/cases.js  -->  /api/cases?open=true
+  * CRM Insights:       GET server/routes/crm.js  -->  /api/crm/insights?userId=:uId
+  * Create Invoice:     POST server/routes/invoices.js  -->  /api/invoices
+    </div>
+
+    <p style="margin-top: 30px; font-size: 11px; color: var(--text-muted); text-align: center;">
+      NyayNow Systems Manual · Strictly Confidential · For Production Administrators · www.nyaynow.in
+    </p>
+
+  </div>
+
+</body>
+</html>

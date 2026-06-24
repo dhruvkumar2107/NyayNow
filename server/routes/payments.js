@@ -1,0 +1,283 @@
+const express = require("express");
+const router = express.Router();
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
+const verifyToken = require("../middleware/authMiddleware");
+const User = require("../models/User");
+
+/* -------------------- RAZORPAY INIT -------------------- */
+const razorpay = process.env.RZP_KEY_ID ? new Razorpay({
+  key_id: process.env.RZP_KEY_ID,
+  key_secret: process.env.RZP_KEY_SECRET
+}) : null;
+
+// Health check to verify Keys on server startup
+if (!process.env.RZP_KEY_ID) {
+  console.error("❌ RAZORPAY ERROR: RZP_KEY_ID is missing from environment variables!");
+} else {
+  console.log("✅ RAZORPAY INFO: Key ID is present:", process.env.RZP_KEY_ID.substring(0, 8) + "...");
+}
+
+const Payment = require("../models/Payment");
+
+/**
+ * POST /api/payments/create-order
+ */
+router.post("/create-order", verifyToken, async (req, res) => {
+  try {
+    const { amount_rupees, plan } = req.body;
+    
+    // Explicitly convert and validate amount
+    const cleanAmount = Number(amount_rupees);
+
+    // Fetch current user email from DB to ensure integrity
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    if (!cleanAmount || !plan) {
+      return res.status(400).json({ error: "Missing or invalid required fields", received: { amount_rupees, plan } });
+    }
+
+    const orderOptions = {
+      amount: Math.round(cleanAmount * 100), // paise
+      currency: "INR",
+      receipt: `receipt_${Date.now()}_${req.userId.substring(0, 5)}`,
+      notes: { plan, email: user.email, userId: req.userId }
+    };
+
+    if (!razorpay) {
+      return res.status(500).json({ error: "Razorpay payment integration is not configured on this server instance." });
+    }
+
+    const order = await razorpay.orders.create(orderOptions);
+
+    res.json({
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      key: process.env.RZP_KEY_ID
+    });
+  } catch (err) {
+    console.error("Create order error:", err);
+    res.status(500).json({ 
+      error: "Order creation failed", 
+      details: err.message || "Unknown error string",
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
+  }
+});
+
+/* -------------------- VERIFY PAYMENT -------------------- */
+/**
+ * POST /api/payments/verify
+ */
+router.post("/verify", verifyToken, async (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature
+    } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ error: "Missing payment details" });
+    }
+
+    if (!razorpay) {
+      return res.status(500).json({ error: "Razorpay payment integration is not configured." });
+    }
+
+    // Verify signature
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RZP_KEY_SECRET)
+      .update(body)
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({ error: "Invalid signature" });
+    }
+
+    // Fetch order server-side from Razorpay to prevent tampering
+    const order = await razorpay.orders.fetch(razorpay_order_id);
+    const verifiedPlan = order.notes?.plan;
+    const verifiedAmount = order.amount; // in paise
+    const verifiedUserId = order.notes?.userId;
+
+    if (!verifiedPlan) {
+      return res.status(400).json({ error: "Order missing plan metadata" });
+    }
+
+    // Verify the order belongs to the requesting user
+    if (verifiedUserId && verifiedUserId !== req.userId) {
+      return res.status(403).json({ error: "Order does not belong to this user" });
+    }
+
+    const User = require("../models/User");
+    const Payment = require("../models/Payment");
+
+    const normalizedPlan = verifiedPlan.toLowerCase();
+    const isCreditPack = normalizedPlan.startsWith("credits_");
+    const isAppointment = normalizedPlan.startsWith("appointment_");
+
+    // Price validation map
+    const PLAN_PRICES_PAISE = {
+      silver: 29900,
+      gold: 59900,
+      diamond: 99900,
+      credits_1: 9900,
+      credits_20: 19900
+    };
+
+    if (isAppointment) {
+      const parts = verifiedPlan.split("_");
+      const appointmentId = parts[1];
+      const Appointment = require("../models/Appointment");
+      const appointment = await Appointment.findById(appointmentId);
+      if (!appointment || appointment.clientId.toString() !== req.userId) {
+        return res.status(403).json({ error: "Appointment not found or not yours" });
+      }
+      const expectedPaise = Math.round(appointment.fee * 100);
+      if (verifiedAmount !== expectedPaise) {
+        return res.status(400).json({ error: "Amount mismatch for appointment fee" });
+      }
+    } else if (PLAN_PRICES_PAISE[normalizedPlan]) {
+      if (verifiedAmount !== PLAN_PRICES_PAISE[normalizedPlan]) {
+        return res.status(400).json({ error: "Amount mismatch for plan" });
+      }
+    } else {
+      return res.status(400).json({ error: "Invalid or unrecognized plan" });
+    }
+
+    // 1. Upgrade User or Process Action
+    let updatedUser;
+
+    if (isAppointment) {
+      const parts = verifiedPlan.split("_");
+      const appointmentId = parts[1];
+      const Appointment = require("../models/Appointment");
+      const updatedApt = await Appointment.findByIdAndUpdate(
+        appointmentId,
+        {
+          paymentStatus: "paid",
+          status: "confirmed",
+          paymentId: razorpay_payment_id
+        },
+        { new: true }
+      );
+      if (!updatedApt) {
+        return res.status(404).json({ error: "Appointment not found" });
+      }
+      updatedUser = await User.findById(req.userId);
+    } else if (isCreditPack) {
+      const parts = verifiedPlan.split("_");
+      const creditsToAdd = parseInt(parts[1]) || 0;
+      
+      const userObj = await User.findById(req.userId);
+      if (!userObj) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      userObj.credits = (userObj.credits || 0) + creditsToAdd;
+      updatedUser = await userObj.save();
+    } else {
+      const updateData = {
+        plan: normalizedPlan
+      };
+      updatedUser = await User.findByIdAndUpdate(
+        req.userId,
+        updateData,
+        { new: true }
+      );
+    }
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // 2. Save Payment Record
+    await Payment.create({
+      orderId: razorpay_order_id,
+      paymentId: razorpay_payment_id,
+      signature: razorpay_signature,
+      user: updatedUser._id,
+      amount: verifiedAmount / 100, // store in rupees
+      plan: verifiedPlan
+    });
+
+    res.json({ success: true, user: updatedUser });
+  } catch (err) {
+    console.error("Verify error:", err);
+    res.status(500).json({ error: "Payment verification failed" });
+  }
+});
+
+/* -------------------- RAZORPAY WEBHOOK -------------------- */
+/**
+ * POST /api/payments/webhook
+ * Razorpay sends events here. Must be registered in the Razorpay Dashboard.
+ * NOTE: This route must receive the RAW body - do NOT add express.json() before this route.
+ */
+router.post("/webhook", express.raw({ type: "application/json", limit: "100kb" }), async (req, res) => {
+  try {
+    const webhookSecret = process.env.RZP_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      console.error("❌ RZP_WEBHOOK_SECRET is not set. Rejecting webhook.");
+      return res.status(500).json({ error: "Webhook secret not configured" });
+    }
+
+    const signature = req.headers["x-razorpay-signature"];
+    if (!signature) {
+      return res.status(400).json({ error: "Missing Razorpay signature header" });
+    }
+
+    // Verify HMAC-SHA256 signature
+    const expectedSignature = crypto
+      .createHmac("sha256", webhookSecret)
+      .update(req.body) // raw Buffer
+      .digest("hex");
+
+    if (expectedSignature !== signature) {
+      console.warn("⚠️  Razorpay webhook signature mismatch - possible forgery");
+      return res.status(400).json({ error: "Invalid webhook signature" });
+    }
+
+    const event = JSON.parse(req.body.toString());
+    const eventType = event.event;
+
+    console.log(`[Webhook] Received Razorpay event: ${eventType}`);
+
+    // Handle payment.captured and subscription.charged
+    if (eventType === "payment.captured" || eventType === "subscription.charged") {
+      let notes;
+      if (eventType === "payment.captured") {
+        notes = event.payload?.payment?.entity?.notes || {};
+      } else {
+        // subscription.charged - notes live on the subscription
+        notes = event.payload?.subscription?.entity?.notes || {};
+      }
+
+      const { userId, plan } = notes;
+
+      if (userId && plan) {
+        const cleanPlan = plan.toLowerCase();
+        // Only upgrade subscription plans, not credit packs or appointment payments
+        if (!cleanPlan.startsWith("credits_") && !cleanPlan.startsWith("appointment_")) {
+          await User.findByIdAndUpdate(userId, { plan: cleanPlan }, { new: true });
+          console.log(`[Webhook] Upgraded user ${userId} to plan: ${cleanPlan}`);
+        }
+      } else {
+        console.warn(`[Webhook] ${eventType} missing userId or plan in notes:`, notes);
+      }
+    }
+
+    // Always return 200 so Razorpay doesn't retry
+    return res.status(200).json({ received: true });
+  } catch (err) {
+    console.error("[Webhook] Error processing Razorpay webhook:", err);
+    // Still return 200 to prevent Razorpay from retrying on our internal errors
+    return res.status(200).json({ received: true });
+  }
+});
+
+module.exports = router;
