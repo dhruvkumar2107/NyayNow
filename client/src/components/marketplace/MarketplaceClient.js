@@ -27,6 +27,16 @@ export default function MarketplaceClient({ initialLawyers }) {
     const [showVerificationModal, setShowVerificationModal] = useState(false)
     // Mobile filter panel toggle
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+    const [lawyerEmail, setLawyerEmail] = useState("")
+    const [emailSubmitted, setEmailSubmitted] = useState(false)
+
+    const handleLawyerOnboardingSubmit = (e) => {
+        e.preventDefault();
+        if (lawyerEmail) {
+            setEmailSubmitted(true);
+            setLawyerEmail("");
+        }
+    };
 
     // Derive Filters
     const specializations = useMemo(() => [...new Set(lawyers.map(l => l.specialization).filter(Boolean))], [lawyers])
@@ -232,8 +242,51 @@ export default function MarketplaceClient({ initialLawyers }) {
                     </div>
 
                     {sortedAndFilteredLawyers.length === 0 ? (
-                        <div className="text-center py-20 text-slate-500 italic bg-[#0f172a] rounded-2xl border border-white/10">
-                            <p>No lawyers found matching your criteria.</p>
+                        <div className="text-center py-12 px-6 bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden text-left">
+                            <div className="absolute -top-24 -left-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+                            <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+                            
+                            <div className="max-w-md mx-auto space-y-6 relative z-10 text-center">
+                                <div className="w-16 h-16 mx-auto rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                                    <ShieldCheck size={32} className="text-indigo-400" />
+                                </div>
+                                <div className="space-y-2">
+                                    <h3 className="text-2xl font-bold text-white font-serif">Expert Advocates Coming Soon</h3>
+                                    <p className="text-slate-400 text-sm leading-relaxed">
+                                        We are currently verifying credentials and onboarding top legal practitioners in this category to ensure elite-level representation.
+                                    </p>
+                                </div>
+                                
+                                {emailSubmitted ? (
+                                    <motion.div 
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold flex items-center justify-center gap-2"
+                                    >
+                                        <CheckCircle size={16} /> Thank you! We will notify you as soon as listings go live.
+                                    </motion.div>
+                                ) : (
+                                    <form onSubmit={handleLawyerOnboardingSubmit} className="space-y-3">
+                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Are you a lawyer? Join the waitlist</p>
+                                        <div className="flex flex-col sm:flex-row gap-2">
+                                            <input
+                                                type="email"
+                                                required
+                                                placeholder="advocate@domain.com"
+                                                value={lawyerEmail}
+                                                onChange={(e) => setLawyerEmail(e.target.value)}
+                                                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition placeholder:text-slate-600 text-sm font-medium"
+                                            />
+                                            <button
+                                                type="submit"
+                                                className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all text-sm whitespace-nowrap"
+                                            >
+                                                Join as a Lawyer
+                                            </button>
+                                        </div>
+                                    </form>
+                                )}
+                            </div>
                         </div>
                     ) : (
                         <div className="grid md:grid-cols-2 gap-6">

@@ -69,7 +69,7 @@ const Disclaimer = () => {
                     </section>
 
                     <section className="p-6 rounded-2xl bg-white/5 border border-white/10 italic text-sm">
-                        Please consult a qualified advocate for official legal queries. Last updated: November 2025.
+                        Please consult a qualified advocate for official legal queries. Last updated: June 2026.
                     </section>
                 </div>
             </motion.div>

@@ -64,7 +64,7 @@ const TermsOfService = () => {
                             4. Refund Policy
                         </h2>
                         <p className="leading-relaxed">
-                            Subscription fees for NyayNow Pro (Gold/Diamond) are generally non-refundable once AI credits have been consumed or a strategic analysis (Judge AI) has been generated. Refund requests made within 24 hours of purchase, where no features have been utilized, may be considered at the sole discretion of the management.
+                            Subscription fees for NyayNow Pro or Firm plans are generally non-refundable once AI credits have been consumed or a strategic analysis (Judge AI) has been generated. Refund requests made within 24 hours of purchase, where no features have been utilized, may be considered at the sole discretion of the management.
                         </p>
                     </section>
 
@@ -108,8 +108,18 @@ const TermsOfService = () => {
                         </p>
                     </section>
 
+                    <section>
+                        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+                            <Scale size={20} className="text-blue-400" />
+                            9. Governing Law & Jurisdiction
+                        </h2>
+                        <p className="leading-relaxed">
+                            These Terms of Service and any dispute or claim arising out of or in connection with them shall be governed by and construed in accordance with the laws of India. The courts of Bengaluru, Karnataka, India shall have exclusive jurisdiction to settle any dispute or claim arising out of or in connection with these Terms.
+                        </p>
+                    </section>
+
                     <section className="p-6 rounded-2xl bg-white/5 border border-white/10 italic text-sm">
-                        By using NyayNow, you agree to these terms. Last updated: November 2025.
+                        By using NyayNow, you agree to these terms. Last updated: June 2026.
                     </section>
                 </div>
             </motion.div>

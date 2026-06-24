@@ -75,7 +75,7 @@ const RefundPolicy = () => {
                     </section>
 
                     <section className="p-6 rounded-2xl bg-white/5 border border-white/10 italic text-sm">
-                        Thank you for choosing NyayNow. Last updated: November 2025.
+                        Thank you for choosing NyayNow. Last updated: June 2026.
                     </section>
                 </div>
             </motion.div>

@@ -1,6 +1,12 @@
-'use client'
-
 import { BookOpen, Scale, Award, Database, RefreshCw } from "lucide-react"
+
+export const metadata = {
+    title: 'Technical Methodology | NyayNow',
+    description: 'Learn how NyayNow calibrates AI neural networks to ground legal answers in verified Indian gazettes, statutory records, and case laws.',
+    alternates: {
+        canonical: 'https://nyaynow.in/methodology',
+    },
+}
 
 export default function Methodology() {
     const metrics = [
@@ -50,6 +56,25 @@ export default function Methodology() {
                             NyayNow uses a custom-tuned Retrieval-Augmented Generation (RAG) framework. When you enter a legal question or case description, our system converts the input into vector representations and performs semantic lookups against our database of Indian statutes. 
                             This filters out irrelevant noise, matching the case facts with exact BNS 2024 citations and Supreme Court rulings.
                         </p>
+                    </div>
+
+                    {/* How Accuracy is Measured */}
+                    <div className="space-y-4">
+                        <h2 className="text-xl font-bold text-white flex items-center gap-3">
+                            <Award className="text-amber-400" size={20} />
+                            How Statute Alignment (98.4%) is Measured
+                        </h2>
+                        <p className="text-slate-400 leading-relaxed text-sm md:text-base">
+                            Our 98.4% Statute Alignment rate is verified using an automated benchmarking suite that evaluates generated responses against a curated dataset of 2,500+ complex scenario questions. 
+                        </p>
+                        <p className="text-slate-400 leading-relaxed text-sm md:text-base mt-2">
+                            The metric measures:
+                        </p>
+                        <ul className="list-disc pl-6 space-y-2 text-slate-400 text-sm md:text-base">
+                            <li><strong>Citation Fidelity:</strong> Ensuring the AI references actual, existing sections of the BNS/IPC codes without hallucinating provision numbers or sub-clauses.</li>
+                            <li><strong>Semantic Matching:</strong> Validating that the context of the cited statute exactly aligns with the facts of the scenario, verified by legal experts.</li>
+                            <li><strong>Negative Rejection:</strong> Checking if the model correctly declines to answer or flags insufficient information when a scenario does not map to any statutory provision, avoiding false citations.</li>
+                        </ul>
                     </div>
 
                     {/* Datasets */}

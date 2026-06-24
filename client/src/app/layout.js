@@ -124,6 +124,36 @@ export default function RootLayout({ children }) {
                 },
                 "query-input": "required name=search_term_string"
             }
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "What is NyayNow?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "NyayNow is an AI-powered legal intelligence platform and verified lawyer marketplace in India, providing instant legal information, autonomous document drafting, and direct connections to expert advocates."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Does NyayNow provide formal legal advice?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "No. NyayNow provides legal information and educational tools. Use of the AI tools does not create an attorney-client relationship, and users are encouraged to consult registered advocates for official legal advice."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How does the Lawyer Marketplace work?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "The Lawyer Marketplace allows users to find, filter, and connect with verified legal professionals across various specializations and jurisdictions in India based on BCI-compliant directory listings."
+                    }
+                }
+            ]
         }
     ];
 

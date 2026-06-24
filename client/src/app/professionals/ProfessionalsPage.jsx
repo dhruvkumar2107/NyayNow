@@ -390,7 +390,7 @@ export default function ProfessionalsPage() {
                 <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-xs font-black uppercase tracking-widest text-emerald-400">Live Dashboard Preview</span>
+                    <span className="text-xs font-black uppercase tracking-widest text-emerald-400">Sample Dashboard (Illustrative Metrics)</span>
                   </div>
 
                   {/* Mock dashboard stats */}

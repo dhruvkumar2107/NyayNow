@@ -151,9 +151,9 @@ export default function Contact() {
                             </h3>
                             <div className="flex gap-3">
                                 {[
-                                    { icon: <Twitter size={18} />, label: 'Twitter / X', href: '#' },
-                                    { icon: <Linkedin size={18} />, label: 'LinkedIn', href: '#' },
-                                    { icon: <Github size={18} />, label: 'GitHub', href: '#' },
+                                    { icon: <Twitter size={18} />, label: 'Twitter / X', href: 'https://twitter.com/nyaynow' },
+                                    { icon: <Linkedin size={18} />, label: 'LinkedIn', href: 'https://linkedin.com/company/nyaynow' },
+                                    { icon: <Github size={18} />, label: 'GitHub', href: 'https://github.com/dhruvkumar2107/NyayNow' },
                                 ].map((s, i) => (
                                     <a key={i} href={s.href} target="_blank" rel="noreferrer"
                                         className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-indigo-600/20 hover:border-indigo-500/30 text-slate-400 hover:text-white transition-all duration-300 text-xs font-bold"

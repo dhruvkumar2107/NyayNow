@@ -113,7 +113,7 @@ const PrivacyPolicy = () => {
                     </section>
 
                     <section className="p-6 rounded-2xl bg-white/5 border border-white/10 italic text-sm">
-                        Your privacy is our priority. Last updated: November 2025.
+                        Your privacy is our priority. Last updated: June 2026.
                     </section>
                 </div>
             </motion.div>
