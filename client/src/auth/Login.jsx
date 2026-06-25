@@ -378,9 +378,14 @@ export default function Login() {
 
           <div className="mt-8 pt-8 border-t border-white/10 text-center">
             <p className="text-slate-400 text-sm mb-4">Don't have an account?</p>
-            <Link href="/register" className="inline-block w-full py-4 rounded-xl border border-gold-500/50 text-gold-400 font-bold hover:bg-gold-500/10 hover:border-gold-400 transition-all duration-300">
-              Create Account
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link href="/register" className="flex-1 py-4 rounded-xl border border-gold-500/50 text-gold-400 font-bold hover:bg-gold-500/10 hover:border-gold-400 transition-all duration-300 text-center text-sm">
+                Sign Up as Client
+              </Link>
+              <Link href="/lawyer/register" className="flex-1 py-4 rounded-xl border border-indigo-500/50 text-indigo-400 font-bold hover:bg-indigo-500/10 hover:border-indigo-400 transition-all duration-300 text-center text-sm">
+                Join as a Lawyer
+              </Link>
+            </div>
           </div>
 
         </div>

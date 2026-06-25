@@ -21,7 +21,7 @@ const INDIAN_CITIES = [
 
 const PHONE_REGEX = /^(\+91[\-\s]?)?[6789]\d{9}$/;
 
-export default function Register() {
+export default function Register({ defaultRole = "client" }) {
   const router = useRouter();
   const { register, loginWithToken } = useAuth();
 
@@ -33,7 +33,7 @@ export default function Register() {
     age: "",
     sex: "",
     phone: "",
-    role: "client",
+    role: defaultRole,
     specialization: "",
     experience: "",
     barCouncilId: "",

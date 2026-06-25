@@ -68,6 +68,10 @@ router.post("/google", async (req, res) => {
       }
     }
 
+    if (user.role === "lawyer" && !user.verified) {
+      return res.status(403).json({ message: "Your lawyer account is pending verification. Please wait until the administrator approves your credentials." });
+    }
+
     // 5. Issue tokens
     issueTokens(res, user);
 
@@ -157,6 +161,18 @@ router.post("/register", async (req, res, next) => {
       return res.status(400).json({
         message: "Email or Phone already registered",
       });
+    }
+
+    if (role === "lawyer") {
+      if (!isStudent && !barCouncilId) {
+        return res.status(400).json({ message: "Bar Council ID (BCI enrollment number) is required for lawyers." });
+      }
+      if (!isStudent) {
+        const bciRegex = /^[A-Za-z]{2,3}\/\d+\/\d{4}$/;
+        if (!bciRegex.test(barCouncilId.trim())) {
+          return res.status(400).json({ message: "Invalid Bar Council ID format. Expected format: STATE/NUMBER/YEAR (e.g. MAH/1234/2024)" });
+        }
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -356,6 +372,10 @@ router.post("/verify-otp", async (req, res, next) => {
       if (process.env.NODE_ENV !== 'production') console.log("OTP USER CREATED:", user._id);
     }
 
+    if (user.role === "lawyer" && !user.verified) {
+      return res.status(403).json({ success: false, message: "Your lawyer account is pending verification. Please wait until the administrator approves your credentials." });
+    }
+
     issueTokens(res, user);
 
     const userResponse = {
@@ -403,6 +423,11 @@ router.post("/login",
     }
 
     resetLoginAttempts(email);
+
+    if (user.role === "lawyer" && !user.verified) {
+      return res.status(403).json({ message: "Your lawyer account is pending verification. Please wait until the administrator approves your credentials." });
+    }
+
     issueTokens(res, user);
 
     const userResponse = {

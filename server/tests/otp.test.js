@@ -49,6 +49,7 @@ describe('Brevo Email OTP Authentication Flow', () => {
         it('should send OTP and return success in mock mode', async () => {
             const res = await request(app)
                 .post('/api/auth/send-otp')
+                .set('X-CSRF-Protection', '1')
                 .send({ email: testEmail });
 
             expect(res.status).toBe(200);
@@ -70,6 +71,7 @@ describe('Brevo Email OTP Authentication Flow', () => {
         it('should return 400 if email is missing', async () => {
             const res = await request(app)
                 .post('/api/auth/send-otp')
+                .set('X-CSRF-Protection', '1')
                 .send({});
             expect(res.status).toBe(400);
         });
@@ -79,6 +81,7 @@ describe('Brevo Email OTP Authentication Flow', () => {
         it('should fail with incorrect OTP', async () => {
             const res = await request(app)
                 .post('/api/auth/verify-otp')
+                .set('X-CSRF-Protection', '1')
                 .send({ email: testEmail, otp: '000000' });
 
             expect(res.status).toBe(400);
@@ -91,6 +94,7 @@ describe('Brevo Email OTP Authentication Flow', () => {
 
             const res = await request(app)
                 .post('/api/auth/verify-otp')
+                .set('X-CSRF-Protection', '1')
                 .send({ email: testEmail, otp: capturedOtp });
 
             expect(res.status).toBe(200);
