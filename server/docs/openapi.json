@@ -1,0 +1,327 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NyayNow API",
+    "description": "AI-Powered Legal Assistant & Lawyer Marketplace API. Authentication uses httpOnly cookies (set by /api/auth/* endpoints). Protected routes require a valid access token cookie.",
+    "version": "1.0.0",
+    "contact": { "email": "support@nyaynow.in" }
+  },
+  "servers": [
+    { "url": "https://nyaynow.in/api", "description": "Production" },
+    { "url": "http://localhost:4000/api", "description": "Local Development" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "token"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error":   { "type": "string" },
+          "message": { "type": "string" }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id":     { "type": "string" },
+          "name":   { "type": "string" },
+          "email":  { "type": "string", "format": "email" },
+          "role":   { "type": "string", "enum": ["client", "lawyer", "admin"] },
+          "plan":   { "type": "string", "enum": ["free", "silver", "gold", "diamond", "pro", "firm"] },
+          "phone":  { "type": "string" }
+        }
+      }
+    },
+    "parameters": {
+      "csrfHeader": {
+        "in": "header",
+        "name": "X-CSRF-Protection",
+        "required": true,
+        "schema": { "type": "string", "enum": ["1"] }
+      }
+    }
+  },
+  "security": [{ "cookieAuth": [] }],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new user",
+        "security": [],
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password", "role"],
+                "properties": {
+                  "name":     { "type": "string" },
+                  "email":    { "type": "string", "format": "email" },
+                  "password": { "type": "string", "minLength": 8 },
+                  "role":     { "type": "string", "enum": ["client", "lawyer"] },
+                  "phone":    { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Registration successful" },
+          "400": { "description": "Validation error", "$ref": "#/components/schemas/Error" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Email + password login",
+        "security": [],
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email":    { "type": "string", "format": "email" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful. Sets httpOnly token + refreshToken cookies.",
+            "content": { "application/json": { "schema": { "type": "object", "properties": { "user": { "$ref": "#/components/schemas/User" } } } } }
+          },
+          "400": { "description": "Invalid credentials" },
+          "429": { "description": "Account temporarily locked" }
+        }
+      }
+    },
+    "/auth/google": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Google OAuth login / signup",
+        "security": [],
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": { "type": "string", "description": "Google ID token from @react-oauth/google" },
+                  "role":  { "type": "string", "enum": ["client", "lawyer"], "description": "Required only for new users" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" },
+          "202": { "description": "New user — role selection required" },
+          "400": { "description": "Invalid role" }
+        }
+      }
+    },
+    "/auth/send-otp": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Send OTP to email",
+        "security": [],
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "required": ["email"], "properties": { "email": { "type": "string", "format": "email" } } }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "OTP sent" },
+          "429": { "description": "Rate limited — wait before retry" }
+        }
+      }
+    },
+    "/auth/verify-otp": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Verify OTP and log in",
+        "security": [],
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "required": ["email", "otp"], "properties": { "email": { "type": "string" }, "otp": { "type": "string", "minLength": 6, "maxLength": 6 } } }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" },
+          "400": { "description": "Invalid or expired OTP" }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh access token using refreshToken cookie",
+        "security": [],
+        "responses": {
+          "200": { "description": "New access token issued via cookie" },
+          "401": { "description": "Invalid or expired refresh token" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logout and clear auth cookies",
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "responses": { "200": { "description": "Logged out" } }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Request a password reset email",
+        "security": [],
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "type": "object", "required": ["email"], "properties": { "email": { "type": "string" } } } } }
+        },
+        "responses": { "200": { "description": "Generic response (no user enumeration)" } }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Reset password using token from email",
+        "security": [],
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "type": "object", "required": ["token", "newPassword"], "properties": { "token": { "type": "string" }, "newPassword": { "type": "string", "minLength": 8 } } } } }
+        },
+        "responses": { "200": { "description": "Password reset" }, "400": { "description": "Invalid token" } }
+      }
+    },
+    "/users/me": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update own profile",
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "phone": { "type": "string" }, "bio": { "type": "string" }, "specialization": { "type": "string" } } } } }
+        },
+        "responses": { "200": { "description": "Updated user object" }, "403": { "description": "Not authenticated" } }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete own account (DPDP — right to be forgotten). Cascades to all related data.",
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "responses": { "200": { "description": "Account deleted" }, "403": { "description": "Not authenticated" } }
+      }
+    },
+    "/users/me/password": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Change own password",
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["currentPassword", "newPassword"], "properties": { "currentPassword": { "type": "string" }, "newPassword": { "type": "string", "minLength": 8 } } } } }
+        },
+        "responses": { "200": { "description": "Password changed. All sessions invalidated." }, "400": { "description": "Wrong current password" } }
+      }
+    },
+    "/users/public/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get a public lawyer profile",
+        "security": [],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Public user profile (no email/phone)" }, "404": { "description": "Not found" } }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Admin: paginated user search",
+        "parameters": [
+          { "in": "query", "name": "q",     "schema": { "type": "string" }, "description": "Search name or phone" },
+          { "in": "query", "name": "role",  "schema": { "type": "string", "enum": ["client", "lawyer", "admin"] } },
+          { "in": "query", "name": "page",  "schema": { "type": "integer", "default": 1 } },
+          { "in": "query", "name": "limit", "schema": { "type": "integer", "default": 50, "maximum": 100 } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated user list", "content": { "application/json": { "schema": { "type": "object", "properties": { "users": { "type": "array", "items": { "$ref": "#/components/schemas/User" } }, "total": { "type": "integer" }, "page": { "type": "integer" }, "pages": { "type": "integer" } } } } } },
+          "403": { "description": "Admin only" }
+        }
+      }
+    },
+    "/payments/create-order": {
+      "post": {
+        "tags": ["Payments"],
+        "summary": "Create a Razorpay order. Amount is derived server-side from the plan — do not send amount.",
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["plan"], "properties": { "plan": { "type": "string", "enum": ["silver", "gold", "diamond", "credits_1", "credits_20"] }, "appointmentId": { "type": "string", "description": "Required when plan is appointment_<id>" } } } } }
+        },
+        "responses": { "200": { "description": "Razorpay order created" }, "400": { "description": "Invalid plan" } }
+      }
+    },
+    "/payments/verify": {
+      "post": {
+        "tags": ["Payments"],
+        "summary": "Verify payment signature and upgrade user plan",
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["razorpay_order_id", "razorpay_payment_id", "razorpay_signature"], "properties": { "razorpay_order_id": { "type": "string" }, "razorpay_payment_id": { "type": "string" }, "razorpay_signature": { "type": "string" } } } } }
+        },
+        "responses": { "200": { "description": "Payment verified, user upgraded" }, "400": { "description": "Signature mismatch or amount mismatch" } }
+      }
+    },
+    "/ai/assistant": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "AI legal assistant (authenticated optional)",
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["question"], "properties": { "question": { "type": "string" }, "language": { "type": "string", "example": "English" }, "location": { "type": "string" }, "history": { "type": "array", "items": { "type": "object" } } } } } }
+        },
+        "responses": { "200": { "description": "Legal answer with follow-up questions" }, "403": { "description": "Query limit reached" } }
+      }
+    },
+    "/ai/predict-outcome": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "Judge AI — case outcome prediction (premium only)",
+        "parameters": [{ "$ref": "#/components/parameters/csrfHeader" }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["caseTitle", "caseDescription"], "properties": { "caseTitle": { "type": "string" }, "caseDescription": { "type": "string" }, "caseType": { "type": "string" } } } } }
+        },
+        "responses": { "200": { "description": "Prediction JSON" }, "403": { "description": "Premium required" } }
+      }
+    }
+  }
+}

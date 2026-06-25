@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse -Force)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\Lohith-IA\\\\Downloads\\\\NyayNow-main\\\\NyayNow-main\"; Get-ChildItem -Recurse | Where-Object {$_.PSIsContainer} | Select-Object -ExpandProperty FullName | Select-Object -First 50)"
+    ]
+  }
+}

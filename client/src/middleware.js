@@ -1,0 +1,39 @@
+import { NextResponse } from 'next/server'
+
+export function middleware(request) {
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
+  const isDev = process.env.NODE_ENV === 'development'
+
+  const scriptSrc = isDev
+    ? `'self' 'nonce-${nonce}' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com/gsi/client`
+    : `'self' 'nonce-${nonce}' https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com/gsi/client`
+
+  const csp = [
+    "default-src 'self'",
+    `script-src ${scriptSrc}`,
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src 'self' data: blob: https://res.cloudinary.com https://ui-avatars.com https://randomuser.me https://unpkg.com https://www.google-analytics.com https://*.basemaps.cartocdn.com https://basemaps.cartocdn.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "connect-src 'self' https://*.sentry.io https://*.posthog.com https://*.algolia.net https://*.algolianet.com https://api.razorpay.com https://lumberjack.razorpay.com https://www.google-analytics.com wss://nyaynow.in https://nyaynow.in https://accounts.google.com/gsi/",
+    "frame-src https://checkout.razorpay.com https://api.razorpay.com https://accounts.google.com/gsi/",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "upgrade-insecure-requests",
+  ].join('; ')
+
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-nonce', nonce)
+  requestHeaders.set('Content-Security-Policy', csp)
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } })
+  response.headers.set('Content-Security-Policy', csp)
+
+  return response
+}
+
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.ico$|.*\\.svg$|.*\\.webp$|.*\\.avif$|sw\\.js$|manifest\\.json$).*)',
+  ],
+}

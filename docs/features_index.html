@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NyayNow | Exhaustive Feature Architecture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #64748b;
+            --accent-gold: #d4af37;
+            --accent-indigo: #6366f1;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Playfair Display', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--primary);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Layout --- */
+        .page-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: 320px;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 2.5rem;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        main {
+            flex: 1;
+            padding: 5rem;
+            max-width: 1400px;
+        }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar-logo {
+            margin-bottom: 3rem;
+            border-left: 4px solid var(--accent-gold);
+            padding-left: 1rem;
+        }
+
+        .sidebar-logo span {
+            font-weight: 900;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+        }
+
+        .sidebar-logo p {
+            font-size: 0.75rem;
+            color: var(--secondary);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .category-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+            margin: 2rem 0 1rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-indigo);
+            transform: translateX(5px);
+        }
+
+        .nav-link .dot {
+            width: 4px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 50%;
+        }
+
+        .nav-link:hover .dot {
+            background: var(--accent-gold);
+        }
+
+        /* --- Content Styling --- */
+        .doc-header {
+            margin-bottom: 5rem;
+            max-width: 900px;
+        }
+
+        .doc-header h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .doc-header p {
+            font-size: 1.4rem;
+            color: var(--secondary);
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .category-section {
+            margin-bottom: 8rem;
+        }
+
+        .category-headline {
+            font-size: 2.8rem;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .category-headline span {
+            color: var(--accent-gold);
+            font-size: 1.5rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06);
+            border-color: var(--accent-indigo);
+        }
+
+        .meta-tag {
+            position: absolute;
+            top: 2.5rem;
+            right: 2.5rem;
+            font-size: 0.65rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-indigo);
+            background: #f1f5f9;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-right: 4rem;
+        }
+
+        .feature-card p {
+            color: var(--secondary);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .capability-list {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-top: auto;
+        }
+
+        .capability-list h4 {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .capability-list ul {
+            list-style: none;
+        }
+
+        .capability-list li {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .capability-list li::before {
+            content: "•";
+            color: var(--accent-gold);
+            font-weight: 900;
+        }
+
+        footer {
+            margin-top: 5rem;
+            padding: 3rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 1024px) {
+            aside {
+                display: none;
+            }
+
+            main {
+                padding: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+        <aside>
+            <div class="sidebar-logo">
+                <span>NyayNow</span>
+                <p>System Architecture v2.1</p>
+            </div>
+
+            <nav>
+                <p class="category-label">Elite AI Lab</p>
+                <a href="#judge-ai" class="nav-link">
+                    <div class="dot"></div> Judge AI Probability
+                </a>
+                <a href="#assistant" class="nav-link">
+                    <div class="dot"></div> Smart AI Assistant
+                </a>
+                <a href="#research" class="nav-link">
+                    <div class="dot"></div> Semantic Research
+                </a>
+                <a href="#drafting" class="nav-link">
+                    <div class="dot"></div> Drafting Lab
+                </a>
+                <a href="#voice" class="nav-link">
+                    <div class="dot"></div> NyayVoice Multilingual
+                </a>
+                <a href="#judge-pro" class="nav-link">
+                    <div class="dot"></div> Judge Pro Analyzer
+                </a>
+                <a href="#decoder" class="nav-link">
+                    <div class="dot"></div> Issue Decoder (Analyze)
+                </a>
+
+                <p class="category-label">Immersive Practice</p>
+                <a href="#nyaycourt" class="nav-link">
+                    <div class="dot"></div> NyayCourt Battle
+                </a>
+                <a href="#moot-court" class="nav-link">
+                    <div class="dot"></div> Moot Court VR
+                </a>
+                <a href="#devils-advocate" class="nav-link">
+                    <div class="dot"></div> Devil's Advocate
+                </a>
+                <a href="#career-hub" class="nav-link">
+                    <div class="dot"></div> Career Hub & Interns
+                </a>
+                <a href="#edu-center" class="nav-link">
+                    <div class="dot"></div> Education & Blog
+                </a>
+
+                <p class="category-label">Emergency & Compliance</p>
+                <a href="#sos" class="nav-link">
+                    <div class="dot"></div> Legal SOS Emergency
+                </a>
+                <a href="#agreements" class="nav-link">
+                    <div class="dot"></div> Agreement Generator
+                </a>
+                <a href="#ecourts" class="nav-link">
+                    <div class="dot"></div> e-Courts Live Tracker
+                </a>
+                <a href="#digilocker" class="nav-link">
+                    <div class="dot"></div> DigiLocker Verified
+                </a>
+                <a href="#legal-docs" class="nav-link">
+                    <div class="dot"></div> Legal Policy Suite
+                </a>
+
+                <p class="category-label">Network & Security</p>
+                <a href="#marketplace" class="nav-link">
+                    <div class="dot"></div> Lawyer Marketplace
+                </a>
+                <a href="#radar" class="nav-link">
+                    <div class="dot"></div> Radar AR Asset Map
+                </a>
+                <a href="#comms" class="nav-link">
+                    <div class="dot"></div> Messages & Video
+                </a>
+                <a href="#profiles" class="nav-link">
+                    <div class="dot"></div> Pro Profiles (Judge/Law)
+                </a>
+
+                <p class="category-label">Operational Command</p>
+                <a href="#client-hub" class="nav-link">
+                    <div class="dot"></div> Client Command Hub
+                </a>
+                <a href="#practice-hub" class="nav-link">
+                    <div class="dot"></div> Practice Console
+                </a>
+                <a href="#governance" class="nav-link">
+                    <div class="dot"></div> Governance (Admin)
+                </a>
+                <a href="#stats" class="nav-link">
+                    <div class="dot"></div> Performance Analytics
+                </a>
+                <a href="#calendar" class="nav-link">
+                    <div class="dot"></div> Calendar & Deadlines
+                </a>
+                <a href="#onboarding" class="nav-link">
+                    <div class="dot"></div> Onboarding & Trust
+                </a>
+            </nav>
+        </aside>
+
+        <main>
+            <header class="doc-header">
+                <h1>Comprehensive Feature Index.</h1>
+                <p>Every intelligence, every utility, and every interaction point of the NyayNow ecosystem. Exhaustively
+                    detailed for absolute transparency.</p>
+            </header>
+
+            <!-- --- CATEGORY: ELITE AI LAB --- -->
+            <section class="category-section" id="ai-lab">
+                <h2 class="category-headline"><span>01.</span> Elite AI Lab</h2>
+                <div class="feature-grid">
+
+                    <article class="feature-card" id="judge-ai">
+                        <span class="meta-tag">Predictive</span>
+                        <h3>Judge AI Probability</h3>
+                        <p>Quantitative outcome prediction engine. Analyzes case facts against millions of historical
+                            rulings to calculate a "Winning Probability Score".</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Historical Precedent Mapping</li>
+                                <li>Judicial Bias Sentiment Analysis</li>
+                                <li>Success Margin Calculation</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="assistant">
+                        <span class="meta-tag">Conversational</span>
+                        <h3>Smart AI Assistant</h3>
+                        <p>Proprietary legal chatbot available 24/7. Trained on Indian Statute Law (IPC, CrPC, BNS) to
+                            provide instant, human-like legal information.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Natural Language Consultation</li>
+                                <li>Statute Citation Retrieval</li>
+                                <li>Multi-turn Issue Scoping</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="research">
+                        <span class="meta-tag">Search</span>
+                        <h3>Semantic Research</h3>
+                        <p>Beyond keyword matching. Uses vector embeddings to find relevant case law based on the
+                            *essence* of your argument across Supreme & High Courts.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Context-Aware Precedent Discovery</li>
+                                <li>Citation Network Traversal</li>
+                                <li>Similarity Ranking Engine</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="drafting">
+                        <span class="meta-tag">Generative</span>
+                        <h3>Drafting Lab</h3>
+                        <p>Automated drafting suite for legal notices, complaints, and complicated legal correspondence.
+                            Reduces 5 hours of work to 30 seconds.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Legal Notice Auto-Generator</li>
+                                <li>Complex Contract Scaffolding</li>
+                                <li>Clause-by-Clause Tailoring</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="voice">
+                        <span class="meta-tag">Voice</span>
+                        <h3>NyayVoice Assistant</h3>
+                        <p>Voice-first AI for the 700M+ Indians who prefer local dialects. Offers legal help in Hindi,
+                            Bengali, Tamil, and more via real-time speech processing.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Speech-to-Intent Recognition</li>
+                                <li>Local Dialect Synthesis</li>
+                                <li>Hands-Free Crisis Guidance</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="judge-pro">
+                        <span class="meta-tag">Enterprise</span>
+                        <h3>Judge Pro Analyzer</h3>
+                        <p>Document intelligence system. Upload massive PDF case files (100+ pages) to extract
+                            chronologies, discrepancies, and critical strategy pointers.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>OCR PDF Data Extraction</li>
+                                <li>Contradiction Detection Heatmap</li>
+                                <li>Fact vs. Statement Separation</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="decoder">
+                        <span class="meta-tag">Decision Support</span>
+                        <h3>Legal Issue Decoder</h3>
+                        <p>A specialized triage module (Analyze) that breaks down a messy situation into structured
+                            legal columns: Rights, Risks, and Ready-Actions.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Situation-to-Rights Mapping</li>
+                                <li>Consumer vs. Criminal Triage</li>
+                                <li>Encrypted Temporary Storage</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- --- CATEGORY: IMMERSIVE PRACTICE --- -->
+            <section class="category-section" id="practice">
+                <h2 class="category-headline"><span>02.</span> Immersive Practice</h2>
+                <div class="feature-grid">
+
+                    <article class="feature-card" id="nyaycourt">
+                        <span class="meta-tag">Simulation</span>
+                        <h3>NyayCourt Battle</h3>
+                        <p>Multi-agent autonomous courtroom. Watch an AI Petitioner and Respondent battle in front of an
+                            AI Judge. Battle-test your defense strategy before trial.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Strategy Vulnerability Testing</li>
+                                <li>Agentic Cross-Examination</li>
+                                <li>Mock Judgment Generation</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="moot-court">
+                        <span class="meta-tag">Training</span>
+                        <h3>Moot Court VR</h3>
+                        <p>Professional training simulator for students. Practice oral arguments in a virtual
+                            high-pressure setting with AI sentiment analysis of your speech.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Argument Performance Metrics</li>
+                                <li>Confidence Score Feedback</li>
+                                <li>Scene-based Litigation Training</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="devils-advocate">
+                        <span class="meta-tag">Opponent AI</span>
+                        <h3>Devil's Advocate</h3>
+                        <p>The world's most aggressive legal critique AI. It intentionally picks apart your argument to
+                            help you find and fix weak points before your opponent does.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Argument Stress Testing</li>
+                                <li>Counter-Precedent Discovery</li>
+                                <li>Defense Hardening Audit</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="career-hub">
+                        <span class="meta-tag">Career</span>
+                        <h3>Career Hub & Micro-Interns</h3>
+                        <p>Platform for law students to earn points by completing micro-tasks (memos, research) for real
+                            lawyers, building a "Verified Skill Ribbon".</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Point-based Ranking System</li>
+                                <li>Micro-Internship Marketplace</li>
+                                <li>Skill Proof Dashboard</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="edu-center">
+                        <span class="meta-tag">Education</span>
+                        <h3>Edu-Center (About/Blog/Contact)</h3>
+                        <p>A centralized knowledge base including the NyayNow Blog for legal updates, an About section
+                            for system transparency, and high-priority Contact support.</p>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- --- CATEGORY: EMERGENCY & COMPLIANCE --- -->
+            <section class="category-section" id="compliance">
+                <h2 class="category-headline"><span>03.</span> Emergency & Compliance</h2>
+                <div class="feature-grid">
+
+                    <article class="feature-card" id="sos">
+                        <span class="meta-tag">Panic Mode</span>
+                        <h3>Legal SOS Emergency</h3>
+                        <p>A high-priority triage for illegal detentions, police harassment, or urgent legal threats.
+                            Provides immediate protocols and emergency contact routing.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Instant Rights Checklist</li>
+                                <li>Panic Protocol Broadcast</li>
+                                <li>Immediate Legal First-Aid</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="agreements">
+                        <span class="meta-tag">Templates</span>
+                        <h3>Agreement Generator</h3>
+                        <p>Library of dynamic, legally-binding templates including Rent Agreements, NDAs, and Service
+                            Contracts tailored for Indian State variations.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>AgreementForm Data Entry</li>
+                                <li>State-Specific Stamp Duty Check</li>
+                                <li>Instant PDF Export & Watermark</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="ecourts">
+                        <span class="meta-tag">Live Data</span>
+                        <h3>e-Courts Live Tracker</h3>
+                        <p>Real-time synchronization with the national e-Courts database. Track hearing dates and
+                            retrieve orders as soon as they are uploaded.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Automatic Deadline Sync</li>
+                                <li>Order Retrieval Engine</li>
+                                <li>Multi-Court Master List</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="digilocker">
+                        <span class="meta-tag">Verification</span>
+                        <h3>DigiLocker Verified</h3>
+                        <p>Biometric and document-based identity verification. Ensures that lawyers and clients on the
+                            platform are real and verified by government databases.</p>
+                    </article>
+
+                    <article class="feature-card" id="legal-docs">
+                        <span class="meta-tag">Governance</span>
+                        <h3>Legal Policy Suite</h3>
+                        <p>Exhaustive Terms of Service and Privacy Policy documentation, ensuring GDPR/DPDP compliance
+                            and protecting user confidentiality.</p>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- --- CATEGORY: NETWORK & SECURITY --- -->
+            <section class="category-section" id="network">
+                <h2 class="category-headline"><span>04.</span> Network & Security</h2>
+                <div class="feature-grid">
+
+                    <article class="feature-card" id="marketplace">
+                        <span class="meta-tag">Marketplace</span>
+                        <h3>Lawyer Marketplace</h3>
+                        <p>Proprietary ranking algorithm (Elite Index) to find the best specialized lawyers based on
+                            past performance, location, and niche expertise.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>Expert Specialization Search</li>
+                                <li>Verified Rating Engine</li>
+                                <li>Direct Consultation Routing</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="radar">
+                        <span class="meta-tag">Geography</span>
+                        <h3>Radar AR Asset Map</h3>
+                        <p>Augmented Reality visualization of lawyers, police stations, and courts around you. Real-time
+                            triangulation of the nearest legal help.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>AR View Overlay</li>
+                                <li>Distance-to-Incident Calculation</li>
+                                <li>Asset Cluster Visualization</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="comms">
+                        <span class="meta-tag">Communication</span>
+                        <h3>Messages & Video Consult</h3>
+                        <p>End-to-end encrypted messaging and built-in professional video conferencing for secure,
+                            privileged client-lawyer communications.</p>
+                        <div class="capability-list">
+                            <h4>Core Intel</h4>
+                            <ul>
+                                <li>E2E Encrypted Chat</li>
+                                <li>In-Browser HD Video Call</li>
+                                <li>Privileged Doc Sharing</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="feature-card" id="profiles">
+                        <span class="meta-tag">Identity</span>
+                        <h3>Verified Profiles (Law/Judge)</h3>
+                        <p>Detailed performance dossiers for every verified professional, including win rates, case
+                            volume, and skill-ribbon certifications.</p>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- --- CATEGORY: OPERATIONAL COMMAND --- -->
+            <section class="category-section" id="operations">
+                <h2 class="category-headline"><span>05.</span> Operational Command</h2>
+                <div class="feature-grid">
+
+                    <article class="feature-card" id="client-hub">
+                        <span class="meta-tag">User Control</span>
+                        <h3>Client Command Hub</h3>
+                        <p>Personal litigation cockpit for individuals. Track lawyer status, payment history, hearing
+                            countdowns, and document vault.</p>
+                    </article>
+
+                    <article class="feature-card" id="practice-hub">
+                        <span class="meta-tag">Lawyer Control</span>
+                        <h3>Practice Console</h3>
+                        <p>Enterprise ERP for advocates. Manage multi-client pipelines, case research folders, and
+                            automated invoice tracking.</p>
+                    </article>
+
+                    <article class="feature-card" id="governance">
+                        <span class="meta-tag">Admin</span>
+                        <h3>Governance (Admin)</h3>
+                        <p>Master oversight dashboard for the NyayNow ecosystem. Handles verification approvals,
+                            platform analytics, and dispute moderation.</p>
+                    </article>
+
+                    <article class="feature-card" id="stats">
+                        <span class="meta-tag">Analytics</span>
+                        <h3>Performance Analytics</h3>
+                        <p>Deep-dive data visualization for lawyers. Track profile traffic, search appearances, and
+                            lead-to-conversion success metrics.</p>
+                    </article>
+
+                    <article class="feature-card" id="calendar">
+                        <span class="meta-tag">Scheduling</span>
+                        <h3>Calendar & Deadlines</h3>
+                        <p>Centralized hearing and filing calendar with automated reminders for the 24-hour response
+                            window required in legal matters.</p>
+                    </article>
+
+                    <article class="feature-card" id="onboarding">
+                        <span class="meta-tag">Trust</span>
+                        <h3>Onboarding & Subscription</h3>
+                        <p>Tiered pricing models (Gold/Diamond) and a streamlined setup process (SetupProfile) including
+                            verification queues for incoming talent.</p>
+                    </article>
+
+                </div>
+            </section>
+
+            <footer>
+                <p>© 2026 NyayNow | Confidential Engineering Documentation | Exhaustive Version 2.1</p>
+            </footer>
+        </main>
+    </div>
+
+</body>
+
+</html>

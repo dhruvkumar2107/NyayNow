@@ -1,0 +1,46 @@
+node_modules
+.env
+.env.*
+!.env.example
+.DS_Store
+dist
+build
+.next
+.gemini
+package-lock.json
+*.log
+tmp
+brain
+
+# Virtual environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Scratch/debug files
+*.txt
+!README.txt
+*.bat
+!run_all.bat
+test*.js
+!test/
+list_models.js
+compile_pdf.js
+check_all_routes.js
+nyaynow-test.js
+
+# IDE
+.idea/
+.vscode/
+
+# Uploads
+uploads/
+
+# AI audit logs (contain request/response data — never commit)
+server/logs/
+logs/
+
+# Test reports/results
+playwright-report/
+test-results/

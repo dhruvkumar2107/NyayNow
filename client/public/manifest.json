@@ -1,0 +1,44 @@
+{
+  "name": "NyayNow",
+  "short_name": "NyayNow",
+  "description": "AI Legal Intelligence & Lawyer Marketplace for India",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "lang": "en-IN",
+  "categories": ["legal", "productivity", "business"],
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "AI Legal Assistant",
+      "url": "/assistant",
+      "description": "Ask a legal question"
+    },
+    {
+      "name": "Find a Lawyer",
+      "url": "/marketplace",
+      "description": "Browse verified lawyers"
+    }
+  ]
+}
