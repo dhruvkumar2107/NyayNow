@@ -5,7 +5,7 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { ShieldAlert, Zap, Lock, ChevronRight, Phone } from "lucide-react"
 
-export function LegalSOSSection() {
+export default function LegalSOSSection() {
     return (
         <section className="relative py-20 md:py-40 overflow-hidden bg-[#020617]">
             {/* AMBIENT EMERGENCY GLOW */}

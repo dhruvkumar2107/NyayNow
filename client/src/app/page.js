@@ -1,12 +1,11 @@
 import React from "react"
-import dynamic from "next/dynamic"
 
 import HeroSection from "../components/home/HeroSection"
 import FeatureCards from "../components/home/FeatureCards"
 import ChooserCards from "../components/home/ChooserCards"
 
-const TrustSection = dynamic(() => import("../components/home/TrustSection"))
-const LegalSOSSection = dynamic(() => import("../components/home/LegalSOSSection").then(mod => mod.LegalSOSSection))
+import TrustSection from "../components/home/TrustSection"
+import LegalSOSSection from "../components/home/LegalSOSSection"
 
 export const metadata = {
     title: 'NyayNow | AI Legal Intelligence & Lawyer Marketplace India',
