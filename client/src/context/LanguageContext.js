@@ -35,6 +35,36 @@ export function LanguageProvider({ children }) {
             document.body.appendChild(container);
         }
 
+        // Inject styles to hide Google Translate banner, tooltips, highlights, etc.
+        if (!document.getElementById('google-translate-styles')) {
+            const style = document.createElement('style');
+            style.id = 'google-translate-styles';
+            style.innerHTML = `
+                .goog-te-banner-frame { display: none !important; }
+                .goog-te-banner { display: none !important; }
+                .goog-te-combo { display: none !important; }
+                body { top: 0px !important; position: static !important; }
+                .goog-logo-link { display: none !important; }
+                .goog-te-gadget { color: transparent !important; font-size: 0px !important; }
+                .goog-te-gadget span { display: none !important; }
+                .goog-te-gadget .goog-logo-link { display: none !important; }
+                div.goog-te-gadget { color: transparent !important; }
+                /* Hide the tooltip popup when hovering over translated text */
+                #goog-gt-tt, .goog-te-balloon-frame, .goog-tooltip, .goog-tooltip:hover {
+                    display: none !important;
+                }
+                .goog-text-highlight {
+                    background-color: transparent !important;
+                    box-shadow: none !important;
+                    box-sizing: border-box !important;
+                }
+                iframe.skiptranslate {
+                    display: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
         // Initialize Google Translate Script
         if (!document.getElementById('google-translate-script')) {
             const script = document.createElement('script');
@@ -78,11 +108,25 @@ export function LanguageProvider({ children }) {
             localStorage.setItem("nyaynow_lang", lang);
         }
 
-        // Trigger Google Translate dropdown
-        const select = document.querySelector('.goog-te-combo');
-        if (select) {
-            select.value = lang;
-            select.dispatchEvent(new Event('change'));
+        // Trigger Google Translate dropdown with retry logic
+        const triggerGoogleTranslate = () => {
+            const select = document.querySelector('.goog-te-combo');
+            if (select) {
+                select.value = lang;
+                select.dispatchEvent(new Event('change'));
+                return true;
+            }
+            return false;
+        };
+
+        if (!triggerGoogleTranslate()) {
+            let retries = 0;
+            const interval = setInterval(() => {
+                if (triggerGoogleTranslate() || retries >= 20) {
+                    clearInterval(interval);
+                }
+                retries++;
+            }, 250);
         }
     };
 
