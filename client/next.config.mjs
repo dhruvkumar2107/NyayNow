@@ -37,13 +37,28 @@ const nextConfig = {
         ]
     },
     async rewrites() {
-        const fallbackBackend = process.env.VERCEL === '1'
+        let backendUrl = process.env.NEXT_PUBLIC_API_URL || (process.env.VERCEL === '1'
             ? 'https://nyaysathi-main.onrender.com/api'
-            : 'http://localhost:4000/api';
+            : 'http://localhost:4000/api');
+
+        // Ensure backendUrl has /api suffix
+        if (backendUrl.endsWith('/api/')) {
+            backendUrl = backendUrl.slice(0, -1);
+        } else if (!backendUrl.endsWith('/api')) {
+            backendUrl = `${backendUrl}/api`;
+        }
+
+        // Get the base backend host for /healthz (without /api)
+        const backendBaseHost = backendUrl.replace(/\/api$/, '');
+
         return [
             {
                 source: '/api/:path*',
-                destination: `${process.env.NEXT_PUBLIC_API_URL || fallbackBackend}/:path*`,
+                destination: `${backendUrl}/:path*`,
+            },
+            {
+                source: '/healthz',
+                destination: `${backendBaseHost}/healthz`,
             },
         ]
     },

@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v1'
+const CACHE_VERSION = 'v2'
 const STATIC_CACHE = `nyaynow-static-${CACHE_VERSION}`
 const API_CACHE = `nyaynow-api-${CACHE_VERSION}`
 
@@ -47,6 +47,13 @@ self.addEventListener('fetch', (event) => {
 
   // Next.js internals / HMR: always network
   if (url.pathname.startsWith('/_next/')) {
+    return
+  }
+
+  // HTML documents: network-first (prevents stale HTML referencing dead hashed CSS/JS assets)
+  const isHTML = request.headers.get('accept')?.includes('text/html')
+  if (isHTML) {
+    event.respondWith(networkFirst(request, STATIC_CACHE))
     return
   }
 
