@@ -23,27 +23,27 @@ export default function ComplianceHubPage() {
         setIsLoading(true)
         setChecklist(null)
         try {
-            const res = await axios.post(`${API_BASE}/ai/chat`, {
-                message: `[COMPLIANCE HUB] Generate a 10-item legal compliance checklist for a mid-sized Indian startup regarding: ${category}. 
+            const res = await axios.post(`${API_BASE}/ai/assistant`, {
+                question: `Generate a 10-item legal compliance checklist for a mid-sized Indian startup regarding: ${category}. 
                 Format each item exactly with keys: "title" (string), "requirement" (string), and "riskLevel" (string: "Low", "Medium", "High"). 
                 RETURN ONLY A VALID JSON ARRAY. NO MARKDOWN FORMATTING, NO BACKTICKS, NO EXPLANATORY TEXT. START WITH [ AND END WITH ].`
             })
             
-            let text = res.data.response;
+            let text = res.data.answer || res.data.response || '';
             // Clean up potentially bad AI output
             text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-            const jsonStart = text.indexOf('[');
-            const jsonEnd = text.lastIndexOf(']');
+            const jsonStart = text.indexOf('[')
+            const jsonEnd = text.lastIndexOf(']')
             
             if (jsonStart !== -1 && jsonEnd !== -1) {
-                const jsonStr = text.substring(jsonStart, jsonEnd + 1);
-                setChecklist(JSON.parse(jsonStr));
+                const jsonStr = text.substring(jsonStart, jsonEnd + 1)
+                setChecklist(JSON.parse(jsonStr))
             } else {
-                setChecklist([{ title: "Compliance Audit", requirement: "AI failed to return valid data format. Raw response: " + text.substring(0, 100), riskLevel: "High" }]);
+                setChecklist([{ title: "Compliance Audit", requirement: "AI failed to return valid data format. Raw response: " + text.substring(0, 100), riskLevel: "High" }])
             }
         } catch (err) {
             console.error(err)
-            setChecklist([{ title: "Audit Error", requirement: "Connection to the Audit Engine failed.", riskLevel: "High" }]);
+            setChecklist([{ title: "Audit Error", requirement: "Connection to the Audit Engine failed.", riskLevel: "High" }])
         } finally {
             setIsLoading(false)
         }

@@ -250,10 +250,11 @@ export default function NyayVoicePage() {
         setIsLoading(true)
         setResponse('')
         try {
-            const res = await axios.post(`${API_BASE}/ai/chat`, {
-                message: `[VOICE CONSULTATION - LANG: ${language}] User asked: ${text}. Provide a concise, professional legal response in the same language of query if possible, suitable for voice playback.`
+            const res = await axios.post(`${API_BASE}/ai/assistant`, {
+                question: text,
+                language: language
             })
-            const aiText = res.data.response
+            const aiText = res.data.answer || res.data.response || "I could not process your request. Please try again."
             setResponse(aiText)
             speakResponse(aiText)
         } catch (err) {

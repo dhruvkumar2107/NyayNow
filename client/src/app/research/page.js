@@ -22,25 +22,31 @@ export default function PrecedentEnginePage() {
         setResults([])
 
         try {
-            const res = await axios.post(`${API_BASE}/ai/chat`, {
-                message: `[LEGAL RESEARCH ENGINE] Find and summarize 3 relevant Indian legal precedents or case laws for this topic: "${query}". 
-                Format the response as a JSON array of objects with keys: "caseName", "citation", "summary", "relevanceScore" (0-100). 
-                If you cannot find exact cases, generate relevant illustrative scenarios with their statutory basis.`
+            const res = await axios.post(`${API_BASE}/ai/legal-research`, {
+                query: query,
+                source: 'All Indian Courts',
+                dateRange: 'All Time'
             })
             
-            // Attempt to parse JSON from AI response
-            const text = res.data.response
-            const jsonMatch = text.match(/\[.*\]/s)
-            if (jsonMatch) {
-                setResults(JSON.parse(jsonMatch[0]))
-            } else {
-                // Fallback if AI doesn't return clean JSON
+            // Server returns { disclaimer, summary, confidence_score, cases: [{name, citation, ratio, relevance}] }
+            const data = res.data
+            const cases = data.cases || []
+            if (cases.length > 0) {
+                setResults(cases.map(c => ({
+                    caseName: c.name,
+                    citation: c.citation,
+                    summary: c.ratio || c.relevance || c.summary,
+                    relevanceScore: data.confidence_score || 90
+                })))
+            } else if (data.summary) {
                 setResults([{
-                    caseName: "Result for: " + query,
-                    citation: "Supreme Court of India / High Court",
-                    summary: text,
-                    relevanceScore: 95
+                    caseName: 'Research Summary',
+                    citation: 'AI Legal Research Engine',
+                    summary: data.summary,
+                    relevanceScore: data.confidence_score || 75
                 }])
+            } else {
+                setError("No results found. Please refine your query.")
             }
         } catch (err) {
             console.error(err)
