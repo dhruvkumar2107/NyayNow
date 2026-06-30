@@ -2,6 +2,7 @@ const express = require("express");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { generateWithFallback, DEFAULT_SYSTEM_PROMPT: SYSTEM_PROMPT } = require("../utils/aiUtils");
 const aiAudit = require("../middleware/aiAudit");
+const axios = require("axios");
 
 const router = express.Router();
 router.use(aiAudit); // Apply auditing to all AI routes
@@ -639,6 +640,39 @@ router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, re
     const { query, source, dateRange } = req.body;
     if (!query) return res.status(400).json({ error: "Query required." });
 
+    // 1. If Indian Kanoon API Key is configured, attempt direct database search
+    if (process.env.INDIANKANOON_API_KEY) {
+      try {
+        console.log("📡 Indian Kanoon: Fetching search results for:", query);
+        const ikResponse = await axios.get(`https://api.indiankanoon.org/search?formInput=${encodeURIComponent(query)}&pagenum=1`, {
+          headers: {
+            'Authorization': `Token ${process.env.INDIANKANOON_API_KEY}`
+          }
+        });
+
+        if (ikResponse.data && Array.isArray(ikResponse.data.results) && ikResponse.data.results.length > 0) {
+          const results = ikResponse.data.results;
+          const mappedCases = results.slice(0, 5).map(r => ({
+            name: r.title.replace(/<[^>]*>/g, ""), // Clean any residual HTML tags
+            citation: `${r.docSource || "Indian Kanoon"} (ID: ${r.tid})`,
+            ratio: r.headline ? r.headline.replace(/<[^>]*>/g, "").trim() : "Review judgment text for decision holding.",
+            relevance: 95
+          }));
+
+          return res.json({
+            disclaimer: "Grounded directly in Indian Kanoon database records.",
+            summary: `Retrieved ${mappedCases.length} relevant legal records directly from the Indian Kanoon index.`,
+            confidence_score: 100,
+            cases: mappedCases
+          });
+        }
+        console.log("⚠️ Indian Kanoon: No direct database hits. Falling back to Gemini search.");
+      } catch (ikErr) {
+        console.error("❌ Indian Kanoon API Error:", ikErr.message, "- Falling back to Grounded AI.");
+      }
+    }
+
+    // 2. Fallback to Google Search Grounding with Gemini if API is not set or failed
     const prompt = `
       ACT AS A LEGAL RESEARCHER FOR THE SUPREME COURT OF INDIA.
       
@@ -1155,37 +1189,106 @@ router.post("/case-detail", verifyTokenOptional, checkAiLimit, async (req, res) 
     const { caseName, citation } = req.body;
     if (!caseName) return res.status(400).json({ error: "Case name is required." });
 
-    const prompt = `
-      ACT AS THE NYAYNOW CASEBASE ANALYTICS COMPILER.
-      
-      Generate a highly detailed, professional legal profile and FIRAC analysis for this Indian court case:
-      Case Name: "${caseName}"
-      Citation: "${citation || "Supreme Court of India / High Court"}"
-      
-      CRITICAL INSTRUCTION: You MUST use Google Search Grounding to pull actual factual records, legal questions, applied rules, judicial reasoning, and concluding orders of this specific judgment. 
-      DO NOT fabricate facts or holdings. Pull real details from the official case record.
-      For the "fullText", provide a professional legal summary representing the official judgment recital.
-      
-      Provide the output strictly in the following JSON format:
-      {
-        "court": "e.g. Supreme Court of India or High Court of Delhi",
-        "bench": "Names of judges on the bench",
-        "date": "Date of judgment (e.g. August 24, 2017)",
-        "citation": "Official citation",
-        "caseName": "Official Case Name",
-        "summary": "Short executive summary of the case",
-        "firac": {
-          "facts": "Detailed facts of the dispute, parties involved, and how the case reached this court.",
-          "issue": "The primary legal questions and issues the court had to decide.",
-          "rule": "Statutory rules, acts, constitutional provisions (e.g. Article 21, Section 300 IPC) and precedents applied.",
-          "analysis": "The detailed judicial reasoning, arguments of both sides, and how the court interpreted the rules.",
-          "conclusion": "The final holding, order, relief granted, and dissenting opinions if any."
-        },
-        "fullText": "A detailed legal transcript of the major judgment holdings and concluding court order in professional judicial language."
+    let rawJudgmentText = "";
+    let isIKSource = false;
+
+    // Try parsing document ID from citation to retrieve from Indian Kanoon directly
+    if (citation && process.env.INDIANKANOON_API_KEY) {
+      const match = citation.match(/ID:\s*(\d+)/i);
+      if (match) {
+        const docId = match[1];
+        try {
+          console.log(`📡 Indian Kanoon: Fetching full text for document ID: ${docId}`);
+          const ikDocResponse = await axios.get(`https://api.indiankanoon.org/doc/${docId}/`, {
+            headers: {
+              'Authorization': `Token ${process.env.INDIANKANOON_API_KEY}`
+            }
+          });
+          if (ikDocResponse.data && ikDocResponse.data.doc) {
+            // Strip HTML tags from the retrieved document text
+            rawJudgmentText = ikDocResponse.data.doc.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").substring(0, 15000);
+            isIKSource = true;
+            console.log("✅ Indian Kanoon: Full text successfully retrieved.");
+          }
+        } catch (docErr) {
+          console.error("❌ Indian Kanoon Document Fetch Error:", docErr.message);
+        }
       }
-      
-      Output ONLY valid JSON. No markdown wrappers, no backticks, no text before or after the JSON.
-    `;
+    }
+
+    let prompt = "";
+    if (isIKSource && rawJudgmentText) {
+      // Prompt with full text context
+      prompt = `
+        ACT AS THE NYAYNOW CASE PRECENDENT ANALYTICS COMPILER.
+        
+        We have retrieved the official judgment text of this case from Indian Kanoon:
+        Case Name: "${caseName}"
+        Citation: "${citation}"
+        
+        JUDGMENT SOURCE CONTEXT:
+        <JUDGMENT_TEXT>
+        ${rawJudgmentText}
+        </JUDGMENT_TEXT>
+        
+        TASK:
+        1. Summarize the facts, issue, rule, analysis, and conclusion based STRICTLY on the real judgment text provided.
+        2. Create a clean executive summary and judicial transcript.
+        
+        Provide the output strictly in the following JSON format:
+        {
+          "court": "e.g. Supreme Court of India or High Court of Delhi",
+          "bench": "Names of judges on the bench",
+          "date": "Date of judgment (e.g. August 24, 2017)",
+          "citation": "Official citation",
+          "caseName": "Official Case Name",
+          "summary": "Short executive summary of the case",
+          "firac": {
+            "facts": "Detailed facts of the dispute, parties involved, and how the case reached this court.",
+            "issue": "The primary legal questions and issues the court had to decide.",
+            "rule": "Statutory rules, acts, constitutional provisions (e.g. Article 21, Section 300 IPC) and precedents applied.",
+            "analysis": "The detailed judicial reasoning, arguments of both sides, and how the court interpreted the rules.",
+            "conclusion": "The final holding, order, relief granted, and dissenting opinions if any."
+          },
+          "fullText": "A detailed legal transcript of the major judgment holdings and concluding court order in professional judicial language."
+        }
+        
+        Output ONLY valid JSON. No markdown wrappers, no backticks, no text before or after the JSON.
+      `;
+    } else {
+      // Grounding search fallback prompt
+      prompt = `
+        ACT AS THE NYAYNOW CASEBASE ANALYTICS COMPILER.
+        
+        Generate a highly detailed, professional legal profile and FIRAC analysis for this Indian court case:
+        Case Name: "${caseName}"
+        Citation: "${citation || "Supreme Court of India / High Court"}"
+        
+        CRITICAL INSTRUCTION: You MUST use Google Search Grounding to pull actual factual records, legal questions, applied rules, judicial reasoning, and concluding orders of this specific judgment. 
+        DO NOT fabricate facts or holdings. Pull real details from the official case record.
+        For the "fullText", provide a professional legal summary representing the official judgment recital.
+        
+        Provide the output strictly in the following JSON format:
+        {
+          "court": "e.g. Supreme Court of India or High Court of Delhi",
+          "bench": "Names of judges on the bench",
+          "date": "Date of judgment (e.g. August 24, 2017)",
+          "citation": "Official citation",
+          "caseName": "Official Case Name",
+          "summary": "Short executive summary of the case",
+          "firac": {
+            "facts": "Detailed facts of the dispute, parties involved, and how the case reached this court.",
+            "issue": "The primary legal questions and issues the court had to decide.",
+            "rule": "Statutory rules, acts, constitutional provisions (e.g. Article 21, Section 300 IPC) and precedents applied.",
+            "analysis": "The detailed judicial reasoning, arguments of both sides, and how the court interpreted the rules.",
+            "conclusion": "The final holding, order, relief granted, and dissenting opinions if any."
+          },
+          "fullText": "A detailed legal transcript of the major judgment holdings and concluding court order in professional judicial language."
+        }
+        
+        Output ONLY valid JSON. No markdown wrappers, no backticks, no text before or after the JSON.
+      `;
+    }
 
     const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
