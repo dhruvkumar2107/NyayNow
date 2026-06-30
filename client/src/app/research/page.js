@@ -230,19 +230,6 @@ export default function PrecedentEnginePage() {
                 <div className="absolute bottom-0 left-0 w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[100px]" />
             </div>
 
-            {/* NAVBAR */}
-            <nav className="relative z-20 p-8 flex justify-between items-center border-b border-white/5 backdrop-blur-3xl">
-                <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/20 flex items-center justify-center">
-                        <BookOpen size={20} className="text-blue-500" />
-                    </div>
-                    <span className="text-lg font-black tracking-[0.2em] uppercase">Precedent<span className="text-blue-500">Engine</span></span>
-                </div>
-                <Link href="/client/dashboard" className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">
-                    Dashboard
-                </Link>
-            </nav>
-
             <main className="relative z-10 flex-1 max-w-5xl mx-auto w-full px-6 py-20">
                 {/* SEARCH HEADER */}
                 <div className="text-center mb-16">

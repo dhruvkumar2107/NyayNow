@@ -649,6 +649,10 @@ router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, re
          - Ratio Decidendi
          - Relevance to the specified scope and date range.
       
+      CRITICAL INSTRUCTION: DO NOT hallucinate. Do not create fake case names, simulated facts, or fictitious citations. 
+      Every case returned MUST be a real historical precedent from the Supreme Court or High Courts of India.
+      If you cannot find exact real cases matching the query, return an empty array for "cases" and explain this in the "summary" instead of generating mock judgments.
+      
       OUTPUT JSON STRICTLY:
       {
         "disclaimer": "Legal research is based on live index of Indian case laws. Verify citations using official records.",
@@ -1153,6 +1157,10 @@ router.post("/case-detail", verifyTokenOptional, checkAiLimit, async (req, res) 
       Case Name: "${caseName}"
       Citation: "${citation || "Supreme Court of India / High Court"}"
       
+      CRITICAL INSTRUCTION: You MUST use Google Search Grounding to pull actual factual records, legal questions, applied rules, judicial reasoning, and concluding orders of this specific judgment. 
+      DO NOT fabricate facts or holdings. Pull real details from the official case record.
+      For the "fullText", provide a professional legal summary representing the official judgment recital.
+      
       Provide the output strictly in the following JSON format:
       {
         "court": "e.g. Supreme Court of India or High Court of Delhi",
@@ -1168,7 +1176,7 @@ router.post("/case-detail", verifyTokenOptional, checkAiLimit, async (req, res) 
           "analysis": "The detailed judicial reasoning, arguments of both sides, and how the court interpreted the rules.",
           "conclusion": "The final holding, order, relief granted, and dissenting opinions if any."
         },
-        "fullText": "A detailed simulated full text of the judgment containing the formal order, major observations, and final holdings in professional judicial language."
+        "fullText": "A detailed legal transcript of the major judgment holdings and concluding court order in professional judicial language."
       }
       
       Output ONLY valid JSON. No markdown wrappers, no backticks, no text before or after the JSON.
