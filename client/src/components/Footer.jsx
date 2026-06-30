@@ -5,10 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
-    Twitter,
     Linkedin,
     Instagram,
-    Github,
     Mail,
     ArrowUpRight,
     ShieldCheck,
@@ -53,10 +51,8 @@ const Footer = () => {
                             The operating system for the <span className="text-white">Indian Justice System</span>. Democratizing legal intelligence through institutional-grade AI.
                         </p>
                         <div className="flex gap-4">
-                            <SocialButton icon={<Twitter size={20} />} label="Twitter" />
                             <SocialButton icon={<Linkedin size={20} />} label="LinkedIn" />
                             <SocialButton icon={<Instagram size={20} />} label="Instagram" />
-                            <SocialButton icon={<Github size={20} />} label="Github" />
                         </div>
                     </div>
 
