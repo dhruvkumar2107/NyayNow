@@ -1138,5 +1138,94 @@ function extractSections(text) {
   return [...new Set(matches)].slice(0, 3);
 }
 
+/* ---------------- CASEBASE.LEXOPS.AI FEATURE REPLICATION ---------------- */
+
+// Generate full case detail & FIRAC analysis
+router.post("/case-detail", verifyTokenOptional, checkAiLimit, async (req, res) => {
+  try {
+    const { caseName, citation } = req.body;
+    if (!caseName) return res.status(400).json({ error: "Case name is required." });
+
+    const prompt = `
+      ACT AS THE NYAYNOW CASEBASE ANALYTICS COMPILER.
+      
+      Generate a highly detailed, professional legal profile and FIRAC analysis for this Indian court case:
+      Case Name: "${caseName}"
+      Citation: "${citation || "Supreme Court of India / High Court"}"
+      
+      Provide the output strictly in the following JSON format:
+      {
+        "court": "e.g. Supreme Court of India or High Court of Delhi",
+        "bench": "Names of judges on the bench",
+        "date": "Date of judgment (e.g. August 24, 2017)",
+        "citation": "Official citation",
+        "caseName": "Official Case Name",
+        "summary": "Short executive summary of the case",
+        "firac": {
+          "facts": "Detailed facts of the dispute, parties involved, and how the case reached this court.",
+          "issue": "The primary legal questions and issues the court had to decide.",
+          "rule": "Statutory rules, acts, constitutional provisions (e.g. Article 21, Section 300 IPC) and precedents applied.",
+          "analysis": "The detailed judicial reasoning, arguments of both sides, and how the court interpreted the rules.",
+          "conclusion": "The final holding, order, relief granted, and dissenting opinions if any."
+        },
+        "fullText": "A detailed simulated full text of the judgment containing the formal order, major observations, and final holdings in professional judicial language."
+      }
+      
+      Output ONLY valid JSON. No markdown wrappers, no backticks, no text before or after the JSON.
+    `;
+
+    const result = await generateWithFallback(prompt, undefined, true);
+    const response = await result.response;
+    let text = response.text();
+
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      text = text.substring(jsonStart, jsonEnd + 1);
+    }
+
+    res.json(JSON.parse(text));
+  } catch (err) {
+    console.error("Case Detail Error:", err.message);
+    res.status(500).json({ error: "Failed to retrieve case details. Try again." });
+  }
+});
+
+// Chat with the Case context
+router.post("/chat-case", verifyTokenOptional, checkAiLimit, async (req, res) => {
+  try {
+    const { caseName, fullText, message, history } = req.body;
+    if (!caseName || !message) return res.status(400).json({ error: "Case name and message required." });
+
+    const chatHistory = history ? history.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join("\n") : "";
+
+    const prompt = `
+      ACT AS A LEGAL COMPLIANCE & CASE CLERK AGENT.
+      You are an expert on the case: "${caseName}".
+      
+      Here is the case detail/judgment text context:
+      <CASE_CONTEXT>
+      ${fullText ? fullText.substring(0, 10000) : "Precedent judgment information"}
+      </CASE_CONTEXT>
+      
+      PREVIOUS DISCUSSIONS:
+      ${chatHistory}
+      
+      USER MESSAGE:
+      "${message}"
+      
+      TASK: Answer the user's question regarding this case judgment. Cite specific parts of the judgment or FIRAC context. Do not hallucinate holdings. Keep your answer professional, concise, and informative.
+    `;
+
+    const result = await generateWithFallback(prompt, undefined, true);
+    const response = await result.response;
+    res.json({ answer: response.text() });
+  } catch (err) {
+    console.error("Chat Case Error:", err.message);
+    res.status(500).json({ error: "Case chat failed." });
+  }
+});
+
 module.exports = router;
 
