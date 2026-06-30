@@ -68,6 +68,28 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
     // Construct History Context
     const conversationHistory = history ? history.map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join("\n") : "";
 
+    // 1. Fetch live legal context from Indian Kanoon if Key is configured (RAG)
+    let ikContext = "";
+    if (process.env.INDIANKANOON_API_KEY && question && question.length > 10) {
+      try {
+        console.log("📡 Indian Kanoon: Fetching matching contexts for Assistant:", question.substring(0, 50));
+        const ikResponse = await axios.get(`https://api.indiankanoon.org/search?formInput=${encodeURIComponent(question)}&pagenum=1`, {
+          headers: {
+            'Authorization': `Token ${process.env.INDIANKANOON_API_KEY}`
+          }
+        });
+
+        if (ikResponse.data && Array.isArray(ikResponse.data.results) && ikResponse.data.results.length > 0) {
+          ikContext = ikResponse.data.results.slice(0, 2).map(r => 
+            `Title: ${r.title.replace(/<[^>]*>/g, "")}\nCourt/Source: ${r.docSource || "Indian Court"}\nFactual Snippet: ${r.headline ? r.headline.replace(/<[^>]*>/g, "").trim() : "N/A"}\nLink: https://indiankanoon.org/doc/${r.tid}`
+          ).join("\n\n");
+          console.log("✅ Indian Kanoon: Injected context into Assistant.");
+        }
+      } catch (ikErr) {
+        console.error("❌ Indian Kanoon API Error in Assistant:", ikErr.message);
+      }
+    }
+
     const prompt = `
       CURRENT DATE: ${new Date().toISOString()}
       RANDOM SEED: ${Math.random()}
@@ -86,6 +108,14 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
       2. Reference at least 1-2 real relevant judgments/case laws from the Supreme Court of India or Indian High Courts.
       3. For any case cited, explicitly return the official citation (SCC/AIR/SCR/Manupatra) alongside the Indian Kanoon Link so the user can read the real judgment.
       4. DO NOT hallucinate case laws.
+      
+      ${ikContext ? `
+      LIVE DATABASE CONTEXT FROM INDIAN KANOON FOR THIS QUERY:
+      <KANOON_DB_RECORDS>
+      ${ikContext}
+      </KANOON_DB_RECORDS>
+      Incorporate these actual case facts and document references into your legal analysis.
+      ` : ""}
       
       USER CONTEXT:
       Location: ${location || "India"}
@@ -373,15 +403,49 @@ router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
       });
     }
 
+    // 1. Query Indian Kanoon database for similar cases to ground the prediction
+    let ikPrecedentsContext = "";
+    let precedentCount = 0;
+    if (process.env.INDIANKANOON_API_KEY && (caseDescription || caseTitle)) {
+      try {
+        const searchQuery = `${caseTitle || ""} ${caseDescription || ""}`.substring(0, 100).trim();
+        console.log("📡 Indian Kanoon: Fetching precedents for Judge AI outcome prediction:", searchQuery);
+        const ikResponse = await axios.get(`https://api.indiankanoon.org/search?formInput=${encodeURIComponent(searchQuery)}&pagenum=1`, {
+          headers: {
+            'Authorization': `Token ${process.env.INDIANKANOON_API_KEY}`
+          }
+        });
+
+        if (ikResponse.data && Array.isArray(ikResponse.data.results) && ikResponse.data.results.length > 0) {
+          const results = ikResponse.data.results;
+          precedentCount = results.length;
+          ikPrecedentsContext = results.slice(0, 3).map(r => 
+            `Title: ${r.title.replace(/<[^>]*>/g, "")}\nSource: ${r.docSource || "Indian Kanoon"}\nExcerpt: ${r.headline ? r.headline.replace(/<[^>]*>/g, "").trim() : "N/A"}\nLink: https://indiankanoon.org/doc/${r.tid}`
+          ).join("\n\n");
+          console.log(`✅ Indian Kanoon: Injected ${results.slice(0,3).length} real precedents into Judge AI.`);
+        }
+      } catch (ikErr) {
+        console.error("❌ Indian Kanoon API Error in Judge AI:", ikErr.message);
+      }
+    }
+
     const prompt = `
       ACT AS A JUDICIAL PREDICTOR (INDIA).
       
-      TASK: Predict the outcome of the following case based on real-time court data and precedents.
+      TASK: Predict the outcome of the following case based on real-time court data, statutes, and precedents.
       
       GROUNDING RULES:
       - Search for similar cases in Supreme/High Courts (2020-2024).
       - Explicitly return the Indian Kanoon Link alongside any SCC citation to support prediction based on previous similar cases.
       - Apply BNS 2024 if applicable. Cite specific sections.
+      
+      ${ikPrecedentsContext ? `
+      OFFICIAL INDIAN KANOON PRECEDENTS FOUND FOR THIS SITUATION:
+      <KANOON_DATABASE_RECORDS>
+      ${ikPrecedentsContext}
+      </KANOON_DATABASE_RECORDS>
+      Analyze the outcome of this case based on the holdings of the real precedents above.
+      ` : ""}
       
       CASE TITLE: "${caseTitle}"
       CASE DETAILS: "${caseDescription}"
@@ -392,7 +456,7 @@ router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
         "case_id": "REF-XXXX",
         "win_probability": 75,
         "risk_level": "Medium",
-        "precedent_count": 12,
+        "precedent_count": ${precedentCount || 12},
         "strategy": ["Step 1...", "Step 2..."],
         "risk_analysis": ["Risk 1...", "Risk 2..."],
         "relevant_precedent": "State vs. X (2023) - Ratio...",
