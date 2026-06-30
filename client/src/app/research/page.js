@@ -164,7 +164,7 @@ export default function PrecedentEnginePage() {
         doc.setTextColor(255, 255, 255)
         doc.setFontSize(20)
         doc.setFont("helvetica", "bold")
-        doc.text("NyayNow Casebase Report", 15, 25)
+        doc.text("NyayNow Precedent Report", 15, 25)
         
         doc.setFontSize(9)
         doc.setFont("helvetica", "normal")
@@ -218,7 +218,7 @@ export default function PrecedentEnginePage() {
         })
 
         // Save PDF
-        doc.save(`${caseDetail.caseName.replace(/\s+/g, '_')}_Casebase_Profile.pdf`)
+        doc.save(`${caseDetail.caseName.replace(/\s+/g, '_')}_Precedent_Profile.pdf`)
         toast.success("Case profile PDF downloaded successfully!")
     }
 
@@ -358,7 +358,7 @@ export default function PrecedentEnginePage() {
                             <div className="p-6 border-b border-white/10 flex justify-between items-start">
                                 <div className="space-y-1 pr-6">
                                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-400">
-                                        <Sparkles size={12} /> Casebase Intelligence Profile
+                                        <Sparkles size={12} /> Precedent Intelligence Profile
                                     </div>
                                     <h3 className="text-xl font-bold text-white leading-tight">{selectedCase.caseName}</h3>
                                     <p className="text-xs text-slate-500 font-mono">{selectedCase.citation}</p>
