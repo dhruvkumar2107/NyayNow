@@ -170,4 +170,97 @@ router.post('/verify-access', verifyToken, async (req, res) => {
     }
 });
 
+// GET /api/admin/lawyers — Fetch all registered lawyers
+router.get('/lawyers', verifyToken, async (req, res) => {
+    try {
+        if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
+        const lawyers = await User.find({ role: 'lawyer' }).select('-password');
+        res.json(lawyers);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Fetch lawyers failed" });
+    }
+});
+
+// POST /api/admin/update-user-plan/:id — Edit client/lawyer subscription plan
+router.post('/update-user-plan/:id', verifyToken, async (req, res) => {
+    try {
+        if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
+        const { plan } = req.body;
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        user.plan = plan;
+        await user.save();
+        res.json({ message: "User plan updated successfully", user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to update user plan" });
+    }
+});
+
+// DELETE /api/admin/user/:id — Remove/Delete any user from the system
+router.delete('/user/:id', verifyToken, async (req, res) => {
+    try {
+        if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        await User.findByIdAndDelete(req.params.id);
+        res.json({ message: "User removed successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to delete user" });
+    }
+});
+
+// GET /api/admin/feature-matrix — Retrieve editable feature limits configuration
+const { getFeatureMatrix, saveFeatureMatrix } = require('../utils/featureMatrix');
+router.get('/feature-matrix', verifyToken, async (req, res) => {
+    try {
+        if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
+        res.json(getFeatureMatrix());
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to get feature matrix" });
+    }
+});
+
+// POST /api/admin/feature-matrix — Save/Update dynamic feature limits configuration
+router.post('/feature-matrix', verifyToken, async (req, res) => {
+    try {
+        if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
+        const success = saveFeatureMatrix(req.body);
+        if (!success) return res.status(500).json({ error: "Failed to save feature matrix configuration" });
+        res.json({ message: "Feature matrix configuration saved successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to save feature matrix" });
+    }
+});
+
+// GET /api/admin/audit-logs — Reads and parses the local AI query audit logs
+const fs = require('fs').promises;
+const path = require('path');
+router.get('/audit-logs', verifyToken, async (req, res) => {
+    try {
+        if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
+        const logPath = path.join(__dirname, '../logs/ai_audit.log');
+        
+        let logs = [];
+        try {
+            const content = await fs.readFile(logPath, 'utf8');
+            const lines = content.split('\n').filter(line => line.trim().length > 0);
+            logs = lines.map(line => JSON.parse(line)).reverse(); // latest first
+        } catch (e) {
+            // File might not exist yet if no AI usage has happened
+            console.log("No AI logs found or log file empty");
+        }
+        res.json(logs);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to retrieve activity audit logs" });
+    }
+});
+
 module.exports = router;
