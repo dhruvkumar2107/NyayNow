@@ -13,20 +13,28 @@ const razorpay = process.env.RZP_KEY_ID
 // ─── PLAN CONFIG ──────────────────────────────────────────────────────────────
 const PLAN_CONFIG = {
   pro: {
-    name: "NyayNow Pro",
-    amount: 49900, // paise = ₹499
+    name: "Nyay Pro",
+    amount: { monthly: 29900, yearly: 249900 }, // ₹299/mo | ₹2499/yr
     period: "monthly",
     interval: 1,
-    description: "Unlimited AI queries, Judge AI, Drafting Lab, NyayVoice",
-    features: ["Unlimited AI Queries", "Judge AI (10/mo)", "Full Drafting Suite", "NyayVoice", "Precedent Engine", "Case Calendar Sync"]
+    description: "Unlimited AI queries, Judge AI, Drafting Lab, NyayVoice, FIRAC Research",
+    features: ["Unlimited AI Queries", "30 Precedent Searches/mo", "10 Document Drafts/mo", "5 Case PDFs/mo", "NyayVoice 20min/mo", "3 Judge AI Predictions/mo"]
+  },
+  gold: {
+    name: "Nyay Gold",
+    amount: { monthly: 79900, yearly: 699900 }, // ₹799/mo | ₹6999/yr
+    period: "monthly",
+    interval: 1,
+    description: "Everything in Pro + Unlimited research, Court-Ready Briefs, Visual Citation Map",
+    features: ["Unlimited AI Queries", "Unlimited Precedent Research", "Unlimited Document Drafting", "25 Case PDFs/mo", "Unlimited Judge AI", "Court-Ready Brief Generator", "Visual Precedent Citation Map"]
   },
   firm: {
-    name: "NyayNow Firm",
-    amount: 499900, // paise = ₹4999
+    name: "Nyay Firm",
+    amount: { monthly: 299900, yearly: 2499900 }, // ₹2999/mo | ₹24999/yr
     period: "monthly",
     interval: 1,
-    description: "Everything in Pro + Moot Court, Devil's Advocate, 5 team accounts",
-    features: ["Everything in Pro", "Moot Court VR", "Devil's Advocate AI", "Unlimited Judge AI", "5 Team Accounts", "Dedicated CRM"]
+    description: "Everything in Gold + Team seats, API access, white-label, Contract Heatmap",
+    features: ["Everything in Gold", "10 Team Seats", "Contract Heatmap & Redliner", "AI Witness Cross-Examiner", "API Access (10k calls/mo)", "White-label Reports", "Dedicated Account Manager"]
   }
 };
 
@@ -68,10 +76,10 @@ router.get("/status", verifyToken, async (req, res) => {
 // ─── CREATE RECURRING SUBSCRIPTION ORDER ──────────────────────────────────────
 router.post("/create-subscription", verifyToken, async (req, res) => {
   try {
-    const { plan } = req.body;
+    const { plan, billing = "monthly" } = req.body;
 
     if (!PLAN_CONFIG[plan]) {
-      return res.status(400).json({ error: "Invalid plan. Choose 'pro' or 'firm'" });
+      return res.status(400).json({ error: "Invalid plan. Choose 'pro', 'gold', or 'firm'" });
     }
 
     if (!razorpay) {
@@ -82,15 +90,17 @@ router.post("/create-subscription", verifyToken, async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     const config = PLAN_CONFIG[plan];
+    const billingKey = billing === "yearly" ? "yearly" : "monthly";
+    const amount = typeof config.amount === "object" ? config.amount[billingKey] : config.amount;
 
-    // Create a Razorpay order (for subscription-like one-time, or use subscription API)
-    // For now: create order, frontend handles recurring with Razorpay checkout
+    // Create a Razorpay order
     const order = await razorpay.orders.create({
-      amount: config.amount,
+      amount,
       currency: "INR",
-      receipt: `sub_${plan}_${req.userId.substring(0, 8)}_${Date.now()}`,
+      receipt: `sub_${plan}_${billingKey}_${req.userId.substring(0, 8)}_${Date.now()}`,
       notes: {
         plan,
+        billing: billingKey,
         userId: req.userId,
         email: user.email,
         type: "subscription"
@@ -103,7 +113,8 @@ router.post("/create-subscription", verifyToken, async (req, res) => {
       currency: order.currency,
       key: process.env.RZP_KEY_ID,
       plan,
-      planConfig: config,
+      billing: billingKey,
+      planConfig: { ...config, amount },
       user: { name: user.name, email: user.email }
     });
   } catch (err) {
