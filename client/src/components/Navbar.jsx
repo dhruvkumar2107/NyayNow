@@ -72,6 +72,11 @@ export default function Navbar() {
     { name: "Pricing", href: "/pricing" }
   ];
 
+  const displayNavItems = [...navItems];
+  if (user && user.role === 'admin') {
+    displayNavItems.push({ name: "Admin Dashboard", href: "/admin" });
+  }
+
   const isDashboard = pathname?.startsWith('/lawyer') || pathname?.startsWith('/client') || pathname?.startsWith('/admin');
   if (isDashboard) return null;
 
@@ -90,65 +95,63 @@ export default function Navbar() {
 
           {/* DESKTOP NAV - CENTERED */}
           <div className="hidden lg:flex items-center gap-4 h-full absolute left-1/2 -translate-x-1/2">
-            {user?.role !== 'admin' && (
-              <>
-                {/* Services Dropdown */}
-                <div 
-                  className="relative h-full flex items-center"
-                  onMouseEnter={() => setServicesOpen(true)}
-                  onMouseLeave={() => setServicesOpen(false)}
-                >
-                  <button className="flex items-center gap-1.5 text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5 outline-none cursor-pointer">
-                    Services
-                    <ChevronDown size={14} className={`transition-transform duration-300 ${servicesOpen ? 'rotate-180 text-white' : ''}`} />
-                  </button>
-                  
-                  <AnimatePresence>
-                    {servicesOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute top-[70%] left-0 w-[420px] bg-[#030712]/95 border border-white/10 rounded-[28px] p-4 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.9)] backdrop-blur-3xl grid grid-cols-1 gap-1 z-[99999]"
-                      >
-                        <div className="px-3 py-1 border-b border-white/5 mb-2">
-                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">Legal AI Services</p>
-                        </div>
-                        {services.map((item) => {
-                          const Icon = item.icon;
-                          return (
-                            <Link
-                              key={item.name}
-                              href={item.href}
-                              className="flex items-start gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all duration-300 group"
-                            >
-                              <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-blue-500/20 group-hover:scale-105 transition-all duration-300 shrink-0 ${item.color}`}>
-                                <Icon size={18} />
-                              </div>
-                              <div className="text-left">
-                                <p className="text-white font-bold text-[13px] tracking-tight group-hover:text-blue-400 transition-colors">{item.name}</p>
-                                <p className="text-slate-400 text-[11px] mt-0.5 font-medium leading-normal">{item.desc}</p>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+            <>
+              {/* Services Dropdown */}
+              <div 
+                className="relative h-full flex items-center"
+                onMouseEnter={() => setServicesOpen(true)}
+                onMouseLeave={() => setServicesOpen(false)}
+              >
+                <button className="flex items-center gap-1.5 text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5 outline-none cursor-pointer">
+                  Services
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${servicesOpen ? 'rotate-180 text-white' : ''}`} />
+                </button>
+                
+                <AnimatePresence>
+                  {servicesOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-[70%] left-0 w-[420px] bg-[#030712]/95 border border-white/10 rounded-[28px] p-4 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.9)] backdrop-blur-3xl grid grid-cols-1 gap-1 z-[99999]"
+                    >
+                      <div className="px-3 py-1 border-b border-white/5 mb-2">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">Legal AI Services</p>
+                      </div>
+                      {services.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            className="flex items-start gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all duration-300 group"
+                          >
+                            <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-blue-500/20 group-hover:scale-105 transition-all duration-300 shrink-0 ${item.color}`}>
+                              <Icon size={18} />
+                            </div>
+                            <div className="text-left">
+                              <p className="text-white font-bold text-[13px] tracking-tight group-hover:text-blue-400 transition-colors">{item.name}</p>
+                              <p className="text-slate-400 text-[11px] mt-0.5 font-medium leading-normal">{item.desc}</p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
-                {navItems.map((item, idx) => (
-                  <Link
-                    key={idx}
-                    href={item.href}
-                    className="text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5 whitespace-nowrap"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </>
-            )}
+              {displayNavItems.map((item, idx) => (
+                <Link
+                  key={idx}
+                  href={item.href}
+                  className="text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5 whitespace-nowrap"
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </>
           </div>
 
           {/* RIGHT ACTIONS */}
@@ -289,7 +292,7 @@ export default function Navbar() {
                     </AnimatePresence>
                   </div>
 
-                  {navItems.map((item, idx) => (
+                  {displayNavItems.map((item, idx) => (
                     <motion.div
                       key={idx}
                       initial={{ opacity: 0, y: 10 }}
