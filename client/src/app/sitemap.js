@@ -48,6 +48,7 @@ export default async function sitemap() {
         { path: "/moot-court",             freq: 'weekly',  priority: 0.7 },
         { path: "/ecourts",                freq: 'weekly',  priority: 0.7 },
         { path: "/translator",             freq: 'weekly',  priority: 0.8 },
+        { path: "/bns",                    freq: 'weekly',  priority: 0.9 },
         { path: "/bns/section-103",        freq: 'weekly',  priority: 0.8 },
         { path: "/bns/section-303",        freq: 'weekly',  priority: 0.8 },
         { path: "/bns/section-318",        freq: 'weekly',  priority: 0.8 },
