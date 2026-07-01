@@ -344,6 +344,11 @@ const seedLawyers = async () => {
         continue;
       }
 
+      // Convert availability to string if it's an array to match User schema definition
+      if (Array.isArray(lawyer.availability)) {
+        lawyer.availability = lawyer.availability.join(", ");
+      }
+
       // Create new user
       const newUser = new User(lawyer);
       await newUser.save();
