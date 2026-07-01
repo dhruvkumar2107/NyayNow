@@ -5,7 +5,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { jsPDF } from 'jspdf';
 import { API_BASE } from '../../config';
-import UpgradeGate from '../components/UpgradeGate';
+import UpgradeGate from '../../components/UpgradeGate';
 import {
     Gavel, Scale, Shield, ChevronRight, Loader2,
     BookOpen, Mic2, Star, RotateCcw, Sparkles, Download, BarChart2, CheckCircle2, AlertTriangle, ArrowRight
