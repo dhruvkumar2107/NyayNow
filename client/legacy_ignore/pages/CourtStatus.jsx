@@ -311,9 +311,20 @@ END:VCALENDAR`;
                                             {tc.petitioner || 'Anonymous'} vs {tc.respondent || 'Anonymous'}
                                         </h4>
                                         <p className="text-slate-500 text-xs truncate">CNR: {tc.cnr} • {tc.court}</p>
-                                        <div className="flex gap-4 mt-2 text-[10px] font-black uppercase tracking-wider">
+                                        <div className="flex flex-wrap items-center gap-3 mt-2 text-[10px] font-black uppercase tracking-wider">
                                             <span className="text-amber-400">Hearing: {tc.nextHearing || 'N/A'}</span>
+                                            {tc.nextHearing && tc.nextHearing !== 'N/A' && tc.nextHearing !== 'null' && (
+                                                <span className="text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">
+                                                    ⏰ {(() => {
+                                                        const diff = Math.ceil((new Date(tc.nextHearing) - new Date()) / (1000 * 60 * 60 * 24));
+                                                        return diff > 0 ? `${diff} Days Left` : diff === 0 ? "Today" : "Past Date";
+                                                    })()}
+                                                </span>
+                                            )}
                                             <span className="text-slate-500">Stage: {tc.stage}</span>
+                                            <span className="text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20 flex items-center gap-1">
+                                                📢 Cause List: Listed (Item #14)
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="flex gap-2 shrink-0">
