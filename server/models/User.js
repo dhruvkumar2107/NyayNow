@@ -58,6 +58,17 @@ const userSchema = new mongoose.Schema(
       firstUsedAt: { type: Date, default: null },
     },
 
+    // ─── PER-FEATURE MONTHLY USAGE (Paywall) ─────────────────────────────
+    // Keyed by feature name e.g. 'assistant', 'legal-research', etc.
+    featureUsage: {
+      type: Map,
+      of: new mongoose.Schema({
+        count: { type: Number, default: 0 },
+        resetAt: { type: Date, default: null }
+      }, { _id: false }),
+      default: {}
+    },
+
     specialization: String,
     experience: Number,
 

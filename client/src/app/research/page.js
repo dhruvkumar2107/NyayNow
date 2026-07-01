@@ -55,6 +55,14 @@ export default function PrecedentEnginePage() {
             })
             
             const data = res.data
+            
+            // Show remaining queries toast
+            if (data.usage && data.usage.limit !== 'unlimited') {
+                const remaining = data.usage.remaining;
+                const limit = data.usage.limit;
+                toast.success(`${remaining} of ${limit} monthly precedent searches remaining`, { id: "research-toast" });
+            }
+
             const cases = data.cases || []
             if (cases.length > 0) {
                 setResults(cases.map(c => ({
@@ -75,7 +83,11 @@ export default function PrecedentEnginePage() {
             }
         } catch (err) {
             console.error(err)
-            setError("The research engine failed to retrieve data. Please refine your query.")
+            const errMsg = err.response?.data?.error || "The research engine failed to retrieve data. Please refine your query.";
+            setError(errMsg)
+            if (err.response?.status === 403) {
+                toast.error(errMsg, { id: "research-toast", duration: 5000 });
+            }
         } finally {
             setIsLoading(false)
         }

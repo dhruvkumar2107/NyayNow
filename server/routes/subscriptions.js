@@ -55,13 +55,14 @@ const LISTING_CONFIG = {
 // ─── GET SUBSCRIPTION STATUS ──────────────────────────────────────────────────
 router.get("/status", verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select("plan credits aiUsage listingTier subscriptionId subscriptionStatus subscriptionEndDate");
+    const user = await User.findById(req.userId).select("plan credits aiUsage listingTier subscriptionId subscriptionStatus subscriptionEndDate featureUsage");
     if (!user) return res.status(404).json({ error: "User not found" });
 
     res.json({
       plan: user.plan,
       credits: user.credits || 0,
       aiUsage: user.aiUsage,
+      featureUsage: user.featureUsage || {},
       listingTier: user.listingTier,
       subscriptionId: user.subscriptionId || null,
       subscriptionStatus: user.subscriptionStatus || "inactive",

@@ -11,7 +11,7 @@ const pdf = require("pdf-parse");
 const upload = multer({ storage: multer.memoryStorage() });
 const verifyToken = require("../middleware/authMiddleware");
 const verifyTokenOptional = require("../middleware/verifyTokenOptional");
-const checkAiLimit = require("../middleware/checkAiLimit");
+const checkFeatureAccess = require("../middleware/checkFeatureAccess");
 
 // Helper to sanitize user input to prevent prompt injection
 function sanitizeUserInput(text) {
@@ -61,7 +61,7 @@ function safeJsonParse(text, routeName) {
 }
 
 /* ---------------- AI ASSISTANT (CHAT) ---------------- */
-router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/assistant", verifyTokenOptional, checkFeatureAccess("assistant"), async (req, res) => {
   try {
     const { question, history, language, location, caseContext } = req.body;
 
@@ -188,7 +188,7 @@ router.post("/assistant", verifyTokenOptional, checkAiLimit, async (req, res) =>
 
 /* ---------------- AGREEMENT ANALYSIS ---------------- */
 /* ---------------- AGREEMENT ANALYSIS ---------------- */
-router.post("/agreement", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/agreement", verifyTokenOptional, checkFeatureAccess("agreement"), async (req, res) => {
   try {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: "No text provided" });
@@ -236,7 +236,7 @@ router.post("/agreement", verifyTokenOptional, checkAiLimit, async (req, res) =>
 });
 
 /* ---------------- AGREEMENT PDF ANALYSIS ---------------- */
-router.post("/analyze-agreement-pdf", verifyTokenOptional, checkAiLimit, upload.single("file"), async (req, res) => {
+router.post("/analyze-agreement-pdf", verifyTokenOptional, checkFeatureAccess("analyze-agreement-pdf"), upload.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No PDF file uploaded" });
 
@@ -292,7 +292,7 @@ router.post("/analyze-agreement-pdf", verifyTokenOptional, checkAiLimit, upload.
 
 /* ---------------- CASE ANALYSIS (Legal Issue) ---------------- */
 /* ---------------- CASE ANALYSIS (Legal Issue) ---------------- */
-router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/case-analysis", verifyTokenOptional, checkFeatureAccess("case-analysis"), async (req, res) => {
   try {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: "No text provided" });
@@ -334,7 +334,7 @@ router.post("/case-analysis", verifyTokenOptional, checkAiLimit, async (req, res
 
 
 /* ---------------- LEGAL NOTICE GENERATOR ---------------- */
-router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/draft-notice", verifyTokenOptional, checkFeatureAccess("draft-notice"), async (req, res) => {
   try {
     const { notice_details, language, type, senderName, recipientName, facts, amount, complianceDays } = req.body;
     
@@ -385,12 +385,12 @@ router.post("/draft-notice", verifyTokenOptional, checkAiLimit, async (req, res)
 });
 
 /* ---------------- JUDGE AI (CASE PREDICTOR) ---------------- */
-router.post("/predict-outcome", verifyToken, checkAiLimit, async (req, res) => {
+router.post("/predict-outcome", verifyToken, checkFeatureAccess("predict-outcome"), async (req, res) => {
   try {
     const { caseTitle, caseDescription, caseType, oppositionDetails, assignedJudge } = req.body;
     console.log(`📑 /predict-outcome requested for: ${caseTitle || "Unnamed Case"}`);
 
-    const user = req.user; // checkAiLimit already fetches and attaches this
+    const user = req.user; // checkFeatureAccess already fetches and attaches this
     if (!user) {
       return res.status(401).json({ error: "Unauthorized" });
     }
@@ -513,7 +513,7 @@ router.get("/prediction-history", verifyToken, async (req, res) => {
 });
 
 /* ---------------- CONTRACT DRAFTING (TurboAgreements) ---------------- */
-router.post("/draft-contract", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/draft-contract", verifyTokenOptional, checkFeatureAccess("draft-contract"), async (req, res) => {
   try {
     const { type, parties, terms } = req.body;
 
@@ -549,7 +549,7 @@ router.post("/draft-contract", verifyTokenOptional, checkAiLimit, async (req, re
 });
 
 /* ---------------- JUDGE AI PRO (PDF ANALYSIS) ---------------- */
-router.post("/analyze-case-file", verifyTokenOptional, checkAiLimit, upload.single("file"), async (req, res) => {
+router.post("/analyze-case-file", verifyTokenOptional, checkFeatureAccess("analyze-case-file"), upload.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No PDF file uploaded" });
 
@@ -604,7 +604,7 @@ router.post("/analyze-case-file", verifyTokenOptional, checkAiLimit, upload.sing
 });
 
 /* ---------------- DEVIL'S ADVOCATE (AI REBUTTAL) ---------------- */
-router.post("/devils-advocate", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/devils-advocate", verifyTokenOptional, checkFeatureAccess("devils-advocate"), async (req, res) => {
   try {
     const { argument } = req.body;
     if (!argument) return res.status(400).json({ error: "Argument required" });
@@ -648,7 +648,7 @@ router.post("/devils-advocate", verifyTokenOptional, checkAiLimit, async (req, r
 });
 
 /* ---------------- MOOT COURT (AI JUDGE) ---------------- */
-router.post("/moot-court", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/moot-court", verifyTokenOptional, checkFeatureAccess("moot-court"), async (req, res) => {
   try {
     const { transcript, caseContext } = req.body;
     if (!transcript) return res.status(400).json({ error: "Transcript required." });
@@ -699,7 +699,7 @@ router.post("/moot-court", verifyTokenOptional, checkAiLimit, async (req, res) =
 });
 
 /* ---------------- LEGAL RESEARCH (SEMANTIC SEARCH) ---------------- */
-router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/legal-research", verifyTokenOptional, checkFeatureAccess("legal-research"), async (req, res) => {
   try {
     const { query, source, dateRange } = req.body;
     if (!query) return res.status(400).json({ error: "Query required." });
@@ -788,7 +788,7 @@ router.post("/legal-research", verifyTokenOptional, checkAiLimit, async (req, re
 });
 
 /* ---------------- CAREER MENTOR (VIRTUAL INTERNSHIP) ---------------- */
-router.post("/career-mentor", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/career-mentor", verifyTokenOptional, checkFeatureAccess("career-mentor"), async (req, res) => {
   try {
     const { taskType, userSubmission } = req.body;
     if (!userSubmission) return res.status(400).json({ error: "Submission required." });
@@ -829,7 +829,7 @@ router.post("/career-mentor", verifyTokenOptional, checkAiLimit, async (req, res
 });
 
 /* ---------------- JUDGE PROFILE GENERATOR ---------------- */
-router.post("/judge-profile", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/judge-profile", verifyTokenOptional, checkFeatureAccess("judge-profile"), async (req, res) => {
   try {
     const { name, court } = req.body;
     if (!name) return res.status(400).json({ error: "Judge name is required" });
@@ -929,7 +929,7 @@ router.post("/legal-sos", verifyTokenOptional, async (req, res) => {
 });
 
 /* ---------------- FIR GENERATOR (EMERGENCY DRAFT) ---------------- */
-router.post("/fir-generator", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/fir-generator", verifyTokenOptional, checkFeatureAccess("fir-generator"), async (req, res) => {
   try {
     const { situation, emergencyType, language, complaintDetails, rights } = req.body;
     if (!situation) return res.status(400).json({ error: "Situation required" });
@@ -988,7 +988,7 @@ router.post("/fir-generator", verifyTokenOptional, checkAiLimit, async (req, res
    The most powerful AI feature: 3 AI personas argue the user's
    real case against each other. Full trial in 60 seconds.
    ═══════════════════════════════════════════════════════════════ */
-router.post("/courtroom-battle", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/courtroom-battle", verifyTokenOptional, checkFeatureAccess("courtroom-battle"), async (req, res) => {
   try {
     const { caseTitle, caseDescription, caseType, plaintiffSide, defenseSide } = req.body;
     if (!caseDescription) return res.status(400).json({ error: "Case description required" });
@@ -1140,7 +1140,7 @@ router.post("/courtroom-battle", verifyTokenOptional, checkAiLimit, async (req, 
    INSTANT LEGAL NOTICE GENERATOR
    POST /api/ai/legal-notice
 ──────────────────────────────────────────────────────── */
-router.post("/legal-notice", verifyToken, checkAiLimit, async (req, res) => {
+router.post("/legal-notice", verifyToken, checkFeatureAccess("legal-notice"), async (req, res) => {
   try {
     const {
       noticeType,        // e.g. "Demand Notice", "Eviction Notice", "Cheque Bounce"
@@ -1248,7 +1248,7 @@ function extractSections(text) {
 /* ---------------- CASEBASE.LEXOPS.AI FEATURE REPLICATION ---------------- */
 
 // Generate full case detail & FIRAC analysis
-router.post("/case-detail", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/case-detail", verifyTokenOptional, checkFeatureAccess("case-detail"), async (req, res) => {
   try {
     const { caseName, citation } = req.body;
     if (!caseName) return res.status(400).json({ error: "Case name is required." });
@@ -1373,7 +1373,7 @@ router.post("/case-detail", verifyTokenOptional, checkAiLimit, async (req, res) 
 });
 
 // Chat with the Case context
-router.post("/chat-case", verifyTokenOptional, checkAiLimit, async (req, res) => {
+router.post("/chat-case", verifyTokenOptional, checkFeatureAccess("chat-case"), async (req, res) => {
   try {
     const { caseName, fullText, message, history } = req.body;
     if (!caseName || !message) return res.status(400).json({ error: "Case name and message required." });

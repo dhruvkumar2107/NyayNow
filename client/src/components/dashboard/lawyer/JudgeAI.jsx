@@ -10,6 +10,7 @@ import autoTable from 'jspdf-autotable';
 import { useAuth } from "../../../context/AuthContext";
 import PaywallModal from "../../PaywallModal";
 import { hasAccess } from "../../../utils/planBorders";
+import UpgradeGate from "../../UpgradeGate";
 
 const JudgeAI = () => {
     const { user } = useAuth();
@@ -93,12 +94,6 @@ const JudgeAI = () => {
     };
 
     const handleAnalyze = async () => {
-        const usageCount = user?.aiUsage?.count || 0;
-        if (!hasAccess(user?.plan, 'LEGAL_RESEARCH', usageCount)) {
-            setShowPaywall(true);
-            return;
-        }
-
         if (!caseInput.trim()) {
             toast.error("Please enter case details first.");
             return;
@@ -134,10 +129,17 @@ const JudgeAI = () => {
                     precedent: res.data.relevant_precedent
                 });
                 toast.success("Strategic Analysis Complete");
+
+                // Show remaining queries toast
+                if (res.data.usage && res.data.usage.limit !== 'unlimited') {
+                    const remaining = res.data.usage.remaining;
+                    const limit = res.data.usage.limit;
+                    toast.success(`${remaining} of ${limit} monthly predictions remaining`, { id: "predict-toast" });
+                }
             }
         } catch (err) {
             console.error("❌ AI Error Details:", err.response?.data || err.message);
-            const errorMsg = err.response?.data?.details || err.response?.data?.message || err.response?.data?.error || "AI Overload. Please try again.";
+            const errorMsg = err.response?.data?.error || "AI Overload. Please try again.";
             toast.error(errorMsg);
             setResult(null);
         } finally {
@@ -169,9 +171,9 @@ const JudgeAI = () => {
 
             {/* MAIN INTERFACE */}
             <section className="container mx-auto px-6 pb-24 max-w-5xl">
-
-                {/* INPUT AREA */}
-                <div className="bg-[#0f172a] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl mb-8">
+                <UpgradeGate feature="predict-outcome">
+                    {/* INPUT AREA */}
+                    <div className="bg-[#0f172a] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl mb-8">
                     {!result && !analyzing && (
                         <div className="space-y-6">
                             <div>
@@ -335,6 +337,7 @@ const JudgeAI = () => {
                         </motion.div>
                     )}
                 </div>
+                </UpgradeGate>
             </section>
 
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} feature="Deep Justice Insights" />

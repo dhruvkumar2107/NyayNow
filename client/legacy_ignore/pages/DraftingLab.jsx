@@ -85,13 +85,20 @@ const DraftingLab = () => {
             setGeneratedContract(data.contract);
             toast.success("Draft generated successfully!");
 
+            if (data.usage && data.usage.limit !== 'unlimited') {
+                const remaining = data.usage.remaining;
+                const limit = data.usage.limit;
+                toast.success(`${remaining} of ${limit} monthly drafts remaining`, { id: "draft-toast" });
+            }
+
             if (!token) {
                 localStorage.setItem('draftingUsed', 'true');
             }
 
         } catch (err) {
             console.error(err);
-            toast.error("Drafting failed. AI model timeout.");
+            const errMsg = err.response?.data?.error || "Drafting failed. AI model timeout.";
+            toast.error(errMsg);
         } finally {
             setLoading(false);
         }
@@ -149,9 +156,16 @@ const DraftingLab = () => {
 
             setAnalysisResult(responseData);
             toast.success("Analysis complete!");
+
+            if (responseData.usage && responseData.usage.limit !== 'unlimited') {
+                const remaining = responseData.usage.remaining;
+                const limit = responseData.usage.limit;
+                toast.success(`${remaining} of ${limit} monthly analyses remaining`, { id: "analyze-toast" });
+            }
         } catch (err) {
             console.error(err);
-            toast.error("Analysis failed. Model timeout.");
+            const errMsg = err.response?.data?.error || "Analysis failed. Model timeout.";
+            toast.error(errMsg);
         } finally {
             setLoading(false);
         }

@@ -1,4 +1,7 @@
+'use client'
+
 import dynamic from 'next/dynamic';
+import UpgradeGate from "../../components/UpgradeGate";
 
 const MootCourt = dynamic(() => import("../../../legacy_ignore/pages/MootCourt"), {
     ssr: false,
@@ -13,5 +16,13 @@ const MootCourt = dynamic(() => import("../../../legacy_ignore/pages/MootCourt")
 });
 
 export default function MootCourtPage() {
-    return <MootCourt />;
+    return (
+        <div className="min-h-screen bg-[#020617] pt-20 px-4">
+            <div className="max-w-5xl mx-auto">
+                <UpgradeGate feature="moot-court">
+                    <MootCourt />
+                </UpgradeGate>
+            </div>
+        </div>
+    );
 }

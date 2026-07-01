@@ -5,6 +5,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { jsPDF } from 'jspdf';
 import { API_BASE } from '../../config';
+import UpgradeGate from '../components/UpgradeGate';
 import {
     Gavel, Scale, Shield, ChevronRight, Loader2,
     BookOpen, Mic2, Star, RotateCcw, Sparkles, Download, BarChart2, CheckCircle2, AlertTriangle, ArrowRight
@@ -293,10 +294,18 @@ export default function CourtroomBattle() {
             setPhase('trial');
             setShownRounds([]);
             setActiveRound(-1);
+
+            // Show remaining queries toast
+            if (data.usage && data.usage.limit !== 'unlimited') {
+                const remaining = data.usage.remaining;
+                const limit = data.usage.limit;
+                toast.success(`${remaining} of ${limit} monthly courtroom simulations remaining`, { id: "battle-toast" });
+            }
         } catch (err) {
             console.error("Court Battle Error:", err);
             setPhase('input');
-            toast.error("Could not reach the High Court. Please try again.");
+            const errMsg = err.response?.data?.error || "Could not reach the High Court. Please try again.";
+            toast.error(errMsg);
         }
     };
 
@@ -399,6 +408,7 @@ export default function CourtroomBattle() {
                 <div className="absolute top-0 inset-x-0 h-[600px] bg-[radial-gradient(ellipse_at_top,_rgba(59,130,246,0.1),_transparent_70%)] pointer-events-none" />
 
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 relative">
+                    <UpgradeGate feature="courtroom-battle">
                     <AnimatePresence mode="wait">
 
                         {/* PHASE: INPUT */}
@@ -810,6 +820,7 @@ export default function CourtroomBattle() {
                             </motion.div>
                         )}
                     </AnimatePresence>
+                    </UpgradeGate>
                 </div>
             </main>
         </div>
