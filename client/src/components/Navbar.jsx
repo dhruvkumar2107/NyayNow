@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Scale, BookOpen, FileText, Briefcase, Gavel,
   Mic, User, Search, MapPin, Video, DollarSign,
-  Users, Menu, X, ChevronDown, LogOut, LayoutDashboard, Shield, Siren, Command, Sparkles
+  Users, Menu, X, ChevronDown, LogOut, LayoutDashboard, Shield, Siren, Command, Sparkles, Languages, Activity
 } from "lucide-react";
 import Image from "next/image";
 
@@ -61,7 +61,9 @@ export default function Navbar() {
     { name: "Courtroom Simulator", desc: "Simulate a live AI trial argument", href: "/nyaycourt-simulator", icon: Scale, color: "text-violet-400" },
     { name: "Multilingual Voice Assist", desc: "Voice search in 14+ Indian languages", href: "/nyayvoice", icon: Mic, color: "text-cyan-400" },
     { name: "Nearby Radar Map", desc: "Find nearest police, courts & advocates", href: "/nearby", icon: MapPin, color: "text-amber-400" },
-    { name: "Legal Precedent Search", desc: "Search through 1.2M court judgments", href: "/research", icon: Search, color: "text-pink-400" }
+    { name: "Legal Precedent Search", desc: "Search through 1.2M court judgments", href: "/research", icon: Search, color: "text-pink-400" },
+    { name: "NJDG Case Tracker", desc: "Track e-Courts case status live", href: "/ecourts", icon: Activity, color: "text-rose-400" },
+    { name: "Bhashini Translator", desc: "Translate text across Indian languages", href: "/translator", icon: Languages, color: "text-sky-400" }
   ];
 
   const navItems = [

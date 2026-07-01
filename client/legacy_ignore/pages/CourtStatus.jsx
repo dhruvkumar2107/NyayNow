@@ -1,10 +1,10 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../src/context/AuthContext';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Gavel, Scale, Calendar, FileText, Activity } from 'lucide-react';
+import { Search, Gavel, Scale, Calendar, FileText, Activity, XCircle, Pin, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const CourtStatus = () => {
@@ -13,6 +13,104 @@ const CourtStatus = () => {
     const [caseData, setCaseData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [trackedCases, setTrackedCases] = useState([]);
+    const [syncingId, setSyncingId] = useState(null);
+
+    const fetchTrackedCases = async () => {
+        if (!user) return;
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get('/api/ecourts/tracked', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setTrackedCases(res.data);
+        } catch (err) {
+            console.error("Error fetching tracked cases:", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchTrackedCases();
+    }, [user]);
+
+    const handleTrackCase = async () => {
+        if (!user) {
+            return toast.error("Please log in to track cases.");
+        }
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post('/api/ecourts/track', {
+                cnr: caseData.cnr,
+                caseNumber: caseData.caseNumber,
+                petitioner: caseData.petitioner,
+                respondent: caseData.respondent,
+                court: caseData.court,
+                judge: caseData.judge,
+                stage: caseData.stage,
+                status: caseData.status,
+                nextHearing: caseData.nextHearing,
+                history: caseData.history
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            toast.success("Case added to your tracking list!");
+            fetchTrackedCases();
+        } catch (err) {
+            toast.error(err.response?.data?.error || "Failed to track case");
+        }
+    };
+
+    const handleSyncTrackedCase = async (id) => {
+        setSyncingId(id);
+        toast.loading("Syncing live court records...", { id: "sync-toast" });
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.post(`/api/ecourts/sync/${id}`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            toast.success("Case details synced with live court nodes!", { id: "sync-toast" });
+            fetchTrackedCases();
+            
+            if (caseData && caseData.cnr === res.data.tracked.cnr) {
+                const raw = res.data.tracked;
+                setCaseData({
+                    court: raw.court,
+                    cnr: raw.cnr,
+                    status: raw.status,
+                    caseNumber: raw.caseNumber,
+                    filingDate: raw.filingDate || "N/A",
+                    nextHearing: raw.nextHearing,
+                    judge: raw.judge,
+                    stage: raw.stage,
+                    petitioner: raw.petitioner,
+                    respondent: raw.respondent,
+                    acts: ["Civil Procedure Code", "Indian Penal Code"],
+                    history: (raw.history || []).map(h => ({
+                        action: h.action || "Hearing",
+                        outcome: h.outcome || "Hearing Conducted",
+                        date: h.date || "N/A"
+                    }))
+                });
+            }
+        } catch (err) {
+            toast.error("Sync failed", { id: "sync-toast" });
+        } finally {
+            setSyncingId(null);
+        }
+    };
+
+    const handleUntrackCase = async (id) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`/api/ecourts/track/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            toast.success("Stopped tracking case.");
+            fetchTrackedCases();
+        } catch (err) {
+            toast.error("Failed to untrack case");
+        }
+    };
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -195,6 +293,52 @@ END:VCALENDAR`;
                     </form>
                 </motion.div>
 
+                {/* TRACKED CASES SECTION */}
+                {user && trackedCases.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white/5 border border-white/10 rounded-[2rem] p-8 space-y-6"
+                    >
+                        <h3 className="text-lg font-serif font-black text-white flex items-center gap-2">
+                            📌 Your Tracked Judicial Cases ({trackedCases.length})
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-4">
+                            {trackedCases.map(tc => (
+                                <div key={tc._id} className="bg-black/40 p-5 rounded-2xl border border-white/5 flex justify-between items-center hover:border-amber-500/30 transition">
+                                    <div className="space-y-1 flex-1 min-w-0 pr-3">
+                                        <h4 className="font-serif font-bold text-white text-base truncate">
+                                            {tc.petitioner || 'Anonymous'} vs {tc.respondent || 'Anonymous'}
+                                        </h4>
+                                        <p className="text-slate-500 text-xs truncate">CNR: {tc.cnr} • {tc.court}</p>
+                                        <div className="flex gap-4 mt-2 text-[10px] font-black uppercase tracking-wider">
+                                            <span className="text-amber-400">Hearing: {tc.nextHearing || 'N/A'}</span>
+                                            <span className="text-slate-500">Stage: {tc.stage}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2 shrink-0">
+                                        <button
+                                            onClick={() => handleSyncTrackedCase(tc._id)}
+                                            disabled={syncingId === tc._id}
+                                            className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-500/30 text-white rounded-xl transition flex items-center justify-center gap-1.5"
+                                            title="Sync live status"
+                                        >
+                                            <RefreshCw size={12} className={syncingId === tc._id ? 'animate-spin text-amber-400' : 'text-slate-400'} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleUntrackCase(tc._id)}
+                                            className="p-2 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition"
+                                            title="Untrack Case"
+                                        >
+                                            <XCircle size={14} />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+
                 {/* RESULTS */}
                 <AnimatePresence mode="wait">
                     {error && (
@@ -220,6 +364,20 @@ END:VCALENDAR`;
                                         <h2 className="text-3xl font-serif font-bold text-white">{caseData.court}</h2>
                                     </div>
                                     <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase font-bold ml-16">CNR: {caseData.cnr}</p>
+                                    {user && (
+                                        <button
+                                            onClick={handleTrackCase}
+                                            disabled={trackedCases.some(tc => tc.cnr === caseData.cnr)}
+                                            className={`mt-4 ml-16 px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition flex items-center gap-1.5 border ${
+                                                trackedCases.some(tc => tc.cnr === caseData.cnr)
+                                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                : 'bg-white/5 hover:bg-white/10 text-white border-white/10'
+                                            }`}
+                                        >
+                                            <Pin size={12} />
+                                            {trackedCases.some(tc => tc.cnr === caseData.cnr) ? 'Tracking Enabled' : 'Track This Case'}
+                                        </button>
+                                    )}
                                 </div>
                                 <div className="flex flex-col items-end">
                                     <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Current Status</span>

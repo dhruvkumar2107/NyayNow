@@ -500,6 +500,7 @@ loadRoute("/api/docusign", "./routes/docusign"); // NEW DOCUSIGN ROUTE
 loadRoute("/api/verification", "./routes/verification"); // REAL DIGILOCKER ROUTE
 loadRoute("/api/confessions", "./routes/confessions"); // ANONYMOUS CONFESSION BOOTH
 loadRoute("/api/ecourts", "./routes/ecourts"); // ECOURTS INTEGRATION
+loadRoute("/api/translate", "./routes/translate"); // BHASHINI MULTILINGUAL TRANSLATION
 loadRoute("/api/subscriptions", "./routes/subscriptions"); // 💰 RECURRING SUBSCRIPTIONS
 loadRoute("/api/leads", "./routes/leads"); // 💰 PAY-PER-LEAD SYSTEM
 
