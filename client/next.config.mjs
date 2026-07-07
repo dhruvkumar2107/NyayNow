@@ -24,6 +24,13 @@ const nextConfig = {
     },
     async redirects() {
         return [
+            // Force HTTP → HTTPS for production domain
+            {
+                source: '/:path*',
+                has: [{ type: 'header', key: 'x-forwarded-proto', value: 'http' }],
+                destination: 'https://nyaynow.in/:path*',
+                permanent: true,
+            },
             {
                 source: '/courtroom-battle',
                 destination: '/nyaycourt-simulator',

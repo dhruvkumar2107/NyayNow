@@ -25,7 +25,7 @@ const Footer = () => {
     if (isDashboard) return null
 
     return (
-        <footer className="bg-[#020617] border-t border-white/5 text-slate-400 font-sans pt-16 md:pt-32 pb-12 relative overflow-hidden">
+        <div className="bg-[#020617] border-t border-white/5 text-slate-400 font-sans pt-16 md:pt-32 pb-12 relative overflow-hidden">
             {/* ULTRA-PREMIUM MESH GRADIENT */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
                 <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[120px]" />
@@ -85,16 +85,17 @@ const Footer = () => {
                 </div>
 
                 {/* LINKS GRID */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 sm:gap-12 border-t border-white/5 pt-12 sm:pt-24 mb-16 sm:mb-24">
+                <nav aria-label="Footer Navigation" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 sm:gap-12 border-t border-white/5 pt-12 sm:pt-24 mb-16 sm:mb-24">
                     <FooterColumn title="Sitemap">
                         <FooterLink href="/assistant">AI Assistant</FooterLink>
                         <FooterLink href="/marketplace">Find a Lawyer</FooterLink>
                         <FooterLink href="/nyaycourt-simulator">NyayCourt Simulator <Badge color="bg-emerald-500/10 text-emerald-400">New</Badge></FooterLink>
                         <FooterLink href="/nyayvoice">NyayVoice <Badge color="bg-blue-500/10 text-blue-400">Live</Badge></FooterLink>
+                        <FooterLink href="/bns">BNS Legal Directory <Badge color="bg-sky-500/10 text-sky-400">SEO</Badge></FooterLink>
                     </FooterColumn>
 
-                    <FooterColumn title="Security & Compliance">
-                        <FooterLink href="/security-and-compliance">Security & Compliance</FooterLink>
+                    <FooterColumn title="Security &amp; Compliance">
+                        <FooterLink href="/security-and-compliance">Security &amp; Compliance</FooterLink>
                         <FooterLink href="/dpdp">DPDP Compliance</FooterLink>
                         <FooterLink href="/methodology">Our Methodology</FooterLink>
                         <FooterLink href="/privacy">Privacy Policy</FooterLink>
@@ -109,7 +110,15 @@ const Footer = () => {
                         <FooterLink href="/career">Careers</FooterLink>
                         <FooterLink href="/contact">Contact Support</FooterLink>
                     </FooterColumn>
-                </div>
+
+                    {/* External authoritative links — boosts SEO trust signals */}
+                    <FooterColumn title="Legal Resources">
+                        <ExternalFooterLink href="https://main.sci.gov.in" label="Supreme Court of India">Supreme Court of India</ExternalFooterLink>
+                        <ExternalFooterLink href="https://ecourts.gov.in" label="eCourts India">eCourts India (NJDG)</ExternalFooterLink>
+                        <ExternalFooterLink href="https://www.indiacode.nic.in" label="India Code Legislative Dept">India Code — BNS 2024</ExternalFooterLink>
+                        <ExternalFooterLink href="https://www.barcouncilofindia.org" label="Bar Council of India">Bar Council of India</ExternalFooterLink>
+                    </FooterColumn>
+                </nav>
 
                 {/* GLOBAL LEGAL DISCLAIMER STRIP */}
                 <div className="pt-8 pb-8 border-t border-white/5 text-center">
@@ -136,8 +145,7 @@ const Footer = () => {
                     </div>
                 </div>
 
-            </div>
-        </footer>
+        </div>
     )
 }
 
@@ -156,6 +164,22 @@ const FooterLink = ({ href, children }) => (
             {children}
             <ArrowUpRight size={12} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 text-blue-500" />
         </Link>
+    </li>
+)
+
+/* External links to authoritative government legal sources — boosts SEO trust signals */
+const ExternalFooterLink = ({ href, label, children }) => (
+    <li>
+        <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${label} (opens in new tab)`}
+            className="text-[15px] font-medium text-slate-500 hover:text-white transition-all duration-300 flex items-center group"
+        >
+            {children}
+            <ArrowUpRight size={12} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 text-blue-500" />
+        </a>
     </li>
 )
 

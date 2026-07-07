@@ -82,7 +82,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-[9999] transition-all duration-700 ${scrolled ? "bg-[#020617]/80 backdrop-blur-3xl border-b border-white/5 h-[64px] md:h-[72px]" : "bg-transparent border-b border-transparent h-[80px] md:h-[100px]"}`}>
+      <nav role="navigation" aria-label="Main Navigation" className={`fixed top-0 w-full z-[9999] transition-all duration-700 ${scrolled ? "bg-[#020617]/80 backdrop-blur-3xl border-b border-white/5 h-[64px] md:h-[72px]" : "bg-transparent border-b border-transparent h-[80px] md:h-[100px]"}`}>
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex items-center justify-between">
 
           {/* LOGO */}

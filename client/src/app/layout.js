@@ -17,8 +17,8 @@ export const metadata = {
         default: 'NyayNow | AI Legal Intelligence & Lawyer Marketplace',
         template: '%s | NyayNow'
     },
-    description: 'NyayNow: AI-Powered Legal Assistant & Lawyer Marketplace for India. Get instant legal information, draft documents, and connect with expert lawyers.',
-    keywords: ['legal assistant', 'AI lawyer', 'Indian law', 'legal information', 'lawyer marketplace', 'legal document drafting', 'NyayNow', 'online legal help India', 'IPC sections', 'Supreme Court judgments', 'free legal advice', 'vakeel online', 'kanoon AI', 'legal chatbot India', 'hire lawyer online'],
+    description: 'NyayNow: India\'s AI-powered legal assistant & lawyer marketplace. Free BNS & IPC answers, contract drafting, eCourts case tracking, and verified advocate directory — in 14 Indian languages.',
+    keywords: ['legal assistant', 'AI lawyer India', 'BNS IPC sections', 'free legal advice', 'find lawyer online', 'eCourts case tracker', 'legal document drafting', 'NyayNow', 'online legal help India', 'supreme court judgments', 'vakeel online', 'kanoon AI', 'legal chatbot India', 'hire lawyer online', 'BNS 2024'],
     authors: [{ name: 'NyayNow Team' }],
     creator: 'NyayNow',
     publisher: 'NyayNow',
@@ -176,14 +176,28 @@ export default function RootLayout({ children }) {
                 />
             </head>
             <body className={`${inter.variable} ${jakarta.variable} font-sans relative`}>
+                {/* Skip to main content — critical for ARIA / screen reader accessibility */}
+                <a
+                    href="#main-content"
+                    className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:font-bold focus:text-sm"
+                >
+                    Skip to main content
+                </a>
+
                 <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
                 <div className="noise-overlay" />
                 <Providers>
                     <EliteCursor />
                     <ScrollProgress />
-                    <Navbar />
+                    {/* role="banner" marks the site-wide header/nav region */}
+                    <header role="banner">
+                        <Navbar />
+                    </header>
                     {children}
-                    <Footer />
+                    {/* role="contentinfo" marks the site-wide footer region */}
+                    <footer role="contentinfo">
+                        <Footer />
+                    </footer>
                     <Toaster position="bottom-right" />
                     <AIAssistant />
                     <CookieConsent />
