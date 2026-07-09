@@ -18,7 +18,13 @@ export default function AssistantPage() {
   const [language, setLanguage] = useState("English");
   const bottomRef = useRef(null);
 
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
