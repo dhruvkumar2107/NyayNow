@@ -512,29 +512,207 @@ router.get("/prediction-history", verifyToken, async (req, res) => {
   }
 });
 
-/* ---------------- CONTRACT DRAFTING (TurboAgreements) ---------------- */
+/* ---------------- CONTRACT DRAFTING (TurboAgreements v2) ---------------- */
+
+// Deep, specialized system prompts per document category
+function getDraftingSystemPrompt(type, fields, state, language) {
+  const lang = language === 'Hindi' ? 'Hindi (Devanagari script)' : 'formal Indian English';
+  const jurisdiction = state ? `${state}, India` : 'India';
+
+  const baseInstruction = `
+You are India's most precise AI legal drafting engine, trained on the full corpus of Indian contract law, Transfer of Property Act 1882, Indian Contract Act 1872, Specific Relief Act, Registration Act, Labour Laws, Family Laws, and the new BNS 2024 criminal code.
+
+CRITICAL RULES:
+1. Draft in ${lang}.
+2. Jurisdiction: ${jurisdiction}. Reference the correct state's Stamp Act duty rates where applicable.
+3. Use ONLY proper legal terminology (Whereas, Now Therefore, In Witness Whereof, etc.).
+4. Include all mandatory legal clauses: effective date, termination, dispute resolution (Arbitration under Arbitration and Conciliation Act 1996), governing law (Indian law), notices clause, entire agreement clause.
+5. Format in clean professional Markdown:
+   - # for the Document Title (centered, ALL CAPS)
+   - ## for major section headings
+   - **Bold** for defined terms and party names
+   - Numbered lists for clauses (1., 1.1, 1.2, etc.)
+   - Horizontal rules (---) to separate major sections
+6. End with a proper SIGNATURE BLOCK with spaces for: Name, Signature, Date, Witness 1, Witness 2, Notary (if applicable).
+7. Do NOT add any preamble, explanation, or markdown code fences. Output ONLY the formatted legal document.
+`;
+
+  // Category-specific deep instructions
+  const categoryPrompts = {
+    // PROPERTY
+    'Rental / Lease Agreement (Residential)': `
+Draft a Residential Rental Agreement compliant with the Model Tenancy Act 2021 and relevant state Rent Control Act.
+Include: Description of Premises with full address, Monthly Rent amount, Security Deposit (typically 2-3 months), Payment Due Date, Maintenance responsibilities split, Permitted Use, Lock-in Period, Notice Period (minimum 30 days), Subletting prohibition, Pet policy, Alteration/renovation restrictions, List of fixtures provided, Utility responsibility, Entry/inspection rights of landlord, Eviction process per law, Stamp duty notice.`,
+
+    'Rental / Lease Agreement (Commercial)': `
+Draft a Commercial Lease Agreement under Transfer of Property Act 1882.
+Include: Detailed property description, Carpet area / Built-up area distinction, Monthly rent and annual escalation % (CAM charges if applicable), Security deposit (6-12 months), Fit-out period (rent-free period), Permitted business activity, Signage rights, Parking allocation, CAM charges structure, Restoration obligation at exit, Force Majeure clause, Assignment/Subletting with landlord consent clause, Lock-in clause with penalty, Exit ramp provisions.`,
+
+    'Leave & License Agreement': `
+Draft a Leave and License Agreement (NOT a lease) under Section 52 of the Indian Easements Act 1882.
+This is critical: explicitly state this is a Leave and License and NOT a lease to prevent tenancy rights.
+Include: Licensor grants revocable license only, No tenancy rights created, Monthly license fee (not rent), Refundable security deposit, Specific permitted use, Duration not exceeding 11 months (to avoid registration), Licensor's absolute right to revoke, Licensee's obligation to vacate on termination.`,
+
+    'Sale Deed': `
+Draft a Sale Deed for immovable property under Transfer of Property Act 1882 and Registration Act 1908.
+Include: Full property description with Survey/Plot number, boundaries (North/South/East/West), Schedule of Property in detail, Sale consideration amount (in figures AND words), Payment schedule and mode, Receipts of advance payment, Encumbrance certificate confirmation, Title guarantee clause, Vacant possession delivery, List of original title documents to be handed over, Seller's indemnity against prior claims, Buyer's right to register, Stamp duty and registration charges responsibility, Completion of sale formalities.`,
+
+    'Agreement to Sell': `
+Draft an Agreement to Sell (agreement for sale, not actual conveyance) under Section 54 of Transfer of Property Act.
+Include: Description of property, Agreed sale price, Earnest money/advance paid, Balance payment schedule, Timeline for execution of final Sale Deed, Conditions precedent (clear title, NOCs, approvals), Default and forfeiture clauses for both parties, Time is of essence clause, Penalty for delay, Right to specific performance under Specific Relief Act 1963.`,
+
+    'Gift Deed': `
+Draft a Gift Deed under Section 122 of Transfer of Property Act 1882. Gift must be made voluntarily without consideration.
+Include: Donor and donee relationship declaration, Description of gifted property, Statement that gift is voluntary and without consideration, Declaration of love and affection (family gifts) or charitable purpose, Acceptance by donee, Delivery of possession, Donor's power to revoke (if any, as gifts are generally irrevocable), Tax implications note (no capital gains between relatives under Income Tax Act).`,
+
+    'Mortgage Deed': `
+Draft a Simple Mortgage Deed under Section 58 of Transfer of Property Act 1882.
+Include: Mortgagor and mortgagee details, Principal loan amount, Rate of interest (per annum), Repayment schedule (EMIs if applicable), Description of mortgaged property, Mortgagor's right to redeem, Mortgagee's right to sell on default (foreclosure), Covenant of title, Insurance obligation, Covenant not to encumber further.`,
+
+    // BUSINESS
+    'Non-Disclosure Agreement (NDA)': `
+Draft a bilateral/mutual NDA under Indian Contract Act 1872.
+Include: Definition of Confidential Information (very specific), Exclusions from confidentiality (public domain, independently developed, received from third party), Permitted disclosures (legal compulsion, with consent), Obligations of receiving party, Non-solicitation clause, Non-circumvention clause, Duration of confidentiality obligation (post-termination), Return/destruction of materials, Remedies for breach (injunctive relief under Section 39 Specific Relief Act), Liquidated damages clause, Dispute resolution via arbitration.`,
+
+    'Partnership Deed': `
+Draft a Partnership Deed under Indian Partnership Act 1932.
+Include: Name and nature of the firm, Principal place of business, Duration of partnership, Capital contribution by each partner, Profit/loss sharing ratio, Interest on capital, Partner drawings/salary, Banking operations, Decision-making and voting rights, Admission/retirement/expulsion of partners, Death/insolvency of a partner, Goodwill valuation on dissolution, Non-compete during partnership, Accounts and audit, Dissolution and winding up procedure per Partnership Act.`,
+
+    'Memorandum of Understanding (MOU)': `
+Draft a non-binding MOU (or optionally binding in specific clauses).
+Include: Statement of intent and purpose, Scope of collaboration, Roles and responsibilities of each party, Exclusivity (if any), Confidentiality provisions, Financial contributions (if any), Timeline and milestones, Dispute resolution (mediation first), Term and termination, Clear disclaimer that MOU does not create binding contract (or specify which clauses are binding), Governing law.`,
+
+    'Shareholders Agreement': `
+Draft a comprehensive Shareholders Agreement for a private limited company under Companies Act 2013.
+Include: Share capital structure, Pre-emption rights (ROFR - Right of First Refusal), Anti-dilution provisions, Tag-along rights (minority protection), Drag-along rights (majority exit), Founder lock-up period, Board composition and voting, Reserved matters (decisions requiring unanimous consent), Dividend policy, Information rights, Representations and warranties of each shareholder, Exit provisions (IPO, M&A, buyback), Non-compete post-exit, Governing law.`,
+
+    'Founders Agreement': `
+Draft a Founders Agreement for a startup.
+Include: Equity split and vesting schedule (typically 4-year vesting with 1-year cliff), Roles and responsibilities of each founder, IP assignment (all IP contributed/created belongs to company), Salary/compensation during bootstrapping phase, Decision-making (CEO authority vs. unanimous decisions), Founder departure (good leaver vs. bad leaver definitions), Non-compete during company tenure, Non-solicitation of co-founders and employees, Dissolution if startup fails.`,
+
+    'Service Level Agreement (SLA)': `
+Draft a Service Level Agreement under Indian Contract Act 1872.
+Include: Scope of services (detailed technical specifications), Service levels (uptime %, response times, resolution times), Measurement methodology, Credits/penalties for SLA breach, Exclusions (force majeure, customer-caused issues), Escalation matrix, Reporting and monitoring, Change management process, Security and data protection (aligned with IT Act 2000), Limitation of liability cap, Termination for persistent breach.`,
+
+    // EMPLOYMENT
+    'Employment Contract': `
+Draft an Employment Agreement compliant with Indian Labour Laws including Industrial Employment (Standing Orders) Act, Payment of Wages Act, Minimum Wages Act, Payment of Gratuity Act 1972, and Employees Provident Fund Act.
+Include: Job title, designation, department, Reporting structure, Place of posting, Date of joining, CTC breakdown (basic, HRA, DA, allowances, PF employer contribution), Probation period (typically 3-6 months), Working hours per Factories Act/Shops Act, Leave policy (EL/PL/CL/SL per state rules), Confidentiality and IP assignment, Non-compete and non-solicitation (reasonable scope and duration), Termination (notice period both ways), ESOP/RSU (if applicable), Governing law and jurisdiction.`,
+
+    'Appointment Letter': `
+Draft a formal Appointment Letter (shorter than full contract) for an employee.
+Include: Congratulatory opening, Designation and department, Date of joining, Location, Reporting manager, CTC and key components, Probation period and confirmation process, Reference to company's Employment Contract / HR policies for full terms, Acceptance signature section.`,
+
+    'Termination Letter': `
+Draft a Termination of Employment letter compliant with Industrial Disputes Act 1947.
+Include: Date of termination (with statutory notice period fulfilled or PILON - Payment in lieu of notice), Reason for termination (clearly stated — misconduct / redundancy / performance / end of contract), Full and final settlement timeline (dues, gratuity if applicable, PF transfer), Return of company property, Non-disparagement clause, Reference letter offer, Confidentiality reminder post-termination.`,
+
+    // FAMILY & PERSONAL
+    'Will / Testament': `
+Draft a legally valid Will under Indian Succession Act 1925 (for Hindus, also consider Hindu Succession Act 1956).
+Include: Full name, address, age of testator, Declaration of sound mind and free will, Revocation of all previous wills, Specific bequests (property item by item with full description to each beneficiary), Residuary estate clause (for assets not specifically mentioned), Executor/Executrix appointment with powers, Guardian appointment for minor children (if applicable), Witness attestation by two independent adult witnesses (who are NOT beneficiaries), Date and place of execution.`,
+
+    'Divorce Settlement (Mutual Consent)': `
+Draft a Divorce Settlement Agreement for mutual consent divorce under Section 13B Hindu Marriage Act 1955 or Section 10A Indian Divorce Act 1869.
+Include: Declaration of mutual consent, Statement of separation period (minimum 1 year), Division of matrimonial assets (property, bank accounts, investments), Alimony / maintenance amount and duration, Children's custody arrangement (primary/shared/visitation schedule), Child support amount and payment mechanism, Education and medical expenses for children, Handover of personal belongings, Non-harassment clause, No criminal complaints against each other, Agreement to appear before court for second motion.`,
+
+    'Maintenance Agreement': `
+Draft a Maintenance Agreement under Section 125 CrPC (now BNSS Section 144) or Section 24/25 Hindu Marriage Act.
+Include: Amount of monthly maintenance, Payment date and mode, Duration of maintenance (temporary/permanent), Education and medical expenses, Provision for revision of maintenance (cost of living escalation), Events triggering stop of maintenance (remarriage, cohabitation), Mode of dispute resolution for revisions.`,
+
+    // LEGAL NOTICES
+    'Legal Notice (General)': `
+Draft a formal Legal Notice under Indian Law.
+Include: Sender's full name and address, Recipient's full name and address, Date, Subject line, Detailed statement of facts (chronological), Specific legal right violated or duty breached, Specific demand / relief sought, Time given to comply (typically 15-30 days), Consequences of non-compliance (legal proceedings), Sent via: Registered Post AD + Email, Advocate's name and bar enrollment number (if applicable).`,
+
+    'Legal Notice — Cheque Bounce (NI Act 138)': `
+Draft a Demand Notice under Section 138 of the Negotiable Instruments Act 1881 (mandatory prerequisite to criminal complaint).
+CRITICAL: This notice MUST be sent within 30 days of receiving bank's dishonour memo.
+Include: Cheque details (number, date, amount, bank), Date of presentation to bank, Date of dishonour, Reason for dishonour as per bank memo, Demand for payment of cheque amount plus interest within 15 days from receipt of notice, Clear statement that failure will result in criminal complaint under Section 138 NI Act (punishment: 2 years + fine up to 2x cheque amount), Mode of service (Registered Post AD + WhatsApp documented).`,
+
+    'Legal Notice — Recovery of Money': `
+Draft a Money Recovery Notice under Order XXXVII Code of Civil Procedure (Summary Suit provisions).
+Include: Principal amount, Period of debt, Interest claimed (at agreed rate or 18% per annum as per commercial practice), Detailed transaction history, Previous attempts to recover (calls, emails), Demand for payment within 15 days, Threat of summary suit (recoverable within 30-60 days under Order XXXVII CPC) or SARFAESI proceedings if secured debt.`,
+
+    'Legal Notice — Eviction': `
+Draft an Eviction Notice to a tenant.
+Include: Reference to rental agreement (date, property), Ground for eviction (expiry of term / non-payment / nuisance / subletting without consent / personal use of landlord), Amount of unpaid rent (if applicable), Time to vacate (15-30 days as per agreement or state Rent Control Act), Warning that overstaying will result in eviction suit and claim for mesne profits (double rent), Demand to return keys and restore property.`,
+
+    'FIR Draft': `
+Draft a First Information Report (FIR) complaint addressed to the Station House Officer (SHO) of the relevant police station.
+Include: Complainant's full details, Date/Time/Place of the offense, Full narration of incident (who, what, when, where, how — chronologically), Names of accused (if known) / description if unknown, List of witnesses, Nature of offense and applicable BNS 2024 / IPC sections (list all relevant sections), Supporting evidence available (CCTV, screenshots, documents), Prayer: Register FIR and investigate, Signature and date.`,
+
+    'Affidavit (General)': `
+Draft a General Affidavit to be sworn before a Notary or First Class Magistrate.
+Include: Deponent's full name, age, address, occupation, Relationship to case/matter, Numbered paragraphs of sworn facts, Statement that contents are true to best of knowledge and belief, Consequences of false affidavit (Section 191-193 BNS 2024 / IPC perjury), Deponent signature, Jurat (sworn before Notary/Magistrate, date, seal space).`,
+
+    'Power of Attorney (General)': `
+Draft a General Power of Attorney under Power of Attorney Act 1882.
+Include: Principal and Agent (Attorney) full details, Scope of authority (very broad — all financial, legal, property matters), Duration (revocable at will or specific term), Authority to sign, receive, execute, bank, litigate, sell property, Sub-delegation rights, Indemnity to third parties acting in good faith, Revocation procedure, Attestation by two witnesses, Notarization.`,
+
+    'Power of Attorney (Special/Limited)': `
+Draft a Special Power of Attorney for a SPECIFIC, LIMITED purpose.
+Include: Single specific task authorized (e.g., sell property at X address only, appear in court case Y only, operate specific bank account), Duration (expires upon completion of task), All other powers explicitly EXCLUDED, No sub-delegation right, Revocation upon task completion.`,
+
+    // FINANCE
+    'Loan Agreement': `
+Draft a Loan Agreement under Indian Contract Act 1872.
+Include: Principal amount (in figures and words), Purpose of loan, Disbursement schedule, Interest rate (per annum, compounded/simple), EMI schedule with amortization table format, Prepayment terms and charges, Default interest rate, Security / collateral provided, Events of default (missed payments, insolvency, fraud), Lender's remedies on default, Prohibition on further encumbrance, Representations of borrower (financial health, no existing defaults).`,
+
+    'Promissory Note': `
+Draft a Promissory Note under Section 4 of Negotiable Instruments Act 1881.
+ESSENTIAL: Must be unconditional promise to pay.
+Include: Date and place of execution, Promise to pay fixed sum, To whom payable (specific person or bearer), Interest rate, Date of repayment or on demand, Stamp duty compliance note (promissory notes require stamp duty), Maker's signature.`,
+
+    // TECHNOLOGY & IP
+    'Software Development Agreement': `
+Draft a Software Development Agreement under Indian Contract Act 1872 and IT Act 2000.
+Include: Scope of work (technical specifications as Schedule A), Project timeline with milestones, Payment terms (milestone-based), IP ownership (all developed code belongs to client upon full payment), Source code escrow (if applicable), Bug fix warranty period (typically 6-12 months post-delivery), Limitation of liability, Source code delivery obligation, Change request procedure, Acceptance testing process, Data security obligations (aligned with DPDP Act 2023).`,
+
+    'Privacy Policy (DPDP Compliant)': `
+Draft a Privacy Policy compliant with India's Digital Personal Data Protection Act 2023 (DPDP Act).
+Include: Data Fiduciary identification, Categories of personal data collected, Purpose limitation (specific lawful purpose), Legal basis for processing (consent, legitimate interest), Data Principal's rights (access, correction, erasure, grievance), Children's data processing restrictions, Data retention periods, Cross-border data transfers, Security measures, Grievance Officer details (mandatory under DPDP), Contact details, Last updated date.`,
+
+    'Freelance Service Agreement': `
+Draft a Freelance/Consultant Service Agreement.
+Include: Independent contractor status (NOT employee — explicitly stated to avoid PF/ESI applicability), Services description, Deliverables and timeline, Payment terms (milestone-based or retainer), Expense reimbursement policy, IP assignment (work product belongs to client), Confidentiality, Non-solicitation (no poaching of client's employees), Non-compete (limited scope and duration — reasonable under Indian Contract Act), Termination with 7-14 days notice, Governing law and arbitration.`,
+  };
+
+  // Get the specific prompt for this document type, or use a smart generic
+  const specificPrompt = categoryPrompts[type] || `
+Draft a comprehensive and legally valid **${type}** under Indian law.
+Ensure all standard clauses are included: parties, recitals, definitions, main obligations, term, termination, confidentiality (if applicable), dispute resolution (arbitration under Arbitration and Conciliation Act 1996), governing law (Indian law and ${jurisdiction} courts), and signature block.
+Make it legally thorough with all necessary sub-clauses and schedules.`;
+
+  return baseInstruction + '\n\nDOCUMENT-SPECIFIC REQUIREMENTS:\n' + specificPrompt;
+}
+
 router.post("/draft-contract", verifyTokenOptional, checkFeatureAccess("draft-contract"), async (req, res) => {
   try {
-    const { type, parties, terms } = req.body;
+    const { type, fields, state, language } = req.body;
 
-    const prompt = `
-      You are an automated legal drafting engine.
-      Draft a legally binding **${type}** under Indian Law.
-      
-      **PARTIES**:
-      ${JSON.stringify(parties, null, 2)}
-      
-      **TERMS/DETAILS**:
-      ${JSON.stringify(terms, null, 2)}
-      
-      **INSTRUCTIONS**:
-      1. Use professional legal language (Whereas, Therefore, In Witness Whereof).
-      2. Include standard jurisdiction clauses (India).
-      3. Format as clean Markdown (use ## for headers, ** for bold).
-      4. Do NOT include any intro/outro text. Start directly with the title.
-      
-      Output ONLY the Markdown contract.
-    `;
+    // Build a structured fields summary for the AI
+    const fieldsSummary = fields && typeof fields === 'object'
+      ? Object.entries(fields)
+          .filter(([, v]) => v && String(v).trim())
+          .map(([k, v]) => `- ${k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}: ${v}`)
+          .join('\n')
+      : String(fields || '');
+
+    const systemPrompt = getDraftingSystemPrompt(type, fields, state, language);
+
+    const prompt = `${systemPrompt}
+
+---
+DOCUMENT TYPE: ${type}
+STATE/JURISDICTION: ${state || 'India (General)'}
+OUTPUT LANGUAGE: ${language || 'English'}
+DATE OF DRAFTING: ${new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
+
+SPECIFIC DETAILS PROVIDED BY USER:
+${fieldsSummary}
+
+Now draft the complete, professional, legally valid document. Start directly with the document title. Do not add any explanatory text before or after.`;
 
     const result = await generateWithFallback(prompt, undefined, true);
     const response = await result.response;
@@ -544,9 +722,10 @@ router.post("/draft-contract", verifyTokenOptional, checkFeatureAccess("draft-co
 
   } catch (err) {
     console.error("Gemini Drafting Error:", err.message);
-    res.status(500).json({ error: "Failed to draft contract" });
+    res.status(500).json({ error: "Failed to draft contract. Please try again." });
   }
 });
+
 
 /* ---------------- JUDGE AI PRO (PDF ANALYSIS) ---------------- */
 router.post("/analyze-case-file", verifyTokenOptional, checkFeatureAccess("analyze-case-file"), upload.single("file"), async (req, res) => {
