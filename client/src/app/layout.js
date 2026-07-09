@@ -184,7 +184,7 @@ export default function RootLayout({ children }) {
                     Skip to main content
                 </a>
 
-                <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+                <GoogleAnalytics />
                 <div className="noise-overlay" />
                 <Providers>
                     <EliteCursor />

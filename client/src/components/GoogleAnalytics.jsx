@@ -1,30 +1,54 @@
 'use client'
 import Script from 'next/script'
-import { useState, useEffect } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 
-export default function GoogleAnalytics({ gaId }) {
-    const [hasConsent, setHasConsent] = useState(false)
+// Measurement ID — hardcoded as fallback if env var is missing
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-QSF042FJXP'
 
+// Helper: push a pageview event to GA4
+function sendPageview(url) {
+    if (typeof window === 'undefined' || !window.gtag) return
+    window.gtag('config', GA_ID, { page_path: url })
+}
+
+export default function GoogleAnalytics() {
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+
+    // Fire a pageview on every client-side route change (SPA navigation)
     useEffect(() => {
-        if (localStorage.getItem('cookie-consent') === 'accepted') {
-            setHasConsent(true)
-        }
-        const onConsent = () => setHasConsent(true)
-        window.addEventListener('cookieConsentAccepted', onConsent)
-        return () => window.removeEventListener('cookieConsentAccepted', onConsent)
-    }, [])
+        if (!pathname) return
+        const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '')
+        sendPageview(url)
+    }, [pathname, searchParams])
 
-    if (!gaId || !hasConsent) return null
+    if (!GA_ID) return null
 
     return (
         <>
+            {/* Async load the gtag.js library */}
             <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
                 strategy="afterInteractive"
             />
-            <Script id="google-analytics" strategy="afterInteractive">
-                {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}',{page_path:window.location.pathname});`}
-            </Script>
+
+            {/* Initialize the dataLayer and fire the first pageview */}
+            <Script
+                id="google-analytics-init"
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{
+                    __html: `
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+                        gtag('config', '${GA_ID}', {
+                            page_path: window.location.pathname,
+                            send_page_view: true
+                        });
+                    `
+                }}
+            />
         </>
     )
 }
