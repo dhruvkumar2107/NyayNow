@@ -145,7 +145,8 @@ const Footer = () => {
                     </div>
                 </div>
 
-        </div>
+            </div>{/* end container */}
+        </div>{/* end footer wrapper */}
     )
 }
 
