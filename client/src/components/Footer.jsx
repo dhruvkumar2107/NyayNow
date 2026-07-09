@@ -94,8 +94,8 @@ const Footer = () => {
                         <FooterLink href="/bns">BNS Legal Directory <Badge color="bg-sky-500/10 text-sky-400">SEO</Badge></FooterLink>
                     </FooterColumn>
 
-                    <FooterColumn title="Security &amp; Compliance">
-                        <FooterLink href="/security-and-compliance">Security &amp; Compliance</FooterLink>
+                    <FooterColumn title="Security & Compliance">
+                        <FooterLink href="/security-and-compliance">Security & Compliance</FooterLink>
                         <FooterLink href="/dpdp">DPDP Compliance</FooterLink>
                         <FooterLink href="/methodology">Our Methodology</FooterLink>
                         <FooterLink href="/privacy">Privacy Policy</FooterLink>
@@ -145,8 +145,8 @@ const Footer = () => {
                     </div>
                 </div>
 
-            </div>{/* end container */}
-        </div>{/* end footer wrapper */}
+            </div>
+        </div>
     )
 }
 
