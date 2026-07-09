@@ -184,7 +184,7 @@ export default function RootLayout({ children }) {
                     Skip to main content
                 </a>
 
-                <GoogleAnalytics />
+                <GoogleAnalytics nonce={nonce} />
                 <div className="noise-overlay" />
                 <Providers>
                     <EliteCursor />

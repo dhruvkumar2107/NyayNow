@@ -3,7 +3,7 @@ import Script from 'next/script'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 
-// Measurement ID — hardcoded as fallback if env var is missing
+// Measurement ID — hardcoded fallback if env var is missing
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-QSF042FJXP'
 
 // Helper: push a pageview event to GA4
@@ -12,7 +12,7 @@ function sendPageview(url) {
     window.gtag('config', GA_ID, { page_path: url })
 }
 
-export default function GoogleAnalytics() {
+export default function GoogleAnalytics({ nonce }) {
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
@@ -27,16 +27,18 @@ export default function GoogleAnalytics() {
 
     return (
         <>
-            {/* Async load the gtag.js library */}
+            {/* Async load the gtag.js library — nonce required for CSP */}
             <Script
                 src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
                 strategy="afterInteractive"
+                nonce={nonce}
             />
 
-            {/* Initialize the dataLayer and fire the first pageview */}
+            {/* Initialize dataLayer and fire first pageview — nonce whitelists this inline script */}
             <Script
                 id="google-analytics-init"
                 strategy="afterInteractive"
+                nonce={nonce}
                 dangerouslySetInnerHTML={{
                     __html: `
                         window.dataLayer = window.dataLayer || [];
