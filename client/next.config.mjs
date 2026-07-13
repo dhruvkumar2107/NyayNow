@@ -28,13 +28,6 @@ const nextConfig = {
     },
     async redirects() {
         return [
-            // Force www → non-www (collapses the double redirect chain reported by PageSpeed)
-            {
-                source: '/:path*',
-                has: [{ type: 'host', value: 'www.nyaynow.in' }],
-                destination: 'https://nyaynow.in/:path*',
-                permanent: true,
-            },
             // Force HTTP → HTTPS for production domain
             {
                 source: '/:path*',
