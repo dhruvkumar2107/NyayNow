@@ -75,6 +75,7 @@ import Footer from '../components/Footer'
 import OfflineNotice from '../components/OfflineNotice'
 import GoogleAnalytics from '../components/GoogleAnalytics'
 import ServiceWorkerRegistrar from '../components/ServiceWorkerRegistrar'
+import ScrollToTop from '../components/ScrollToTop'
 
 export default function RootLayout({ children }) {
     const nonce = headers().get('x-nonce') ?? ''
@@ -230,6 +231,7 @@ export default function RootLayout({ children }) {
                 <GoogleAnalytics nonce={nonce} />
                 <div className="noise-overlay" />
                 <Providers>
+                    <ScrollToTop />
                     <EliteCursor />
                     <ScrollProgress />
                     {/* role="banner" marks the site-wide header/nav region */}
