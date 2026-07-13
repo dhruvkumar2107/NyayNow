@@ -1,0 +1,55 @@
+# NyayNow
+> India's AI-powered legal platform — AI Legal Assistant, Bar Council Verified Lawyer Marketplace, and Emergency Legal SOS.
+
+NyayNow is an AI-driven legal intelligence platform headquartered in New Delhi, India.
+It provides free and premium legal tools for Indian citizens, legal professionals, and businesses.
+All AI outputs are grounded in BNS 2024 (Bharatiya Nyaya Sanhita), IPC sections, and Supreme Court / High Court precedents.
+
+## Core Services
+
+- **AI Legal Assistant** (`/assistant`): Ask legal questions in plain language across 14 Indian languages (Hindi, Tamil, Bengali, Telugu, Marathi, etc.). Answers are grounded strictly in BNS 2024 & IPC sections and relevant court data.
+- **Lawyer Marketplace** (`/marketplace`): Directory of Bar Council of India (BCI) verified advocates filterable by specialization, location, language, and fee range.
+- **Legal SOS** (`/legal-sos`): Emergency legal response system. Classifies legal crises in under 5 seconds, delivers rights analysis in 14+ languages, auto-drafts BNS 2024 compliant FIRs, and connects to a nearby verified advocate in under 60 seconds.
+- **BNS 2024 Reference** (`/bns`): Full searchable index of Bharatiya Nyaya Sanhita (BNS) 2024 sections replacing the Indian Penal Code (IPC).
+- **Autonomous Drafting** (`/drafting`): AI-generated legal documents — rent agreements, affidavits, notices, contracts — with e-sign support.
+- **eCourts Case Tracker** (`/ecourts`): Real-time Supreme Court and High Court case data tracking by case number or party name.
+- **Legal Research** (`/research`): AI-assisted research tool grounded in Supreme Court judgments and High Court orders.
+- **NyayVoice** (`/nyayvoice`): Voice-based legal assistant supporting spoken queries in Indian regional languages.
+- **Judge AI** (`/judge-ai`): Predictive analysis of case outcomes based on historical Supreme Court and High Court data.
+- **Court Room Simulator** (`/nyaycourt-simulator`): Interactive legal training and moot court practice tool.
+- **Translator** (`/translator`): Legal document translation across 14 Indian languages.
+
+## Trust & Compliance
+
+- All lawyers verified via DigiLocker KYC + Bar Council of India (BCI) database matching.
+- AI is strictly grounded — no hallucination; only BNS 2024, IPC, and verified court data.
+- DPDP (Digital Personal Data Protection) Act compliant.
+- End-to-end encrypted communications.
+- Operates 24/7 with zero downtime SLA.
+
+## Target Users
+
+- Indian citizens needing free legal advice or BNS 2024 / IPC guidance.
+- Advocates seeking a verified client acquisition and ERP platform.
+- Businesses requiring legal document drafting and compliance.
+- Law students and educators using moot court simulation tools.
+
+## Pricing
+
+- Free tier: AI legal queries, BNS 2024 lookup, Legal SOS access.
+- Premium plans: ₹0–₹999/month for advanced drafting, case tracking, and lawyer consultations.
+
+## Languages Supported
+
+Hindi, English, Tamil, Telugu, Bengali, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia, Assamese, Urdu, Sanskrit (14 Indian languages).
+
+## Legal Disclaimer
+
+NyayNow provides legal information and educational tools only. Use does not create an attorney-client relationship. Users are advised to consult registered advocates for formal legal advice.
+
+## Contact & Social
+
+- Website: https://nyaynow.in
+- X (Twitter): https://x.com/NyayNowX
+- LinkedIn: https://linkedin.com/company/nyaynow
+- Contact: https://nyaynow.in/contact

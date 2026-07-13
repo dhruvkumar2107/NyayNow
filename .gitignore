@@ -21,6 +21,7 @@ __pycache__/
 # Scratch/debug files
 *.txt
 !README.txt
+!client/public/llms.txt
 *.bat
 !run_all.bat
 test*.js

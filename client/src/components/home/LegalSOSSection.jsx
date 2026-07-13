@@ -33,7 +33,9 @@ export default function LegalSOSSection() {
                         </h2>
 
                         <p className="text-slate-400 text-lg md:text-xl leading-relaxed mb-12 max-w-lg font-medium">
-                            Democratizing legal protection through instant, multi-dialect crisis response. Get immediate rights analysis in your language, an AI-drafted FIR, and an elite advocate connection in 60 seconds.
+                            Democratizing legal protection through instant, multi-dialect crisis response.
+                            Powered by real Supreme Court data and BNS 2024 legal standards, get immediate rights analysis
+                            in your language, an AI-drafted FIR, and a Bar Council verified advocate connection in 60 seconds.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-5">

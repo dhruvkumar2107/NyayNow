@@ -9,25 +9,25 @@ export default function FeatureCards() {
         {
             icon: <Sparkles className="text-amber-400" size={28} />,
             title: "AI Legal Intelligence",
-            desc: "Ask queries in plain language (12+ Indian languages) and get instant answers grounded in BNS (2024), IPC, and case precedents.",
+            desc: "Ask legal queries in plain language across 12+ Indian languages. Get instant answers grounded strictly in BNS 2024, IPC sections, and Supreme Court / High Court precedents — zero hallucination.",
             glow: "rgba(245,158,11,0.15)"
         },
         {
             icon: <ShieldCheck className="text-blue-400" size={28} />,
             title: "BCI Verified Advocates",
-            desc: "Consult securely with registered, elite advocates in India. License credentials verified via official Bar Council matching.",
+            desc: "Connect with Bar Council of India (BCI) verified lawyers. Every advocate is KYC-matched against official Bar Council records before listing on the platform.",
             glow: "rgba(96,165,250,0.15)"
         },
         {
             icon: <FileText className="text-emerald-400" size={28} />,
             title: "Autonomous Drafting",
-            desc: "Generate legally enforceable agreements, rent deeds, notices, and affidavits. E-sign and print in minutes.",
+            desc: "Generate legally enforceable agreements, rent deeds, notices, and affidavits — drafted to BNS 2024 standards. E-sign and print in minutes, ready for court submission.",
             glow: "rgba(52,211,153,0.15)"
         },
         {
             icon: <AlertTriangle className="text-red-400" size={28} />,
             title: "24/7 Legal SOS Response",
-            desc: "Instant panic gateway mapping coordinates to nearby police stations, legal aid clinics, and emergency advocates.",
+            desc: "Emergency legal gateway using court data and BNS 2024 to instantly classify your crisis, deliver rights analysis in 14 languages, draft an FIR, and connect you to a verified advocate — in 60 seconds.",
             glow: "rgba(248,113,113,0.15)"
         }
     ]
@@ -60,10 +60,10 @@ export default function FeatureCards() {
                             whileHover={{ y: -8 }}
                             className="group relative bg-[#0f172a]/60 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-3xl p-8 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-2xl"
                         >
-                            {/* Card Glow Effect */}
+                            {/* Card Glow Effect — CSS custom property avoids inline style lint warning */}
                             <div 
-                                className="absolute -top-24 -left-24 w-48 h-48 rounded-full blur-3xl pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity duration-300"
-                                style={{ background: f.glow }}
+                                className="absolute -top-24 -left-24 w-48 h-48 rounded-full blur-3xl pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity duration-300 card-glow"
+                                style={{ '--card-glow-color': f.glow }}
                             />
 
                             <div className="relative z-10 space-y-6">

@@ -121,6 +121,31 @@ export default function HeroSection() {
                            </div>
                         ))}
                     </div>
+
+                    {/* STAT BAR — keyword-rich, server-rendered, crawlable */}
+                    <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+                        {[
+                            { value: '10,000+', label: 'Legal Queries Answered' },
+                            { value: 'BNS 2024', label: 'Compliant AI Responses' },
+                            { value: '14', label: 'Indian Languages Supported' },
+                            { value: 'BCI', label: 'Bar Council Verified Lawyers' },
+                        ].map(({ value, label }) => (
+                            <div
+                                key={label}
+                                className="flex flex-col items-center gap-1 px-4 py-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:border-blue-500/20 transition-colors"
+                            >
+                                <span className="text-white font-black text-xl tracking-tight">{value}</span>
+                                <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider text-center leading-tight">{label}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* SPEAKABLE — used by SpeakableSpecification schema + GEO crawlers */}
+                    <p className="speakable sr-only">
+                        NyayNow is India's AI-powered legal platform offering free legal advice grounded in BNS 2024 and IPC sections,
+                        Bar Council of India verified lawyer connections, Supreme Court and High Court case data,
+                        autonomous contract drafting, Legal SOS emergency response, and support in 14 Indian languages including Hindi and Tamil.
+                    </p>
                 </motion.div>
 
                 {/* BOTTOM TRUST SIGNAL */}

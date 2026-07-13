@@ -84,6 +84,10 @@ export default function TrustSection() {
                         <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6">
                             Simplifying Justice in 3 Steps
                         </h2>
+                        <p className="text-slate-400 text-sm md:text-base leading-relaxed font-medium mt-4">
+                            Every step is guided by Bar Council of India compliance, BNS 2024 legal standards,
+                            and Supreme Court precedents — so you always have accurate, trusted legal guidance.
+                        </p>
                         
                         {/* Tab Switcher */}
                         <div className="inline-flex bg-white/5 border border-white/10 p-1.5 rounded-2xl gap-1 mt-6">

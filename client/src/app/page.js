@@ -8,15 +8,15 @@ import TrustSection from "../components/home/TrustSection"
 import LegalSOSSection from "../components/home/LegalSOSSection"
 
 export const metadata = {
-    title: 'NyayNow — AI Legal Assistant & Verified Lawyer Marketplace in India | Free Legal Advice',
-    description: 'NyayNow: India\'s AI-powered legal assistant. Get free BNS & IPC legal answers, draft contracts, find verified lawyers near you, and track court cases — in Hindi, Tamil & English.',
-    keywords: 'free legal advice India, AI legal assistant, BNS IPC sections, find lawyer online, legal help Hindi, court case tracker, draft rent agreement, NyayNow',
+    title: 'NyayNow | AI Legal Assistant & Lawyer Marketplace India',
+    description: 'NyayNow: India\'s AI legal platform. Free BNS 2024 & IPC answers, contract drafting, Bar Council verified lawyers, eCourts case tracking — Hindi, Tamil & English.',
+    keywords: 'free legal advice India, AI legal assistant, BNS 2024, IPC sections, bar council verified lawyers, find lawyer online, legal sos, supreme court judgments, court data, legal help Hindi, NyayNow',
     alternates: {
         canonical: 'https://nyaynow.in',
     },
     openGraph: {
-        title: 'NyayNow — AI Legal Assistant & Verified Lawyer Marketplace India',
-        description: 'India\'s AI-powered legal assistant. Free BNS & IPC legal answers, contract drafting, verified lawyers, and court case tracking in Hindi, Tamil & English.',
+        title: 'NyayNow | AI Legal Assistant & Lawyer Marketplace India',
+        description: 'Free BNS 2024 & IPC legal answers, Bar Council verified advocates, contract drafting, Legal SOS, and Supreme Court case tracking in 14 Indian languages.',
         url: 'https://nyaynow.in',
         images: [
             {
@@ -29,8 +29,8 @@ export const metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'NyayNow — Free AI Legal Assistant India',
-        description: 'Free BNS & IPC legal answers in Hindi, Tamil & English. Find verified lawyers, draft contracts, and track court cases instantly.',
+        title: 'NyayNow | Free AI Legal Assistant India',
+        description: 'BNS 2024 & IPC answers, Bar Council verified lawyers, Legal SOS & Supreme Court case tracking. Free legal advice in Hindi, Tamil & English.',
         site: '@NyayNow'
     }
 }

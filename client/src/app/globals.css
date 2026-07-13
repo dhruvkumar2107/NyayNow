@@ -165,6 +165,12 @@ h6 {
   border-width: 0.5px;
 }
 
+/* Card glow — reads --card-glow-color CSS custom property set via style prop */
+/* Eliminates raw inline background: value (performance lint) */
+.card-glow {
+  background: var(--card-glow-color, transparent);
+}
+
 /* Hide scrollbar for horizontal tab lists on mobile */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

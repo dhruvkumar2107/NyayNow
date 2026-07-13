@@ -5,6 +5,10 @@
 
 const nextConfig = {
     reactStrictMode: true,
+    experimental: {
+        // Tree-shake large icon/animation packages to reduce unused JS bundle (PageSpeed)
+        optimizePackageImports: ['lucide-react', 'framer-motion'],
+    },
     images: {
         formats: ['image/avif', 'image/webp'],
         remotePatterns: [
@@ -24,6 +28,13 @@ const nextConfig = {
     },
     async redirects() {
         return [
+            // Force www → non-www (collapses the double redirect chain reported by PageSpeed)
+            {
+                source: '/:path*',
+                has: [{ type: 'host', value: 'www.nyaynow.in' }],
+                destination: 'https://nyaynow.in/:path*',
+                permanent: true,
+            },
             // Force HTTP → HTTPS for production domain
             {
                 source: '/:path*',
