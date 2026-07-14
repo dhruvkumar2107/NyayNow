@@ -7,7 +7,6 @@ dist
 build
 .next
 .gemini
-package-lock.json
 *.log
 tmp
 brain
