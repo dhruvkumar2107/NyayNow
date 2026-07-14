@@ -14,17 +14,19 @@ export function middleware(request) {
     "https://www.google-analytics.com",
     "https://accounts.google.com/gsi/client",
     "https://translate.google.com",
-    "https://translate.googleapis.com"
+    "https://translate.googleapis.com",
+    "https://*.googleapis.com",
+    "https://*.google.com"
   ].join(' ')
 
   const csp = [
     "default-src 'self'",
     `script-src ${scriptSrc}`,
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://translate.googleapis.com",
-    "img-src 'self' data: blob: https://res.cloudinary.com https://ui-avatars.com https://randomuser.me https://unpkg.com https://www.google-analytics.com https://*.basemaps.cartocdn.com https://basemaps.cartocdn.com https://translate.google.com https://translate.googleapis.com https://www.google.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://translate.googleapis.com https://*.googleapis.com",
+    "img-src 'self' data: blob: https://res.cloudinary.com https://ui-avatars.com https://randomuser.me https://unpkg.com https://www.google-analytics.com https://*.basemaps.cartocdn.com https://basemaps.cartocdn.com https://translate.google.com https://translate.googleapis.com https://www.google.com https://images.unsplash.com https://www.transparenttextures.com https://fonts.gstatic.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://*.sentry.io https://*.posthog.com https://*.algolia.net https://*.algolianet.com https://api.razorpay.com https://lumberjack.razorpay.com https://www.google-analytics.com wss://nyaynow.in https://nyaynow.in https://accounts.google.com/gsi/ https://nyaysathi-main.onrender.com https://translate.googleapis.com",
-    "frame-src https://checkout.razorpay.com https://api.razorpay.com https://accounts.google.com/gsi/ https://*.google.com",
+    "connect-src 'self' https://*.sentry.io https://*.posthog.com https://*.algolia.net https://*.algolianet.com https://api.razorpay.com https://lumberjack.razorpay.com https://www.google-analytics.com wss://nyaynow.in wss://*.nyaynow.in https://nyaynow.in https://www.nyaynow.in https://accounts.google.com/gsi/ https://nyaysathi-main.onrender.com https://translate.googleapis.com https://*.googleapis.com",
+    "frame-src https://checkout.razorpay.com https://api.razorpay.com https://accounts.google.com/gsi/ https://*.google.com https://*.googleapis.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
