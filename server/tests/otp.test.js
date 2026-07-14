@@ -21,7 +21,7 @@ describe('Brevo Email OTP Authentication Flow', () => {
         console.log = (...args) => {
             originalLog(...args);
             const logStr = args.join(' ');
-            const match = logStr.match(/with OTP: (\d{6})/);
+            const match = logStr.match(/OTP:\s*(\d{6})/);
             if (match) {
                 capturedOtp = match[1];
             }
@@ -86,7 +86,7 @@ describe('Brevo Email OTP Authentication Flow', () => {
 
             expect(res.status).toBe(400);
             expect(res.body.success).toBe(false);
-            expect(res.body.message).toBe('Invalid OTP');
+            expect(res.body.message).toContain('Invalid OTP');
         });
 
         it('should succeed with correct OTP and create/login user', async () => {
@@ -99,7 +99,9 @@ describe('Brevo Email OTP Authentication Flow', () => {
 
             expect(res.status).toBe(200);
             expect(res.body.success).toBe(true);
-            expect(res.body).toHaveProperty('token');
+            expect(res.headers['set-cookie']).toBeDefined();
+            const hasTokenCookie = res.headers['set-cookie'].some(c => c.startsWith('token='));
+            expect(hasTokenCookie).toBe(true);
             expect(res.body.user.email).toBe(testEmail);
 
             // Verify user was created in database

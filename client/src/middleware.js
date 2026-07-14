@@ -4,18 +4,27 @@ export function middleware(request) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
   const isDev = process.env.NODE_ENV === 'development'
 
-  const scriptSrc = isDev
-    ? `'self' 'nonce-${nonce}' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com/gsi/client`
-    : `'self' 'nonce-${nonce}' https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com/gsi/client`
+  const scriptSrc = [
+    "'self'",
+    `'nonce-${nonce}'`,
+    "'unsafe-eval'",
+    "https://checkout.razorpay.com",
+    "https://cdn.razorpay.com",
+    "https://www.googletagmanager.com",
+    "https://www.google-analytics.com",
+    "https://accounts.google.com/gsi/client",
+    "https://translate.google.com",
+    "https://translate.googleapis.com"
+  ].join(' ')
 
   const csp = [
     "default-src 'self'",
     `script-src ${scriptSrc}`,
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://res.cloudinary.com https://ui-avatars.com https://randomuser.me https://unpkg.com https://www.google-analytics.com https://*.basemaps.cartocdn.com https://basemaps.cartocdn.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://translate.googleapis.com",
+    "img-src 'self' data: blob: https://res.cloudinary.com https://ui-avatars.com https://randomuser.me https://unpkg.com https://www.google-analytics.com https://*.basemaps.cartocdn.com https://basemaps.cartocdn.com https://translate.google.com https://translate.googleapis.com https://www.google.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://*.sentry.io https://*.posthog.com https://*.algolia.net https://*.algolianet.com https://api.razorpay.com https://lumberjack.razorpay.com https://www.google-analytics.com wss://nyaynow.in https://nyaynow.in https://accounts.google.com/gsi/",
-    "frame-src https://checkout.razorpay.com https://api.razorpay.com https://accounts.google.com/gsi/",
+    "connect-src 'self' https://*.sentry.io https://*.posthog.com https://*.algolia.net https://*.algolianet.com https://api.razorpay.com https://lumberjack.razorpay.com https://www.google-analytics.com wss://nyaynow.in https://nyaynow.in https://accounts.google.com/gsi/ https://nyaysathi-main.onrender.com https://translate.googleapis.com",
+    "frame-src https://checkout.razorpay.com https://api.razorpay.com https://accounts.google.com/gsi/ https://*.google.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

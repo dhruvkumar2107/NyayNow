@@ -219,7 +219,7 @@ export default function PricingPage() {
     setLoading(planId)
     try {
       const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/create-subscription`,
+        `/api/subscriptions/create-subscription`,
         { plan: planId, billing },
         { headers: { Authorization: `Bearer ${token}` } }
       )

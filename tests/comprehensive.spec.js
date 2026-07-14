@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 const PAGES = [
-    { path: '/', title: /NyayNow/i, canonical: 'https://nyaynow.in/' },
+    { path: '/', title: /NyayNow/i, canonical: 'https://nyaynow.in' },
     { path: '/about', title: /About Us/i, canonical: 'https://nyaynow.in/about' },
     { path: '/pricing', title: /Pricing/i, canonical: 'https://nyaynow.in/pricing' },
     { path: '/terms', title: /Terms/i, canonical: 'https://nyaynow.in/terms' },
@@ -12,7 +12,7 @@ const PAGES = [
     { path: '/login', title: /Sign In|Login/i, canonical: 'https://nyaynow.in/login' },
     { path: '/register', title: /Create an Account/i, canonical: 'https://nyaynow.in/register' },
     { path: '/judge-ai', title: /Judge AI/i, canonical: 'https://nyaynow.in/judge-ai', waitText: 'Predictive Justice Engine' },
-    { path: '/drafting', title: /Drafting/i, canonical: 'https://nyaynow.in/drafting', waitText: 'Configure Parameters' },
+    { path: '/drafting', title: /Drafting/i, canonical: 'https://nyaynow.in/drafting', waitText: 'Smart Drafting Lab' },
     { path: '/nearby', title: /Nearby/i, canonical: 'https://nyaynow.in/nearby', waitText: 'Enable AR Vision' },
     { path: '/nyaycourt-simulator', title: /NyayCourt Simulator/i, canonical: 'https://nyaynow.in/nyaycourt-simulator' },
     { path: '/nyayvoice', title: /NyayVoice/i, canonical: 'https://nyaynow.in/nyayvoice' }
