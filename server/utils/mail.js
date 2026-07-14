@@ -57,7 +57,7 @@ if (!isHttpApi && BREVO_SMTP_USER && BREVO_SMTP_PASS) {
  */
 async function sendVerificationEmail(email, otp) {
   // --- Mock Mode ---
-  if (!BREVO_SMTP_PASS || (!BREVO_SMTP_USER && !isHttpApi)) {
+  if (!BREVO_SMTP_PASS || (!BREVO_SMTP_USER && !isHttpApi) || process.env.NODE_ENV === 'test') {
     console.log(`[Brevo MOCK] Verification email to ${email} → OTP: ${otp}`);
     return { success: true, mock: true };
   }
@@ -155,7 +155,7 @@ async function sendPasswordResetEmail(email, token) {
   const htmlContent = `<p>Click <a href="${link}">here</a> to reset your password. Link expires in 15 mins.</p>`;
 
   // --- Mock Mode ---
-  if (!BREVO_SMTP_PASS || (!BREVO_SMTP_USER && !isHttpApi)) {
+  if (!BREVO_SMTP_PASS || (!BREVO_SMTP_USER && !isHttpApi) || process.env.NODE_ENV === 'test') {
     console.log(`[Brevo MOCK] Password reset link to ${email} → Link: ${link}`);
     return { success: true, mock: true };
   }
