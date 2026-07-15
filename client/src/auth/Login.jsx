@@ -112,7 +112,7 @@ export default function Login() {
         }
       }
     } catch (err) {
-      toast.error("Google Login Failed");
+      toast.error(err?.response?.data?.message || "Google Login Failed");
       setLoading(false);
     }
   };
@@ -131,8 +131,12 @@ export default function Login() {
       } else {
         router.push("/client/dashboard");
       }
-    } catch (err) { toast.error("Registration Failed"); }
-    finally { setLoading(false); setShowRoleModal(false); }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Registration Failed");
+    } finally {
+      setLoading(false);
+      setShowRoleModal(false);
+    }
   };
 
   return (
@@ -256,10 +260,14 @@ export default function Login() {
                       if (!otpEmail || !emailRegex.test(otpEmail)) return toast.error("Please enter a valid email address.");
                       setOtpLoading(true);
                       try {
-                        await axios.post('/api/auth/send-otp', { email: otpEmail });
+                        const res = await axios.post('/api/auth/send-otp', { email: otpEmail });
                         setOtpSent(true);
                         setOtpCooldown(60);
                         toast.success("OTP sent to your email!");
+                        if (res.data.debugOtp) {
+                          setOtpCode(res.data.debugOtp);
+                          toast(`[DEBUG] Auto-filled OTP: ${res.data.debugOtp}`, { icon: '🔑', duration: 6000 });
+                        }
                       } catch (err) {
                         toast.error(err?.response?.data?.message || "Failed to send OTP.");
                       } finally {
@@ -336,10 +344,14 @@ export default function Login() {
                         if (otpCooldown > 0) return;
                         setOtpLoading(true);
                         try {
-                          await axios.post('/api/auth/send-otp', { email: otpEmail });
+                          const res = await axios.post('/api/auth/send-otp', { email: otpEmail });
                           setOtpCooldown(60);
                           setOtpCode("");
                           toast.success("OTP resent!");
+                          if (res.data.debugOtp) {
+                            setOtpCode(res.data.debugOtp);
+                            toast(`[DEBUG] Auto-filled OTP: ${res.data.debugOtp}`, { icon: '🔑', duration: 6000 });
+                          }
                         } catch (err) {
                           toast.error(err?.response?.data?.message || "Failed to resend OTP.");
                         } finally {

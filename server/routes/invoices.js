@@ -36,6 +36,27 @@ router.get("/", verifyToken, async (req, res) => {
     }
 });
 
+// Get Single Invoice
+router.get("/:id", verifyToken, async (req, res) => {
+    try {
+        const inv = await Invoice.findById(req.params.id);
+        if (!inv) return res.status(404).json({ error: "Invoice not found" });
+
+        // Check permission: either the lawyer who created it, or the client it's meant for.
+        if (inv.lawyerId.toString() !== req.userId && inv.clientId?.toString() !== req.userId) {
+            // Also allow matching by email if clientId is not set yet
+            const User = require("../models/User");
+            const user = await User.findById(req.userId);
+            if (!user || !inv.clientEmail || inv.clientEmail.toLowerCase() !== user.email.toLowerCase()) {
+                return res.status(403).json({ error: "Unauthorized access to this invoice" });
+            }
+        }
+        res.json(inv);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch invoice details" });
+    }
+});
+
 // Update Invoice (Secure ownership check)
 router.put("/:id", verifyToken, async (req, res) => {
     try {

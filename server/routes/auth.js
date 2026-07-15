@@ -263,15 +263,21 @@ router.post("/send-otp", async (req, res) => {
       {
         otp,
         expiresAt: new Date(Date.now() + OTP_TTL_MS),
+        attempts: 0,
       },
       { upsert: true, new: true }
     );
 
     if (process.env.NODE_ENV !== 'production') {
-      console.log(`[OTP LOG] ${normalizedEmail} → [SENT]`);
+      console.log(`[OTP LOG] ${normalizedEmail} → [SENT] OTP: ${otp}`);
     }
 
-    res.json({ success: true, message: "OTP sent via Email" });
+    const isMockOrFallback = result.mock || result.fallback || process.env.NODE_ENV !== 'production';
+    res.json({
+      success: true,
+      message: "OTP sent via Email",
+      ...(isMockOrFallback ? { debugOtp: otp } : {})
+    });
   } catch (err) {
     console.error("[send-otp] error:", err);
     res.status(500).json({ success: false, message: "Failed to send OTP" });

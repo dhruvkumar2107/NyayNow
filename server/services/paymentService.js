@@ -28,6 +28,7 @@ async function applyPaymentOutcome(userId, verifiedPlan, verifiedAmount, razorpa
   const normalizedPlan = verifiedPlan.toLowerCase();
   const isCreditPack  = normalizedPlan.startsWith("credits_");
   const isAppointment = normalizedPlan.startsWith("appointment_");
+  const isInvoice     = normalizedPlan.startsWith("invoice_");
 
   let updatedUser;
 
@@ -41,6 +42,17 @@ async function applyPaymentOutcome(userId, verifiedPlan, verifiedAmount, razorpa
       { new: true }
     );
     if (!updatedApt) throw Object.assign(new Error("Appointment not found"), { status: 404 });
+    updatedUser = await User.findById(userId);
+  } else if (isInvoice) {
+    const Invoice = require("../models/Invoice");
+    const parts = normalizedPlan.split("_");
+    const invoiceId = parts[1];
+    const updatedInvoice = await Invoice.findByIdAndUpdate(
+      invoiceId,
+      { status: "paid", clientId: userId },
+      { new: true }
+    );
+    if (!updatedInvoice) throw Object.assign(new Error("Invoice not found"), { status: 404 });
     updatedUser = await User.findById(userId);
   } else if (isCreditPack) {
     const credits = parseInt(normalizedPlan.split("_")[1]) || 0;

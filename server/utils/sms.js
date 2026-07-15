@@ -6,10 +6,10 @@ const verifyServiceSid = process.env.TWILIO_VERIFY_SID; // Optional if using Ver
 
 let client;
 
-if (accountSid && authToken) {
+if (accountSid && accountSid.startsWith('AC') && authToken) {
     client = twilio(accountSid, authToken);
 } else {
-    console.warn("⚠️ TWILIO KEYS MISSING: SMS/WhatsApp will be logged to console only.");
+    console.warn("⚠️ TWILIO KEYS MISSING OR INVALID (SID must start with AC): SMS/WhatsApp will be logged to console only.");
 }
 
 /**

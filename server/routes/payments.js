@@ -49,6 +49,19 @@ router.post("/create-order", verifyToken, async (req, res) => {
         return res.status(403).json({ error: "Appointment not found or not yours" });
       }
       amountPaise = Math.round(apt.fee * 100);
+    } else if (normalizedPlan.startsWith("invoice_")) {
+      // Invoice payments: derive amount from invoice record
+      const Invoice = require("../models/Invoice");
+      const parts = normalizedPlan.split("_");
+      const invoiceId = parts[1];
+      const inv = await Invoice.findById(invoiceId);
+      if (!inv) return res.status(404).json({ error: "Invoice not found" });
+      if (inv.clientId && inv.clientId.toString() !== req.userId) {
+        return res.status(403).json({ error: "Invoice not belongs to you" });
+      } else if (!inv.clientId && inv.clientEmail && inv.clientEmail.toLowerCase() !== user.email.toLowerCase()) {
+        return res.status(403).json({ error: "Invoice email mismatch" });
+      }
+      amountPaise = Math.round(inv.amount * 100);
     } else if (PLAN_PRICES_PAISE[normalizedPlan]) {
       amountPaise = PLAN_PRICES_PAISE[normalizedPlan];
     } else {
@@ -128,6 +141,7 @@ router.post("/verify", verifyToken, async (req, res) => {
 
     const normalizedPlan = verifiedPlan.toLowerCase();
     const isAppointment = normalizedPlan.startsWith("appointment_");
+    const isInvoice = normalizedPlan.startsWith("invoice_");
 
     // Amount integrity check
     if (isAppointment) {
@@ -140,6 +154,23 @@ router.post("/verify", verifyToken, async (req, res) => {
       }
       if (verifiedAmount !== Math.round(appointment.fee * 100)) {
         return res.status(400).json({ error: "Amount mismatch for appointment fee" });
+      }
+    } else if (isInvoice) {
+      const parts = normalizedPlan.split("_");
+      const invoiceId = parts[1];
+      const Invoice = require("../models/Invoice");
+      const invoice = await Invoice.findById(invoiceId);
+      if (!invoice) return res.status(404).json({ error: "Invoice not found" });
+      if (invoice.clientId && invoice.clientId.toString() !== req.userId) {
+        return res.status(403).json({ error: "Invoice not belongs to you" });
+      } else if (!invoice.clientId && invoice.clientEmail) {
+        const user = await User.findById(req.userId);
+        if (invoice.clientEmail.toLowerCase() !== user.email.toLowerCase()) {
+          return res.status(403).json({ error: "Invoice email mismatch" });
+        }
+      }
+      if (verifiedAmount !== Math.round(invoice.amount * 100)) {
+        return res.status(400).json({ error: "Amount mismatch for invoice fee" });
       }
     } else if (PLAN_PRICES_PAISE[normalizedPlan]) {
       if (verifiedAmount !== PLAN_PRICES_PAISE[normalizedPlan]) {

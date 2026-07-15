@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const InvoiceSchema = new mongoose.Schema({
     lawyerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    clientId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     clientName: { type: String, required: true },
     clientEmail: { type: String },
     amount: { type: Number, required: true },

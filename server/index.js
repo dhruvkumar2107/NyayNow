@@ -2,6 +2,12 @@ require("dotenv").config();
 
 // Fail fast if JWT_SECRET is missing or uses a known-default value (except in test environment)
 const KNOWN_BAD_SECRETS = ['super_secret_key_change_later', 'secret', 'jwt_secret', 'changeme'];
+if (process.env.NODE_ENV === 'test' && !process.env.JWT_SECRET) {
+  process.env.JWT_SECRET = 'test_only_secret_key_for_jest';
+}
+if (process.env.NODE_ENV !== 'production' && !process.env.JWT_SECRET) {
+  process.env.JWT_SECRET = 'dev_only_secret_key_fallback_for_local_development_nyaynow_9f8b4c2b9a7';
+}
 if (process.env.NODE_ENV !== 'test' && (!process.env.JWT_SECRET || KNOWN_BAD_SECRETS.includes(process.env.JWT_SECRET))) {
   console.error('❌ FATAL: JWT_SECRET is missing or uses a known-insecure default. Refusing to start.');
   process.exit(1);
@@ -154,8 +160,8 @@ app.use(helmet({
 const RATE_LIMIT = {
   GLOBAL_WINDOW_MS:   15 * 60 * 1000,  // 15 minutes
   GLOBAL_MAX:         300,
-  AUTH_WINDOW_MS:     60 * 60 * 1000,  // 1 hour
-  AUTH_MAX:           10,
+  AUTH_WINDOW_MS:     15 * 60 * 1000,  // 15 minutes
+  AUTH_MAX:           35,              // 35 requests (more than enough for any legitimate user login/OTP flow)
   AI_WINDOW_MS:       15 * 60 * 1000,  // 15 minutes
   AI_MAX:             50,
 };
@@ -180,18 +186,25 @@ const limiter = rateLimit({
   keyGenerator: perUserKey,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { ip: false },
 });
 app.use(limiter);
 
-// 🛡️ AUTH LIMITER (Brute-force protection)
+// 🛡️ AUTH LIMITER (Brute-force protection - applied selectively to protect session/refresh endpoints)
 const authLimiter = rateLimit({
   windowMs: RATE_LIMIT.AUTH_WINDOW_MS,
   max:      RATE_LIMIT.AUTH_MAX,
-  message: { error: "Too many login attempts. Try again in an hour." },
+  message: { error: "Too many login/registration attempts. Try again in 15 minutes." },
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use("/api/auth", authLimiter);
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api/auth/send-otp", authLimiter);
+app.use("/api/auth/verify-email", authLimiter);
+app.use("/api/auth/verify-otp", authLimiter);
+app.use("/api/auth/forgot-password", authLimiter);
+app.use("/api/auth/reset-password", authLimiter);
 
 // 🛡️ AI LIMITER (Cost overflow protection)
 const aiLimiter = rateLimit({
@@ -201,6 +214,7 @@ const aiLimiter = rateLimit({
   message: { error: "AI capacity limit reached. Please wait a moment." },
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { ip: false },
 });
 app.use("/api/ai", aiLimiter);
 

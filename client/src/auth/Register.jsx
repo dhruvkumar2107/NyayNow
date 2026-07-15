@@ -72,6 +72,17 @@ export default function Register({ defaultRole = "client" }) {
     }
   }, [otpCooldown]);
 
+  // Close city dropdown on click outside
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest(".city-dropdown-container")) {
+        setShowCityDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
   // Filter Cities
   const filteredCities = useMemo(() => {
     return INDIAN_CITIES.filter(c => c.toLowerCase().includes(citySearch.toLowerCase()));
@@ -108,12 +119,16 @@ export default function Register({ defaultRole = "client" }) {
 
     setLoading(true);
     try {
-      await axios.post(`/api/auth/send-otp`, { email: formData.email });
+      const res = await axios.post(`/api/auth/send-otp`, { email: formData.email });
       
       setOtpSent(true);
       setOtpCooldown(60);
       setOtpRetries(prev => prev - 1);
       toast.success("OTP verification code sent to your email.");
+      if (res.data.debugOtp) {
+        setOtpCode(res.data.debugOtp);
+        toast(`[DEBUG] Auto-filled OTP: ${res.data.debugOtp}`, { icon: '🔑', duration: 6000 });
+      }
     } catch (err) {
       toast.error(err?.response?.data?.message || "Failed to send OTP code. Please retry.");
     } finally {
@@ -440,6 +455,45 @@ export default function Register({ defaultRole = "client" }) {
                     ) : (
                         <InputGroup label="Bar Council ID" name="barCouncilId" value={formData.barCouncilId} onChange={handleChange} placeholder="MAH/1234/2024" />
                     )}
+
+                    {/* City Selection Dropdown */}
+                    <div className="city-dropdown-container relative">
+                      <label className="block text-xs font-bold text-slate-400 ml-1 uppercase tracking-wider mb-1.5">City</label>
+                      <input
+                        type="text"
+                        placeholder="Search & select city (e.g. Mumbai)"
+                        value={selectedCity || citySearch}
+                        onFocus={() => setShowCityDropdown(true)}
+                        onChange={(e) => {
+                          setCitySearch(e.target.value);
+                          setSelectedCity(""); // Clear selection when typing
+                          setShowCityDropdown(true);
+                        }}
+                        className="glass-input w-full rounded-xl px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-slate-600 focus:ring-1 focus:ring-gold-500/50 outline-none transition duration-300"
+                      />
+                      {showCityDropdown && (
+                        <div className="absolute z-20 w-full mt-1 max-h-48 overflow-y-auto bg-[#0b0f19] border border-white/10 rounded-xl shadow-xl scrollbar-thin scrollbar-thumb-slate-700">
+                          {filteredCities.length > 0 ? (
+                            filteredCities.map((city) => (
+                              <button
+                                key={city}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedCity(city);
+                                  setCitySearch("");
+                                  setShowCityDropdown(false);
+                                }}
+                                className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-gold-500/10 hover:text-gold-400 transition"
+                              >
+                                {city}
+                              </button>
+                            ))
+                          ) : (
+                            <div className="px-4 py-2 text-sm text-slate-500">No cities found</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
 
                     <div className="relative group">
                         <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Identity Document (PDF/JPG)</label>

@@ -53,10 +53,8 @@ describe('Brevo Email OTP Authentication Flow', () => {
                 .send({ email: testEmail });
 
             expect(res.status).toBe(200);
-            expect(res.body).toEqual({
-                success: true,
-                message: 'OTP sent via Email'
-            });
+            expect(res.body.success).toBe(true);
+            expect(res.body.message).toBe('OTP sent via Email');
 
             // Verify OtpEntry is created in database
             const entry = await OtpEntry.findOne({ email: testEmail });

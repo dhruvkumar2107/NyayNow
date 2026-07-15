@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 const PLANS = [
   {
@@ -202,6 +203,19 @@ export default function PricingPage() {
   const [loading, setLoading] = useState(null)
   const router = useRouter()
 
+  const loadScript = (src) => {
+    return new Promise((resolve) => {
+      if (typeof window !== "undefined" && document.querySelector(`script[src="${src}"]`)) {
+        return resolve(true);
+      }
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handleSubscribe = async (planId) => {
     if (planId === 'saathi') {
       router.push('/register')
@@ -212,29 +226,80 @@ export default function PricingPage() {
       return
     }
     const token = localStorage.getItem('token')
-    if (!token) {
-      router.push('/login?redirect=/pricing')
-      return
-    }
     setLoading(planId)
+    const toastId = toast.loading("Initiating subscription...")
     try {
+      const sdkLoaded = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+      if (!sdkLoaded) {
+        toast.error("Razorpay SDK failed to load. Please check your internet connection.", { id: toastId });
+        setLoading(null);
+        return;
+      }
+
       const { data } = await axios.post(
         `/api/subscriptions/create-subscription`,
         { plan: planId, billing },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
       )
-      if (data.subscriptionId && window.Razorpay) {
+      if (data.orderId) {
         const rzp = new window.Razorpay({
-          key: process.env.NEXT_PUBLIC_RZP_KEY_ID,
-          subscription_id: data.subscriptionId,
+          key: data.key || process.env.NEXT_PUBLIC_RZP_KEY_ID,
+          amount: data.amount,
+          currency: data.currency || "INR",
           name: 'NyayNow',
           description: `${planId.charAt(0).toUpperCase() + planId.slice(1)} Plan`,
-          handler: () => { router.push('/assistant?upgrade=success') }
+          order_id: data.orderId,
+          handler: async (response) => {
+            toast.loading("Verifying payment...", { id: toastId });
+            try {
+              const verifyRes = await axios.post(
+                `/api/subscriptions/verify-subscription`,
+                {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  plan: planId
+                },
+                { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+              );
+              if (verifyRes.data.success) {
+                toast.success("Subscription upgraded successfully!", { id: toastId });
+                router.push('/payment/success');
+              } else {
+                toast.error("Subscription verification failed.", { id: toastId });
+              }
+            } catch (err) {
+              console.error(err);
+              toast.error("Failed to verify transaction.", { id: toastId });
+            }
+          },
+          prefill: {
+            name: data.user?.name || "",
+            email: data.user?.email || ""
+          },
+          theme: {
+            color: "#3b82f6"
+          },
+          modal: {
+            ondismiss: function() {
+              toast.dismiss(toastId);
+              setLoading(null);
+            }
+          }
         })
         rzp.open()
+        toast.dismiss(toastId)
+      } else {
+        toast.error("Order creation failed.", { id: toastId });
       }
     } catch (err) {
-      if (err?.response?.status === 401) router.push('/login?redirect=/pricing')
+      console.error(err)
+      toast.dismiss(toastId)
+      if (err?.response?.status === 401) {
+        router.push('/login?redirect=/pricing')
+      } else {
+        toast.error(err?.response?.data?.error || "Failed to start checkout session.")
+      }
     } finally {
       setLoading(null)
     }
