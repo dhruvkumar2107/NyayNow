@@ -70,7 +70,6 @@ import Navbar from '../components/Navbar'
 import EliteCursor from '../components/EliteCursor'
 import ScrollProgress from '../components/ScrollProgress'
 import CookieConsent from '../components/CookieConsent'
-import WhatsAppWidget from '../components/WhatsAppWidget'
 import Footer from '../components/Footer'
 import OfflineNotice from '../components/OfflineNotice'
 import GoogleAnalytics from '../components/GoogleAnalytics'
@@ -247,7 +246,6 @@ export default function RootLayout({ children }) {
                     <Toaster position="bottom-right" />
                     <AIAssistant />
                     <CookieConsent />
-                    <WhatsAppWidget />
                     <OfflineNotice />
                     <ServiceWorkerRegistrar />
                 </Providers>
