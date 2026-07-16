@@ -121,7 +121,8 @@ export default function RootLayout({ children }) {
             },
             "sameAs": [
                 "https://twitter.com/nyaynow",
-                "https://www.linkedin.com/company/nyaynow"
+                "https://www.linkedin.com/company/nyaynow",
+                "https://www.instagram.com/nyaynow.in/"
             ]
         },
         {

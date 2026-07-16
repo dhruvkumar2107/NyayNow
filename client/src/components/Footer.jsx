@@ -51,8 +51,8 @@ const Footer = () => {
                             The operating system for the <span className="text-white">Indian Justice System</span>. Democratizing legal intelligence through institutional-grade AI.
                         </p>
                         <div className="flex gap-4">
-                            <SocialButton icon={<Linkedin size={20} />} label="LinkedIn" />
-                            <SocialButton icon={<Instagram size={20} />} label="Instagram" />
+                            <SocialButton icon={<Linkedin size={20} />} label="LinkedIn" href="https://www.linkedin.com/company/nyaynow" />
+                            <SocialButton icon={<Instagram size={20} />} label="Instagram" href="https://www.instagram.com/nyaynow.in/" />
                         </div>
                     </div>
 
@@ -190,13 +190,16 @@ const Badge = ({ children, color, className = "" }) => (
     </span>
 )
 
-const SocialButton = ({ icon, label }) => (
-    <button
+const SocialButton = ({ icon, label, href }) => (
+    <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
         className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:bg-blue-600/10 hover:text-blue-400 hover:border-blue-500/30 hover:-translate-y-1 transition-all duration-500 shadow-2xl"
         aria-label={label}
     >
         {icon}
-    </button>
+    </a>
 )
 
 export default Footer
