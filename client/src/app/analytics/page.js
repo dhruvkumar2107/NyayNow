@@ -4,8 +4,12 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { BarChart3, TrendingUp, Users, Scale, AlertTriangle, ArrowUpRight, Gauge, Globe, Zap, ArrowLeft, Shield } from 'lucide-react'
 import Link from 'next/link'
+import { useAuth } from "../../context/AuthContext"
 
 export default function CourtAnalyticsPage() {
+    const { user } = useAuth();
+    const dashboardLink = user?.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard';
+
     return (
         <div className="min-h-screen bg-[#020617] text-white flex flex-col font-sans">
              <div className="absolute inset-0 pointer-events-none overflow-hidden h-[1000px]">
@@ -25,7 +29,7 @@ export default function CourtAnalyticsPage() {
                     </div>
                 </div>
 
-                <Link href="/client/dashboard" className="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-white transition-colors flex items-center gap-2">
+                <Link href={dashboardLink} className="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-white transition-colors flex items-center gap-2">
                     <ArrowLeft size={14} /> Back
                 </Link>
             </header>

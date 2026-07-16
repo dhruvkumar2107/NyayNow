@@ -1,6 +1,7 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 import { motion } from "framer-motion";
 import { Bell, Lock, Shield, User, Smartphone, Globe, Moon, Monitor, CreditCard, Settings2, Search } from "lucide-react";
@@ -8,8 +9,15 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 export default function Settings() {
-    const { user, updateUser } = useAuth();
+    const { user, updateUser, loading: authLoading } = useAuth();
+    const router = useRouter();
     const [activeTab, setActiveTab] = useState('account');
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push("/login");
+        }
+    }, [authLoading, user, router]);
 
     const INDIAN_CITIES = [
         "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata", "Pune", "Jaipur", "Surat",
@@ -79,6 +87,14 @@ export default function Settings() {
             toast.error("Failed to save settings");
         }
     };
+
+    if (authLoading || !user) {
+        return (
+            <div className="min-h-screen bg-[#0c1220] flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#0c1220] font-sans text-slate-400 selection:bg-indigo-500/30 pb-20 relative overflow-hidden">

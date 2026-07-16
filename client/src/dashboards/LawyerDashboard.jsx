@@ -41,15 +41,27 @@ import {
   Settings,
   User as UserIcon,
   Video,
-  BookOpen
+  BookOpen,
+  Globe
 } from "lucide-react";
 
 
 export default function LawyerDashboard() {
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const socketRef = useRef(null);
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        router.push("/login");
+      } else if (user.role !== "lawyer") {
+        router.push(user.role === "client" ? "/client/dashboard" : "/admin");
+      }
+    }
+  }, [authLoading, user, router]);
+
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "board");
   const [leads, setLeads] = useState([]);
   const [acceptedCases, setAcceptedCases] = useState([]);
@@ -296,7 +308,7 @@ export default function LawyerDashboard() {
     }
   };
 
-  if (loading || !user) return <PremiumLoader text="Initializing Command Center..." />;
+  if (authLoading || loading || !user || user.role !== "lawyer") return <PremiumLoader text="Initializing Command Center..." />;
 
   // Ensure user fields are safe
   const userName = user?.name || "Counsel";
@@ -306,29 +318,55 @@ export default function LawyerDashboard() {
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
 
       {/* SIDEBAR NAVIGATION (Fixed Left) */}
-      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#0f172a] border-r border-white/5 flex flex-col z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#030712] border-r border-white/5 flex flex-col z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} overflow-y-auto custom-scrollbar`}>
         <div className="p-6">
-          <div className="flex items-center gap-3 mb-10">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/20">
-              <Gavel className="text-white w-6 h-6" />
+          <div className="flex items-center gap-3 mb-8 px-2">
+            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-600/20">
+              <Gavel className="text-white w-5 h-5" />
             </div>
             <div>
-              <span className="text-white font-black text-xl tracking-tighter uppercase">Nyay<span className="text-indigo-500">Dash</span></span>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">Counsel OS</p>
+              <span className="text-white font-black text-lg tracking-tighter uppercase">Nyay<span className="text-indigo-500">Dash</span></span>
+              <p className="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em] leading-none mt-0.5">Counsel OS</p>
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <NavItem icon={<LayoutDashboard size={18} />} label="Dashboard" active={activeTab === 'board'} onClick={() => setActiveTab('board')} />
-            <NavItem icon={<Zap size={18} />} label="Lead Pool" count={leads.length} active={activeTab === 'leads'} onClick={() => setActiveTab('leads')} />
-            <NavItem icon={<Users size={18} />} label="Client CRM" active={activeTab === 'clients'} onClick={() => setActiveTab('clients')} />
-            <NavItem icon={<MessageSquare size={18} />} label="Messages" to="/messages" />
-            <NavItem icon={<Calendar size={18} />} label="Calendar" to="/calendar" />
-            <NavItem icon={<DollarSign size={18} />} label="Financials" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
-            <NavItem icon={<MessageSquare size={18} />} label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
-            <div className="my-4 h-px bg-white/5 mx-2" />
-            <NavItem icon={<BookOpen size={18} className="text-emerald-400" />} label="Live Research" active={activeTab === 'research'} onClick={() => setActiveTab('research')} />
-            <NavItem icon={<FileText size={18} />} label="AI Drafter" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} />
+          <div className="space-y-6">
+            {/* Command Center section */}
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Command Center</p>
+              <div className="space-y-1">
+                <NavItem icon={<LayoutDashboard size={18} />} label="Dashboard" active={activeTab === 'board'} onClick={() => setActiveTab('board')} />
+                <NavItem icon={<Zap size={18} />} label="Lead Pool" count={leads.length} active={activeTab === 'leads'} onClick={() => setActiveTab('leads')} />
+                <NavItem icon={<Users size={18} />} label="Client CRM" active={activeTab === 'clients'} onClick={() => setActiveTab('clients')} />
+              </div>
+            </div>
+
+            {/* Communication section */}
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Communication</p>
+              <div className="space-y-1">
+                <NavItem icon={<MessageSquare size={18} />} label="Messages" to="/messages" />
+                <NavItem icon={<Calendar size={18} />} label="Calendar" to="/calendar" />
+                <NavItem icon={<Globe size={18} />} label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
+              </div>
+            </div>
+
+            {/* AI Practice Suite section */}
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">AI Practice Suite</p>
+              <div className="space-y-1">
+                <NavItem icon={<BookOpen size={18} className="text-indigo-400" />} label="Live Research" active={activeTab === 'research'} onClick={() => setActiveTab('research')} />
+                <NavItem icon={<FileText size={18} />} label="AI Drafter" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} />
+              </div>
+            </div>
+
+            {/* Finance & Account section */}
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Finance & Account</p>
+              <div className="space-y-1">
+                <NavItem icon={<DollarSign size={18} />} label="Financials" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -798,25 +836,28 @@ function NavItem({ icon, label, to, count, active, onClick, badge }) {
   return (
     <div
       onClick={handleClick}
-      className={`flex items-center justify-between px-4 py-3 rounded-2xl cursor-pointer transition-all duration-300 group ${active
-          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-          : 'text-slate-500 hover:text-slate-200 hover:bg-white/5'
+      className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl cursor-pointer transition-all duration-200 group ${active
+          ? 'bg-indigo-500/10 text-white border border-indigo-500/25 shadow-sm font-semibold'
+          : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'
         }`}
     >
       <div className="flex items-center gap-3">
-        <span className={`transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
+        <span className={`transition-colors duration-200 ${active ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300'}`}>
           {icon}
         </span>
-        <span className={`text-xs font-bold uppercase tracking-widest ${active ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'}`}>
+        <span className="text-[13px] tracking-normal font-medium">
           {label}
         </span>
       </div>
-      {count !== undefined && (
-        <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg ${active ? 'bg-white/20 text-white' : 'bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white'
-          } transition-colors`}>
-          {count}
-        </span>
-      )}
+      <div className="flex items-center gap-2">
+        {count !== undefined && (
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${active ? 'bg-indigo-500/20 text-white' : 'bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500/15 group-hover:text-white'
+            } transition-colors border border-indigo-500/20`}>
+            {count}
+          </span>
+        )}
+        {badge && <span className="text-[9px] font-bold bg-indigo-500/15 text-indigo-400 border border-indigo-500/25 px-1.5 py-0.5 rounded uppercase tracking-wider">{badge}</span>}
+      </div>
     </div>
   )
 }

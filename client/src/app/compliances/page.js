@@ -6,8 +6,11 @@ import { ShieldCheck, FileCheck, AlertCircle, Info, ArrowLeft, Loader2, CheckCir
 import Link from 'next/link'
 import axios from 'axios'
 import { API_BASE } from '../../config'
+import { useAuth } from '../../context/AuthContext'
 
 export default function ComplianceHubPage() {
+    const { user } = useAuth();
+    const dashboardLink = user?.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard';
     const [activeTab, setActiveTab] = useState('posh')
     const [isLoading, setIsLoading] = useState(false)
     const [checklist, setChecklist] = useState(null)
@@ -67,7 +70,7 @@ export default function ComplianceHubPage() {
                     </div>
                 </div>
 
-                <Link href="/client/dashboard" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">
+                <Link href={dashboardLink} className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">
                     <ArrowLeft size={14} /> Back
                 </Link>
             </header>

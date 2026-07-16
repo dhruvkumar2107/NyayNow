@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../src/context/AuthContext";
 import axios from "axios";
@@ -7,9 +7,15 @@ import toast from "react-hot-toast";
 import { Shield, UploadCloud, CheckCircle, XCircle, Loader } from "lucide-react";
 
 export default function SetupProfile() {
-    const { user, updateUser } = useAuth();
+    const { user, updateUser, loading: authLoading } = useAuth();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push("/login");
+        }
+    }, [authLoading, user, router]);
 
     const [formData, setFormData] = useState({
         bio: user?.bio || "",
@@ -70,6 +76,14 @@ export default function SetupProfile() {
             setLoading(false);
         }
     };
+
+    if (authLoading || !user) {
+        return (
+            <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#020617] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-indigo-500/30">

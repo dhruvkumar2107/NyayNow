@@ -193,7 +193,7 @@ export default function InvoicePaymentPage() {
 
       <div className="relative z-10 w-full max-w-2xl">
         <button
-          onClick={() => router.push("/client/dashboard")}
+          onClick={() => router.push(user?.role === "lawyer" ? "/lawyer/dashboard" : "/client/dashboard")}
           className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition mb-6"
         >
           <ArrowLeft size={14} /> Back to Dashboard

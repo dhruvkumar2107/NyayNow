@@ -21,10 +21,26 @@ import { hasAccess } from "../utils/planBorders";
 import PaywallModal from "../components/PaywallModal";
 import { useRef } from "react";
 import { API_BASE, API_HOST } from "../config";
+import {
+  LayoutDashboard,
+  MessageSquare,
+  Globe,
+  Scale,
+  FileText,
+  Mic,
+  Gavel,
+  Search,
+  Briefcase,
+  DollarSign,
+  Folder,
+  ShieldCheck,
+  TrendingUp,
+  Sparkles
+} from "lucide-react";
 
 
 export default function ClientDashboard() {
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const socketRef = useRef(null);
@@ -34,6 +50,16 @@ export default function ClientDashboard() {
   const [appointments, setAppointments] = useState([]);
   const [suggestedLawyers, setSuggestedLawyers] = useState([]);
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || 'overview'); // 'overview', 'cases', 'feed'
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        router.push("/login");
+      } else if (user.role !== "client") {
+        router.push(user.role === "lawyer" ? "/lawyer/dashboard" : "/admin");
+      }
+    }
+  }, [authLoading, user, router]);
 
   useEffect(() => {
     const tab = searchParams.get("tab");
@@ -332,7 +358,7 @@ export default function ClientDashboard() {
     setShowInstantModal(true);
   };
 
-  if (loading || !user) return <PremiumLoader text="Loading Workspace..." />;
+  if (authLoading || loading || !user || user.role !== "client") return <PremiumLoader text="Loading Workspace..." />;
 
   const activeCase = activeCases.find(c => c.stage !== 'Closed') || activeCases[0];
 
@@ -340,32 +366,58 @@ export default function ClientDashboard() {
     <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
 
       {/* SIDEBAR NAVIGATION (Fixed Left) */}
-      <aside className={`fixed left-0 top-0 h-screen w-72 bg-[#020617] border-r border-white/5 flex flex-col z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-8">
-          <Link href="/" className="flex items-center gap-3 group">
+      <aside className={`fixed left-0 top-0 h-screen w-72 bg-[#030712] border-r border-white/5 flex flex-col z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} overflow-y-auto custom-scrollbar`}>
+        <div className="p-6">
+          <Link href="/" className="flex items-center gap-3 group mb-8 px-2">
             <div className="relative">
-              <div className="absolute inset-0 bg-gold-400 blur-[15px] opacity-10 group-hover:opacity-30 transition duration-500"></div>
-              <img src="/logo.png" alt="NyayNow Logo" className="w-10 h-10 relative object-contain hover:scale-105 transition duration-300" />
+              <div className="absolute inset-0 bg-indigo-500 blur-[15px] opacity-10 group-hover:opacity-30 transition duration-500"></div>
+              <img src="/logo.png" alt="NyayNow Logo" className="w-8 h-8 relative object-contain hover:scale-105 transition duration-300" />
             </div>
-            <span className="text-2xl font-black text-white tracking-tighter transition-colors group-hover:text-indigo-400">NyayNow</span>
+            <span className="text-xl font-black text-white tracking-tighter transition-colors group-hover:text-indigo-400">NyayNow</span>
           </Link>
 
-            <div className="space-y-1 mt-8">
-            <NavItem icon="📊" label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
-            <NavItem icon="⚖️" label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
-            <NavItem icon="🤖" label="Judge AI" to="/judge-ai" locked={!hasAccess(user.plan, 'LEGAL_RESEARCH', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Judge AI Analysis"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
-            <NavItem icon="📝" label="Drafting Lab" to="/drafting" locked={!hasAccess(user.plan, 'DOCUMENT_DRAFTING', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Document Drafting Lab"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
-            <NavItem icon="🎙️" label="NyayVoice" to="/nyayvoice" badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : "Live"} locked={!hasAccess(user.plan, 'NYAY_VOICE', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("NyayVoice Assistant"); setShowPaywall(true); }} />
-            <NavItem icon="⚔️" label="NyayCourt" to="/nyaycourt-simulator" badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : "New"} locked={!hasAccess(user.plan, 'NYAY_COURT', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("NyayCourt Battle Simulator"); setShowPaywall(true); }} />
-            <NavItem icon="🔍" label="Precedent Engine" to="/research" locked={!hasAccess(user.plan, 'LEGAL_RESEARCH', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Precedent Research Engine"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
-            <NavItem icon="🛡️" label="Compliance Hub" to="/compliances" />
-            <NavItem icon="📈" label="Analytics" to="/analytics" locked={!hasAccess(user.plan, 'silver')} onLocked={() => { setPaywallFeature("Deep Analytics"); setShowPaywall(true); }} />
-            <NavItem icon="📄" label="Quantum Vault" to="/agreements" locked={!hasAccess(user.plan, 'gold')} onLocked={() => { setPaywallFeature("Agreement Vault"); setShowPaywall(true); }} />
-            <NavItem icon="💬" label="Messages" to="/messages" />
-            <NavItem icon="💳" label="Smart Escrow" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
-            <NavItem icon="📡" label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
-            <div className="my-2 h-px bg-white/5" />
-            <NavItem icon="🎭" label="Confession Booth" active={activeTab === 'confessions'} onClick={() => setActiveTab('confessions')} />
+          <div className="space-y-6">
+            {/* Workspace section */}
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Workspace</p>
+              <div className="space-y-1">
+                <NavItem icon={<LayoutDashboard size={18} />} label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
+                <NavItem icon={<MessageSquare size={18} />} label="Messages" to="/messages" />
+                <NavItem icon={<Globe size={18} />} label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
+              </div>
+            </div>
+
+            {/* AI Legal Suite section */}
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">AI Legal Suite</p>
+              <div className="space-y-1">
+                <NavItem icon={<Scale size={18} />} label="Judge AI Scan" to="/judge-ai" locked={!hasAccess(user.plan, 'LEGAL_RESEARCH', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Judge AI Analysis"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
+                <NavItem icon={<FileText size={18} />} label="Drafting Lab" to="/drafting" locked={!hasAccess(user.plan, 'DOCUMENT_DRAFTING', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Document Drafting Lab"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
+                <NavItem icon={<Mic size={18} />} label="NyayVoice" to="/nyayvoice" badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : "Live"} locked={!hasAccess(user.plan, 'NYAY_VOICE', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("NyayVoice Assistant"); setShowPaywall(true); }} />
+                <NavItem icon={<Gavel size={18} />} label="NyayCourt Arena" to="/nyaycourt-simulator" badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : "New"} locked={!hasAccess(user.plan, 'NYAY_COURT', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("NyayCourt Battle Simulator"); setShowPaywall(true); }} />
+                <NavItem icon={<Search size={18} />} label="Precedent Search" to="/research" locked={!hasAccess(user.plan, 'LEGAL_RESEARCH', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Precedent Research Engine"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
+              </div>
+            </div>
+
+            {/* Cases & Escrow section */}
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Cases & Escrow</p>
+              <div className="space-y-1">
+                <NavItem icon={<Briefcase size={18} />} label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
+                <NavItem icon={<DollarSign size={18} />} label="Smart Escrow" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
+                <NavItem icon={<Folder size={18} />} label="Quantum Vault" to="/agreements" locked={!hasAccess(user.plan, 'gold')} onLocked={() => { setPaywallFeature("Agreement Vault"); setShowPaywall(true); }} />
+              </div>
+            </div>
+
+            {/* Utilities section */}
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Utilities</p>
+              <div className="space-y-1">
+                <NavItem icon={<ShieldCheck size={18} />} label="Compliance Hub" to="/compliances" />
+                <NavItem icon={<TrendingUp size={18} />} label="Analytics" to="/analytics" locked={!hasAccess(user.plan, 'silver')} onLocked={() => { setPaywallFeature("Deep Analytics"); setShowPaywall(true); }} />
+                <NavItem icon={<Sparkles size={18} />} label="Confessions" active={activeTab === 'confessions'} onClick={() => setActiveTab('confessions')} />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -511,53 +563,84 @@ export default function ClientDashboard() {
           {activeTab === 'overview' && (
             <div className="col-span-1 lg:col-span-8 space-y-6">
 
-              {/* HERO CARD: ACTIVE CASE */}
-              <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl opacity-50 pointer-events-none group-hover:bg-indigo-500/20 transition duration-1000"></div>
-
-                <div className="relative z-10 flex justify-between items-start mb-8">
+              {/* APPLE STYLE GETTING STARTED CHECKLIST */}
+              <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-sm relative overflow-hidden">
+                <div className="flex items-center justify-between mb-4">
                   <div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
-                      <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Active Matter</span>
+                    <h3 className="text-white font-bold text-sm">Getting Started</h3>
+                    <p className="text-xs text-slate-500">Complete these steps to maximize your platform benefits.</p>
+                  </div>
+                  <span className="text-[10px] font-black text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    {activeCase ? "50% Completed" : "25% Completed"}
+                  </span>
+                </div>
+                {/* Progress bar */}
+                <div className="w-full bg-white/5 rounded-full h-1 mb-6">
+                  <div className="bg-indigo-500 h-1 rounded-full transition-all duration-500" style={{ width: activeCase ? "50%" : "25%" }}></div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 text-xs text-slate-300">
+                    <span className="text-emerald-400">✓</span>
+                    <span className="line-through text-slate-500">Account verified and initial setup complete</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-slate-300">
+                    <span className={activeCase ? "text-emerald-400" : "text-indigo-400 font-bold"}>{activeCase ? "✓" : "○"}</span>
+                    <span className={activeCase ? "line-through text-slate-500" : ""}>Brief your first active legal matter</span>
+                    {!activeCase && (
+                      <button onClick={() => setShowPostModal(true)} className="text-[10px] text-indigo-400 font-bold hover:underline ml-auto">Brief Now →</button>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-slate-300">
+                    <span className="text-slate-500">○</span>
+                    <span>Analyze win probability with Judge AI Outcome Predictor</span>
+                    <Link href="/judge-ai" className="text-[10px] text-indigo-400 font-bold hover:underline ml-auto">Launch Predictor →</Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* HERO CARD: ACTIVE CASE */}
+              <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl opacity-50 pointer-events-none group-hover:bg-indigo-500/10 transition duration-1000"></div>
+
+                <div className="relative z-10 flex justify-between items-start mb-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Active Matter Status</span>
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-2">
-                      {activeCase ? activeCase.title : "No Active Legal Matters"}
+                    <h2 className="text-xl font-bold text-white mb-1">
+                      {activeCase ? activeCase.title : "No Active Matters"}
                     </h2>
-                    <p className="text-slate-400 max-w-lg leading-relaxed">
-                      {activeCase ? activeCase.desc : "Upload a new document to begin autonomous AI analysis."}
+                    <p className="text-xs text-slate-500 max-w-lg leading-relaxed">
+                      {activeCase ? activeCase.desc : "Brief your legal case or use our AI workspace suite below to start."}
                     </p>
                   </div>
                   {activeCase && <div className="text-right">
-                    <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mb-1">Budget</p>
-                    <p className="text-3xl font-bold text-white">₹{activeCase.budget}</p>
+                    <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Budget Allocation</p>
+                    <p className="text-2xl font-bold text-white">₹{activeCase.budget}</p>
                   </div>}
                 </div>
 
                 {
                   activeCase ? (
-                    <div className="bg-[#1e293b]/50 rounded-2xl p-6 border border-white/5">
+                    <div className="bg-[#1e293b]/30 rounded-2xl p-5 border border-white/5">
                       <TrustTimeline stage={activeCase.stage || 'New Lead'} />
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => setShowPostModal(true)}>
-                        <div className="text-2xl mb-2 group-hover:scale-110 transition">📝</div>
-                        <div className="font-bold text-sm text-white">Draft Contract</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="p-4 bg-white/[0.02] rounded-2xl border border-white/[0.08] text-center hover:bg-white/[0.05] hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => setShowPostModal(true)}>
+                        <div className="text-xl mb-1.5 group-hover:scale-110 transition">📝</div>
+                        <div className="font-bold text-xs text-white">Brief New Case Matter</div>
+                        <p className="text-[10px] text-slate-500 mt-0.5">Get matched with verified advocates</p>
                       </div>
                       {/* JUDGE AI MINI WIDGET */}
-                      <div className="p-4 bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-2xl border border-indigo-500/30 text-center hover:scale-105 transition cursor-pointer group relative overflow-hidden" onClick={() => router.push('/judge-ai')}>
-                        <div className="absolute inset-0 bg-indigo-500/10 animate-pulse"></div>
+                      <div className="p-4 bg-gradient-to-br from-indigo-950/20 to-slate-900/40 rounded-2xl border border-indigo-500/20 text-center hover:border-indigo-500/40 transition cursor-pointer group relative overflow-hidden" onClick={() => router.push('/judge-ai')}>
                         <div className="relative z-10">
-                          <div className="text-2xl mb-2">⚖️</div>
-                          <div className="font-bold text-sm text-white">Judge AI Scan</div>
-                          <div className="text-[10px] text-indigo-300 mt-1">Check Win Probability</div>
+                          <div className="text-xl mb-1.5">⚖️</div>
+                          <div className="font-bold text-xs text-white">Judge AI Win Predictor</div>
+                          <p className="text-[10px] text-indigo-300/80 mt-0.5">Analyze outcome & strategic strategy</p>
                         </div>
                       </div>
-                      {/* <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center hover:bg-white/10 hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => router.push('/marketplace')}>
-                        <div className="text-2xl mb-2 group-hover:scale-110 transition">🔍</div>
-                        <div className="font-bold text-sm text-white">Find Lawyer</div>
-                      </div> */}
                     </div>
                   )
                 }
@@ -928,9 +1011,13 @@ export default function ClientDashboard() {
   );
 }
 
-function NavItem({ icon, label, to, active, onClick, badge }) {
+function NavItem({ icon, label, to, active, onClick, badge, locked, onLocked }) {
   const router = useRouter();
   const handleClick = () => {
+    if (locked && onLocked) {
+      onLocked();
+      return;
+    }
     if (onClick) onClick();
     if (to) router.push(to);
   };
@@ -938,13 +1025,16 @@ function NavItem({ icon, label, to, active, onClick, badge }) {
   return (
     <div
       onClick={handleClick}
-      className={`flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 ${active ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-inner font-bold' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+      className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl cursor-pointer transition-all duration-200 group ${active ? 'bg-indigo-500/10 text-white border border-indigo-500/20 shadow-sm font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'}`}
     >
       <div className="flex items-center gap-3">
-        <span className="text-xl opacity-80">{icon}</span>
-        <span className="text-sm tracking-wide font-medium">{label}</span>
+        <span className={`transition-colors duration-200 ${active ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300'}`}>{icon}</span>
+        <span className="text-[13px] tracking-normal font-medium">{label}</span>
       </div>
-      {badge && <span className="text-[9px] font-black bg-violet-500/20 text-violet-400 border border-violet-500/30 px-2 py-0.5 rounded-md uppercase tracking-wider">{badge}</span>}
+      <div className="flex items-center gap-2">
+        {locked && <span className="text-[11px] text-slate-600">🔒</span>}
+        {badge && <span className="text-[9px] font-bold bg-indigo-500/15 text-indigo-400 border border-indigo-500/25 px-1.5 py-0.5 rounded uppercase tracking-wider">{badge}</span>}
+      </div>
     </div>
   )
 }

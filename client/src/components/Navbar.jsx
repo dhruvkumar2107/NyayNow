@@ -210,7 +210,7 @@ export default function Navbar() {
                     </div>
 
                     <div className="space-y-1">
-                      <Link href={user.role === 'admin' ? '/admin' : '/client/dashboard'} className="flex items-center gap-4 px-5 py-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl text-[14px] transition font-bold tracking-tight">
+                      <Link href={user.role === 'admin' ? '/admin' : (user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard')} className="flex items-center gap-4 px-5 py-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl text-[14px] transition font-bold tracking-tight">
                         <LayoutDashboard size={18} className="text-blue-500/50" /> Dashboard
                       </Link>
 

@@ -10,6 +10,7 @@ import Link from 'next/link'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
 import { API_BASE } from '../../config'
+import { useAuth } from '../../context/AuthContext'
 
 // Indian dialects and languages config
 const SUPPORTED_LANGUAGES = [
@@ -156,6 +157,8 @@ const SUPPORTED_LANGUAGES = [
 ]
 
 export default function NyayVoicePage() {
+    const { user } = useAuth();
+    const dashboardLink = user?.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard';
     const [isListening, setIsListening] = useState(false)
     const [transcript, setTranscript] = useState('')
     const [confidence, setConfidence] = useState(1.0)
@@ -386,7 +389,7 @@ export default function NyayVoicePage() {
 
             {/* HEADER */}
             <header className="relative z-10 p-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <Link href="/client/dashboard" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all group">
+                <Link href={dashboardLink} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all group">
                     <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
                     <span className="text-sm font-bold">Dashboard</span>
                 </Link>

@@ -3,6 +3,8 @@ import React from 'react';
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Clock, MessageCircle, ShieldAlert, CheckCircle, Mail, ArrowRight } from "lucide-react";
+import { useAuth } from "../../src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const STEPS = [
     {
@@ -26,6 +28,29 @@ const STEPS = [
 ];
 
 export default function VerificationPending() {
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
+
+    React.useEffect(() => {
+        if (!authLoading) {
+            if (!user) {
+                router.push("/login");
+            } else if (user.role === "lawyer" && user.verified) {
+                router.push("/lawyer/dashboard");
+            } else if (user.role !== "lawyer") {
+                router.push("/client/dashboard");
+            }
+        }
+    }, [authLoading, user, router]);
+
+    if (authLoading || !user) {
+        return (
+            <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-amber-500/30">
 
