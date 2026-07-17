@@ -3,6 +3,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Link from "next/link";
+import PaywallModal from "../../src/components/PaywallModal";
 
 import { useAuth } from "../../src/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,6 +19,7 @@ const EXAMPLES = [
 export default function Analyze() {
   const { user } = useAuth();
   const [text, setText] = useState("");
+  const [showPaywall, setShowPaywall] = useState(false);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +51,11 @@ export default function Analyze() {
       setResult(res.data);
     } catch (err) {
       console.error(err);
-      toast.error("Analysis failed. Please try again.");
+      if (err.response?.status === 403 || err.response?.status === 401) {
+        setShowPaywall(true);
+      } else {
+        toast.error("Analysis failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -260,6 +266,7 @@ export default function Analyze() {
       </section>
 
       <div className="pb-20" />
+      <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} feature="AI Case Analysis" />
     </div>
   );
 }

@@ -11,11 +11,12 @@ const PAGES = [
     { path: '/refund', title: /Refund/i, canonical: 'https://nyaynow.in/refund' },
     { path: '/login', title: /Sign In|Login/i, canonical: 'https://nyaynow.in/login' },
     { path: '/register', title: /Create an Account/i, canonical: 'https://nyaynow.in/register' },
-    { path: '/judge-ai', title: /Judge AI/i, canonical: 'https://nyaynow.in/judge-ai', waitText: 'Predictive Justice Engine' },
-    { path: '/drafting', title: /Drafting/i, canonical: 'https://nyaynow.in/drafting', waitText: 'Smart Drafting Lab' },
+    { path: '/judge-ai', title: /Judge AI/i, canonical: 'https://nyaynow.in/judge-ai', waitText: 'Judge AI' },
+    { path: '/drafting', title: /Drafting/i, canonical: 'https://nyaynow.in/drafting', waitText: 'Drafting Lab' },
     { path: '/nearby', title: /Nearby/i, canonical: 'https://nyaynow.in/nearby', waitText: 'Enable AR Vision' },
     { path: '/nyaycourt-simulator', title: /NyayCourt Simulator/i, canonical: 'https://nyaynow.in/nyaycourt-simulator' },
-    { path: '/nyayvoice', title: /NyayVoice/i, canonical: 'https://nyaynow.in/nyayvoice' }
+    { path: '/nyayvoice', title: /NyayVoice/i, canonical: 'https://nyaynow.in/nyayvoice' },
+    { path: '/agreements', title: /Evidence & Quantum Vault/i, canonical: 'https://nyaynow.in/agreements', waitText: 'Post-Quantum Encryption' }
 ];
 
 test.describe('NyayNow Page Verification Suite', () => {

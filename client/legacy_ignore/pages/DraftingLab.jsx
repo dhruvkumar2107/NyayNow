@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
+import PaywallModal from '../../src/components/PaywallModal';
+import { useAuth } from '../../src/context/AuthContext';
 import {
   FileText, Search, Zap, Download, Copy, Edit3, Check,
   ChevronRight, ArrowLeft, Mic, MicOff, Globe, MapPin,
@@ -579,6 +581,8 @@ const INDIAN_STATES = [
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function DraftingLab() {
+  const { user } = useAuth();
+  const [showPaywall, setShowPaywall] = useState(false);
   const [activeTab, setActiveTab] = useState('draft');
 
   // Draft flow
@@ -640,7 +644,11 @@ export default function DraftingLab() {
       setStep('output');
       toast.success('Document drafted successfully!');
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Drafting failed. Please try again.');
+      if (err.response?.status === 403 || err.response?.status === 401) {
+        setShowPaywall(true);
+      } else {
+        toast.error(err.response?.data?.error || 'Drafting failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -667,7 +675,11 @@ export default function DraftingLab() {
       setAnalysisResult(responseData);
       toast.success('Analysis complete!');
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Analysis failed.');
+      if (err.response?.status === 403 || err.response?.status === 401) {
+        setShowPaywall(true);
+      } else {
+        toast.error(err.response?.data?.error || 'Analysis failed.');
+      }
     } finally {
       setLoading(false);
     }
@@ -1080,6 +1092,7 @@ export default function DraftingLab() {
           )}
         </AnimatePresence>
 
+        <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} feature="Document Drafting Lab" />
       </div>
     </div>
   );
