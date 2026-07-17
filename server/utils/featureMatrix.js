@@ -27,8 +27,8 @@ const DEFAULT_MATRIX = {
   },
   'draft-contract': {
     label: 'Contract Drafting',
-    upgradeMessage: 'Upgrade to Nyay Pro to draft contracts and agreements.',
-    limits: { free: false, pro: 10, gold: 'unlimited', firm: 'unlimited' }
+    upgradeMessage: 'Upgrade to Nyay Pro for 10 drafts/month or Gold for unlimited.',
+    limits: { free: 1, pro: 10, gold: 'unlimited', firm: 'unlimited' }
   },
   'agreement': {
     label: 'Agreement Generator',
