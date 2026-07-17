@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Star, X, Zap, Loader2, Sparkles } from "lucide-react";
+import { Check, Star, X, Zap, Loader2, Sparkles, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE } from "../config";
