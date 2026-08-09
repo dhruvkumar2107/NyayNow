@@ -1,8 +1,9 @@
-const fallbackBackend = typeof process !== 'undefined' && process.env.VERCEL === '1'
-    ? 'https://nyaysathi-main.onrender.com/api'
-    : 'http://localhost:4000/api';
+// Client-side: use relative path (Next.js rewrites will proxy)
+// Server-side: use full backend URL for SSR
+const isServer = typeof window === 'undefined';
+const fallbackBackend = 'https://nyaysathi-main.onrender.com/api';
 
-export const API_BASE = typeof window !== 'undefined' ? "/api" : (process.env.NEXT_PUBLIC_API_URL || fallbackBackend);
-export const API_HOST = typeof window !== 'undefined' ? "" : API_BASE.replace(/\/api$/, '');
+export const API_BASE = isServer ? fallbackBackend : "/api";
+export const API_HOST = isServer ? fallbackBackend.replace(/\/api$/, '') : "";
 
 
