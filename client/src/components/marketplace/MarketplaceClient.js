@@ -12,9 +12,32 @@ export default function MarketplaceClient({ initialLawyers }) {
     const rawLawyers = Array.isArray(initialLawyers) 
         ? initialLawyers 
         : (initialLawyers && Array.isArray(initialLawyers.lawyers) ? initialLawyers.lawyers : []);
-    const [lawyers] = useState(rawLawyers)
+    const [lawyers, setLawyers] = useState(rawLawyers)
     const [searchQuery, setSearchQuery] = useState("")
     const [sortBy, setSortBy] = useState("rating")
+    const [loading, setLoading] = useState(false)
+
+    // Fetch lawyers on mount if initial data is empty
+    useEffect(() => {
+        if (rawLawyers.length === 0 && !loading) {
+            fetchLawyers()
+        }
+    }, [])
+
+    const fetchLawyers = async () => {
+        setLoading(true)
+        try {
+            const res = await fetch(`/api/lawyers?all=true`)
+            if (res.ok) {
+                const data = await res.json()
+                setLawyers(data)
+            }
+        } catch (error) {
+            console.error("Failed to fetch lawyers:", error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     // Filters State
     const [selectedSpecialization, setSelectedSpecialization] = useState([])
