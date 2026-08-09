@@ -8,3 +8,7 @@ export const metadata = {
         url: 'https://nyaynow.in/marketplace',
     },
 }
+
+export default function MarketplaceLayout({ children }) {
+    return children
+}
