@@ -36,13 +36,8 @@ export default function MarketplacePage() {
                 </div>
             </div>
 
-            {/* TEST - Simple content */}
-            <div className="container mx-auto px-6 py-20">
-                <div className="bg-glass rounded-2xl p-8 text-center">
-                    <h2 className="text-3xl font-bold text-white mb-4">Marketplace Loading...</h2>
-                    <p className="text-slate-400">Lawyers directory will appear here</p>
-                </div>
-            </div>
+            {/* CLIENT CONTENT - fetches lawyers client-side */}
+            <MarketplaceClient initialLawyers={[]} />
 
         </div>
     )
