@@ -5,7 +5,7 @@ import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
     Sparkles, FileText, UserCheck, MapPin, 
-    Mic, Scale, Search, Briefcase, ChevronRight 
+    Mic, Scale, Search, Briefcase, ChevronRight, ShieldCheck
 } from "lucide-react"
 
 export default function ChooserCards() {
@@ -19,7 +19,8 @@ export default function ChooserCards() {
             icon: Sparkles,
             badge: "Free Trial",
             color: "from-blue-500/10 to-indigo-500/10 border-blue-500/30 hover:border-blue-500/80 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)]",
-            iconColor: "text-blue-400"
+            iconColor: "text-blue-400",
+            gradient: "from-blue-500 to-indigo-500",
         },
         {
             title: "Find a Verified Lawyer",
@@ -28,7 +29,8 @@ export default function ChooserCards() {
             icon: UserCheck,
             badge: "BCI Verified",
             color: "from-emerald-500/10 to-teal-500/10 border-emerald-500/30 hover:border-emerald-500/80 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]",
-            iconColor: "text-emerald-400"
+            iconColor: "text-emerald-400",
+            gradient: "from-emerald-500 to-teal-500",
         },
         {
             title: "Draft an Agreement",
@@ -37,7 +39,8 @@ export default function ChooserCards() {
             icon: FileText,
             badge: "Smart Templates",
             color: "from-purple-500/10 to-pink-500/10 border-purple-500/30 hover:border-purple-500/80 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)]",
-            iconColor: "text-purple-400"
+            iconColor: "text-purple-400",
+            gradient: "from-purple-500 to-pink-500",
         },
         {
             title: "Nearby Radar Map",
@@ -46,7 +49,8 @@ export default function ChooserCards() {
             icon: MapPin,
             badge: "Real-time Map",
             color: "from-amber-500/10 to-orange-500/10 border-amber-500/30 hover:border-amber-500/80 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)]",
-            iconColor: "text-amber-400"
+            iconColor: "text-amber-400",
+            gradient: "from-amber-500 to-orange-500",
         },
         {
             title: "Voice Search (NyayVoice)",
@@ -55,7 +59,8 @@ export default function ChooserCards() {
             icon: Mic,
             badge: "14+ Dialects",
             color: "from-cyan-500/10 to-blue-500/10 border-cyan-500/30 hover:border-cyan-500/80 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]",
-            iconColor: "text-cyan-400"
+            iconColor: "text-cyan-400",
+            gradient: "from-cyan-500 to-blue-500",
         }
     ]
 
@@ -67,16 +72,18 @@ export default function ChooserCards() {
             icon: Sparkles,
             badge: "Advanced AI",
             color: "from-indigo-500/10 to-violet-500/10 border-indigo-500/30 hover:border-indigo-500/80 hover:shadow-[0_0_30px_rgba(99,102,241,0.15)]",
-            iconColor: "text-indigo-400"
+            iconColor: "text-indigo-400",
+            gradient: "from-indigo-500 to-violet-500",
         },
         {
             title: "NyayCourt Trial Simulator",
             desc: "Practice argument delivery against interactive AI prosecution & judges.",
             link: "/nyaycourt-simulator",
             icon: Scale,
-            badge: "Interactive simulation",
+            badge: "Interactive Simulation",
             color: "from-violet-500/10 to-fuchsia-500/10 border-violet-500/30 hover:border-violet-500/80 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]",
-            iconColor: "text-violet-400"
+            iconColor: "text-violet-400",
+            gradient: "from-violet-500 to-fuchsia-500",
         },
         {
             title: "Legal Precedent Search",
@@ -85,7 +92,8 @@ export default function ChooserCards() {
             icon: Search,
             badge: "Semantic Search",
             color: "from-pink-500/10 to-rose-500/10 border-pink-500/30 hover:border-pink-500/80 hover:shadow-[0_0_30px_rgba(236,72,153,0.15)]",
-            iconColor: "text-pink-400"
+            iconColor: "text-pink-400",
+            gradient: "from-pink-500 to-rose-500",
         },
         {
             title: "Advocate Portal & Lead Hub",
@@ -94,7 +102,8 @@ export default function ChooserCards() {
             icon: Briefcase,
             badge: "Pro Tools",
             color: "from-blue-500/10 to-sky-500/10 border-blue-500/30 hover:border-blue-500/80 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)]",
-            iconColor: "text-blue-400"
+            iconColor: "text-blue-400",
+            gradient: "from-blue-500 to-sky-500",
         }
     ]
 
@@ -102,31 +111,41 @@ export default function ChooserCards() {
 
     return (
         <section className="relative py-16 bg-[#000000] overflow-hidden">
+            <div className="absolute inset-0 mesh-gradient pointer-events-none" />
+            <div className="absolute inset-0 pattern-grid-fine pointer-events-none opacity-20" />
+            <div className="absolute inset-0 pattern-noise pointer-events-none" />
+            
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 {/* Section Header */}
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">
-                        What would you like to do today?
-                    </h2>
-                    <p className="text-slate-400 text-base max-w-xl mx-auto mb-8 leading-relaxed">
-                        Select a path below to access our direct services. No complicated menus, no guesswork.
-                    </p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight text-gradient-premium">
+                            What would you like to do today?
+                        </h2>
+                        <p className="text-slate-400 text-base max-w-xl mx-auto mb-8 leading-relaxed">
+                            Select a path below to access our direct services. No complicated menus, no guesswork.
+                        </p>
 
-                    {/* Tabs switcher */}
-                    <div className="inline-flex bg-white/5 border border-white/10 p-1 rounded-2xl">
-                        <button
-                            onClick={() => setActiveTab("citizens")}
-                            className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === "citizens" ? "bg-white text-slate-950 shadow-lg shadow-white/5" : "text-slate-400 hover:text-white"}`}
-                        >
-                            For Citizens & Clients
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("professionals")}
-                            className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === "professionals" ? "bg-white text-slate-950 shadow-lg shadow-white/5" : "text-slate-400 hover:text-white"}`}
-                        >
-                            For Advocates & Professionals
-                        </button>
-                    </div>
+                        {/* Tabs switcher */}
+                        <div className="inline-flex bg-glass border border-white/10 p-1 rounded-2xl">
+                            <button
+                                onClick={() => setActiveTab("citizens")}
+                                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === "citizens" ? "bg-white text-slate-950 shadow-lg shadow-white/5" : "text-slate-400 hover:text-white"}`}
+                            >
+                                For Citizens & Clients
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("professionals")}
+                                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === "professionals" ? "bg-white text-slate-950 shadow-lg shadow-white/5" : "text-slate-400 hover:text-white"}`}
+                            >
+                                For Advocates & Professionals
+                            </button>
+                        </div>
+                    </motion.div>
                 </div>
 
                 {/* Services Grid */}
@@ -141,32 +160,50 @@ export default function ChooserCards() {
                                 <motion.div
                                     key={card.title}
                                     layout
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    transition={{ duration: 0.3, delay: idx * 0.05 }}
-                                    className="flex h-full"
+                                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                                    transition={{ duration: 0.4, delay: idx * 0.08 }}
+                                    className="h-full"
                                 >
                                     <Link 
                                         href={card.link}
-                                        className={`flex flex-col justify-between w-full p-6 sm:p-8 rounded-3xl border bg-gradient-to-br transition-all duration-500 group relative overflow-hidden text-left ${card.color}`}
+                                        className={`flex flex-col justify-between w-full h-full p-6 sm:p-8 rounded-3xl border bg-gradient-to-br transition-all duration-500 group relative overflow-hidden text-left card-premium-interactive ${card.color}`}
+                                        style={{ '--card-glow': `rgba(59, 130, 246, 0.1)` }}
                                     >
-                                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/[0.01] rounded-bl-full pointer-events-none group-hover:scale-150 transition-transform duration-700" />
-                                        <div>
-                                            <div className="inline-flex p-3 rounded-2xl bg-white/5 border border-white/10 mb-6 group-hover:scale-105 transition-transform duration-500">
-                                                <Icon size={22} className={card.iconColor} />
-                                            </div>
-                                            <h3 className="text-lg font-bold text-white mb-2 tracking-tight group-hover:text-blue-400 transition-colors duration-300">{card.title}</h3>
+                                        {/* Animated background orb */}
+                                        <motion.div
+                                            initial={{ scale: 0.5, opacity: 0 }}
+                                            whileInView={{ scale: 1, opacity: 1 }}
+                                            viewport={{ once: true }}
+                                            animate={{ scale: [1, 1.05, 1] }}
+                                            transition={{ duration: 4, repeat: Infinity, delay: idx * 0.3 }}
+                                            className="absolute top-0 right-0 w-24 h-24 bg-white/[0.02] rounded-bl-full pointer-events-none group-hover:scale-150 transition-transform duration-700"
+                                            style={{ background: `linear-gradient(135deg, transparent 50%, ${card.gradient.replace('to', 'to')} 100%)` }}
+                                        />
+                                        
+                                        <div className="relative z-10">
+                                            <motion.div
+                                                whileHover={{ scale: 1.1, rotate: 2 }}
+                                                transition={{ duration: 0.3 }}
+                                                className="inline-flex p-3 rounded-2xl bg-glass border border-white/10 mb-6 group-hover:border-blue-500/30 group-hover:bg-blue-500/10 transition-all duration-500"
+                                            >
+                                                <Icon size={24} className={card.iconColor} />
+                                            </motion.div>
+                                            <h3 className="text-lg font-bold text-white mb-2 tracking-tight group-hover:text-amber-400 transition-colors duration-300">{card.title}</h3>
                                             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-6 font-medium">{card.desc}</p>
                                         </div>
-                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
-                                            <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 px-3 py-1 rounded-full bg-white/5 border border-white/10 group-hover:text-white group-hover:bg-white/10 transition-colors">
+                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5 relative z-10">
+                                            <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 px-3 py-1 rounded-full bg-glass border border-white/10 group-hover:text-white group-hover:bg-white/10 transition-colors">
                                                 {card.badge}
                                             </span>
-                                            <span className="text-xs font-bold text-white group-hover:translate-x-1.5 transition-transform flex items-center gap-1">
+                                            <motion.span
+                                                whileHover={{ x: 4 }}
+                                                className="text-xs font-bold text-white group-hover:translate-x-1.5 transition-transform flex items-center gap-1"
+                                            >
                                                 Launch
                                                 <ChevronRight size={14} />
-                                            </span>
+                                            </motion.span>
                                         </div>
                                     </Link>
                                 </motion.div>

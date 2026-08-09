@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
-import { FileText, CheckCircle, AlertTriangle, Scale, Swords, Play, Lock, Sparkles } from "lucide-react";
+import { FileText, CheckCircle, AlertTriangle, Scale, Swords, Play, Lock, Sparkles, Download, ShieldCheck, Brain, Zap, ChevronRight } from "lucide-react";
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
@@ -148,18 +148,22 @@ const JudgeAI = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0c1220] text-slate-400 font-sans selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#000000] text-slate-400 font-sans selection:bg-indigo-500/30 relative">
+            {/* BACKGROUND EFFECTS */}
+            <div className="absolute inset-0 pointer-events-none mesh-gradient" />
+            <div className="absolute inset-0 pointer-events-none pattern-grid-fine opacity-20" />
+            <div className="absolute inset-0 pointer-events-none pattern-noise" />
 
             {/* HERO SECTION */}
             <section className="relative pt-24 md:pt-36 pb-20 overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-indigo-500/20 blur-[150px] rounded-full pointer-events-none mix-blend-screen"></div>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-indigo-500/20 blur-[150px] rounded-full pointer-events-none mix-blend-screen animate-float-slow"></div>
 
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-                        <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-indigo-400 text-xs font-bold uppercase tracking-[0.2em] mb-6 inline-block shadow-sm backdrop-blur-md">
+                        <span className="px-4 py-1.5 rounded-full border border-white/10 bg-glass text-indigo-400 text-xs font-bold uppercase tracking-[0.2em] mb-6 inline-block shadow-sm backdrop-blur-md">
                             Predictive Justice Engine
                         </span>
-                        <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 tracking-tight text-white">
+                        <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white text-gradient-premium">
                             Judge <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">AI</span>
                         </h1>
                         <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
@@ -170,14 +174,19 @@ const JudgeAI = () => {
             </section>
 
             {/* MAIN INTERFACE */}
-            <section className="container mx-auto px-6 pb-24 max-w-5xl">
+            <section className="container mx-auto px-6 pb-24 max-w-5xl relative z-10">
                 <UpgradeGate feature="predict-outcome">
                     {/* INPUT AREA */}
-                    <div className="bg-[#0f172a] border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl mb-8">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="bg-glass border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl mb-8 card-premium"
+                    >
                     {!result && !analyzing && (
                         <div className="space-y-6">
                             <div>
-                                <h3 className="text-2xl font-bold mb-6 text-white tracking-tight">Case Parameters</h3>
+                                <h3 className="text-2xl font-bold mb-6 text-white tracking-tight text-gradient-indigo">Case Parameters</h3>
                                 
                                 <div className="grid md:grid-cols-3 gap-4 mb-6">
                                     <div>
@@ -187,7 +196,7 @@ const JudgeAI = () => {
                                             value={courtType}
                                             onChange={(e) => setCourtType(e.target.value)}
                                             placeholder="e.g. Delhi High Court"
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-indigo-500/50 transition placeholder-slate-600"
+                                            className="w-full input-glossy rounded-xl px-4 py-4 text-white placeholder-slate-600"
                                         />
                                     </div>
                                     <div>
@@ -197,7 +206,7 @@ const JudgeAI = () => {
                                             value={assignedJudge}
                                             onChange={(e) => setAssignedJudge(e.target.value)}
                                             placeholder="e.g. Justice D.Y. Chandrachud"
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-indigo-500/50 transition placeholder-slate-600"
+                                            className="w-full input-glossy rounded-xl px-4 py-4 text-white placeholder-slate-600"
                                         />
                                     </div>
                                     <div>
@@ -207,7 +216,7 @@ const JudgeAI = () => {
                                             value={opposingParty}
                                             onChange={(e) => setOpposingParty(e.target.value)}
                                             placeholder="e.g. Reliance Industries"
-                                            className="w-full bg-black/20 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-indigo-500/50 transition placeholder-slate-600"
+                                            className="w-full input-glossy rounded-xl px-4 py-4 text-white placeholder-slate-600"
                                         />
                                     </div>
                                 </div>
@@ -217,37 +226,48 @@ const JudgeAI = () => {
                                     value={caseInput}
                                     onChange={(e) => setCaseInput(e.target.value)}
                                     placeholder="Paste comprehensive case details, legal notices, or situation descriptions here for deep mathematical analysis..."
-                                    className="w-full h-40 bg-black/20 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-indigo-500/50 transition resize-none custom-scrollbar text-sm leading-relaxed"
+                                    className="w-full input-glossy rounded-xl px-4 py-4 text-white placeholder-slate-600 resize-none custom-scrollbar text-sm leading-relaxed"
+                                    style={{ minHeight: '160px' }}
                                 />
                             </div>
                             <div className="flex justify-center">
-                                <button
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                     onClick={handleAnalyze}
-                                    className="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 flex items-center gap-2 group"
+                                    className="px-10 py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 flex items-center gap-2 group btn-glossy-primary"
                                 >
                                     <Play size={20} className="group-hover:translate-x-1 transition" /> Analyze Strategy
-                                </button>
+                                </motion.button>
                             </div>
                         </div>
                     )}
 
                     {analyzing && (
-                        <div className="text-center py-10">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-center py-10"
+                        >
                             <div className="relative w-32 h-32 mx-auto mb-8">
-                                <div className="absolute inset-0 border-4 border-indigo-500/30 rounded-full"></div>
-                                <div className="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
+                                <div className="absolute inset-0 border-4 border-indigo-500/30 rounded-full animate-rotate-slow" />
+                                <div className="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin" />
                                 <Scale className="absolute inset-0 m-auto text-indigo-400" size={40} />
                             </div>
-                            <h3 className="text-2xl font-bold mb-2 animate-pulse text-white">Formulating Legal Strategy...</h3>
+                            <h3 className="text-2xl font-bold mb-2 animate-pulse text-white text-gradient-indigo">Formulating Legal Strategy...</h3>
                             <p className="text-slate-400">Consulting Live Judicial Precedents (BNS 2024)</p>
-                        </div>
+                        </motion.div>
                     )}
 
                     {result && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-left space-y-8">
 
                             {/* Mandantory Legal Disclaimer */}
-                            <div className="mb-6 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="mb-6 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3 card-glossy"
+                            >
                                 <AlertTriangle size={18} className="text-amber-500 mt-0.5 shrink-0" />
                                 <div>
                                     <p className="text-xs text-amber-200/90 font-bold uppercase tracking-wider mb-1">AI Prediction — Legal Information Only</p>
@@ -255,11 +275,16 @@ const JudgeAI = () => {
                                         The win probability and strategy provided are generated by an AI model grounded in real-time search data. This is <span className="text-white underline">NOT</span> a guarantee of outcome. Always verify with a legal professional.
                                     </p>
                                 </div>
-                            </div>
+                            </motion.div>
 
                             {/* TOP STATS ROW */}
-                            <div className="grid md:grid-cols-4 gap-4">
-                                <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-center relative overflow-hidden">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 }}
+                                className="grid md:grid-cols-4 gap-4"
+                            >
+                                <div className="card-premium p-6 rounded-2xl text-center relative overflow-hidden" style={{ '--card-glow': 'rgba(16, 185, 129, 0.15)' }}>
                                     <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500"></div>
                                     <p className="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-2">Win Prob.</p>
                                     <div className="text-4xl font-bold text-emerald-400 mb-1">
@@ -267,19 +292,19 @@ const JudgeAI = () => {
                                     </div>
                                     <p className="text-[9px] text-emerald-500/80 font-bold uppercase tracking-tighter">Case Strength</p>
                                 </div>
-                                <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-center relative overflow-hidden">
+                                <div className="card-premium p-6 rounded-2xl text-center relative overflow-hidden" style={{ '--card-glow': 'rgba(245, 158, 11, 0.15)' }}>
                                     <div className="absolute top-0 left-0 w-full h-1 bg-amber-500"></div>
                                     <p className="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-2">Risk Level</p>
                                     <div className="text-2xl font-bold text-amber-400 mb-1 h-9 flex items-center justify-center uppercase">{result.riskLevel}</div>
                                     <p className="text-[9px] text-amber-500/80 font-bold uppercase tracking-tighter">Procedural</p>
                                 </div>
-                                <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-center relative overflow-hidden">
+                                <div className="card-premium p-6 rounded-2xl text-center relative overflow-hidden" style={{ '--card-glow': 'rgba(59, 130, 246, 0.15)' }}>
                                     <div className="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
                                     <p className="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-2">Precedents</p>
                                     <div className="text-3xl font-bold text-blue-400 mb-1 h-9 flex items-center justify-center">{result.keyPrecedents}</div>
                                     <p className="text-[9px] text-blue-500/80 font-bold uppercase tracking-tighter">Live Mentions</p>
                                 </div>
-                                <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-center relative overflow-hidden">
+                                <div className="card-premium p-6 rounded-2xl text-center relative overflow-hidden" style={{ '--card-glow': 'rgba(139, 92, 246, 0.15)' }}>
                                     <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500"></div>
                                     <p className="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-2">AI Confidence</p>
                                     <div className="text-4xl font-bold text-indigo-400 mb-1">
@@ -287,57 +312,93 @@ const JudgeAI = () => {
                                     </div>
                                     <p className="text-[9px] text-indigo-500/80 font-bold uppercase tracking-tighter">Grounding Rank</p>
                                 </div>
-                            </div>
+                            </motion.div>
 
                             {/* STRATEGY SECTION */}
-                            <div className="bg-indigo-900/10 border border-indigo-500/30 rounded-2xl p-6 relative overflow-hidden">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                                className="bg-indigo-900/10 border border-indigo-500/30 rounded-2xl p-6 relative overflow-hidden card-premium"
+                                style={{ '--card-glow': 'rgba(99, 102, 241, 0.15)' }}
+                            >
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                    <motion.div
+                                        animate={{ scale: [1, 1.05, 1] }}
+                                        transition={{ duration: 3, repeat: Infinity }}
+                                        className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400"
+                                    >
                                         <Swords size={20} />
-                                    </div>
-                                    <h3 className="text-xl font-serif font-bold text-white">Strategic Counsel</h3>
+                                    </motion.div>
+                                    <h3 className="text-xl font-bold text-white text-gradient-indigo">Strategic Counsel</h3>
                                 </div>
                                 <ul className="space-y-4">
                                     {result.strategy && result.strategy.map((item, idx) => (
-                                        <li key={idx} className="flex gap-4 text-slate-300 leading-relaxed">
+                                        <motion.li
+                                            key={idx}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.3 + idx * 0.1 }}
+                                            className="flex gap-4 text-slate-300 leading-relaxed"
+                                        >
                                             <span className="text-indigo-400 font-black text-xs mt-1 border border-indigo-500/30 w-6 h-6 rounded-lg flex items-center justify-center bg-indigo-500/10 shrink-0">{idx + 1}</span>
                                             <span className="text-sm">{item}</span>
-                                        </li>
+                                        </motion.li>
                                     ))}
                                 </ul>
-                            </div>
+                            </motion.div>
 
                             {/* PRECEDENT CARD */}
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 }}
+                                className="bg-glass border border-white/10 rounded-2xl p-6 relative overflow-hidden group card-premium"
+                                style={{ '--card-glow': 'rgba(245, 158, 11, 0.1)' }}
+                            >
+                                <motion.div
+                                    animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
+                                    transition={{ duration: 6, repeat: Infinity }}
+                                    className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"
+                                >
                                     <Sparkles size={40} className="text-amber-500" />
-                                </div>
+                                </motion.div>
                                 <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                    <Scale size={12} /> Key Legal Precedents (Live)
+                                    <Scale size={12} className="text-amber-400" /> Key Legal Precedents (Live)
                                 </h4>
                                 <p className="text-base font-serif italic text-white leading-relaxed">"{result.precedent || "Fetching real-time case law..."}"</p>
-                            </div>
+                            </motion.div>
 
                             <p className="text-[10px] text-slate-600 italic text-center mt-4">
                                 ⚖️ This is AI-generated information. Verify with a qualified lawyer.
                             </p>
 
                             <div className="flex justify-between items-center pt-8 border-t border-white/10">
-                                <button
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                     onClick={generatePDF}
-                                    className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 transition flex items-center gap-2"
+                                    className="px-6 py-3 rounded-xl bg-glass border border-white/10 text-white font-bold text-sm hover:bg-white/10 transition flex items-center gap-2 btn-glossy-secondary"
                                 >
-                                    <FileText size={16} />
+                                    <Download size={16} />
                                     Download Dossier
                                     {user?.plan !== 'gold' && <Lock size={14} className="text-amber-400" />}
-                                </button>
-                                <button onClick={() => setResult(null)} className="text-sm text-slate-500 hover:text-white underline underline-offset-8 font-bold uppercase tracking-widest">Restart Simulation</button>
+                                </motion.button>
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => setResult(null)}
+                                    className="text-sm text-slate-500 hover:text-white underline underline-offset-8 font-bold uppercase tracking-widest flex items-center gap-1"
+                                >
+                                    Restart Simulation
+                                    <ChevronRight size={14} />
+                                </motion.button>
                             </div>
 
                         </motion.div>
                     )}
-                </div>
-                </UpgradeGate>
+                    </motion.div>
+                    </UpgradeGate>
             </section>
 
             <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} feature="Deep Justice Insights" />

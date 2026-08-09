@@ -55,15 +55,15 @@ export default function Navbar() {
   };
 
   const services = [
-    { name: "AI Legal Assistant", desc: "Instant answers grounded in BNS & IPC", href: "/assistant", icon: Sparkles, color: "text-blue-400" },
-    { name: "Smart Document Drafting", desc: "Draft legal agreements & notices", href: "/drafting", icon: FileText, color: "text-emerald-400" },
-    { name: "Outcome Predictor (Judge AI)", desc: "Predict win probabilities & analyze risk", href: "/judge-ai", icon: Gavel, color: "text-indigo-400" },
-    { name: "Courtroom Simulator", desc: "Simulate a live AI trial argument", href: "/nyaycourt-simulator", icon: Scale, color: "text-violet-400" },
-    { name: "Multilingual Voice Assist", desc: "Voice search in 14+ Indian languages", href: "/nyayvoice", icon: Mic, color: "text-cyan-400" },
-    { name: "Nearby Radar Map", desc: "Find nearest police, courts & advocates", href: "/nearby", icon: MapPin, color: "text-amber-400" },
-    { name: "Legal Precedent Search", desc: "Search through 1.2M court judgments", href: "/research", icon: Search, color: "text-pink-400" },
-    { name: "NJDG Case Tracker", desc: "Track e-Courts case status live", href: "/ecourts", icon: Activity, color: "text-rose-400" },
-    { name: "Bhashini Translator", desc: "Translate text across Indian languages", href: "/translator", icon: Languages, color: "text-sky-400" }
+    { name: "AI Legal Assistant", desc: "Instant answers grounded in BNS & IPC", href: "/assistant", icon: Sparkles, color: "text-blue-400", gradient: "from-blue-500 to-indigo-500" },
+    { name: "Smart Document Drafting", desc: "Draft legal agreements & notices", href: "/drafting", icon: FileText, color: "text-emerald-400", gradient: "from-emerald-500 to-teal-500" },
+    { name: "Outcome Predictor (Judge AI)", desc: "Predict win probabilities & analyze risk", href: "/judge-ai", icon: Gavel, color: "text-indigo-400", gradient: "from-indigo-500 to-violet-500" },
+    { name: "Courtroom Simulator", desc: "Simulate a live AI trial argument", href: "/nyaycourt-simulator", icon: Scale, color: "text-violet-400", gradient: "from-violet-500 to-fuchsia-500" },
+    { name: "Multilingual Voice Assist", desc: "Voice search in 14+ Indian languages", href: "/nyayvoice", icon: Mic, color: "text-cyan-400", gradient: "from-cyan-500 to-blue-500" },
+    { name: "Nearby Radar Map", desc: "Find nearest police, courts & advocates", href: "/nearby", icon: MapPin, color: "text-amber-400", gradient: "from-amber-500 to-orange-500" },
+    { name: "Legal Precedent Search", desc: "Search through 1.2M court judgments", href: "/research", icon: Search, color: "text-pink-400", gradient: "from-pink-500 to-rose-500" },
+    { name: "NJDG Case Tracker", desc: "Track e-Courts case status live", href: "/ecourts", icon: Activity, color: "text-rose-400", gradient: "from-rose-500 to-red-500" },
+    { name: "Bhashini Translator", desc: "Translate text across Indian languages", href: "/translator", icon: Languages, color: "text-sky-400", gradient: "from-sky-500 to-cyan-500" }
   ];
 
   const navItems = [
@@ -82,14 +82,18 @@ export default function Navbar() {
 
   return (
     <>
-      <nav role="navigation" aria-label="Main Navigation" className={`fixed top-0 w-full z-[9999] transition-all duration-700 ${scrolled ? "bg-[#020617]/80 backdrop-blur-3xl border-b border-white/5 h-[64px] md:h-[72px]" : "bg-transparent border-b border-transparent h-[80px] md:h-[100px]"}`}>
+      <nav role="navigation" aria-label="Main Navigation" className={`fixed top-0 w-full z-[9999] transition-all duration-700 ${scrolled ? "bg-glass-strong border-b border-white/10 h-[64px] md:h-[72px]" : "bg-transparent border-b border-transparent h-[80px] md:h-[100px]"}`}>
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-full flex items-center justify-between">
 
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3 group relative z-50 shrink-0" aria-label="NyayNow Home">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center group-hover:scale-105 transition duration-300">
+            <motion.div
+                whileHover={{ scale: 1.1, rotate: 3 }}
+                transition={{ duration: 0.3 }}
+                className="w-10 h-10 rounded-xl bg-glass border border-white/10 flex items-center justify-center group-hover:border-blue-500/30 transition-all duration-300"
+            >
               <Image src="/logo.png" alt="NyayNow Logo" width={24} height={24} className="object-contain" />
-            </div>
+            </motion.div>
             <span className="text-xl font-bold tracking-[-0.03em] text-white group-hover:text-blue-400 transition-colors duration-300">{t("brand")}</span>
           </Link>
 
@@ -102,7 +106,7 @@ export default function Navbar() {
                 onMouseEnter={() => setServicesOpen(true)}
                 onMouseLeave={() => setServicesOpen(false)}
               >
-                <button className="flex items-center gap-1.5 text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5 outline-none cursor-pointer">
+                <button className="flex items-center gap-1.5 text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5 outline-none cursor-pointer bg-glass border border-white/10">
                   Services
                   <ChevronDown size={14} className={`transition-transform duration-300 ${servicesOpen ? 'rotate-180 text-white' : ''}`} />
                 </button>
@@ -114,7 +118,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 15, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute top-[70%] left-0 w-[420px] bg-[#030712]/95 border border-white/10 rounded-[28px] p-4 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.9)] backdrop-blur-3xl grid grid-cols-1 gap-1 z-[99999]"
+                      className="absolute top-[70%] left-0 w-[420px] bg-glass-strong border border-white/10 rounded-[28px] p-4 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.9)] backdrop-blur-3xl grid grid-cols-1 gap-1 z-[99999]"
                     >
                       <div className="px-3 py-1 border-b border-white/5 mb-2">
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">Legal AI Services</p>
@@ -127,9 +131,13 @@ export default function Navbar() {
                             href={item.href}
                             className="flex items-start gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all duration-300 group"
                           >
-                            <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-blue-500/20 group-hover:scale-105 transition-all duration-300 shrink-0 ${item.color}`}>
+                            <motion.div
+                                whileHover={{ scale: 1.1, rotate: 2 }}
+                                transition={{ duration: 0.3 }}
+                                className={`w-10 h-10 rounded-xl bg-glass border border-white/5 flex items-center justify-center group-hover:border-blue-500/20 group-hover:scale-105 transition-all duration-300 shrink-0 ${item.color}`}
+                            >
                               <Icon size={18} />
-                            </div>
+                            </motion.div>
                             <div className="text-left">
                               <p className="text-white font-bold text-[13px] tracking-tight group-hover:text-blue-400 transition-colors">{item.name}</p>
                               <p className="text-slate-400 text-[11px] mt-0.5 font-medium leading-normal">{item.desc}</p>
@@ -146,7 +154,7 @@ export default function Navbar() {
                 <Link
                   key={idx}
                   href={item.href}
-                  className="text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5 whitespace-nowrap"
+                  className="text-slate-400 hover:text-white font-bold text-[13.5px] transition-all duration-300 px-4 py-1.5 rounded-full hover:bg-white/5 whitespace-nowrap bg-glass border border-white/10 hover:border-blue-500/30"
                 >
                   {item.name}
                 </Link>
@@ -161,7 +169,7 @@ export default function Navbar() {
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="bg-[#0b0f19] border border-white/10 rounded-full px-3 py-1.5 text-xs text-slate-300 outline-none hover:bg-white/5 cursor-pointer transition font-bold"
+                className="bg-glass border border-white/10 rounded-full px-3 py-1.5 text-xs text-slate-300 outline-none hover:bg-white/5 cursor-pointer transition font-bold"
               >
                 <option value="en">English</option>
                 <option value="hi">हिंदी (HI)</option>
@@ -186,28 +194,39 @@ export default function Navbar() {
                   {t("navbar.signin")}
                 </Link>
                 <Link href="/register">
-                  <button className="px-4 sm:px-6 py-2 sm:py-2.5 bg-white text-slate-950 font-bold text-[12px] sm:text-[13px] rounded-full hover:bg-blue-600 hover:text-white transition-all duration-500 shadow-xl shadow-white/5 active:scale-95">
+                  <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-4 sm:px-6 py-2 sm:py-2.5 bg-white text-slate-950 font-bold text-[12px] sm:text-[13px] rounded-full hover:bg-blue-600 hover:text-white transition-all duration-500 shadow-xl shadow-white/5 btn-glossy-gold"
+                  >
                     {t("navbar.get_started")}
-                  </button>
+                  </motion.button>
                 </Link>
               </div>
             ) : (
               <div className="flex items-center gap-4">
                 <div className="relative group cursor-pointer">
-                  <div className="w-10 h-10 rounded-xl bg-slate-900 border border-white/10 p-1 hover:border-blue-500/50 transition duration-300 overflow-hidden flex items-center justify-center shadow-2xl">
+                  <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      className="w-10 h-10 rounded-xl bg-glass border border-white/10 p-1 hover:border-blue-500/50 transition duration-300 overflow-hidden flex items-center justify-center shadow-2xl"
+                  >
                     {user.profileImage ? (
                       <img src={user.profileImage} alt="User profile" className="w-full h-full object-cover rounded-lg" />
                     ) : (
                       <span className="font-bold text-blue-500 text-base uppercase">{user.name[0]}</span>
                     )}
-                  </div>
+                  </motion.div>
 
                   {/* PREMIUM DROPDOWN */}
-                  <div className="absolute right-0 top-full mt-4 w-72 bg-[#030712] border border-white/10 rounded-[32px] p-3 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-500 transform origin-top-right translate-y-4 group-hover:translate-y-0 backdrop-blur-3xl">
-                    <div className="px-5 py-6 border-b border-white/5 mb-2 bg-white/5 rounded-[24px]">
+                  <div className="absolute right-0 top-full mt-4 w-72 bg-glass-strong border border-white/10 rounded-[32px] p-3 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-500 transform origin-top-right translate-y-4 group-hover:translate-y-0 backdrop-blur-3xl">
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="px-5 py-6 border-b border-white/5 mb-2 bg-white/5 rounded-[24px]"
+                    >
                       <p className="text-white font-bold text-[14px] truncate tracking-tight">{user.name}</p>
                       <p className="text-blue-500 text-[10px] truncate tracking-[0.2em] mt-1 uppercase font-black">{user.role}</p>
-                    </div>
+                    </motion.div>
 
                     <div className="space-y-1">
                       <Link href={user.role === 'admin' ? '/admin' : (user.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard')} className="flex items-center gap-4 px-5 py-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl text-[14px] transition font-bold tracking-tight">
@@ -245,7 +264,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[9998] premium-glass pt-24 pb-12 px-6 overflow-y-auto"
+            className="fixed inset-0 z-[9998] bg-glass-strong pt-24 pb-12 px-6 overflow-y-auto"
           >
             <div className="max-w-lg mx-auto space-y-10">
               <div className="space-y-4">
@@ -256,7 +275,7 @@ export default function Navbar() {
                   <div>
                     <button
                       onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                      className="flex items-center justify-between w-full p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all text-white font-bold text-[14px] active:scale-[0.98]"
+                      className="flex items-center justify-between w-full p-4 rounded-2xl bg-glass border border-white/5 hover:border-blue-500/30 transition-all text-white font-bold text-[14px] active:scale-[0.98]"
                     >
                       <span>Services</span>
                       <ChevronDown size={16} className={`transition-transform duration-300 ${mobileServicesOpen ? 'rotate-180 text-white' : 'text-slate-400'}`} />
@@ -280,7 +299,7 @@ export default function Navbar() {
                                 onClick={() => setMobileMenuOpen(false)}
                                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 text-slate-300 hover:text-white transition-all"
                               >
-                                <div className={`w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 ${item.color}`}>
+                                <div className={`w-8 h-8 rounded-lg bg-glass border border-white/5 flex items-center justify-center shrink-0 ${item.color}`}>
                                   <Icon size={16} />
                                 </div>
                                 <span className="font-bold text-[13px]">{item.name}</span>
@@ -302,7 +321,7 @@ export default function Navbar() {
                       <Link
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all text-white font-bold text-[14px] active:scale-[0.98]"
+                        className="flex items-center justify-between p-4 rounded-2xl bg-glass border border-white/5 hover:border-blue-500/30 transition-all text-white font-bold text-[14px] active:scale-[0.98]"
                       >
                         <span>{item.name}</span>
                         <span aria-hidden="true">→</span>
@@ -319,8 +338,8 @@ export default function Navbar() {
                   transition={{ delay: 0.5 }}
                   className="pt-10 border-t border-white/10 flex flex-col gap-4"
                 >
-                  <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-5 rounded-2xl bg-white/5 text-white font-bold text-center text-sm border border-white/10">Sign In</Link>
-                  <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="w-full py-5 rounded-2xl bg-white text-slate-950 font-bold text-center text-sm shadow-2xl">Get Started</Link>
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="w-full py-5 rounded-2xl bg-glass text-white font-bold text-center text-sm border border-white/10">Sign In</Link>
+                  <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="w-full py-5 rounded-2xl bg-white text-slate-950 font-bold text-center text-sm shadow-2xl btn-glossy-gold">Get Started</Link>
                 </motion.div>
               )}
             </div>

@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, MapPin, ShieldCheck, Filter, X, HelpCircle, CheckCircle } from "lucide-react"
+import { Search, MapPin, ShieldCheck, Filter, X, HelpCircle, CheckCircle, Star, Award } from "lucide-react"
 import Image from "next/image"
 import VerifiedBadge from "../VerifiedBadge"
 import FeaturedBadge from "../FeaturedBadge"
@@ -158,44 +158,48 @@ export default function MarketplaceClient({ initialLawyers }) {
         <div className="container mx-auto px-6 -mt-10 relative z-20">
             {/* SEARCH BAR (Inlined for interactivity) */}
             <div className="max-w-3xl mx-auto relative group mb-20 -translate-y-1/2">
-                <div className="absolute inset-0 bg-indigo-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500"></div>
-                <div className="relative flex items-center bg-[#1e293b]/80 border border-white/10 rounded-2xl p-2 shadow-2xl backdrop-blur-md">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500"></div>
+                <div className="relative flex items-center bg-glass-strong border border-white/10 rounded-2xl p-2 shadow-2xl backdrop-blur-md">
                     <Search className="text-slate-500 ml-4" aria-hidden="true" />
                     <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search expertise..."
-                        className="flex-1 p-4 bg-transparent outline-none text-white placeholder:text-slate-500 text-lg"
+                        placeholder="Search expertise, name, location..."
+                        className="flex-1 p-4 bg-transparent outline-none text-white placeholder:text-slate-500 text-lg input-glossy"
                     />
-                    <button
-                        className="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20"
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:from-blue-500 hover:to-indigo-500 transition shadow-lg shadow-blue-500/20 btn-glossy-primary"
                         aria-label="Find Legal Experts"
                     >
                         Find Experts
-                    </button>
+                    </motion.button>
                 </div>
             </div>
 
             {/* MOBILE FILTER TOGGLE */}
             <div className="flex items-center justify-between mb-4 lg:hidden">
                 <span className="text-slate-400 text-sm font-bold">{sortedAndFilteredLawyers.length} lawyers found</span>
-                <button
+                <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-bold text-sm transition-all ${mobileFiltersOpen ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'}`}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-bold text-sm transition-all ${mobileFiltersOpen ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-glass border-white/10 text-slate-400 hover:text-white'}`}
                 >
                     <Filter size={16} aria-hidden="true" />
                     {mobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}
-                    {hasAnyActiveFilters && <span className="w-2 h-2 bg-indigo-400 rounded-full ml-1" />}
-                </button>
+                    {hasAnyActiveFilters && <span className="w-2 h-2 bg-indigo-400 rounded-full ml-1 animate-pulse" />}
+                </motion.button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
                 {/* SIDEBAR FILTERS */}
                 <div className={`col-span-1 lg:col-span-3 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
-                    <div className="bg-[#0f172a] rounded-2xl p-6 shadow-xl border border-white/10 sticky top-28 text-left backdrop-blur-md space-y-6">
+                    <div className="bg-glass rounded-2xl p-6 shadow-xl border border-white/10 sticky top-28 text-left backdrop-blur-md space-y-6 card-premium">
                         <div className="flex items-center justify-between text-white font-bold pb-2 border-b border-white/5">
-                            <div className="flex items-center gap-2"><Filter size={18} aria-hidden="true" /> Filters</div>
+                            <div className="flex items-center gap-2"><Filter size={18} aria-hidden="true" className="text-blue-400" /> Filters</div>
                             {hasAnyActiveFilters && (
                                 <button 
                                     onClick={() => { 
@@ -205,9 +209,9 @@ export default function MarketplaceClient({ initialLawyers }) {
                                         setSelectedLanguage([]); 
                                         setSelectedBudget([]); 
                                     }} 
-                                    className="text-[10px] text-indigo-400 hover:text-white transition uppercase tracking-wider"
+                                    className="text-[10px] text-indigo-400 hover:text-white transition uppercase tracking-wider hover:text-amber-400"
                                 >
-                                    Reset
+                                    Reset All
                                 </button>
                             )}
                         </div>
@@ -221,12 +225,14 @@ export default function MarketplaceClient({ initialLawyers }) {
 
                         {/* VERIFICATION CRITERIA LINK */}
                         <div className="pt-4 border-t border-white/5">
-                            <button
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                                 onClick={() => setShowVerificationModal(true)}
-                                className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-500/5 hover:bg-indigo-500/10 text-indigo-400 border border-indigo-500/10 rounded-xl text-xs font-bold transition-all"
+                                className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-500/5 hover:bg-indigo-500/10 text-indigo-400 border border-indigo-500/10 rounded-xl text-xs font-bold transition-all hover:border-indigo-500/30"
                             >
                                 <HelpCircle size={14} aria-hidden="true" /> What verification means
-                            </button>
+                            </motion.button>
                         </div>
                     </div>
                 </div>
@@ -244,7 +250,7 @@ export default function MarketplaceClient({ initialLawyers }) {
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
-                                className="bg-[#0f172a] border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-slate-300 outline-none hover:bg-white/5 cursor-pointer transition"
+                                className="input-glossy rounded-xl px-4 py-2 text-xs font-bold cursor-pointer"
                             >
                                 <option value="rating">Rating & Credibility</option>
                                 <option value="experience">Years of Experience</option>
@@ -256,14 +262,22 @@ export default function MarketplaceClient({ initialLawyers }) {
                     </div>
 
                     {sortedAndFilteredLawyers.length === 0 ? (
-                        <div className="text-center py-12 px-6 bg-[#0f172a]/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden text-left">
-                            <div className="absolute -top-24 -left-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-                            <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-center py-12 px-6 bg-glass backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden text-left card-premium"
+                        >
+                            <div className="absolute -top-24 -left-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none animate-float-slow" />
+                            <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none animate-float-slow" style={{ animationDelay: '2s' }} />
                             
                             <div className="max-w-md mx-auto space-y-6 relative z-10 text-center">
-                                <div className="w-16 h-16 mx-auto rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                                <motion.div
+                                    animate={{ scale: [1, 1.05, 1] }}
+                                    transition={{ duration: 3, repeat: Infinity }}
+                                    className="w-16 h-16 mx-auto rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center"
+                                >
                                     <ShieldCheck size={32} className="text-indigo-400" />
-                                </div>
+                                </motion.div>
                                 <div className="space-y-2">
                                     <h3 className="text-2xl font-bold text-white font-serif">Expert Advocates Coming Soon</h3>
                                     <p className="text-slate-400 text-sm leading-relaxed">
@@ -289,19 +303,21 @@ export default function MarketplaceClient({ initialLawyers }) {
                                                 placeholder="advocate@domain.com"
                                                 value={lawyerEmail}
                                                 onChange={(e) => setLawyerEmail(e.target.value)}
-                                                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition placeholder:text-slate-600 text-sm font-medium"
+                                                className="flex-1 input-glossy rounded-xl px-4 py-3 text-white placeholder:text-slate-600 text-sm font-medium"
                                             />
-                                            <button
+                                            <motion.button
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
                                                 type="submit"
-                                                className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all text-sm whitespace-nowrap"
+                                                className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 transition-all text-sm whitespace-nowrap btn-glossy-primary"
                                             >
                                                 Join as a Lawyer
-                                            </button>
+                                            </motion.button>
                                         </div>
                                     </form>
                                 )}
                             </div>
-                        </div>
+                        </motion.div>
                     ) : (
                         <>
                             <div className="grid md:grid-cols-2 gap-6">
@@ -315,14 +331,20 @@ export default function MarketplaceClient({ initialLawyers }) {
                             </div>
 
                             {totalPages > 1 && (
-                                <div className="flex items-center justify-center gap-3 mt-10">
-                                    <button
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="flex items-center justify-center gap-3 mt-10"
+                                >
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                         disabled={currentPage === 1}
-                                        className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-bold text-slate-300 hover:bg-indigo-600 hover:border-indigo-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                                        className="px-4 py-2 rounded-xl bg-glass border border-white/10 text-sm font-bold text-slate-300 hover:bg-indigo-600 hover:border-indigo-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
                                     >
                                         Previous
-                                    </button>
+                                    </motion.button>
 
                                     <div className="flex items-center gap-1">
                                         {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -335,24 +357,28 @@ export default function MarketplaceClient({ initialLawyers }) {
                                             .map((p, idx) =>
                                                 p === '…'
                                                     ? <span key={`ellipsis-${idx}`} className="px-2 text-slate-500 select-none">…</span>
-                                                    : <button
+                                                    : <motion.button
                                                         key={p}
+                                                        whileHover={{ scale: 1.1 }}
+                                                        whileTap={{ scale: 0.95 }}
                                                         onClick={() => setCurrentPage(p)}
-                                                        className={`w-9 h-9 rounded-lg text-sm font-bold transition ${currentPage === p ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'}`}
+                                                        className={`w-9 h-9 rounded-lg text-sm font-bold transition ${currentPage === p ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30' : 'bg-glass border border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'}`}
                                                     >
                                                         {p}
-                                                    </button>
+                                                    </motion.button>
                                             )}
                                     </div>
 
-                                    <button
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                         disabled={currentPage === totalPages}
-                                        className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-bold text-slate-300 hover:bg-indigo-600 hover:border-indigo-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                                        className="px-4 py-2 rounded-xl bg-glass border border-white/10 text-sm font-bold text-slate-300 hover:bg-indigo-600 hover:border-indigo-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
                                     >
                                         Next
-                                    </button>
-                                </div>
+                                    </motion.button>
+                                </motion.div>
                             )}
                         </>
                     )}
@@ -367,18 +393,26 @@ export default function MarketplaceClient({ initialLawyers }) {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-[#0f172a] border border-white/10 rounded-3xl p-8 w-full max-w-lg shadow-2xl relative"
+                            className="bg-glass-strong border border-white/10 rounded-3xl p-8 w-full max-w-lg shadow-2xl relative card-premium"
                         >
-                            <button 
+                            <motion.button 
+                                whileHover={{ scale: 1.1, rotate: 90 }}
+                                whileTap={{ scale: 0.9 }}
                                 onClick={() => setShowVerificationModal(false)}
                                 className="absolute top-5 right-5 text-slate-500 hover:text-white transition"
                                 aria-label="Close Verification Info Modal"
                             >
                                 <X size={20} aria-hidden="true" />
-                            </button>
+                            </motion.button>
 
                             <div className="flex items-center gap-3 mb-6">
-                                <ShieldCheck className="text-indigo-400" size={28} aria-hidden="true" />
+                                <motion.div
+                                    animate={{ scale: [1, 1.1, 1] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                    className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center"
+                                >
+                                    <ShieldCheck className="text-indigo-400" size={28} aria-hidden="true" />
+                                </motion.div>
                                 <h3 className="text-2xl font-bold text-white tracking-tight">NyayNow Advocate Verification</h3>
                             </div>
 
@@ -420,12 +454,14 @@ export default function MarketplaceClient({ initialLawyers }) {
                                 </div>
                             </div>
 
-                            <button 
+                            <motion.button 
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                                 onClick={() => setShowVerificationModal(false)}
-                                className="w-full mt-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/20 text-xs uppercase tracking-wider"
+                                className="w-full mt-8 py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/20 text-xs uppercase tracking-wider btn-glossy-primary"
                             >
                                 Understood
-                            </button>
+                            </motion.button>
                         </motion.div>
                     </div>
                 )}
@@ -443,9 +479,12 @@ function FilterSection({ title, options, selected, toggle }) {
                 {options.map((option) => (
                     <label key={option} className="flex items-center gap-3 cursor-pointer group">
                         <input type="checkbox" className="hidden" onChange={() => toggle(option)} checked={selected.includes(option)} />
-                        <div className={`w-4 h-4 rounded border transition flex items-center justify-center ${selected.includes(option) ? 'bg-indigo-600 border-indigo-600' : 'bg-black/20 border-slate-600 group-hover:border-indigo-500'}`}>
+                        <motion.div
+                            whileHover={{ scale: 1.1 }}
+                            className={`w-4 h-4 rounded border transition flex items-center justify-center ${selected.includes(option) ? 'bg-gradient-to-r from-blue-600 to-indigo-600 border-transparent' : 'bg-black/20 border-slate-600 group-hover:border-indigo-500'}`}
+                        >
                             {selected.includes(option) && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
-                        </div>
+                        </motion.div>
                         <span className={`text-sm transition ${selected.includes(option) ? 'text-white font-bold' : 'text-slate-400 group-hover:text-white'}`}>
                             {option}
                         </span>
@@ -457,11 +496,27 @@ function FilterSection({ title, options, selected, toggle }) {
 }
 
 function LawyerCard({ lawyer }) {
+    const getTierGlow = (tier) => {
+        if (tier === 'premium') return 'rgba(245, 158, 11, 0.2)';
+        if (tier === 'featured') return 'rgba(139, 92, 246, 0.2)';
+        return 'rgba(59, 130, 246, 0.15)';
+    };
+
+    const tierGlow = getTierGlow(lawyer.listingTier);
+
     return (
-        <motion.div whileHover={{ y: -5 }} className="bg-[#0f172a]/80 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 group">
+        <motion.div 
+            whileHover={{ y: -8, scale: 1.015 }}
+            className="card-premium-interactive p-6"
+            style={{ '--card-glow': tierGlow }}
+        >
             <div className="flex justify-between items-start mb-6">
                 <Link href={`/lawyer/${lawyer._id}`} className="flex gap-4 cursor-pointer">
-                    <div className="w-16 h-16 rounded-xl bg-slate-800 flex items-center justify-center text-2xl font-bold text-slate-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 overflow-hidden relative">
+                    <motion.div
+                        whileHover={{ scale: 1.1, rotate: 3 }}
+                        transition={{ duration: 0.3 }}
+                        className="w-16 h-16 rounded-xl bg-glass border border-white/10 flex items-center justify-center text-2xl font-bold text-slate-500 group-hover:border-blue-500/30 transition-all duration-300 overflow-hidden relative"
+                    >
                         {lawyer.profileImage ? (
                             <Image
                                 src={lawyer.profileImage}
@@ -470,11 +525,11 @@ function LawyerCard({ lawyer }) {
                                 className="object-cover"
                             />
                         ) : lawyer.name?.[0]}
-                    </div>
+                    </motion.div>
                     <div>
-                        <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">{lawyer.name}</h3>
+                        <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{lawyer.name}</h3>
                         <p className="text-xs font-semibold text-slate-500 mb-1 flex flex-wrap items-center gap-2">
-                            <span>{lawyer.specialization || "Legal Consultant"}</span>
+                            <span className="text-blue-400">{lawyer.specialization || "Legal Consultant"}</span>
                             {lawyer.barCouncilId && (
                                 <span className="text-[9px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-mono font-bold">
                                     BCI: {lawyer.barCouncilId}
@@ -482,7 +537,7 @@ function LawyerCard({ lawyer }) {
                             )}
                         </p>
                         <div className="flex items-center gap-1 text-xs font-bold text-slate-500">
-                            <MapPin size={12} aria-hidden="true" /> {lawyer.location?.city || lawyer.city || "Online"}
+                            <MapPin size={12} aria-hidden="true" className="text-blue-400" /> {lawyer.location?.city || lawyer.city || "Online"}
                         </div>
                     </div>
                 </Link>
@@ -508,7 +563,7 @@ function LawyerCard({ lawyer }) {
                 )}
             </div>
             <div className="flex gap-3 text-sm font-bold">
-                <Link href={`/lawyer/${lawyer._id}`} className="flex-1 py-3 text-center rounded-lg bg-white/5 text-white hover:bg-indigo-600 transition border border-white/10">
+                <Link href={`/lawyer/${lawyer._id}`} className="flex-1 py-3 text-center rounded-lg bg-glass text-white hover:bg-blue-600 transition border border-white/10 btn-glossy-secondary">
                     View Profile
                 </Link>
             </div>
