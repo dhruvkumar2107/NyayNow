@@ -1,21 +1,10 @@
 export const metadata = {
-    title: 'Lawyer Directory | Find Verified Advocates - NyayNow',
-    description: 'Browse and connect with verified lawyers across India on NyayNow. Filter by specialization, location, and experience to find the right advocate for your case.',
+    title: 'Find Verified Lawyers in India | NyayNow Marketplace',
+    description: 'Browse and connect with verified lawyers across India. Filter by specialization, city, and experience. Book consultations online.',
+    alternates: { canonical: 'https://nyaynow.in/marketplace' },
     openGraph: {
-        title: 'NyayNow Lawyer Directory',
-        description: 'Connect with verified advocates across India. Browse listings by specialization, experience, and court jurisdiction.',
+        title: 'Find Verified Lawyers in India | NyayNow',
+        description: 'Browse and connect with verified lawyers across India.',
         url: 'https://nyaynow.in/marketplace',
-        type: 'website',
-        images: ['/logo.png'],
     },
-    twitter: {
-        card: 'summary_large_image',
-        title: 'NyayNow Lawyer Marketplace',
-        description: 'Find verified legal experts across India.',
-        images: ['/logo.png'],
-    }
-}
-
-export default function MarketplaceLayout({ children }) {
-    return <>{children}</>
 }

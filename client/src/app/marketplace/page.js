@@ -1,41 +1,12 @@
+'use client'
+
 import React from "react"
 import Image from "next/image"
+import { motion } from "framer-motion"
 import MarketplaceClient from "../../components/marketplace/MarketplaceClient"
 import { API_BASE } from "../../config"
 
-export const metadata = {
-    title: 'Find Verified Lawyers in India | NyayNow Marketplace',
-    description: 'Browse and connect with verified lawyers across India. Filter by specialization, city, and experience. Book consultations online.',
-    alternates: { canonical: 'https://nyaynow.in/marketplace' },
-    openGraph: {
-        title: 'Find Verified Lawyers in India | NyayNow',
-        description: 'Browse and connect with verified lawyers across India.',
-        url: 'https://nyaynow.in/marketplace',
-    },
-}
-
-async function getLawyers() {
-    // Safety check for build-time fetches to localhost
-    if (typeof window === 'undefined' && API_BASE.includes('localhost')) {
-        return []
-    }
-
-    try {
-        const res = await fetch(`${API_BASE}/lawyers?all=true`, { next: { revalidate: 3600 } })
-        if (!res.ok) return []
-        return await res.json()
-    } catch (error) {
-        if (!API_BASE.includes('localhost')) {
-            console.error("Failed to fetch lawyers for SSR", error)
-        }
-        return []
-    }
-}
-
-
-export default async function MarketplacePage() {
-    const lawyers = await getLawyers()
-
+export default function MarketplacePage() {
     return (
         <div className="min-h-screen bg-[#000000] font-sans text-slate-400 pb-20 selection:bg-indigo-500/30 relative">
             {/* BACKGROUND EFFECTS */}
@@ -65,8 +36,8 @@ export default async function MarketplacePage() {
                 </div>
             </div>
 
-            {/* CLIENT CONTENT */}
-            <MarketplaceClient initialLawyers={lawyers} />
+            {/* CLIENT CONTENT - fetches lawyers client-side */}
+            <MarketplaceClient initialLawyers={[]} />
 
         </div>
     )
