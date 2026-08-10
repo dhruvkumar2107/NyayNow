@@ -721,10 +721,97 @@ process.on('SIGINT',  () => gracefulShutdown('SIGINT'));
 /* ================= START ================= */
 if (process.env.NODE_ENV !== 'test') {
   connectDB().finally(() => {
+    // Create demo master account on startup
+    ensureDemoUser().catch(err => console.error("Demo user creation failed:", err.message));
+    
     server.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
   });
+}
+
+/* ================= DEMO USER AUTO-CREATION ================= */
+async function ensureDemoUser() {
+  const User = require("./models/User");
+  const bcrypt = require("bcryptjs");
+  
+  const DEMO_EMAIL = "demo@nyaynow.in";
+  const DEMO_PASSWORD = "Demo@12345";
+  
+  try {
+    let demoUser = await User.findOne({ email: DEMO_EMAIL });
+    
+    if (demoUser) {
+      // Update existing to ensure full access
+      let needsSave = false;
+      if (demoUser.plan !== "diamond") { demoUser.plan = "diamond"; needsSave = true; }
+      if (!demoUser.verified) { demoUser.verified = true; needsSave = true; }
+      if (demoUser.verificationStatus !== "verified") { demoUser.verificationStatus = "verified"; needsSave = true; }
+      if (demoUser.credits < 99999) { demoUser.credits = 99999; needsSave = true; }
+      if (!demoUser.aiUsage || demoUser.aiUsage.count > 0) { demoUser.aiUsage = { count: 0, firstUsedAt: null }; needsSave = true; }
+      if (!demoUser.featureUsage || demoUser.featureUsage.size > 0) { demoUser.featureUsage = new Map(); needsSave = true; }
+      
+      // Ensure lawyer profile fields are populated
+      if (demoUser.specialization !== "Corporate Law, M&A, Contracts, Litigation, IPR") { 
+        demoUser.specialization = "Corporate Law, M&A, Contracts, Litigation, IPR"; needsSave = true; 
+      }
+      if (demoUser.experience !== 10) { demoUser.experience = 10; needsSave = true; }
+      if (!demoUser.barCouncilId || demoUser.barCouncilId !== "MAH/9999/2014") { 
+        demoUser.barCouncilId = "MAH/9999/2014"; needsSave = true; 
+      }
+      if (demoUser.consultationFee !== 5000) { demoUser.consultationFee = 5000; needsSave = true; }
+      if (demoUser.listingTier !== "premium") { demoUser.listingTier = "premium"; needsSave = true; }
+      if (!demoUser.isFeatured) { demoUser.isFeatured = true; needsSave = true; }
+      if (!demoUser.isProfileComplete) { demoUser.isProfileComplete = true; needsSave = true; }
+      
+      if (needsSave) {
+        await demoUser.save();
+        console.log("✅ Demo master account updated with full access");
+      }
+    } else {
+      const hashedPassword = await bcrypt.hash(DEMO_PASSWORD, 10);
+      
+      demoUser = await User.create({
+        role: "client",
+        name: "Demo Master",
+        email: DEMO_EMAIL,
+        password: hashedPassword,
+        plan: "diamond",
+        verified: true,
+        verificationStatus: "verified",
+        credits: 99999,
+        aiUsage: { count: 0, firstUsedAt: null },
+        featureUsage: new Map(),
+        phone: "+91-9999999999",
+        location: { city: "Mumbai", state: "Maharashtra" },
+        languages: ["English", "Hindi", "Marathi", "Gujarati", "Tamil", "Bengali", "Telugu"],
+        specialization: "Corporate Law, M&A, Contracts, Litigation, IPR",
+        experience: 10,
+        barCouncilId: "MAH/9999/2014",
+        consultationFee: 5000,
+        availability: "Mon-Fri, 10am - 6pm",
+        courts: ["Supreme Court", "Bombay High Court", "Delhi High Court", "NCLT", "NCLAT"],
+        education: [
+          { degree: "LL.M. Corporate Law", college: "Government Law College, Mumbai", year: 2014 },
+          { degree: "B.A. LL.B.", college: "ILS Law College, Pune", year: 2012 }
+        ],
+        bio: "Senior Advocate with 10+ years experience in Corporate Law, Mergers & Acquisitions, Commercial Contracts, and Litigation. Former partner at top-tier law firm. DEMO ACCOUNT - Full access to all client & lawyer features.",
+        listingTier: "premium",
+        isFeatured: true,
+        isProfileComplete: true,
+        settings: {
+          notifications: { email: true, push: true, marketing: false },
+          privacy: { profileVisible: true, showStatus: true },
+          theme: "Dark"
+        }
+      });
+      console.log("✅ Demo master account created with FULL ACCESS (Client + Lawyer features)");
+      console.log("📧 Email:", DEMO_EMAIL);
+      console.log("🔑 Password:", DEMO_PASSWORD);
+    }
+  } catch (error) {
+    console.error("❌ Demo user creation error:", error.message);
+  }
 }
 
 module.exports = { app, server };
