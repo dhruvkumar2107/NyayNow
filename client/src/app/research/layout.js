@@ -1,6 +1,6 @@
 export const metadata = {
     title: 'AI Precedent Search & Legal Case Research - NyayNow',
-    description: 'Query over 1.2M court judgments, Supreme Court rulings, and High Court orders using specialized AI semantic embeddings. Complete case timeline & FIRAC analysis.',
+    description: 'Search Indian legal materials and review AI-assisted case summaries. Verify each result and citation against its source.',
     alternates: {
         canonical: 'https://nyaynow.in/research',
     },

@@ -30,6 +30,15 @@ async function applyPaymentOutcome(userId, verifiedPlan, verifiedAmount, razorpa
   const isAppointment = normalizedPlan.startsWith("appointment_");
   const isInvoice     = normalizedPlan.startsWith("invoice_");
 
+  // ── IDEMPOTENCY ────────────────────────────────────────────────────────────
+  // If this provider payment has already been applied, do NOT apply it again
+  // (prevents replayed /verify calls from duplicating credits or entitlements).
+  const existing = await Payment.findOne({ paymentId: razorpayPaymentId });
+  if (existing) {
+    const currentUser = await User.findById(userId);
+    if (currentUser) return { user: currentUser, duplicate: true };
+  }
+
   let updatedUser;
 
   if (isAppointment) {

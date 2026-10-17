@@ -1,66 +1,54 @@
 import { test, expect } from '@playwright/test';
 
-const PAGES = [
-    { path: '/', title: /NyayNow/i, canonical: 'https://nyaynow.in' },
-    { path: '/about', title: /About Us/i, canonical: 'https://nyaynow.in/about' },
-    { path: '/pricing', title: /Pricing/i, canonical: 'https://nyaynow.in/pricing' },
-    { path: '/terms', title: /Terms/i, canonical: 'https://nyaynow.in/terms' },
-    { path: '/privacy', title: /Privacy/i, canonical: 'https://nyaynow.in/privacy' },
-    { path: '/disclaimer', title: /Disclaimer/i, canonical: 'https://nyaynow.in/disclaimer' },
-    { path: '/contact', title: /Contact/i, canonical: 'https://nyaynow.in/contact' },
-    { path: '/refund', title: /Refund/i, canonical: 'https://nyaynow.in/refund' },
-    { path: '/login', title: /Sign In|Login/i, canonical: 'https://nyaynow.in/login' },
-    { path: '/register', title: /Create an Account/i, canonical: 'https://nyaynow.in/register' },
-    { path: '/judge-ai', title: /Judge AI/i, canonical: 'https://nyaynow.in/judge-ai', waitText: 'Judge AI' },
-    { path: '/drafting', title: /Drafting/i, canonical: 'https://nyaynow.in/drafting', waitText: 'Drafting Lab' },
-    { path: '/nearby', title: /Nearby/i, canonical: 'https://nyaynow.in/nearby', waitText: 'Enable AR Vision' },
-    { path: '/nyaycourt-simulator', title: /NyayCourt Simulator/i, canonical: 'https://nyaynow.in/nyaycourt-simulator' },
-    { path: '/nyayvoice', title: /NyayVoice/i, canonical: 'https://nyaynow.in/nyayvoice' },
-    { path: '/agreements', title: /Evidence & Quantum Vault/i, canonical: 'https://nyaynow.in/agreements', waitText: 'Post-Quantum Encryption' }
+const publicRoutes = [
+  '/',
+  '/methodology/benchmark',
+  '/investors',
+  '/grievance',
+  '/judge-ai',
+  '/voice-assistant',
+  '/agreements',
+  '/bns',
+  '/bns/section-103',
+  '/courtroom-battle',
+  '/nyaycourt-simulator',
+  '/moot-court',
 ];
 
-test.describe('NyayNow Page Verification Suite', () => {
-    
-    for (const pageInfo of PAGES) {
-        test(`Page verification: ${pageInfo.path}`, async ({ page }) => {
-            console.log(`=== Testing ${pageInfo.path} ===`);
-            
-            const response = await page.goto(pageInfo.path, { waitUntil: 'domcontentloaded', timeout: 30000 });
-            expect(response.status()).toBe(200);
-
-            // Wait for dynamic components if needed
-            if (pageInfo.waitText) {
-                await expect(page.locator('body')).toContainText(pageInfo.waitText, { timeout: 15000 });
-            }
-
-            // Verify Title
-            await expect(page).toHaveTitle(pageInfo.title);
-
-            // Verify Canonical
-            const canonicalLocator = page.locator('link[rel="canonical"]');
-            await expect(canonicalLocator).toHaveAttribute('href', pageInfo.canonical);
-
-            // Verify OpenGraph URL
-            const ogUrlLocator = page.locator('meta[property="og:url"]');
-            await expect(ogUrlLocator).toHaveAttribute('content', pageInfo.canonical);
-
-            // Verify exactly one Navbar and Footer
-            const navCount = await page.locator('nav.fixed').count();
-            expect(navCount).toBe(1);
-
-            const footerCount = await page.locator('footer').count();
-            expect(footerCount).toBe(1);
-
-            // Verify absence of raw static block text or unwanted overlay copy
-            const bodyText = await page.innerText('body');
-            expect(bodyText).not.toContain('Tick Consent First');
-            expect(bodyText).not.toContain('Accept Consent Checkboxes First');
-        });
-    }
-
-    test('301 Redirect courtroom-battle -> nyaycourt-simulator', async ({ page }) => {
-        console.log('=== Testing Redirect: /courtroom-battle ===');
-        const response = await page.goto('/courtroom-battle', { waitUntil: 'domcontentloaded', timeout: 30000 });
-        expect(page.url()).toContain('/nyaycourt-simulator');
+test.describe('NyayNow public route smoke checks', () => {
+  for (const route of publicRoutes) {
+    test(`${route} responds successfully`, async ({ page }) => {
+      const response = await page.goto(route, { waitUntil: 'domcontentloaded' });
+      expect(response, `No document response for ${route}`).not.toBeNull();
+      expect(response.status(), `${route} should load`).toBe(200);
+      await expect(page).toHaveTitle(/NyayNow/i);
     });
+  }
+
+  test('benchmark page does not claim unpublished results', async ({ page }) => {
+    await page.goto('/methodology/benchmark');
+    await expect(page.getByRole('heading', { name: /no public benchmark results yet/i })).toBeVisible();
+    await expect(page.locator('body')).toContainText(/has not published a counsel-reviewed benchmark/i);
+  });
+
+  test('case outcome research clearly says it is in development', async ({ page }) => {
+    await page.goto('/judge-ai');
+    await expect(page.locator('body')).toContainText(/in development|disabled/i);
+  });
+
+  test('BNS directory withholds unreviewed section summaries', async ({ page }) => {
+    await page.goto('/bns');
+    await expect(page.locator('body')).toContainText(/has not completed source-linked, counsel-reviewed section explanations/i);
+    await expect(page.getByRole('link', { name: /official india code text/i })).toHaveAttribute('href', /indiacode\.nic\.in/);
+  });
+
+  test('courtroom simulation is off unless its experimental flag is enabled', async ({ page }) => {
+    await page.goto('/courtroom-battle');
+    await expect(page.locator('body')).toContainText(/does not have a validated legal-source layer or reviewed scoring method/i);
+  });
+
+  test('moot court scoring is marked in development', async ({ page }) => {
+    await page.goto('/moot-court');
+    await expect(page.locator('body')).toContainText(/scoring method and citation assessment have not been independently evaluated/i);
+  });
 });

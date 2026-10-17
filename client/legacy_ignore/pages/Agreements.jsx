@@ -31,17 +31,12 @@ export default function Agreements() {
   // Modal states
   const [showPaywall, setShowPaywall] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
-  const [isSignModalOpen, setIsSignModalOpen] = useState(false);
   const [selectedItemToView, setSelectedItemToView] = useState(null);
-  const [selectedItemToSign, setSelectedItemToSign] = useState(null);
   
   // Form fields
   const [docType, setDocType] = useState("Evidence Scan");
   const [partyA, setPartyA] = useState("");
   const [partyB, setPartyB] = useState("");
-  const [signerName, setSignerName] = useState("");
-  const [aadhaarNo, setAadhaarNo] = useState("");
-  const [isSigning, setIsSigning] = useState(false);
 
   const router = useRouter();
   const { user } = useAuth();
@@ -111,7 +106,7 @@ export default function Agreements() {
         });
         setResult(res.data);
       }
-      toast.success("Forensic scan diagnostics complete!");
+      toast.success("AI-assisted document review complete. Verify any legal issue with an advocate.");
     } catch (err) {
       if (err.response?.status === 403 || err.response?.status === 401) {
         setShowPaywall(true);
@@ -148,7 +143,7 @@ export default function Agreements() {
         }
       };
       const res = await axios.post("/api/agreements", payload);
-      toast.success("Document secured in Quantum Vault! 🔒");
+      toast.success("Saved to your account-linked document workspace. Storage is not an encrypted vault.");
       setIsSaveModalOpen(false);
       // Clear fields
       setPartyA("");
@@ -158,73 +153,39 @@ export default function Agreements() {
       setActiveTab("vault");
     } catch (err) {
       console.error("Failed to save to vault", err);
-      toast.error(err.response?.data?.error || "Failed to secure document in vault.");
+      toast.error(err.response?.data?.error || "Failed to save document.");
     }
   };
 
-  const handleSign = async () => {
-    if (!selectedItemToSign) return;
-    if (!signerName.trim()) {
-      toast.error("Please enter signer name.");
-      return;
-    }
-    if (!aadhaarNo.trim() || aadhaarNo.length !== 12) {
-      toast.error("Please enter a valid 12-digit Aadhaar number.");
-      return;
-    }
-
-    setIsSigning(true);
-    try {
-      const res = await axios.post(`/api/agreements/sign/${selectedItemToSign._id}`, {
-        signerName
-      });
-      toast.success("Aadhaar eSign verification completed successfully!");
-      setIsSignModalOpen(false);
-      setSignerName("");
-      setAadhaarNo("");
-      setSelectedItemToSign(null);
-      fetchVaultItems();
-    } catch (err) {
-      console.error("eSign failed", err);
-      toast.error(err.response?.data?.error || "Aadhaar eSign failed.");
-    } finally {
-      setIsSigning(false);
-    }
-  };
-
-  const downloadCertificate = (item) => {
-    const hash = `PQC-SHA256-${item._id.toUpperCase()}`;
+  const downloadRecordSummary = (item) => {
+    const recordId = String(item._id);
     const certContent = `
 =========================================================
-      NYAYNOW SECURE QUANTUM VAULT INTEGRITY CERTIFICATE
+      NYAYNOW DOCUMENT RECORD SUMMARY
 =========================================================
 Document ID: ${item._id}
-Secured Date: ${new Date(item.createdAt).toLocaleString()}
+Saved Date: ${new Date(item.createdAt).toLocaleString()}
 Document Type: ${item.type}
-Quantum Safe Signature Hash: ${hash}
+Record ID: ${recordId}
 
 PARTIES INVOLVED:
 Party A: ${item.parties?.partyA || "N/A"}
 Party B: ${item.parties?.partyB || "N/A"}
 
-STATUS: ${item.isSigned ? "VERIFIED & SIGNED" : "UNSIGNED"}
-eSign Signer Name: ${item.signerName || "N/A"}
-Aadhaar Tx ID: ${item.aadhaarTxId || "N/A"}
-Signature Date: ${item.signatureDate ? new Date(item.signatureDate).toLocaleString() : "N/A"}
+SIGNING: Electronic signing is unavailable and NyayNow does not verify signature status.
 
 ---------------------------------------------------------
-This document is secured using Post-Quantum Cryptographic
-Escrow and is stored in the NyayNow Cryptographic Ledger.
+This summary records fields stored in NyayNow. It is not a cryptographic certificate, signature validation, or proof of filing.
 =========================================================
 `;
     const element = document.createElement("a");
     const certFile = new Blob([certContent], {type: 'text/plain'});
     element.href = URL.createObjectURL(certFile);
-    element.download = `NyayNow-Vault-Cert-${item._id.slice(-6)}.txt`;
+    element.download = `NyayNow-Record-Summary-${item._id.slice(-6)}.txt`;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-    toast.success("Security Certificate downloaded!");
+    toast.success("Record summary downloaded.");
   };
 
   const getRiskColor = (level) => {
@@ -244,16 +205,16 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
         {/* HEADER */}
         <div className="text-center max-w-4xl mx-auto mb-12 relative z-10">
           <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 text-emerald-400 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-            <Shield size={14} className="fill-emerald-400" /> Post-Quantum Encryption (PQC) Active
+            <Shield size={14} className="fill-emerald-400" /> AI-assisted document review; verify outputs
           </motion.div>
 
           <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="text-4xl md:text-6xl font-serif font-bold tracking-tight text-white mb-6 leading-tight">
-            Evidence & <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-emerald-400 to-cyan-400">Quantum Vault</span>
+            Agreement Review &amp; <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-emerald-400 to-cyan-400">Document Workspace</span>
           </motion.h1>
 
           <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="text-base md:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto">
-            Securely store and analyze litigation evidence using military-grade PQC encryption algorithms and deep-learning forensic scans.
+            Analyze supplied agreement text or PDFs with AI and save review records to your account. This is not an encrypted evidence vault, forensic authentication, or signature service. Do not upload confidential case material until you have reviewed the privacy terms and storage controls.
           </motion.p>
 
           {/* Tab Switcher */}
@@ -268,7 +229,7 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
               <button
                 onClick={() => {
                   if (!user) {
-                    toast.error("Please login to access your Quantum Vault.");
+                    toast.error("Please login to access saved documents.");
                     router.push("/login");
                     return;
                   }
@@ -276,7 +237,7 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                 }}
                 className={`px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${activeTab === "vault" ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/25" : "text-slate-400 hover:text-white"}`}
               >
-                <Database size={14} /> Quantum Vault {vaultItems.length > 0 && <span className="ml-1 px-1.5 py-0.5 bg-indigo-900 text-indigo-200 text-[9px] rounded-full">{vaultItems.length}</span>}
+                <Database size={14} /> Saved Documents {vaultItems.length > 0 && <span className="ml-1 px-1.5 py-0.5 bg-indigo-900 text-indigo-200 text-[9px] rounded-full">{vaultItems.length}</span>}
               </button>
             </div>
           </motion.div>
@@ -324,7 +285,7 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                       <textarea
                         value={text}
                         onChange={(e) => setText(e.target.value)}
-                        placeholder="Paste your agreement clause, affidavit, or general legal evidence text here for instant forensic analysis..."
+                        placeholder="Paste agreement text for an AI-assisted review. Avoid highly sensitive details."
                         className="flex-1 w-full min-h-[350px] resize-none p-8 outline-none bg-transparent text-slate-300 leading-relaxed font-mono text-sm placeholder:text-slate-600 custom-scrollbar"
                       />
                     ) : (
@@ -387,10 +348,10 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                           <Shield size={28} className="opacity-40 text-indigo-400" />
                         </div>
                         <h3 className="text-xl font-bold text-white mb-2">Ready to Scan</h3>
-                        <p className="max-w-xs text-sm mb-6">Provide text or upload a PDF document on the left to generate an instant forensic analysis report.</p>
+                        <p className="max-w-xs text-sm mb-6">Provide agreement text or a PDF for an AI-assisted review. Generated analysis can be inaccurate and is not forensic authentication.</p>
                         <div className="flex gap-4 text-xs font-bold uppercase tracking-widest opacity-50">
-                          <span className="flex items-center gap-1.5"><Shield size={12} /> Secure Storage</span>
-                          <span className="flex items-center gap-1.5"><Zap size={12} /> Real-Time Analysis</span>
+                          <span className="flex items-center gap-1.5"><Shield size={12} /> Account-linked records</span>
+                          <span className="flex items-center gap-1.5"><Zap size={12} /> AI-assisted review</span>
                         </div>
                       </div>
                     ) : (
@@ -402,7 +363,7 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                         {/* Result Header */}
                         <div className="bg-white/5 border-b border-white/5 px-6 py-4 flex justify-between items-center">
                           <span className="font-bold text-white flex items-center gap-2">
-                             <Shield size={16} className="text-emerald-400" /> Forensic Scan Results
+                             <Shield size={16} className="text-emerald-400" /> AI-assisted review results
                           </span>
                           <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border ${getRiskColor(result.riskLevel)}`}>
                             {result.riskLevel} Risk
@@ -410,21 +371,6 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                         </div>
 
                         <div className="p-8 space-y-6 max-h-[500px] overflow-y-auto custom-scrollbar">
-                          {/* Score */}
-                          <div className="flex items-center gap-6 p-5 bg-white/5 rounded-2xl border border-white/5">
-                            <div className="relative w-20 h-20 flex items-center justify-center">
-                              <svg className="transform -rotate-90 w-20 h-20">
-                                <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="5" fill="transparent" className="text-slate-800" />
-                                <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="5" fill="transparent" strokeDasharray={213.6} strokeDashoffset={213.6 * (1 - (result.accuracyScore / 100))} className="text-emerald-500" />
-                              </svg>
-                              <span className="absolute text-lg font-bold text-white">{result.accuracyScore}%</span>
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-white text-sm">Integrity & Robustness Score</h4>
-                              <p className="text-xs text-slate-500 mt-0.5">Higher score indicates lower loopholes and stronger legal security.</p>
-                            </div>
-                          </div>
-
                           {/* Paywall Overlay */}
                           {result.isLocked && (
                             <div className="p-6 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 text-center">
@@ -473,7 +419,7 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                             }}
                             className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:opacity-90 hover:scale-[1.02] transition flex items-center justify-center gap-2"
                           >
-                            <Shield size={14} /> Save to Quantum Vault
+                            <Shield size={14} /> Save review record
                           </button>
                         </div>
                       </motion.div>
@@ -506,13 +452,13 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                 {vaultLoading && vaultItems.length === 0 ? (
                   <div className="py-20 text-center">
                     <Loader2 className="animate-spin mx-auto text-indigo-400 mb-4" size={32} />
-                    <p className="text-sm text-slate-500">Decrypting vault keys...</p>
+                    <p className="text-sm text-slate-500">Loading saved records...</p>
                   </div>
                 ) : vaultItems.length === 0 ? (
                   <div className="py-20 text-center border border-dashed border-white/10 rounded-3xl bg-white/[0.01]">
                     <Database className="mx-auto text-slate-600 mb-4" size={40} />
-                    <h4 className="text-white font-bold text-base mb-1">Your Vault is Empty</h4>
-                    <p className="text-sm text-slate-500 max-w-sm mx-auto mb-6">Secure your evidence analysis and agreements by running scans and saving them here.</p>
+                    <h4 className="text-white font-bold text-base mb-1">No saved documents</h4>
+                    <p className="text-sm text-slate-500 max-w-sm mx-auto mb-6">Run an AI-assisted review and save a record to your account. Review the privacy terms before adding personal or case information.</p>
                     <button onClick={() => setActiveTab("scan")} className="px-5 py-2.5 bg-indigo-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition hover:bg-indigo-500">
                       Scan Document Now
                     </button>
@@ -520,7 +466,7 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                 ) : (
                   <div className="grid md:grid-cols-2 gap-6">
                     {vaultItems.map((item) => {
-                      const secureHash = `PQC-SHA256-0x${item._id.slice(0, 8).toUpperCase()}`;
+                      const recordId = String(item._id);
                       return (
                         <motion.div
                           layout
@@ -532,7 +478,7 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                               <span className="px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-[10px] font-black uppercase tracking-wider rounded-lg">
                                 {item.type}
                               </span>
-                              <p className="text-[10px] text-slate-500 font-mono mt-2">{secureHash}</p>
+                              <p className="text-[10px] text-slate-500 font-mono mt-2">Record: {recordId.slice(-8)}</p>
                             </div>
                             <span className="text-[10px] text-slate-500 font-mono">{new Date(item.createdAt).toLocaleDateString()}</span>
                           </div>
@@ -552,18 +498,10 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
 
                           {/* Status Badge */}
                           <div className="mb-6">
-                            {item.isSigned ? (
-                              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 text-xs text-emerald-400 flex flex-col gap-1">
-                                <span className="font-bold flex items-center gap-1.5"><Shield size={13} className="fill-emerald-400/20" /> SECURE eSIGN COMPLETED</span>
-                                <span className="text-[10px] text-slate-500 font-mono">Signer: {item.signerName}</span>
-                                <span className="text-[10px] text-slate-500 font-mono">Tx ID: {item.aadhaarTxId}</span>
-                              </div>
-                            ) : (
-                              <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-400 flex items-center gap-1.5">
-                                <AlertTriangle size={14} />
-                                <span>UNSIGNED • eSign verification required</span>
-                              </div>
-                            )}
+                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-400 flex items-center gap-1.5">
+                              <AlertTriangle size={14} />
+                              <span>Electronic signing is unavailable; signature status is not verified.</span>
+                            </div>
                           </div>
 
                           {/* Actions */}
@@ -571,28 +509,17 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                             <button
                               onClick={() => setSelectedItemToView(item)}
                               className="px-3.5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 text-xs text-white transition flex items-center gap-1.5"
-                              title="View Forensic scan"
+                              title="View AI-assisted review record"
                             >
                               <Eye size={14} /> Report
                             </button>
                             <button
-                              onClick={() => downloadCertificate(item)}
+                              onClick={() => downloadRecordSummary(item)}
                               className="px-3.5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 text-xs text-white transition flex items-center gap-1.5"
-                              title="Download Hash Certificate"
+                              title="Download record summary"
                             >
-                              <Download size={14} /> Security Cert
+                              <Download size={14} /> Record Summary
                             </button>
-                            {!item.isSigned && (
-                              <button
-                                onClick={() => {
-                                  setSelectedItemToSign(item);
-                                  setIsSignModalOpen(true);
-                                }}
-                                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-1.5"
-                              >
-                                <Key size={14} /> Aadhaar eSign
-                              </button>
-                            )}
                           </div>
                         </motion.div>
                       );
@@ -622,9 +549,9 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                 <X size={18} />
               </button>
               <h4 className="text-white font-bold text-lg mb-2 flex items-center gap-2">
-                <Shield size={18} className="text-emerald-400" /> Secure in Quantum Vault
+                <Shield size={18} className="text-emerald-400" /> Save review record
               </h4>
-              <p className="text-xs text-slate-400 mb-6">Enter document details to generate a cryptographic vault block.</p>
+              <p className="text-xs text-slate-400 mb-6">Saved content is stored in an account-linked database record. It is not end-to-end encrypted or cryptographically sealed.</p>
               
               <div className="space-y-4">
                 <div>
@@ -676,88 +603,7 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                     onClick={saveToVault}
                     className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold text-xs uppercase transition shadow-lg shadow-emerald-600/20"
                   >
-                    Lock & Secure
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* AADHAAR ESIGN MODAL */}
-      <AnimatePresence>
-        {isSignModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#0f172a] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl relative"
-            >
-              <button 
-                onClick={() => setIsSignModalOpen(false)}
-                className="absolute top-4 right-4 text-slate-500 hover:text-white"
-              >
-                <X size={18} />
-              </button>
-              <h4 className="text-white font-bold text-lg mb-2 flex items-center gap-2">
-                <Key size={18} className="text-indigo-400" /> Aadhaar eSign Gateway
-              </h4>
-              <p className="text-xs text-slate-400 mb-6">Authenticate using your 12-digit Aadhaar UIDAI identifier.</p>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs uppercase tracking-wider font-bold text-slate-500 mb-2">Signer Legal Name</label>
-                  <input
-                    type="text"
-                    value={signerName}
-                    onChange={(e) => setSignerName(e.target.value)}
-                    placeholder="Enter name exactly as on Aadhaar"
-                    className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-indigo-500/50"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs uppercase tracking-wider font-bold text-slate-500 mb-2">Aadhaar Number (12-Digit)</label>
-                  <input
-                    type="text"
-                    maxLength={12}
-                    value={aadhaarNo}
-                    onChange={(e) => setAadhaarNo(e.target.value.replace(/\D/g, ''))}
-                    placeholder="0000 0000 0000"
-                    className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-xs text-white tracking-widest font-mono focus:outline-none focus:border-indigo-500/50"
-                  />
-                </div>
-
-                <div className="text-[10px] text-slate-500 bg-white/5 border border-white/5 rounded-xl p-3 leading-relaxed flex gap-2">
-                  <Shield size={14} className="shrink-0 text-emerald-400 mt-0.5" />
-                  <span>Your identifier is validated through the e-KYC gateway and discarded immediately. No Aadhaar data is stored locally.</span>
-                </div>
-
-                <div className="pt-4 flex gap-3">
-                  <button
-                    onClick={() => setIsSignModalOpen(false)}
-                    className="flex-1 border border-white/10 hover:bg-white/5 text-white py-3 rounded-xl font-bold text-xs uppercase transition"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSign}
-                    disabled={isSigning}
-                    className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-bold text-xs uppercase transition shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-1.5"
-                  >
-                    {isSigning ? (
-                      <>
-                        <Loader2 size={14} className="animate-spin" />
-                        <span>Verifying...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Key size={14} />
-                        <span>Sign Document</span>
-                      </>
-                    )}
+                    Save review record
                   </button>
                 </div>
               </div>
@@ -787,8 +633,8 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                   <span className="px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-[10px] font-black uppercase tracking-wider rounded-lg">
                     {selectedItemToView.type}
                   </span>
-                  <h4 className="text-white font-serif font-bold text-2xl mt-3">Forensic Security Scan Report</h4>
-                  <p className="text-xs text-slate-500 font-mono mt-1">Secured Block: {selectedItemToView._id}</p>
+                  <h4 className="text-white font-serif font-bold text-2xl mt-3">AI-assisted review record</h4>
+                  <p className="text-xs text-slate-500 font-mono mt-1">Record ID: {String(selectedItemToView._id).slice(-8)}</p>
                 </div>
               </div>
 
@@ -803,7 +649,7 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
                   <p className="font-bold text-white mt-1">{selectedItemToView.parties?.partyB || "N/A"}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Secured At</p>
+                  <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Saved At</p>
                   <p className="font-bold text-white mt-1">{new Date(selectedItemToView.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
@@ -815,10 +661,10 @@ Escrow and is stored in the NyayNow Cryptographic Ledger.
 
               <div className="mt-8 pt-6 border-t border-white/5 flex justify-end gap-2">
                 <button
-                  onClick={() => downloadCertificate(selectedItemToView)}
+                  onClick={() => downloadRecordSummary(selectedItemToView)}
                   className="px-5 py-2.5 border border-white/10 hover:bg-white/5 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition flex items-center gap-1.5"
                 >
-                  <Download size={14} /> Download Certificate
+                  <Download size={14} /> Download Record Summary
                 </button>
                 <button
                   onClick={() => setSelectedItemToView(null)}

@@ -147,6 +147,21 @@ function RoundCard({ round, index, isActive, onDone }) {
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function CourtroomBattle() {
+    if (process.env.NEXT_PUBLIC_EXPERIMENTAL_COURTROOM_SIMULATION_ENABLED !== 'true') {
+        return (
+            <main className="min-h-screen bg-[#020617] px-6 pb-20 pt-36 text-slate-200">
+                <section className="mx-auto max-w-3xl rounded-2xl border border-amber-400/20 bg-amber-400/5 p-8">
+                    <p className="text-xs font-bold uppercase tracking-widest text-amber-300">Experimental simulation in development</p>
+                    <h1 className="mt-4 text-3xl font-bold text-white">Courtroom practice is not available yet</h1>
+                    <p className="mt-4 leading-7 text-slate-300">The current simulation does not have a validated legal-source layer or reviewed scoring method. It cannot determine case outcomes or issue rulings. Do not submit confidential case information.</p>
+                </section>
+            </main>
+        );
+    }
+    return <CourtroomBattleEnabled />;
+}
+
+function CourtroomBattleEnabled() {
     const [phase, setPhase] = useState('input'); // input | loading | trial | verdict
     const [caseData, setCaseData] = useState({
         caseTitle: '',
@@ -776,7 +791,7 @@ export default function CourtroomBattle() {
                                                 <div className="grid md:grid-cols-2 gap-5 mb-6">
                                                     <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-5">
                                                         <p className="text-slate-500 text-[10px] font-black uppercase tracking-wider mb-3 flex items-center gap-2">
-                                                            <Star size={12} className="text-amber-400" /> Judge's Summary
+                                                            <Star size={12} className="text-amber-400" /> Judge&apos;s Summary
                                                         </p>
                                                         <p className="text-slate-300 text-sm leading-relaxed">{result.verdict?.judge_summary}</p>
                                                     </div>

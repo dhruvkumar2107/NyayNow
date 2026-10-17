@@ -80,7 +80,6 @@ export default function AIAssistant() {
             setMessages(prev => [...prev, { 
                 role: "system", 
                 content: aiResponse,
-                citations: ["BNS 2024"] // default category grounding
             }]);
         } catch (error) {
             console.error(error);
@@ -125,7 +124,7 @@ export default function AIAssistant() {
                                     <h3 className="font-bold text-sm tracking-tight">NyayNow AI</h3>
                                     <div className="flex items-center gap-1.5 opacity-80">
                                         <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Secure AI</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">AI-assisted</span>
                                     </div>
                                 </div>
                             </div>
@@ -145,7 +144,7 @@ export default function AIAssistant() {
 
                         {/* STICKY DISCLAIMER BAR */}
                         <div className="bg-[#dc2626]/10 border-b border-[#dc2626]/20 py-2 px-4 text-center text-[9px] text-red-400 font-bold">
-                            ⚠️ Grounded in BNS (2024). AI guidance, not legal advice.
+                            ⚠️ AI-generated information may be incomplete or wrong. Citations are not verified for every answer; check primary sources and consult an advocate.
                         </div>
 
                         {/* Chat Area */}
@@ -160,7 +159,7 @@ export default function AIAssistant() {
                                     </div>
                                     {msg.role === 'system' && i > 0 && (
                                         <div className="flex items-center gap-2 px-1">
-                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Grounded (BNS 2024)</span>
+                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">AI-generated · verify independently</span>
                                             <button 
                                                 onClick={() => handleConsultLawyer(msg.content)}
                                                 className="text-[9px] font-black text-blue-400 uppercase tracking-wider hover:underline"
@@ -187,7 +186,7 @@ export default function AIAssistant() {
                         <div className="p-4 bg-[#020617] border-t border-white/10">
                             {messages.length <= 1 && (
                                 <div className="mb-3 flex flex-wrap gap-1.5">
-                                    {["BNS 318 Cheating", "FIR Rights"].map((chip) => (
+                                    {["Prepare questions for an advocate", "Summarize this information"].map((chip) => (
                                         <button
                                             key={chip}
                                             onClick={() => setInput(chip)}

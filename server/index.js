@@ -36,13 +36,19 @@ const allowedOrigins = [
   "https://www.nyaynow.in",
   "https://nyaynow.com",
   process.env.CLIENT_URL,
+  // Extra explicit origins (e.g. staging/preview) via comma-separated env var
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",").map(o => o.trim()) : []),
   ...(process.env.NODE_ENV !== 'production' ? ["http://localhost:3000", "http://localhost:5173"] : []),
 ].filter(Boolean);
 
 const isAllowedOrigin = (origin) => {
   if (!origin) return true;
   if (allowedOrigins.includes(origin)) return true;
-  if (origin.endsWith(".vercel.app")) return true;
+  // SECURITY: Wildcard *.vercel.app is only tolerated outside production.
+  // With credentials enabled, allowing any vercel.app origin in production
+  // would let an attacker's preview deployment issue credentialed requests
+  // and defeat CSRF protection. Add specific preview URLs via ALLOWED_ORIGINS.
+  if (process.env.NODE_ENV !== 'production' && origin.endsWith(".vercel.app")) return true;
   return false;
 };
 
@@ -62,6 +68,7 @@ const io = new Server(server, {
 const compression = require("compression");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const { ipKeyGenerator } = rateLimit;
 const Sentry = require("@sentry/node");
 const { nodeProfilingIntegration } = require("@sentry/profiling-node");
 
@@ -176,7 +183,7 @@ function perUserKey(req) {
       if (decoded?.id) return `user_${decoded.id}`;
     } catch { /* fall through */ }
   }
-  return req.ip || 'unknown';
+  return ipKeyGenerator(req.ip || 'unknown');
 }
 
 // 🛡️ GLOBAL LIMITER
@@ -517,6 +524,7 @@ loadRoute("/api/ecourts", "./routes/ecourts"); // ECOURTS INTEGRATION
 loadRoute("/api/translate", "./routes/translate"); // BHASHINI MULTILINGUAL TRANSLATION
 loadRoute("/api/subscriptions", "./routes/subscriptions"); // 💰 RECURRING SUBSCRIPTIONS
 loadRoute("/api/leads", "./routes/leads"); // 💰 PAY-PER-LEAD SYSTEM
+loadRoute("/api", "./routes/public"); // Aggregate public metrics and gated proof receipts
 
 // Custom Sentry Error Handler (Compatible with all versions)
 app.use((err, req, res, next) => {
@@ -653,7 +661,7 @@ if (fs.existsSync(clientDist)) {
         }
       } else if (req.originalUrl === "/find-lawyers") {
         title = "Lawyer Directory | Find Verified Advocates - NyayNow";
-        description = "Browse and connect with verified lawyers across India. Filter by specialization, location, and experience.";
+        description = "Browse lawyer profile information by specialization, location, and experience. Confirm credentials and engagement terms independently.";
       } else if (req.originalUrl === "/assistant") {
         title = "AI Legal Assistant | Instant Legal Guidance - NyayNow";
         description = "Get instant answers to your legal queries with NyayNow's AI-powered assistant.";
@@ -721,9 +729,13 @@ process.on('SIGINT',  () => gracefulShutdown('SIGINT'));
 /* ================= START ================= */
 if (process.env.NODE_ENV !== 'test') {
   connectDB().finally(() => {
-    // Create demo master account on startup
-    ensureDemoUser().catch(err => console.error("Demo user creation failed:", err.message));
-    
+    // SECURITY: The demo master account uses hardcoded credentials and is therefore
+    // NEVER created in production. It can only be enabled explicitly for local/demo
+    // environments via DEMO_USER_ENABLED=true.
+    if (process.env.NODE_ENV !== 'production' && process.env.DEMO_USER_ENABLED === 'true') {
+      ensureDemoUser().catch(err => console.error("Demo user creation failed:", err.message));
+    }
+
     server.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });

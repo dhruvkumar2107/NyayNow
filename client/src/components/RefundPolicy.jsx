@@ -24,7 +24,7 @@ const RefundPolicy = () => {
                             <ShieldCheck size={16} /> Transparent Pricing Policy
                         </p>
                         <p className="text-white text-base leading-relaxed font-bold">
-                            At NyayNow, we charge fees to maintain the expensive high-performance AI APIs and verified lawyer marketplace coordination. Our refund rules are designed to be clear and fair for all enterprise and individual users.
+                            At NyayNow, we charge fees to maintain the expensive high-performance AI APIs and lawyer profile marketplace operations. Our refund rules are designed to be clear and fair for all enterprise and individual users.
                         </p>
                     </section>
 

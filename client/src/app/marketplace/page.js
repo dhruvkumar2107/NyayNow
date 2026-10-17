@@ -31,7 +31,7 @@ export default function MarketplacePage() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="text-xl text-slate-400 max-w-2xl mx-auto mb-10"
                     >
-                        Connect with India's top 1% of legal minds. Verified, vetted, and ready to represent you.
+                        Browse lawyer profiles by area, location, and language, then review each profile before reaching out.
                     </motion.p>
                 </div>
             </div>

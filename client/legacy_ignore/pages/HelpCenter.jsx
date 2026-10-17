@@ -7,45 +7,45 @@ import Link from 'next/link';
 const FAQS = [
     {
         q: "Is the legal information provided by NyayNow AI binding?",
-        a: "No. NyayNow's AI provides 'legal information' and outcome predictions based on historical data. It is a powerful research and drafting tool, but it is NOT a substitute for a licensed attorney. Always consult a qualified lawyer for important legal decisions."
+        a: "No. NyayNow provides AI-generated information that can be incomplete or wrong. It is not legal advice. Verify citations against primary sources and consult a qualified advocate before acting. Outcome analysis is disabled by default."
     },
     {
         q: "How accurate is the Judge AI Win Predictor?",
-        a: "Our Judge AI has demonstrated 94% accuracy in historical case validations across 50+ legal categories. However, every case has unique variables — the AI is a strategic advisory tool, not a guarantee of outcome."
+        a: "Outcome prediction is disabled by default. NyayNow has not published a counsel-reviewed benchmark or accuracy results."
     },
     {
         q: "Is my case data private and secure?",
-        a: "Absolutely. We use AES-256 encryption for all data at rest and TLS 1.3 in transit. Your case files are anonymized before AI processing and we never train our models on your private documents. We are fully PDPA compliant."
+        a: "Review the current Privacy Policy and Security & Compliance page before sharing information. Encryption at rest, provider handling, retention, and deletion have not been independently verified in this repository. Do not submit sensitive case material unless you understand the current controls."
     },
     {
         q: "Can I use NyayNow to find a real lawyer?",
-        a: "Yes! Our Verified Lawyer Marketplace has 200+ advocates verified by Bar Council ID. You can filter by specialization, experience, location, and consultation fee, and book a video or in-person consultation directly."
+        a: "The marketplace displays profile information supplied to the platform. NyayNow does not currently verify advocate enrolment through DigiLocker or a Bar Council database. Confirm credentials, availability, and terms independently."
     },
     {
         q: "What Indian laws does your AI understand?",
-        a: "Our models are trained on BNS (Bhartiya Nyaya Sanhita), BNSS, BSA, the Indian Constitution, IPC, CrPC, CPC, Consumer Protection Act, IT Act, RTI Act, and major state-specific legislation. We update our knowledge base quarterly."
+        a: "NyayNow has not documented a comprehensive, licensed legal corpus or a guaranteed update schedule. Available answers may use configured AI and search providers and must be checked against current official sources."
     },
     {
         q: "How does the FIR Generator work?",
-        a: "You describe your situation in plain language through our Legal SOS wizard. Our AI classifies the emergency, identifies applicable IPC/BNS sections, and generates a correctly formatted FIR draft you can print or share with authorities."
+        a: "Legal SOS can help prepare an unfiled complaint draft for review. It does not file an FIR, dispatch emergency help, or guarantee correct legal sections. For immediate danger call 112; seek legal aid through NALSA at 15100."
     },
     {
         q: "Do you support regional Indian languages?",
-        a: "Yes! NyayVoice supports voice input and output in Hindi, Tamil, Telugu, Kannada, Bengali, Marathi, Gujarati, Punjabi, Odia, and English. We're adding Assamese and Malayalam in 2026."
+        a: "Language and voice availability vary by feature, browser, and configured provider. Transcription and translation may be inaccurate; review the result before relying on it."
     },
     {
         q: "Can lawyers use NyayNow to find clients?",
-        a: "Yes! The Lawyer Dashboard includes a full CRM, client management tools, AI-powered research, and a verified profile listing that helps you get discovered by clients in your practice area and city."
+        a: "Some accounts can access profile and practice-management features. Listings do not guarantee enquiries or clients; platform profile review is not independent proof of a current advocate licence."
     }
 ];
 
 const CATEGORIES = [
     { icon: <Zap size={22} />, title: "Getting Started", desc: "Account setup, first steps, and AI onboarding.", color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20", link: "/register" },
-    { icon: <Shield size={22} />, title: "Security & Privacy", desc: "Encryption, 2FA, data handling, and compliance.", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20", link: "/contact" },
+    { icon: <Shield size={22} />, title: "Security & Privacy", desc: "Review current data-handling disclosures and open items.", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20", link: "/security-and-compliance" },
     { icon: <FileText size={22} />, title: "Billing & Plans", desc: "Invoices, upgrades, cancellations, and enterprise.", color: "text-amber-400 bg-amber-500/10 border-amber-500/20", link: "/pricing" },
     { icon: <BookOpen size={22} />, title: "AI Features", desc: "How our models work and their limitations.", color: "text-purple-400 bg-purple-500/10 border-purple-500/20", link: "/assistant" },
-    { icon: <Users size={22} />, title: "Lawyer Tools", desc: "CRM, leads, verification, and practice tools.", color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20", link: "/marketplace" },
-    { icon: <Star size={22} />, title: "Premium Features", desc: "NyayCourt, DigiLocker, Legal SOS, and more.", color: "text-rose-400 bg-rose-500/10 border-rose-500/20", link: "/courtroom-battle" },
+    { icon: <Users size={22} />, title: "Lawyer Tools", desc: "Profile, CRM, and practice features; availability varies.", color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20", link: "/marketplace" },
+    { icon: <Star size={22} />, title: "Product Features", desc: "AI-assisted workflows, simulation, and legal SOS limitations.", color: "text-rose-400 bg-rose-500/10 border-rose-500/20", link: "/courtroom-battle" },
 ];
 
 export default function HelpCenter() {
@@ -151,7 +151,7 @@ export default function HelpCenter() {
                                 <MessageCircle size={28} />
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-2 font-serif">Still need help?</h3>
-                            <p className="text-slate-400 mb-8 text-sm leading-relaxed">Our support team is available Mon–Sat 9AM–7PM IST. Enterprise clients get 24/7 priority.</p>
+                            <p className="text-slate-400 mb-8 text-sm leading-relaxed">For support, use the contact page. Response times are not guaranteed.</p>
                             <Link href="/contact" className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 text-sm">
                                 Contact Support <ArrowRight size={16} />
                             </Link>

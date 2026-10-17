@@ -94,13 +94,13 @@ export default function BhashiniTranslator() {
       {/* Title */}
       <div className="text-center max-w-2xl mx-auto space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20 text-xs font-bold uppercase tracking-widest">
-          <Languages size={14} /> National Language Translation Mission (NLTM)
+          <Languages size={14} /> Machine translation
         </div>
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-white tracking-tight">
-          Bhashini <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Legal Translate</span>
+          Legal <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Text Translate</span>
         </h1>
         <p className="text-slate-400 text-sm md:text-base leading-relaxed font-light">
-          Break the language barrier. Instantly translate legal notices, contracts, and advice across 11 official Indian languages powered by Bhashini pipelines.
+          Translate text into a selected language using an available configured provider. Legal machine translations can be incomplete or inaccurate; have an advocate or qualified translator review them before relying on them.
         </p>
       </div>
 

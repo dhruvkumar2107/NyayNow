@@ -54,15 +54,13 @@ export default function LegalSOS() {
     const [phone, setPhone] = useState('');
     const [locationText, setLocationText] = useState('');
     const [phoneError, setPhoneError] = useState('');
-    const [routingStatus, setRoutingStatus] = useState('idle'); // idle | routing | routed
-    const [routedTicketId, setRoutedTicketId] = useState('');
     const recognitionRef = useRef(null);
 
     const handlePhoneChange = (val) => {
         setPhone(val);
         const indianPhoneRegex = /^(?:\+91|0)?[6-9]\d{9}$/;
         if (!val) {
-            setPhoneError('Phone number is required for emergency callback.');
+            setPhoneError('Phone number is required.');
         } else if (!indianPhoneRegex.test(val.replace(/\s+/g, ''))) {
             setPhoneError('Please enter a valid 10-digit Indian phone number.');
         } else {
@@ -143,7 +141,7 @@ export default function LegalSOS() {
         })));
         const shareUrl = `${window.location.origin}/legal-sos?case=${payload}`;
         navigator.clipboard.writeText(shareUrl);
-        toast.success('Encrypted case link copied! Share with your lawyer.');
+        toast.success('Case link copied! Share with your lawyer.');
     };
 
     const downloadFIR = () => {
@@ -192,7 +190,7 @@ export default function LegalSOS() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
                         </span>
-                        <span className="text-red-400 font-black text-xs tracking-[0.2em] uppercase">Emergency Legal Response Active</span>
+                        <span className="text-red-400 font-black text-xs tracking-[0.2em] uppercase">Legal information tool — not emergency dispatch</span>
                     </motion.div>
 
                     <motion.h1
@@ -213,7 +211,7 @@ export default function LegalSOS() {
                         transition={{ delay: 0.2 }}
                         className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-4 leading-relaxed"
                     >
-                        In a legal emergency? Get your fundamental rights, an AI-drafted FIR, and connect with a lawyer — in under <span className="text-white font-bold">60 seconds</span>.
+                        For immediate danger, call emergency services. This tool can help organize facts and prepare an AI-generated complaint draft for review; it does not contact authorities or file a complaint.
                     </motion.p>
 
                     {/* Emergency call bar */}
@@ -235,6 +233,7 @@ export default function LegalSOS() {
                         >
                             <Phone size={16} /> 181 (Women Helpline)
                         </a>
+                        <a href="tel:15100" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 text-slate-200 border border-white/10 font-bold text-sm hover:bg-white/10 transition">15100 (NALSA legal-aid helpline)</a>
                         <a
                             href="/nearby"
                             className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 text-slate-300 border border-white/10 font-bold text-sm hover:bg-white/10 transition active:scale-95"
@@ -254,7 +253,7 @@ export default function LegalSOS() {
                         <div className={`h-0.5 w-16 md:w-24 rounded transition-all duration-700 ${step > 1 ? 'bg-gradient-to-r from-red-500 to-emerald-500' : 'bg-white/10'}`} />
                         <StepDot n={2} current={step} label="Rights" />
                         <div className={`h-0.5 w-16 md:w-24 rounded transition-all duration-700 ${step > 2 ? 'bg-gradient-to-r from-red-500 to-emerald-500' : 'bg-white/10'}`} />
-                        <StepDot n={3} current={step} label="FIR Draft" />
+                        <StepDot n={3} current={step} label="Complaint draft" />
                     </motion.div>
                 </div>
             </div>
@@ -349,7 +348,7 @@ export default function LegalSOS() {
                             {/* Triage Questionnaire: Phone & Location */}
                             <div className="grid md:grid-cols-2 gap-6 bg-white/[0.02] border border-white/5 p-6 rounded-3xl">
                                 <div>
-                                    <label className="block text-white font-bold text-sm mb-2">Emergency Callback Phone Number *</label>
+                                    <label className="block text-white font-bold text-sm mb-2">Your Phone Number *</label>
                                     <input
                                         type="tel"
                                         value={phone}
@@ -474,83 +473,45 @@ export default function LegalSOS() {
                                 </div>
                             )}
 
-                            {/* ONE-CLICK EMERGENCY LAWYER ROUTING PANEL */}
+                            {/* EMERGENCY ADVOCATE CONNECT PANEL */}
                             <div className="bg-red-950/20 border border-red-500/30 rounded-3xl p-8 space-y-6 relative overflow-hidden backdrop-blur-md">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-bl-full pointer-events-none" />
-                                
+
                                 <div className="flex items-center gap-3">
                                     <Siren className="text-red-500 animate-pulse" size={24} />
                                     <div>
-                                        <h3 className="text-xl font-bold text-white">Emergency Advocate Response Network</h3>
-                                        <p className="text-xs text-slate-500 mt-0.5">SLA: 15-Minute response time • 24/7 Availability</p>
+                                        <h3 className="text-xl font-bold text-white">Connect With An Independent Advocate</h3>
+                                        <p className="text-xs text-slate-500 mt-0.5">Browse verified lawyers and contact them directly</p>
                                     </div>
                                 </div>
 
                                 <p className="text-sm text-slate-400 leading-relaxed">
-                                    Route your case details directly to the nearest criminal defense/emergency lawyer panel. A vetted, licensed advocate will call you on <strong className="text-white">{phone}</strong> within 15 minutes.
+                                    If you are in immediate danger or police custody, call <a href="tel:112" className="text-red-400 font-bold underline">112</a> (police emergency) right now.
+                                    To arrange legal representation, browse our marketplace of independent, verified advocates and contact them directly.
+                                    NyayNow does not employ advocates, does not dispatch cases on your behalf, and cannot guarantee any response time.
                                 </p>
 
-                                {routingStatus === 'idle' && (
-                                    <button
-                                        onClick={async () => {
-                                            setRoutingStatus('routing');
-                                            // Simulate secure routing call
-                                            setTimeout(() => {
-                                                setRoutingStatus('routed');
-                                                setRoutedTicketId(`SOS-${Math.floor(100000 + Math.random() * 900000)}`);
-                                                toast.success("Emergency lead dispatched securely!");
-                                            }, 2000);
-                                        }}
-                                        className="w-full py-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-lg shadow-red-500/20 transition-all active:scale-[0.98]"
-                                    >
-                                        Transmit Case to Lawyer Panel (One-Click)
-                                    </button>
-                                )}
+                                <a
+                                    href="/find-lawyers"
+                                    className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-lg shadow-red-500/20 transition-all active:scale-[0.98]"
+                                >
+                                    <Scale size={18} /> Find a Criminal Defense Lawyer
+                                </a>
 
-                                {routingStatus === 'routing' && (
-                                    <div className="flex items-center justify-center gap-3 py-4 bg-white/5 border border-white/10 rounded-xl">
-                                        <Loader2 className="animate-spin text-red-400" size={18} />
-                                        <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Encrypting and Dispatching...</span>
-                                    </div>
-                                )}
-
-                                {routingStatus === 'routed' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.98 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        className="p-5 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl space-y-4"
-                                    >
-                                        <div className="flex items-center gap-2 text-emerald-400">
-                                            <CheckCircle2 size={16} />
-                                            <span className="text-xs font-black uppercase tracking-wider">Status: Securely Routed (Priority 1)</span>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4 text-xs font-bold">
-                                            <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                                                <span className="text-slate-500 block uppercase tracking-wider mb-1">Ticket ID</span>
-                                                <span className="text-white font-mono">{routedTicketId}</span>
-                                            </div>
-                                            <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                                                <span className="text-slate-500 block uppercase tracking-wider mb-1">Response SLA</span>
-                                                <span className="text-emerald-400">15 Minutes Callback</span>
-                                            </div>
-                                        </div>
-
-                                        {/* SELF HELP GUIDES DURING LIVE ROUTING */}
-                                        <div className="pt-4 border-t border-white/5 space-y-3">
-                                            <span className="text-slate-400 font-black text-[10px] uppercase tracking-wider block">Immediate Self-Help Protocol:</span>
-                                            <ul className="space-y-2 text-xs text-slate-300 list-disc list-inside leading-relaxed">
-                                                <li><strong>Remain Calm:</strong> Speak politely and avoid confrontational behavior.</li>
-                                                <li><strong>Do Not Sign:</strong> Do not sign any confessions, papers, or statements without your lawyer present.</li>
-                                                <li><strong>Identify Officers:</strong> Politely ask the police officers for their names, ranks, and police station details.</li>
-                                                <li><strong>Contact Family:</strong> Inform a trusted relative or friend about your exact location and situation immediately.</li>
-                                                <li><strong>Document Events:</strong> Write down timestamps and exact details of what is happening or took place.</li>
-                                            </ul>
-                                        </div>
-                                    </motion.div>
-                                )}
+                                {/* SELF HELP GUIDES */}
+                                <div className="pt-4 border-t border-white/5 space-y-3">
+                                    <span className="text-slate-400 font-black text-[10px] uppercase tracking-wider block">Immediate Self-Help Protocol:</span>
+                                    <ul className="space-y-2 text-xs text-slate-300 list-disc list-inside leading-relaxed">
+                                        <li><strong>Remain Calm:</strong> Speak politely and avoid confrontational behavior.</li>
+                                        <li><strong>Do Not Sign:</strong> Do not sign any confessions, papers, or statements without your lawyer present.</li>
+                                        <li><strong>Identify Officers:</strong> Politely ask the police officers for their names, ranks, and police station details.</li>
+                                        <li><strong>Contact Family:</strong> Inform a trusted relative or friend about your exact location and situation immediately.</li>
+                                        <li><strong>Document Events:</strong> Write down timestamps and exact details of what is happening or took place.</li>
+                                    </ul>
+                                </div>
 
                                 <p className="text-[10px] text-slate-500 leading-normal italic">
-                                    Disclaimer: NyayNow acts solely as a technological router and does not provide direct legal representation. Dispatches are encrypted end-to-end. Routing does not establish a formal attorney-client relationship. Response SLA is subject to network availability and advocate response parameters.
+                                    Disclaimer: NyayNow is a technology platform and does not provide legal representation, does not employ or dispatch advocates, and does not guarantee any response time. Contacting an advocate through the marketplace does not by itself create an attorney-client relationship; that relationship is formed directly between you and the advocate.
                                 </p>
                             </div>
 

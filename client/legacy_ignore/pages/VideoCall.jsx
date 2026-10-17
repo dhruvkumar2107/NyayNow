@@ -32,7 +32,7 @@ export default function VideoCall() {
 
         const domain = "meet.jit.si";
         const options = {
-            roomName: `NyayNow-Secure-Meeting-${id}`,
+            roomName: `NyayNow-Meeting-${id}`,
             width: "100%",
             height: "100%",
             parentNode: jitsiContainer.current,
@@ -92,21 +92,24 @@ export default function VideoCall() {
                                 <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-3 h-3 bg-purple-500 rounded-full shadow-[0_0_10px_#a855f7]"></motion.div>
                                 <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-3 h-3 bg-emerald-500 rounded-full shadow-[0_0_10px_#10b981]"></motion.div>
                             </div>
-                            <h2 className="text-xl font-bold tracking-[0.2em] uppercase font-serif">Establishing Secure Uplink</h2>
+                            <h2 className="text-xl font-bold tracking-[0.2em] uppercase font-serif">Connecting to video provider</h2>
                             <p className="text-indigo-400 text-xs mt-3 font-mono font-bold flex items-center justify-center gap-2">
-                                <Lock size={12} /> End-to-End Encryption Enabled
+                                Video and participant information are handled by the configured conferencing provider.
                             </p>
                         </div>
                     </div>
                 )}
 
+                <div className="absolute top-24 left-6 right-6 z-20 mx-auto max-w-3xl rounded-lg bg-amber-950/90 px-4 py-2 text-center text-xs text-amber-100">
+                    Video is provided by meet.jit.si. Review its privacy terms; avoid sharing confidential case information in this meeting.
+                </div>
                 {/* VIDEO CONTAINER */}
                 <div className="w-full h-full rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl relative bg-black/50 backdrop-blur-xl">
-                    {/* Secure Badge */}
+                    {/* Provider disclosure */}
                     <div className="absolute top-6 left-6 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 shadow-lg">
                         <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]"></div>
                         <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-1">
-                            <ShieldCheck size={12} /> NYAY_SECURE_CHANNEL_v4
+                            <ShieldCheck size={12} /> Third-party video meeting
                         </span>
                     </div>
 

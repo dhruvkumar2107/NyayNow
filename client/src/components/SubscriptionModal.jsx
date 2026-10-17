@@ -31,7 +31,7 @@ const SubscriptionModal = ({ isOpen, onClose, featureName }) => {
 
                     <h2 className="text-3xl font-black text-white mb-2 tracking-tight">Unlock {featureName || "Feature"}</h2>
                     <p className="text-slate-400 mb-8 font-light text-sm leading-relaxed px-4">
-                        You've reached the free limit. Upgrade to <span className="text-indigo-400 font-bold">Diamond</span> for unlimited access to advanced legal intelligence.
+                        You&apos;ve reached the free limit. Upgrade to <span className="text-indigo-400 font-bold">Diamond</span> for unlimited access to advanced legal intelligence.
                     </p>
 
                     <div className="bg-white/5 rounded-2xl p-5 mb-8 border border-white/5 text-left space-y-3">

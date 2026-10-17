@@ -39,13 +39,20 @@ router.get('/', verifyToken, async (req, res) => {
 });
 
 // GET /api/users/public/:id - Get Public Profile of any user (usually lawyer)
+// Only fields intended for public marketplace display are returned. Credential,
+// billing and internal verification artifacts are never exposed here.
+const PUBLIC_PROFILE_FIELDS = [
+  "_id", "role", "name", "age", "sex", "specialization", "experience", "location",
+  "resume", "bio", "profileImage", "languages", "courts", "education", "socials",
+  "consultationFee", "availability", "isProfileComplete", "stats", "listingTier",
+  "isFeatured", "verified", "verificationStatus", "rejectionReason",
+  "isStudent", "createdAt"
+].join(" ");
+
 router.get("/public/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
-      .select("-password -__v -otp -otpExpires -email -phone"); // Exclude private info
-
+    const user = await User.findById(req.params.id).select(PUBLIC_PROFILE_FIELDS);
     if (!user) return res.status(404).json({ message: "User not found" });
-
     res.json(user);
   } catch (err) {
     console.error(err);
@@ -54,18 +61,64 @@ router.get("/public/:id", async (req, res) => {
 });
 
 // PUT /api/users/me - Secure Profile Update
+// Allowlist: only fields a user may legitimately edit about their own profile.
+// Security/entitlement fields (role, plan, verification, usage, billing,
+// tokenVersion, credentials) are intentionally NOT updatable here.
+const ALLOWED_PROFILE_FIELDS = [
+  "name", "age", "sex", "phone", "specialization", "experience", "location",
+  "resume", "bio", "headline", "awards", "profileImage", "languages", "courts",
+  "education", "socials", "consultationFee", "availability", "isProfileComplete",
+  "settings", "isStudent", "studentRollNumber"
+];
+
 router.put("/me", verifyToken, async (req, res) => {
   try {
-    const updates = req.body;
-    // Prevent privilege escalation via this route
-    const PROTECTED_FIELDS = ['role', 'password', 'plan', 'verified', 'verificationStatus', 'credits', 'googleId'];
-    for (const field of PROTECTED_FIELDS) {
-      delete updates[field];
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    const updates = {};
+    for (const field of ALLOWED_PROFILE_FIELDS) {
+      if (Object.prototype.hasOwnProperty.call(body, field)) {
+        updates[field] = body[field];
+      }
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No updatable fields provided" });
     }
 
     const user = await User.findByIdAndUpdate(req.userId, updates, { new: true }).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
-    res.json(user);
+    // Normalise _id -> id so the client's compact user object keeps its identifier
+    const obj = user.toObject();
+    obj.id = obj._id;
+    res.json(obj);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update profile" });
+  }
+});
+
+// PUT /api/users/:id - backward-compatible self-update. A user may ONLY update
+// their own profile through this alias; any other id is rejected.
+router.put("/:id", verifyToken, async (req, res) => {
+  try {
+    if (req.params.id !== req.userId) {
+      return res.status(403).json({ message: "Forbidden: you can only update your own profile" });
+    }
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    const updates = {};
+    for (const field of ALLOWED_PROFILE_FIELDS) {
+      if (Object.prototype.hasOwnProperty.call(body, field)) {
+        updates[field] = body[field];
+      }
+    }
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No updatable fields provided" });
+    }
+    const user = await User.findByIdAndUpdate(req.userId, updates, { new: true }).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    const obj = user.toObject();
+    obj.id = obj._id;
+    res.json(obj);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to update profile" });
@@ -132,34 +185,32 @@ router.put("/me/password", verifyToken, async (req, res) => {
   }
 });
 
-// GET /api/users/stats/public - Public statistics (query count, precedents)
+// GET /api/users/stats/public - Public statistics.
+// Only real, DB-derived values are reported. We do NOT inflate or hardcode
+// numbers — if data is unavailable the endpoint returns honest zeros.
 router.get("/stats/public", async (req, res) => {
   try {
-    const totalLawyers = await User.countDocuments({ role: "lawyer" });
-    
+    const totalLawyers = await User.countDocuments({ role: "lawyer", verified: true, verificationStatus: "verified" });
+
     const ChatHistory = require("../models/ChatHistory");
     const GuestUsage = require("../models/GuestUsage");
-    
+
     const guestQueries = await GuestUsage.aggregate([
       { $group: { _id: null, total: { $sum: "$count" } } }
     ]);
     const guestTotal = guestQueries.length > 0 ? guestQueries[0].total : 0;
-    
+
     const chatQueries = await ChatHistory.countDocuments();
-    const totalQueries = 12400 + guestTotal + chatQueries;
-    
+    const totalQueries = guestTotal + chatQueries;
+
     res.json({
       queries: totalQueries,
-      precedents: 1200000,
       lawyers: totalLawyers
     });
   } catch (err) {
     console.error("Failed to fetch public stats:", err);
-    res.json({
-      queries: 12847,
-      precedents: 1200000,
-      lawyers: 48
-    });
+    // Honest fallback — never present invented figures as real
+    res.json({ queries: 0, lawyers: 0 });
   }
 });
 

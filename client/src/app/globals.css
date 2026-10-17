@@ -34,8 +34,8 @@
 
 /* Global resets */
 :root {
-  --font-sans: 'Inter', sans-serif;
-  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', Inter, ui-sans-serif, system-ui, sans-serif;
   --color-bg: #000000;
   --color-bg-elevated: #0a0f1e;
   --color-card: #0f172a;

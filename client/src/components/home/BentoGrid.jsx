@@ -33,16 +33,16 @@ export function BentoGrid() {
                     />
                     <BentoCard
                         title="NyayVoice AI"
-                        desc="Democratizing law in 14+ Indian dialects. Breaking the English barrier for 1.4B people."
+                        desc="Voice input is available in supported browser and language combinations; transcription quality can vary."
                         icon={<Mic className="text-white" size={20} />}
                         color="from-cyan-500 via-blue-500 to-indigo-500"
                         href="/nyayvoice"
-                        badge="Every Language"
+                        badge="Language support varies"
                         className="md:col-span-4 md:row-span-1"
                     />
                     {/* <BentoCard
                         title="Elite Network"
-                        desc="Direct access to the top 1% of India's verified legal minds."
+                        desc="Browse lawyer profiles and verify credentials independently before engaging."
                         icon={<Users className="text-white" size={20} />}
                         color="from-blue-500 via-blue-600 to-indigo-600"
                         href="/marketplace"
@@ -51,7 +51,7 @@ export function BentoGrid() {
                     /> */}
                     <BentoCard
                         title="Drafting Lab"
-                        desc="Deploy Agentic AI to autonomously draft and negotiate enterprise contracts."
+                        desc="Generate editable document drafts for human review; automated negotiation is not available."
                         icon={<FileText className="text-white" size={20} />}
                         color="from-blue-400 via-cyan-500 to-emerald-500"
                         href="/drafting"
@@ -59,7 +59,7 @@ export function BentoGrid() {
                     />
                     <BentoCard
                         title="Precedent Engine"
-                        desc="Find winning precedents across judicial records with neural semantic search."
+                        desc="Search available legal records and review source links; search results do not indicate likely case outcomes."
                         icon={<Search className="text-white" size={20} />}
                         color="from-indigo-500 via-violet-500 to-purple-500"
                         href="/research"

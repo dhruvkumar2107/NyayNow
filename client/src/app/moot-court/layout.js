@@ -1,6 +1,6 @@
 export const metadata = {
-    title: 'AI Moot Court Simulator | Advocate Practice - NyayNow',
-    description: 'Practice legal oral arguments in our virtual Moot Court. Present your case to a simulated AI panel of judges, receive critiques, and improve advocacy skills.',
+    title: 'Moot court practice — in development | NyayNow',
+    description: 'Moot court scoring and citation assessment are disabled while legal-source verification and evaluation remain in development.',
     alternates: {
         canonical: 'https://nyaynow.in/moot-court',
     },

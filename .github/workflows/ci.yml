@@ -36,7 +36,7 @@ jobs:
         cache-dependency-path: server/package-lock.json
 
     - name: Install Backend Dependencies
-      run: npm install
+      run: npm ci
 
     - name: Run Backend Tests
       run: npm test
@@ -44,13 +44,9 @@ jobs:
         NODE_ENV: test
         JWT_SECRET: "test_secret"
         MONGO_URI: "mongodb://127.0.0.1:27017/test_db" 
-        # Note: In a real CI, we'd spin up a MongoDB service container. 
-        # For this simple template, tests might fail if they expect a real DB connection.
-        # We'll skip DB tests or mock them. 
-        # Our api.test.js closes the connection gracefully even if it fails to connect.
         
     - name: Frontend Build Check
       working-directory: ./client
       run: |
-        npm install
+        npm ci
         npm run build > build_ci.log 2>&1 || (cat build_ci.log && exit 1)

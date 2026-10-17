@@ -1,29 +1,21 @@
 'use client'
 
-import { Scale, Users, ShieldAlert, CheckCircle, ArrowRight } from "lucide-react"
+import Link from "next/link"
+import { Scale, Users, ShieldAlert, ArrowRight } from "lucide-react"
 
 export default function CaseStudies() {
-    const studies = [
+    const useCases = [
         {
-            title: "Transitioning to BNS 2024",
-            industry: "Legal Practice Group",
-            summary: "How a mid-sized law firm in Bengaluru mapped their open litigations to the new Bharatiya Nyaya Sanhita criminal codes in under 48 hours using the NyayNow Precedent Engine.",
-            metric: "90% Time Saved",
+            title: "Understand a legal question",
+            industry: "Current product capability",
+            summary: "A user can ask a question in the assistant and receive an AI-generated informational response. Selected routes can include search results from Indian Kanoon when the integration is configured. All citations need source verification.",
             icon: Scale
         },
         {
-            title: "Pro-bono Legal Aid Assistance",
-            industry: "Non-Profit Organization",
-            summary: "A legal aid society used NyayVoice dialect models to capture audio testimony from rural clients in Hindi and Kannada, automatically mapping claims to statutory guidelines.",
-            metric: "400+ Clients Guided",
+            title: "Practice advocacy",
+            industry: "Current product capability",
+            summary: "Interactive moot-court and courtroom simulation experiences let users practice argumentation. These are learning tools, not court-tested legal outcomes or professional representation.",
             icon: Users
-        },
-        {
-            title: "Contract Compliance Restructuring",
-            industry: "Technology Enterprise",
-            summary: "A cloud-hosting company scrubbed 1,200 active client service level agreements to conform to data retention rules outlined in the Indian DPDP Act 2023.",
-            metric: "Zero Compliancy Gaps",
-            icon: CheckCircle
         }
     ]
 
@@ -35,18 +27,18 @@ export default function CaseStudies() {
 
                 <div className="mb-16">
                     <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-6">
-                        <Users size={12} /> Case Studies
+                        <Users size={12} /> Product use cases
                     </span>
                     <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">
-                        Case Studies
+                        Product use cases
                     </h1>
                     <p className="text-slate-400 text-lg">
-                        Explore how advocates, organizations, and businesses leverage NyayNow to streamline legal workflows and master transitions to the new 2024 legal frameworks.
+                        These describe product workflows, not customer deployments. We will publish measured outcomes only with permission and supporting evidence.
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-8 mb-16">
-                    {studies.map((study) => {
+                    {useCases.map((study) => {
                         const Icon = study.icon
                         return (
                             <div key={study.title} className="p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all duration-300 relative group overflow-hidden">
@@ -64,23 +56,20 @@ export default function CaseStudies() {
                                         </div>
                                         <p className="text-slate-400 leading-relaxed text-sm md:text-base">{study.summary}</p>
                                     </div>
-                                    <div className="bg-white/5 border border-white/5 px-6 py-4 rounded-2xl text-center min-w-[150px] self-start md:self-center">
-                                        <span className="text-xs text-slate-500 block mb-1">Impact</span>
-                                        <span className="text-sm font-black text-white uppercase tracking-wider">{study.metric}</span>
-                                    </div>
+                                    <span className="text-xs font-bold text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-full px-3 py-2">Available workflow</span>
                                 </div>
                             </div>
                         )
                     })}
                 </div>
 
-                {/* Privacy Warning */}
                 <div className="p-6 rounded-2xl bg-white/5 border border-white/5 flex items-start gap-4">
                     <ShieldAlert size={20} className="text-slate-500 shrink-0 mt-0.5" />
                     <p className="text-slate-500 text-xs leading-relaxed">
-                        To maintain strict advocate-client privileges and adhere to the DPDP Act 2023, case studies are modeled based on general platform usage reports. Identifiable details, specific facts, and litigation records have been fully anonymized.
+                        NyayNow is seeking design partners to validate time saved, citation accuracy, language quality, and repeat usage with consented workflows. No customer results or measured impact are claimed on this page.
                     </p>
                 </div>
+                <Link href="/contact" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-400 hover:text-blue-300">Discuss a pilot <ArrowRight size={15} /></Link>
             </main>
 
         </div>

@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function AssistantPage() {
   const { user } = useAuth();
   const [messages, setMessages] = useState([
-    { role: "assistant", content: "Namaste! I am NyayNow's AI Legal Assistant, trained on Indian law (BNS 2024, BNSS, Constitution). Ask me anything about your legal situation and I'll provide information grounded in current Indian law." }
+    { role: "assistant", content: "Namaste! I can help organize a legal question and provide AI-generated information. Responses may be incomplete or out of date; verify any legal claim against an official source and consult an advocate before acting." }
   ]);
   const [input, setInput]       = useState("");
   const [loading, setLoading]   = useState(false);
@@ -109,7 +109,7 @@ export default function AssistantPage() {
             </motion.div>
             <div>
               <h1 className="text-lg font-bold tracking-tight text-gradient-blue">AI Legal Assistant</h1>
-              <p className="text-xs text-slate-500">Grounded in BNS 2024 · Indian Law</p>
+              <p className="text-xs text-slate-500">AI-generated information · verify independently</p>
             </div>
           </div>
           <div className="flex items-center gap-3">

@@ -139,7 +139,7 @@ export default function LegalConfessionBooth() {
                                     <Lock size={9} />Anonymous
                                 </span>
                             </div>
-                            <p className="text-slate-500 text-sm">Your identity is never revealed. AI + verified lawyers respond.</p>
+                            <p className="text-slate-500 text-sm">Review the privacy terms before sharing sensitive details. Replies may be AI-generated and are not necessarily reviewed by a lawyer.</p>
                         </div>
                     </div>
                     <button

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { motion, useSpring, useMotionValue } from "framer-motion"
 import { useAuth } from "../../context/AuthContext"
 import { useLanguage } from "../../context/LanguageContext"
-import { ShieldCheck, ChevronRight, Lock, Sparkles, Scale } from "lucide-react"
+import { ShieldCheck, ChevronRight, Sparkles, Scale, BookOpen } from "lucide-react"
 
 export default function HeroSection() {
     const { user } = useAuth()
@@ -68,7 +68,7 @@ export default function HeroSection() {
                         animate={{ scale: [1, 1.2, 1] }} 
                         transition={{ duration: 1.5, repeat: Infinity }}
                     />
-                    <span>{t("hero.badge")}</span>
+                    <span>Verified Legal Intelligence — in development</span>
                     <span className="w-1 h-1 rounded-full bg-white/20 mx-1" />
                     <span className="text-white/20">v2.0 Beta</span>
                 </motion.div>
@@ -118,8 +118,8 @@ export default function HeroSection() {
                         <p className="text-lg md:text-xl text-slate-400 font-medium leading-relaxed tracking-tight">
                             {t("hero.subtitle")}
                         </p>
-                        <p className="text-blue-400/80 text-[10px] font-black uppercase tracking-[0.4em] pb-4">
-                            {t("hero.grounded")}
+                    <p className="text-blue-400/80 text-[10px] font-black uppercase tracking-[0.2em] pb-4">
+                            AI output is not citation-verified today. Check source records before relying on it.
                         </p>
                     </motion.div>
                 </div>
@@ -169,9 +169,9 @@ export default function HeroSection() {
                     transition={{ duration: 1.5, delay: 1 }}
                     className="mt-24 space-y-8"
                 >
-                    <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.4em]">{t("hero.integrated")}</p>
+                    <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.4em]">Built for Indian legal workflows</p>
                     <div className="flex flex-wrap items-center justify-center gap-x-6 md:gap-x-12 gap-y-6 grayscale opacity-30 invert hover:opacity-60 transition-opacity duration-500">
-                        {['e-Courts', 'Bar Council Info', 'NALSA', 'NIC', 'Supreme Court Data'].map((partner) => (
+                        {['Indian statutes', 'Advocate workflows', 'Regional language access'].map((partner) => (
                            <motion.div
                                key={partner}
                                initial={{ opacity: 0, y: 10 }}
@@ -190,16 +190,15 @@ export default function HeroSection() {
                     {/* STAT BAR — keyword-rich, server-rendered, crawlable */}
                     <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
                         {[
-                            { value: '10,000+', label: 'Legal Queries Answered', icon: Sparkles, color: 'text-amber-400' },
-                            { value: 'BNS 2024', label: 'Compliant AI Responses', icon: Scale, color: 'text-blue-400' },
-                            { value: '14', label: 'Indian Languages', icon: Sparkles, color: 'text-emerald-400' },
-                            { value: 'BCI', label: 'Bar Council Verified', icon: ShieldCheck, color: 'text-indigo-400' },
-                        ].map(({ value, label, icon: Icon, color }) => (
+                            { value: 'AI-assisted', label: 'Generated information can be wrong', icon: Sparkles, color: 'text-blue-400' },
+                            { value: 'Review', label: 'Ask a qualified advocate before acting', icon: ShieldCheck, color: 'text-emerald-400' },
+                            { value: 'Sources', label: 'Check primary records independently', icon: BookOpen, color: 'text-indigo-400' },
+                        ].map(({ value, label, icon: Icon, color }, index) => (
                             <motion.div
                                 key={label}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 1.2 + ['Legal Queries Answered', 'Compliant AI Responses', 'Indian Languages', 'Bar Council Verified'].indexOf(label) * 0.1 }}
+                                transition={{ delay: 1.2 + index * 0.1 }}
                                 className="flex flex-col items-center gap-1 px-4 py-4 rounded-2xl bg-glass border border-white/5 hover:border-blue-500/20 transition-all card-premium-interactive"
                             >
                                 <div className="flex items-center gap-2 mb-2">
@@ -213,29 +212,10 @@ export default function HeroSection() {
 
                     {/* SPEAKABLE — used by SpeakableSpecification schema + GEO crawlers */}
                     <p className="speakable sr-only">
-                        NyayNow is India's AI-powered legal platform offering free legal advice grounded in BNS 2024 and IPC sections,
-                        Bar Council of India verified lawyer connections, Supreme Court and High Court case data,
-                        autonomous contract drafting, Legal SOS emergency response, and support in 14 Indian languages including Hindi and Tamil.
+                        NyayNow provides AI-assisted legal information and workflow tools for India. AI outputs may be inaccurate; verify citations and consult a qualified advocate before acting.
                     </p>
                 </motion.div>
 
-                {/* BOTTOM TRUST SIGNAL */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1.5, delay: 1.2 }}
-                    className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-slate-500 text-[10px] font-black uppercase tracking-[0.3em] opacity-50"
-                >
-                    <div className="flex items-center gap-2 group cursor-default hover:text-blue-400 transition-colors">
-                        <Lock size={12} />
-                        <span>{t("hero.encryption")}</span>
-                    </div>
-                    <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-slate-800" />
-                    <div className="flex items-center gap-2 group cursor-default hover:text-emerald-400 transition-colors">
-                        <ShieldCheck size={12} />
-                        <span>{t("hero.bci")}</span>
-                    </div>
-                </motion.div>
             </div>
         </section>
     )

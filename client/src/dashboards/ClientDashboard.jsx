@@ -592,7 +592,7 @@ export default function ClientDashboard() {
                   </div>
                   <div className="flex items-center gap-3 text-xs text-slate-300">
                     <span className="text-slate-500">○</span>
-                    <span>Analyze win probability with Judge AI Outcome Predictor</span>
+                    <span>Review experimental AI-assisted case analysis (not a validated outcome prediction)</span>
                     <Link href="/judge-ai" className="text-[10px] text-indigo-400 font-bold hover:underline ml-auto">Launch Predictor →</Link>
                   </div>
                 </div>
@@ -631,7 +631,7 @@ export default function ClientDashboard() {
                       <div className="p-4 bg-white/[0.02] rounded-2xl border border-white/[0.08] text-center hover:bg-white/[0.05] hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => setShowPostModal(true)}>
                         <div className="text-xl mb-1.5 group-hover:scale-110 transition">📝</div>
                         <div className="font-bold text-xs text-white">Brief New Case Matter</div>
-                        <p className="text-[10px] text-slate-500 mt-0.5">Get matched with verified advocates</p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">Browse lawyer profiles; verify credentials independently</p>
                       </div>
                       {/* JUDGE AI MINI WIDGET */}
                       <div className="p-4 bg-gradient-to-br from-indigo-950/20 to-slate-900/40 rounded-2xl border border-indigo-500/20 text-center hover:border-indigo-500/40 transition cursor-pointer group relative overflow-hidden" onClick={() => router.push('/judge-ai')}>
@@ -990,7 +990,7 @@ export default function ClientDashboard() {
               </div>
               <h3 className="font-bold text-2xl text-white mb-3">Broadcasting Secure Uplink</h3>
               <p className="text-slate-400 text-sm mb-8 leading-relaxed">
-                We are alerting our network of verified legal professionals. Stay on this screen; the first available expert will connect with you shortly.
+                This demo request does not confirm that an advocate has been contacted or will respond. Use the marketplace to browse profiles and confirm availability directly.
               </p>
               <div className="flex flex-col gap-4">
                 <div className="flex justify-center gap-2 mb-2">

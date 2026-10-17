@@ -14,7 +14,7 @@ export default function ChooserCards() {
     const citizenServices = [
         {
             title: "Ask a Legal Question",
-            desc: "Get instant, AI-powered answers grounded in Indian Law (BNS & IPC).",
+            desc: "Ask for AI-assisted legal information. Check current primary sources before relying.",
             link: "/assistant",
             icon: Sparkles,
             badge: "Free Trial",
@@ -27,7 +27,7 @@ export default function ChooserCards() {
             desc: "Consult top advocates filtered by city, budget, and language.",
             link: "/marketplace",
             icon: UserCheck,
-            badge: "BCI Verified",
+            badge: "Profile details",
             color: "from-emerald-500/10 to-teal-500/10 border-emerald-500/30 hover:border-emerald-500/80 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]",
             iconColor: "text-emerald-400",
             gradient: "from-emerald-500 to-teal-500",
@@ -54,10 +54,10 @@ export default function ChooserCards() {
         },
         {
             title: "Voice Search (NyayVoice)",
-            desc: "Speak your queries directly in Hindi, Tamil, Telugu, and 11+ languages.",
+            desc: "Voice input depends on browser support and the selected language; transcription quality can vary.",
             link: "/nyayvoice",
             icon: Mic,
-            badge: "14+ Dialects",
+            badge: "Voice assistant",
             color: "from-cyan-500/10 to-blue-500/10 border-cyan-500/30 hover:border-cyan-500/80 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]",
             iconColor: "text-cyan-400",
             gradient: "from-cyan-500 to-blue-500",
@@ -67,7 +67,7 @@ export default function ChooserCards() {
     const professionalServices = [
         {
             title: "Outcome Predictor (Judge AI)",
-            desc: "Analyze win probability, legal risks, and precedents from court cases.",
+            desc: "Explore experimental AI-assisted case analysis. No outcome prediction is validated.",
             link: "/judge-ai",
             icon: Sparkles,
             badge: "Advanced AI",
@@ -87,10 +87,10 @@ export default function ChooserCards() {
         },
         {
             title: "Legal Precedent Search",
-            desc: "Locate winning case law citations across 1.2M+ Indian judgments.",
+            desc: "Search for Indian legal materials and review AI-assisted summaries with source checks.",
             link: "/research",
             icon: Search,
-            badge: "Semantic Search",
+            badge: "Legal research",
             color: "from-pink-500/10 to-rose-500/10 border-pink-500/30 hover:border-pink-500/80 hover:shadow-[0_0_30px_rgba(236,72,153,0.15)]",
             iconColor: "text-pink-400",
             gradient: "from-pink-500 to-rose-500",
@@ -153,7 +153,7 @@ export default function ChooserCards() {
                     layout
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
-                    <AnimatePresence mode="wait">
+                    <AnimatePresence>
                         {activeServices.map((card, idx) => {
                             const Icon = card.icon
                             return (

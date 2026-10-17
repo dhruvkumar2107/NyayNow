@@ -3,7 +3,26 @@ const router = express.Router();
 const crypto = require('crypto');
 const User = require('../models/User');
 const Payment = require('../models/Payment'); // Make sure this model exists
+const AdminAuditLog = require('../models/AdminAuditLog');
 const verifyToken = require('../middleware/authMiddleware');
+
+// Append-only audit trail for sensitive admin actions. Never throws — a failed
+// audit write must not break the underlying operation, but is surfaced in logs.
+async function writeAdminAudit(req, action, targetId, details = {}) {
+    try {
+        await AdminAuditLog.create({
+            actorId: req.userId,
+            action,
+            targetType: 'user',
+            targetId: targetId || null,
+            details,
+            ip: req.ip || null,
+            timestamp: new Date(),
+        });
+    } catch (err) {
+        console.error("❌ Failed to write admin audit log:", err.message);
+    }
+}
 
 // In-memory store for admin access tokens (hash → expiresAt)
 const adminTokenStore = new Map(); // userId → { hash, expiresAt }
@@ -64,9 +83,15 @@ router.post('/verify-lawyer/:id', verifyToken, async (req, res) => {
     try {
         if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
         const { status } = req.body; // 'approved' or 'rejected'
+        if (status !== 'approved' && status !== 'rejected') {
+            return res.status(400).json({ error: "status must be 'approved' or 'rejected'" });
+        }
         const user = await User.findById(req.params.id);
 
         if (!user) return res.status(404).json({ error: "User not found" });
+        if (user.role !== 'lawyer') return res.status(400).json({ error: "Target user is not a lawyer" });
+
+        const previousStatus = user.verificationStatus;
 
         if (status === 'approved') {
             user.verified = true;
@@ -79,6 +104,14 @@ router.post('/verify-lawyer/:id', verifyToken, async (req, res) => {
         }
 
         await user.save();
+
+        await writeAdminAudit(
+            req,
+            status === 'approved' ? 'lawyer_verified' : 'lawyer_rejected',
+            user._id,
+            { previousStatus, newStatus: user.verificationStatus, reason: req.body.reason || null }
+        );
+
         res.json({ message: `Lawyer ${status} successfully`, user });
     } catch (err) {
         console.error(err);
@@ -103,12 +136,16 @@ router.post('/request-access', verifyToken, async (req, res) => {
         adminTokenStore.set(req.userId, { hash, expiresAt: Date.now() + ACCESS_TOKEN_TTL_MS });
 
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+            // In production we must NOT leak the access token to logs or the
+            // response. Fail closed so the admin uses a configured channel.
+            if (process.env.NODE_ENV === 'production') {
+                console.error("❌ Admin access requested but email credentials are not configured.");
+                return res.status(503).json({ error: "Access token delivery unavailable. Contact the system operator." });
+            }
             console.warn("⚠️ Nodemailer credentials missing. Access token printed to server log.");
             console.log(`[ACCESS TOKEN] ${user.email} -> ${token}`);
             const devResponse = { message: "Token generated (check server logs)" };
-            if (process.env.NODE_ENV === 'development') {
-                devResponse.devToken = token;
-            }
+            devResponse.devToken = token;
             return res.json(devResponse);
         }
 
@@ -183,15 +220,23 @@ router.get('/lawyers', verifyToken, async (req, res) => {
 });
 
 // POST /api/admin/update-user-plan/:id — Edit client/lawyer subscription plan
+const VALID_PLANS = ['free', 'silver', 'gold', 'diamond', 'pro', 'firm'];
 router.post('/update-user-plan/:id', verifyToken, async (req, res) => {
     try {
         if (req.userRole !== 'admin') return res.status(403).json({ error: "Access denied" });
         const { plan } = req.body;
+        if (!VALID_PLANS.includes(plan)) {
+            return res.status(400).json({ error: `plan must be one of: ${VALID_PLANS.join(', ')}` });
+        }
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json({ error: "User not found" });
 
+        const previousPlan = user.plan;
         user.plan = plan;
         await user.save();
+
+        await writeAdminAudit(req, 'user_plan_changed', user._id, { previousPlan, newPlan: plan });
+
         res.json({ message: "User plan updated successfully", user });
     } catch (err) {
         console.error(err);
@@ -207,6 +252,7 @@ router.delete('/user/:id', verifyToken, async (req, res) => {
         if (!user) return res.status(404).json({ error: "User not found" });
 
         await User.findByIdAndDelete(req.params.id);
+        await writeAdminAudit(req, 'user_deleted', user._id, { email: user.email, role: user.role, plan: user.plan });
         res.json({ message: "User removed successfully" });
     } catch (err) {
         console.error(err);

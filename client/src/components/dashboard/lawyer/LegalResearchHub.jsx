@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, BookOpen, Scale, FileText, Loader2, AlertTriangle, ExternalLink, Filter } from 'lucide-react';
+import { Search, BookOpen, Scale, FileText, Loader2, AlertTriangle, ExternalLink, Filter, Sparkles } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -149,17 +149,17 @@ export default function LegalResearchHub() {
                                             fill="transparent"
                                             strokeDasharray="251.2"
                                             initial={{ strokeDashoffset: 251.2 }}
-                                            animate={{ strokeDashoffset: 251.2 - (251.2 * (results.confidence_score || 85)) / 100 }}
+                                            animate={{ strokeDashoffset: 251.2 }}
                                             transition={{ duration: 1.5, ease: "easeOut" }}
                                             className="text-indigo-500"
                                         />
                                     </svg>
                                     <div className="absolute inset-0 flex items-center justify-center flex-col">
-                                        <span className="text-2xl font-black text-white">{results.confidence_score || 85}%</span>
+                                        <span className="text-xs font-bold text-white">Not scored</span>
                                     </div>
                                 </div>
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Grounding Confidence</h4>
-                                <p className="text-[9px] text-indigo-400 font-bold uppercase tracking-widest">Verified Citations</p>
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Source review</h4>
+                                <p className="text-[9px] text-indigo-400 font-bold uppercase tracking-widest">Open and verify each source</p>
                             </div>
                         </div>
 
@@ -181,7 +181,7 @@ export default function LegalResearchHub() {
                                                         {c.citation}
                                                     </span>
                                                     <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-slate-400 font-bold uppercase border border-white/5">
-                                                        VERIFIED LIVE
+                                                        SOURCE LINK
                                                     </span>
                                                 </div>
                                             </div>

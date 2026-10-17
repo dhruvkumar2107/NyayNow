@@ -69,14 +69,14 @@ export default function PrecedentEnginePage() {
                     caseName: c.name,
                     citation: c.citation,
                     summary: c.ratio || c.relevance || c.summary,
-                    relevanceScore: data.confidence_score || 90
+                    relevanceScore: null
                 })))
             } else if (data.summary) {
                 setResults([{
                     caseName: 'Research Summary',
                     citation: 'AI Legal Research Engine',
                     summary: data.summary,
-                    relevanceScore: data.confidence_score || 75
+                    relevanceScore: null
                 }])
             } else {
                 setError("No results found. Please refine your query.")
@@ -111,25 +111,9 @@ export default function PrecedentEnginePage() {
             setCaseDetail(res.data)
         } catch (err) {
             console.error(err)
-            toast.error("Failed to load case profile. Generating fallback profile...")
-            
-            // Fallback profile if API fails
-            setCaseDetail({
-                caseName: caseItem.caseName,
-                citation: caseItem.citation,
-                court: "Supreme Court of India",
-                bench: "Division Bench",
-                date: "Recent Ruling",
-                summary: caseItem.summary,
-                firac: {
-                  facts: "Detailed facts are being indexed. This case concerns the application of regulatory laws and civil/criminal liabilities.",
-                  issue: "Whether the actions of the petitioner violate the provisions of the stated statutes.",
-                  rule: "Constitution of India, BNS (2024), and relevant statutory precedents.",
-                  analysis: "The court reviewed previous decisions and noted the importance of balancing public interest with regulatory compliance.",
-                  conclusion: "The court directed the parties to adhere to statutory guidelines, disposed of the petition, and upheld the lower court findings."
-                },
-                fullText: `Formal Order of the Court:\n\nHaving heard learned counsel for both parties, the Court observes that the issues raised herein have significant constitutional and statutory implications. Upon detailed analysis of the facts and rules cited, it is ordered that the petition stands disposed of in terms of the observations made in the detailed report. The parties shall bear their own costs.`
-            })
+            // Do not fabricate a judgment profile when the source lookup fails.
+            setCaseDetail(null)
+            toast.error("Case details could not be retrieved. Please try again later.")
         } finally {
             setIsDetailLoading(false)
         }
@@ -176,11 +160,11 @@ export default function PrecedentEnginePage() {
         doc.setTextColor(255, 255, 255)
         doc.setFontSize(20)
         doc.setFont("helvetica", "bold")
-        doc.text("NyayNow Precedent Report", 15, 25)
+        doc.text("NyayNow AI Research Note", 15, 25)
         
         doc.setFontSize(9)
         doc.setFont("helvetica", "normal")
-        doc.text("OFFICIAL CASE DETAILS & FIRAC ANALYSIS", 15, 32)
+        doc.text("AI-GENERATED SUMMARY — VERIFY AGAINST THE SOURCE", 15, 32)
 
         // Metadata
         doc.setTextColor(50, 50, 50)
@@ -250,11 +234,11 @@ export default function PrecedentEnginePage() {
                         animate={{ opacity: 1, scale: 1 }}
                         className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mb-8"
                     >
-                        <Sparkles size={12} /> Semantic Law Search Active
+                        <Sparkles size={12} /> AI-assisted legal research
                     </motion.div>
                     <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">Research Institutional Cases.</h2>
                     <p className="text-slate-400 text-lg max-w-2xl mx-auto font-medium">
-                        Query the entire corpus of Indian statutory Law and Precedents using specialized AI embeddings.
+                        Search Indian legal materials and review AI-generated summaries. Verify every result against its source before relying on it.
                     </p>
                 </div>
 
@@ -296,9 +280,7 @@ export default function PrecedentEnginePage() {
                                 <div className="flex flex-col md:flex-row justify-between items-start gap-6">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-3 mb-4">
-                                            <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-black text-blue-400 uppercase tracking-widest">
-                                                Relevance: {result.relevanceScore}%
-                                            </div>
+                                            {result.relevanceScore != null && <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-black text-blue-400 uppercase tracking-widest">Relevance: {result.relevanceScore}%</div>}
                                             <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                                 {result.citation}
                                             </div>
@@ -370,10 +352,12 @@ export default function PrecedentEnginePage() {
                             <div className="p-6 border-b border-white/10 flex justify-between items-start">
                                 <div className="space-y-1 pr-6">
                                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-400">
-                                        <Sparkles size={12} /> Precedent Intelligence Profile
+                                        <Sparkles size={12} /> AI-assisted case profile
                                     </div>
                                     <h3 className="text-xl font-bold text-white leading-tight">{selectedCase.caseName}</h3>
                                     <p className="text-xs text-slate-500 font-mono">{selectedCase.citation}</p>
+                                    {caseDetail?.sourceType && <p className="text-xs text-slate-400">{caseDetail.sourceType === 'indian-kanoon-document' ? 'Summary based on a retrieved Indian Kanoon document' : 'AI-generated summary using search context'}</p>}
+                                    {caseDetail?.sourceUrl && <a className="text-xs text-blue-400 hover:text-blue-300 underline" href={caseDetail.sourceUrl} target="_blank" rel="noreferrer">Open source document</a>}
                                 </div>
                                 <button 
                                     onClick={() => setSelectedCase(null)}
@@ -388,7 +372,7 @@ export default function PrecedentEnginePage() {
                                 <div className="flex-1 flex flex-col items-center justify-center text-center">
                                     <Loader2 className="animate-spin text-blue-500 mb-4" size={40} />
                                     <p className="text-sm font-bold text-slate-300">Retrieving Judgment Records...</p>
-                                    <p className="text-xs text-slate-500 mt-1">Grounding FIRAC metrics & citations</p>
+                                    <p className="text-xs text-slate-500 mt-1">Loading case information and an AI-generated summary</p>
                                 </div>
                             ) : caseDetail ? (
                                 <>
@@ -411,7 +395,7 @@ export default function PrecedentEnginePage() {
                                         {[
                                             { id: 'summary', label: 'Summary', icon: Info },
                                             { id: 'firac', label: 'FIRAC Analysis', icon: Scale },
-                                            { id: 'fullText', label: 'Judgment Text', icon: FileText },
+                                            { id: 'fullText', label: 'AI Case Summary', icon: FileText },
                                             { id: 'chat', label: 'AI Case Chat', icon: MessageSquare }
                                         ].map(tab => {
                                             const Icon = tab.icon
@@ -477,7 +461,8 @@ export default function PrecedentEnginePage() {
 
                                         {activeTab === 'fullText' && (
                                             <div className="space-y-4">
-                                                <h4 className="text-sm font-black uppercase tracking-widest text-slate-400 font-bold">Full Judgment Recital</h4>
+                                                <h4 className="text-sm font-black uppercase tracking-widest text-slate-400 font-bold">AI-generated case summary</h4>
+                                                <p className="text-xs text-amber-300">This is not the full judgment text. Verify facts and holdings against the linked source before relying on them.</p>
                                                 <pre className="text-slate-300 text-xs font-mono leading-relaxed bg-black/40 border border-white/5 p-4 rounded-xl whitespace-pre-wrap h-96 overflow-y-auto">
                                                     {caseDetail.fullText}
                                                 </pre>
@@ -546,7 +531,7 @@ export default function PrecedentEnginePage() {
                     <div className="flex items-center gap-3">
                          <Shield size={14} /> 256-Bit TLS Research Channel
                     </div>
-                    <p>© 2025 NyayNow Institutional Research</p>
+                    <p>AI-assisted legal research · Verify source records</p>
                 </div>
             </footer>
         </div>

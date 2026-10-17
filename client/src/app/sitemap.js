@@ -1,5 +1,7 @@
 import { API_BASE } from "../config"
 
+export const dynamic = 'force-dynamic'
+
 async function getLawyers() {
     // Skip fetching during build if on localhost (backend won't be there)
     if (typeof window === 'undefined' && API_BASE.includes('localhost')) {

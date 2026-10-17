@@ -728,7 +728,7 @@ export default function LawyerDashboard() {
                   <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-400">
                     <Calendar size={16} />
                   </div>
-                  <h3 className="font-black text-lg text-white tracking-tight">Today's Agenda</h3>
+                  <h3 className="font-black text-lg text-white tracking-tight">Today&apos;s Agenda</h3>
                 </div>
                 {appointments.length === 0 ? (
                   <div className="py-10 text-center opacity-30 border-2 border-dashed border-white/5 rounded-2xl">
