@@ -1,0 +1,120 @@
+'use client'
+
+import React from "react"
+import { motion } from "framer-motion"
+import { Sparkles, ShieldCheck, FileText, AlertTriangle, Scale, Mic, Search, MapPin } from "lucide-react"
+
+export default function FeatureCards() {
+    const features = [
+        {
+            icon: <Sparkles className="text-amber-400" size={28} />,
+            title: "AI Legal Intelligence",
+            desc: "Ask legal questions in plain language and receive AI-generated information. Selected routes can include legal search context; check sources and verify citations before relying on an answer.",
+            glow: "rgba(245,158,11,0.15)",
+            gradient: "from-amber-500/10 to-orange-500/10",
+            borderColor: "border-amber-500/30",
+            hoverBorder: "hover:border-amber-500/80",
+            hoverShadow: "hover:shadow-[0_0_40px_rgba(245,158,11,0.15)]",
+        },
+        {
+            icon: <ShieldCheck className="text-blue-400" size={28} />,
+            title: "Lawyer Marketplace",
+            desc: "Browse lawyer profiles and review the verification status shown on each profile before contacting an advocate.",
+            glow: "rgba(96,165,250,0.15)",
+            gradient: "from-blue-500/10 to-indigo-500/10",
+            borderColor: "border-blue-500/30",
+            hoverBorder: "hover:border-blue-500/80",
+            hoverShadow: "hover:shadow-[0_0_40px_rgba(59,130,246,0.15)]",
+        },
+        {
+            icon: <FileText className="text-emerald-400" size={28} />,
+            title: "AI-assisted Drafting",
+            desc: "Create a first draft of selected legal documents. Have an advocate review it for your facts, jurisdiction, and current law before signing or filing.",
+            glow: "rgba(52,211,153,0.15)",
+            gradient: "from-emerald-500/10 to-teal-500/10",
+            borderColor: "border-emerald-500/30",
+            hoverBorder: "hover:border-emerald-500/80",
+            hoverShadow: "hover:shadow-[0_0_40px_rgba(16,185,129,0.15)]",
+        },
+        {
+            icon: <AlertTriangle className="text-red-400" size={28} />,
+            title: "Legal SOS information and contacts",
+            desc: "Find legal help and use the available SOS workflow to describe an urgent issue. For immediate danger, contact local emergency services directly.",
+            glow: "rgba(248,113,113,0.15)",
+            gradient: "from-red-500/10 to-rose-500/10",
+            borderColor: "border-red-500/30",
+            hoverBorder: "hover:border-red-500/80",
+            hoverShadow: "hover:shadow-[0_0_40px_rgba(248,113,113,0.15)]",
+        }
+    ]
+
+    return (
+        <section className="py-20 bg-[#070c19] relative overflow-hidden border-t border-b border-white/5">
+            <div className="absolute inset-0 mesh-gradient-cool pointer-events-none" />
+            <div className="absolute inset-0 pattern-grid-fine pointer-events-none opacity-30" />
+            
+            <div className="relative z-10 max-w-7xl mx-auto px-6">
+                <div className="text-center max-w-3xl mx-auto mb-16">
+                    <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.4em] mb-3 block">
+                        THE NYAYNOW SUITE
+                    </span>
+                    <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight leading-tight text-gradient-premium">
+                        Next-Gen Legal Operating System
+                    </h2>
+                    <p className="text-slate-400 text-base md:text-lg mt-4 font-light leading-relaxed">
+                        NyayNow combines AI-assisted tools with lawyer discovery and document workflows for Indian legal needs.
+                    </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {features.map((f, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 35 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                            whileHover={{ y: -10, scale: 1.02 }}
+                            className="group relative card-premium p-8 flex flex-col justify-between overflow-hidden"
+                            style={{ '--card-glow': f.glow }}
+                        >
+                            {/* Card Glow Effect */}
+                            <div 
+                                className="absolute -top-24 -left-24 w-48 h-48 rounded-full blur-3xl pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity duration-500"
+                                style={{ background: f.glow }}
+                            />
+
+                            <div className="relative z-10 space-y-6">
+                                <motion.div
+                                    whileHover={{ scale: 1.1, rotate: 3 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="w-14 h-14 rounded-2xl bg-glass border border-white/10 flex items-center justify-center shadow-inner group-hover:border-blue-500/30 transition-all duration-300"
+                                >
+                                    {f.icon}
+                                </motion.div>
+                                <div className="space-y-2">
+                                    <h3 className="text-xl font-bold text-white tracking-tight group-hover:text-amber-400 transition-colors duration-300">
+                                        {f.title}
+                                    </h3>
+                                    <p className="text-slate-400 text-xs leading-relaxed font-light">
+                                        {f.desc}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            {/* Bottom accent line */}
+                            <motion.div
+                                initial={{ width: 0 }}
+                                whileInView={{ width: '100%' }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
+                                className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-transparent via-current to-transparent opacity-50 group-hover:opacity-100 transition-opacity"
+                                style={{ background: f.glow.replace('0.15', '0.5') }}
+                            />
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    )
+}

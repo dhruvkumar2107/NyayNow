@@ -1,0 +1,56 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\title{NyayNow: Current Architecture and Deep-Tech Validation Plan}
+\author{NyayNow Engineering}
+\date{17 October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\textbf{Internal technical brief. This document reports no measured accuracy, customer outcomes, or independent evaluation.}
+\end{center}
+
+\begin{abstract}
+NyayNow is an early legal technology product for Indian legal workflows. The inspected repository contains a Next.js web application, an Express API, Gemini-based text generation, optional Indian Kanoon search on selected API routes, a lawyer marketplace, document tools, and a separate FastAPI service. The current implementation is an application layer over third-party model and search services. This brief records that architecture and outlines the data, retrieval, evaluation, and privacy work required to substantiate a deeper technical and investment thesis. It makes no empirical performance claims.
+\end{abstract}
+
+\section{Product and system scope}
+The client is implemented with Next.js and React. The Node service exposes Express routes for authentication, marketplace workflows, document operations, and AI-assisted features. The main legal assistant route calls Google Gemini through a model fallback helper. Selected routes can query Indian Kanoon if an API key is configured; when it is absent or a request fails, route behavior varies. A Python FastAPI service is present for analysis and nearby lookup, but the main assistant route inspected is served by Node.
+
+These components establish a product prototype and integration surface. The repository does not establish a proprietary foundation model, a custom vector index, a verified corpus of a stated size, or a reproducible benchmark. Model-generated output and search results require source verification.
+
+\section{Current limitations}
+\begin{itemize}[leftmargin=*]
+  \item Retrieval coverage depends on third-party services and runtime configuration. No comprehensive legal data ingestion and versioning pipeline was identified in the inspected code.
+  \item The application does not provide a public, reproducible evaluation protocol for citation correctness, legal reasoning, multilingual quality, or outcome prediction.
+  \item Deployment regions, provider retention, encryption-at-rest settings, and operational privacy controls depend on infrastructure configuration and require independent review.
+  \item Case predictions are not validated court-outcome forecasts and should not be used as probabilities of success.
+\end{itemize}
+
+\section{Deep-tech development plan}
+\subsection{Versioned legal sources}
+Establish lawful source access and capture provenance for each statute and judgment: source identifier, licence or terms, court, jurisdiction, publication and effective dates, amendments, and ingestion timestamp. Keep source text immutable, record revisions, and build automated checks for duplicate records, OCR quality, and failed updates.
+
+\subsection{Evidence-preserving retrieval}
+Build lexical and semantic retrieval only over permitted sources. Preserve paragraph and page spans, add filters for jurisdiction, court, date, statute version, and procedural posture, then rerank results. Answers should distinguish retrieved evidence from model explanation, include links to source passages, and abstain when the available evidence is weak.
+
+\subsection{Evaluation and safety}
+Create a permissioned, counsel-reviewed test set and publish the evaluation protocol before reporting performance. Measure citation existence and span support, statutory-version correctness, retrieval recall, unsupported-claim and abstention rates, language quality, latency, cost, and human correction time. Report dataset cutoff, sample size, reviewer process, baselines, confidence intervals, and known failure modes. Do not reduce legal quality to one accuracy number.
+
+\section{Funding milestones}
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{0--3 months:} Review data-source rights, interview design partners, define the corpus schema, and audit a baseline of source and citation errors.
+  \item \textbf{3--6 months:} Deliver a limited source-linked retrieval pilot, counsel-reviewed evaluation, privacy and security threat model, and measured task completion and correction rates.
+  \item \textbf{6--12 months:} Validate paid pilots, repeat usage, customer-reported time savings, retention, and unit economics before expanding source coverage or sales.
+\end{enumerate}
+Targets should be agreed with pilot partners after a baseline exists. Do not describe planned milestones as achieved results.
+
+\section{Conclusion}
+NyayNow can pursue a deep-tech direction by building lawful legal data operations, evidence-preserving retrieval, and rigorous evaluation into the product. The current code is a useful starting point, but the proprietary data and measurable quality evidence that would support a defensible legal AI thesis remain to be built and validated.
+
+\end{document}

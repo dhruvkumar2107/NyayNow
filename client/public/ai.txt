@@ -1,0 +1,83 @@
+# AI Crawler Configuration for NyayNow
+# NyayNow: The AI-Powered Legal Assistant & Lawyer Marketplace for India
+
+User-agent: GPTBot
+Allow: /
+Allow: /marketplace
+Allow: /assistant
+Allow: /bns
+Allow: /judge-ai
+Allow: /drafting
+Allow: /legal-sos
+Disallow: /api/
+Disallow: /admin/
+Disallow: /client/
+Disallow: /lawyer/dashboard/
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /marketplace
+Allow: /assistant
+Allow: /bns
+Allow: /judge-ai
+Allow: /drafting
+Allow: /legal-sos
+Disallow: /api/
+Disallow: /admin/
+Disallow: /client/
+Disallow: /lawyer/dashboard/
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /marketplace
+Allow: /assistant
+Allow: /bns
+Allow: /judge-ai
+Allow: /drafting
+Allow: /legal-sos
+Disallow: /api/
+Disallow: /admin/
+Disallow: /client/
+Disallow: /lawyer/dashboard/
+
+User-agent: Google-Extended
+Allow: /
+Allow: /marketplace
+Allow: /assistant
+Allow: /bns
+Allow: /judge-ai
+Allow: /drafting
+Allow: /legal-sos
+Disallow: /api/
+Disallow: /admin/
+Disallow: /client/
+Disallow: /lawyer/dashboard/
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /marketplace
+Allow: /assistant
+Allow: /bns
+Allow: /judge-ai
+Allow: /drafting
+Allow: /legal-sos
+Disallow: /api/
+Disallow: /admin/
+Disallow: /client/
+Disallow: /lawyer/dashboard/
+
+User-agent: Applebot-Extended
+Allow: /
+Allow: /marketplace
+Allow: /assistant
+Allow: /bns
+Allow: /judge-ai
+Allow: /drafting
+Allow: /legal-sos
+Disallow: /api/
+Disallow: /admin/
+Disallow: /client/
+Disallow: /lawyer/dashboard/
+
+Sitemap: https://nyaynow.in/sitemap.xml
+Host: https://nyaynow.in

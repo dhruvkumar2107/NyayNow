@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Letter of Intent – NyayNow</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #b2b8c4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 0 50px;
+      font-family: 'EB Garamond', serif;
+    }
+
+    .controls {
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn {
+      padding: 9px 26px;
+      background: #1a3a5c;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.3px;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #1c4268; }
+
+    /* ══ A4 — strict single page ══ */
+    .a4 {
+      width: 210mm;
+      height: 297mm;           /* FIXED height — single page */
+      background: #fff;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.22);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* top blue rule */
+    .a4::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: #1a3a5c;
+      z-index: 2;
+    }
+
+    /* bottom gold rule */
+    .a4::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: #b8963e;
+      z-index: 2;
+    }
+
+    /* faint watermark */
+    .watermark {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(-28deg);
+      font-family: 'EB Garamond', serif;
+      font-size: 68pt;
+      font-weight: 600;
+      color: rgba(26, 58, 92, 0.032);
+      white-space: nowrap;
+      pointer-events: none;
+      letter-spacing: 8px;
+      z-index: 0;
+    }
+
+    .inner {
+      padding: 9mm 17mm 8mm;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 7px;
+      border-bottom: 1.5px solid #1a3a5c;
+      margin-bottom: 9px;
+    }
+    .logo-wrap img {
+      height: 46px;
+      width: auto;
+      display: block;
+    }
+    .header-center { text-align: center; }
+    .brand-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 15.5pt;
+      font-weight: 600;
+      color: #1a3a5c;
+      letter-spacing: -0.3px;
+      line-height: 1;
+    }
+    .brand-name em { color: #3d2680; font-style: normal; }
+    .brand-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 6pt;
+      font-weight: 500;
+      color: #b8963e;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      margin-top: 3px;
+    }
+    .doc-meta {
+      font-family: 'Inter', sans-serif;
+      font-size: 7pt;
+      color: #555;
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    /* ── TITLE ── */
+    .title-block {
+      text-align: center;
+      margin-bottom: 7px;
+    }
+    .doc-title {
+      font-family: 'EB Garamond', serif;
+      font-size: 14.5pt;
+      font-weight: 600;
+      color: #111;
+      letter-spacing: 0.4px;
+      margin-bottom: 1px;
+    }
+    .doc-subtitle {
+      font-family: 'EB Garamond', serif;
+      font-size: 9.5pt;
+      font-style: italic;
+      color: #666;
+    }
+    .title-rule {
+      width: 50mm;
+      height: 1px;
+      background: #b8963e;
+      margin: 6px auto 7px;
+    }
+
+    /* ── ADDRESS BLOCK ── */
+    .address-block {
+      font-size: 9.5pt;
+      line-height: 1.6;
+      color: #222;
+      margin-bottom: 8px;
+    }
+    .address-block .lbl {
+      font-family: 'Inter', sans-serif;
+      font-size: 7pt;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      display: inline-block;
+      min-width: 32px;
+    }
+
+    /* ── BODY TEXT ── */
+    .body-text {
+      font-size: 10pt;
+      line-height: 1.68;
+      color: #1c1c1c;
+      flex: 1;
+    }
+    .body-text p {
+      margin-bottom: 6px;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    /* blanks */
+    .blank    { display:inline-block; border-bottom:1px solid #333; min-width:140px; vertical-align:bottom; }
+    .blank-sm { display:inline-block; border-bottom:1px solid #333; min-width:68px;  vertical-align:bottom; }
+    .blank-md { display:inline-block; border-bottom:1px solid #333; min-width:100px; vertical-align:bottom; }
+
+    /* indented declaration */
+    .declaration {
+      border-left: 2px solid #1a3a5c;
+      padding: 7px 13px;
+      margin: 7px 0;
+      background: #f7f8fc;
+    }
+    .declaration p {
+      font-style: italic;
+      font-size: 10pt;
+      color: #1c1c1c;
+      line-height: 1.68;
+      margin: 0 !important;
+      text-align: justify;
+    }
+
+    /* ── SIGNATURE ── */
+    .sig-section {
+      padding-top: 9px;
+      border-top: 1px solid #bbb;
+      margin-top: 8px;
+    }
+    .sig-lbl {
+      font-family: 'Inter', sans-serif;
+      font-size: 6.5pt;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+      margin-bottom: 7px;
+    }
+    .sig-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px 28px;
+    }
+    .sig-field {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+    }
+    .sig-field-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 7pt;
+      color: #555;
+      white-space: nowrap;
+      min-width: 100px;
+      flex-shrink: 0;
+      padding-bottom: 2px;
+    }
+    .sig-field-line {
+      flex: 1;
+      border-bottom: 1px solid #999;
+      min-height: 14px;
+    }
+
+    /* ── DISCLAIMER ── */
+    .disclaimer {
+      margin-top: 8px;
+      padding: 6px 9px;
+      border: 1px solid #ddd;
+      background: #fafafa;
+      font-family: 'Inter', sans-serif;
+      font-size: 6.2pt;
+      color: #777;
+      line-height: 1.6;
+      text-align: justify;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 7px;
+      padding-top: 6px;
+      border-top: 1px solid #e4e4e4;
+      font-family: 'Inter', sans-serif;
+      font-size: 6pt;
+      color: #aaa;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .controls { display: none; }
+      .a4 { box-shadow: none; width: 210mm; height: 297mm; }
+      @page { size: A4 portrait; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+
+  <div class="a4">
+    <div class="watermark">NyayNow</div>
+
+    <div class="inner">
+
+      <!-- Header -->
+      <div class="header">
+        <div class="logo-wrap">
+          <img src="./client/public/logo.png" alt="NyayNow" />
+        </div>
+        <div class="header-center">
+          <div class="brand-name">Nyay<em>Now</em></div>
+          <div class="brand-sub">India's Legal Operating System</div>
+        </div>
+        <div class="doc-meta">
+          Date:&nbsp;<strong id="loi-date"></strong><br />
+          Ref.:&nbsp;<strong>LOI/NN/<span id="loi-ref"></span></strong><br />
+          nyaynow.in
+        </div>
+      </div>
+
+      <!-- Title -->
+      <div class="title-block">
+        <div class="doc-title">Letter of Intent</div>
+        <div class="doc-subtitle">Expression of Interest — NyayNow Digital Legal Platform</div>
+        <div class="title-rule"></div>
+      </div>
+
+      <!-- Address -->
+      <div class="address-block">
+        <div><span class="lbl">To</span>&ensp;The Founding Team, NyayNow</div>
+        <div><span class="lbl">Sub.</span>&ensp;Declaration of interest and support for the NyayNow platform</div>
+      </div>
+
+      <!-- Body -->
+      <div class="body-text">
+
+        <p>I,&nbsp;<span class="blank">&nbsp;</span>, Advocate, enrolled with the Bar Council of&nbsp;<span class="blank-sm">&nbsp;</span>, vide Enrolment No.&nbsp;<span class="blank-sm">&nbsp;</span>, presently practising in the field of&nbsp;<span class="blank-md">&nbsp;</span>, with&nbsp;<span class="blank-sm">&nbsp;</span> years of standing at the Bar, write this letter to formally record my interest in the <strong>NyayNow</strong> platform — a digital legal services initiative presently under development in India.</p>
+
+        <p>Having reviewed the vision and proposed features of the NyayNow platform, I am of the considered opinion that it addresses a long-standing and critical gap in access to legal services within the country. A significant portion of India's population remains unaware of their legal rights and is unable to connect with qualified legal counsel in a timely or affordable manner. A structured digital platform of this nature holds the potential to fundamentally transform how legal services are discovered, accessed, and delivered.</p>
+
+        <!-- Formal declaration -->
+        <div class="declaration">
+          <p>I hereby formally record my intent that, upon the official launch of the NyayNow platform — with its proposed features including online legal consultations, appointment scheduling, and case management tools — I intend to register on the platform, pilot its services within my practice, and, where appropriate, recommend it to my peers and clients.</p>
+        </div>
+
+        <p>I am particularly supportive of the platform's objective of providing structured opportunities to <strong>junior advocates and law students</strong>. Young lawyers in India frequently face difficulty in securing meaningful exposure and clientele during the early years of their career. NyayNow's approach of connecting junior lawyers with senior advocates, facilitating mentorship, and providing a credible channel for client engagement would serve as a valuable professional resource for the next generation of legal professionals.</p>
+
+        <p>For the <strong>common citizen</strong>, the ability to engage a verified legal professional through a reliable digital interface — without navigating unfamiliar court complexes or relying entirely on personal references — represents a meaningful step towards the democratisation of legal assistance in India.</p>
+
+        <p>I clarify that this letter is a <strong>voluntary and non-binding</strong> expression of personal interest and support only. It does not constitute a contract, partnership, or financial commitment. I understand that NyayNow is not yet a registered entity, and this letter is issued solely in recognition of the initiative's merit. I extend my best wishes to the founding team.</p>
+
+        <p style="margin-top:4px;">Yours sincerely,</p>
+
+      </div>
+
+      <!-- Signature -->
+      <div class="sig-section">
+        <span class="sig-lbl">Advocate's Particulars &amp; Signature</span>
+        <div class="sig-grid">
+          <div class="sig-field">
+            <span class="sig-field-label">Full Name:</span>
+            <div class="sig-field-line"></div>
+          </div>
+          <div class="sig-field">
+            <span class="sig-field-label">Bar Enrolment No.:</span>
+            <div class="sig-field-line"></div>
+          </div>
+          <div class="sig-field">
+            <span class="sig-field-label">Area of Practice:</span>
+            <div class="sig-field-line"></div>
+          </div>
+          <div class="sig-field">
+            <span class="sig-field-label">Contact No. / Email:</span>
+            <div class="sig-field-line"></div>
+          </div>
+          <div class="sig-field">
+            <span class="sig-field-label">City &amp; State:</span>
+            <div class="sig-field-line"></div>
+          </div>
+          <div class="sig-field">
+            <span class="sig-field-label">Signature &amp; Date:</span>
+            <div class="sig-field-line"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="disclaimer">
+        <strong>Disclaimer:</strong> This Letter of Intent is a voluntary, personal, and entirely non-binding declaration. It does not create any legal obligation, financial commitment, contractual relationship, or liability of any kind upon the signatory or upon NyayNow. NyayNow is presently not a registered company or legal entity. This document is issued purely in support of the platform's stated vision and does not constitute an endorsement of any commercial nature.
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <span>Non-Binding Expression of Intent &nbsp;|&nbsp; For Internal Use Only</span>
+        <span>NyayNow &nbsp;·&nbsp; nyaynow.in</span>
+      </div>
+
+    </div><!-- /inner -->
+  </div><!-- /a4 -->
+
+  <script>
+    const d = new Date();
+    const months = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+    document.getElementById('loi-date').textContent =
+      d.getDate() + ' ' + months[d.getMonth()] + ', ' + d.getFullYear();
+    document.getElementById('loi-ref').textContent =
+      d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') +
+      '-' + String(Math.floor(Math.random()*9000)+1000);
+  </script>
+
+</body>
+</html>

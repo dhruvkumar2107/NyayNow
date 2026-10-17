@@ -1,0 +1,217 @@
+'use client'
+
+import React, { useState } from "react"
+import Link from "next/link"
+import { motion, AnimatePresence } from "framer-motion"
+import { 
+    Sparkles, FileText, UserCheck, MapPin, 
+    Mic, Scale, Search, Briefcase, ChevronRight, ShieldCheck
+} from "lucide-react"
+
+export default function ChooserCards() {
+    const [activeTab, setActiveTab] = useState("citizens") // "citizens" or "professionals"
+
+    const citizenServices = [
+        {
+            title: "Ask a Legal Question",
+            desc: "Ask for AI-assisted legal information. Check current primary sources before relying.",
+            link: "/assistant",
+            icon: Sparkles,
+            badge: "Free Trial",
+            color: "from-blue-500/10 to-indigo-500/10 border-blue-500/30 hover:border-blue-500/80 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)]",
+            iconColor: "text-blue-400",
+            gradient: "from-blue-500 to-indigo-500",
+        },
+        {
+            title: "Find a Verified Lawyer",
+            desc: "Consult top advocates filtered by city, budget, and language.",
+            link: "/marketplace",
+            icon: UserCheck,
+            badge: "Profile details",
+            color: "from-emerald-500/10 to-teal-500/10 border-emerald-500/30 hover:border-emerald-500/80 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]",
+            iconColor: "text-emerald-400",
+            gradient: "from-emerald-500 to-teal-500",
+        },
+        {
+            title: "Draft an Agreement",
+            desc: "Draft rental agreements, NDAs, legal notices, and wills in minutes.",
+            link: "/drafting",
+            icon: FileText,
+            badge: "Smart Templates",
+            color: "from-purple-500/10 to-pink-500/10 border-purple-500/30 hover:border-purple-500/80 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)]",
+            iconColor: "text-purple-400",
+            gradient: "from-purple-500 to-pink-500",
+        },
+        {
+            title: "Nearby Radar Map",
+            desc: "Locate nearest police stations, local courts, and registered advocates.",
+            link: "/nearby",
+            icon: MapPin,
+            badge: "Real-time Map",
+            color: "from-amber-500/10 to-orange-500/10 border-amber-500/30 hover:border-amber-500/80 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)]",
+            iconColor: "text-amber-400",
+            gradient: "from-amber-500 to-orange-500",
+        },
+        {
+            title: "Voice Search (NyayVoice)",
+            desc: "Voice input depends on browser support and the selected language; transcription quality can vary.",
+            link: "/nyayvoice",
+            icon: Mic,
+            badge: "Voice assistant",
+            color: "from-cyan-500/10 to-blue-500/10 border-cyan-500/30 hover:border-cyan-500/80 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]",
+            iconColor: "text-cyan-400",
+            gradient: "from-cyan-500 to-blue-500",
+        }
+    ]
+
+    const professionalServices = [
+        {
+            title: "Outcome Predictor (Judge AI)",
+            desc: "Explore experimental AI-assisted case analysis. No outcome prediction is validated.",
+            link: "/judge-ai",
+            icon: Sparkles,
+            badge: "Advanced AI",
+            color: "from-indigo-500/10 to-violet-500/10 border-indigo-500/30 hover:border-indigo-500/80 hover:shadow-[0_0_30px_rgba(99,102,241,0.15)]",
+            iconColor: "text-indigo-400",
+            gradient: "from-indigo-500 to-violet-500",
+        },
+        {
+            title: "NyayCourt Trial Simulator",
+            desc: "Practice argument delivery against interactive AI prosecution & judges.",
+            link: "/nyaycourt-simulator",
+            icon: Scale,
+            badge: "Interactive Simulation",
+            color: "from-violet-500/10 to-fuchsia-500/10 border-violet-500/30 hover:border-violet-500/80 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]",
+            iconColor: "text-violet-400",
+            gradient: "from-violet-500 to-fuchsia-500",
+        },
+        {
+            title: "Legal Precedent Search",
+            desc: "Search for Indian legal materials and review AI-assisted summaries with source checks.",
+            link: "/research",
+            icon: Search,
+            badge: "Legal research",
+            color: "from-pink-500/10 to-rose-500/10 border-pink-500/30 hover:border-pink-500/80 hover:shadow-[0_0_30px_rgba(236,72,153,0.15)]",
+            iconColor: "text-pink-400",
+            gradient: "from-pink-500 to-rose-500",
+        },
+        {
+            title: "Advocate Portal & Lead Hub",
+            desc: "Access client consultations, manage active slots, and premium plans.",
+            link: "/pricing",
+            icon: Briefcase,
+            badge: "Pro Tools",
+            color: "from-blue-500/10 to-sky-500/10 border-blue-500/30 hover:border-blue-500/80 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)]",
+            iconColor: "text-blue-400",
+            gradient: "from-blue-500 to-sky-500",
+        }
+    ]
+
+    const activeServices = activeTab === "citizens" ? citizenServices : professionalServices
+
+    return (
+        <section className="relative py-16 bg-[#000000] overflow-hidden">
+            <div className="absolute inset-0 mesh-gradient pointer-events-none" />
+            <div className="absolute inset-0 pattern-grid-fine pointer-events-none opacity-20" />
+            <div className="absolute inset-0 pattern-noise pointer-events-none" />
+            
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+                {/* Section Header */}
+                <div className="text-center mb-12">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight text-gradient-premium">
+                            What would you like to do today?
+                        </h2>
+                        <p className="text-slate-400 text-base max-w-xl mx-auto mb-8 leading-relaxed">
+                            Select a path below to access our direct services. No complicated menus, no guesswork.
+                        </p>
+
+                        {/* Tabs switcher */}
+                        <div className="inline-flex bg-glass border border-white/10 p-1 rounded-2xl">
+                            <button
+                                onClick={() => setActiveTab("citizens")}
+                                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === "citizens" ? "bg-white text-slate-950 shadow-lg shadow-white/5" : "text-slate-400 hover:text-white"}`}
+                            >
+                                For Citizens & Clients
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("professionals")}
+                                className={`px-8 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === "professionals" ? "bg-white text-slate-950 shadow-lg shadow-white/5" : "text-slate-400 hover:text-white"}`}
+                            >
+                                For Advocates & Professionals
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* Services Grid */}
+                <motion.div 
+                    layout
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                    <AnimatePresence>
+                        {activeServices.map((card, idx) => {
+                            const Icon = card.icon
+                            return (
+                                <motion.div
+                                    key={card.title}
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                                    transition={{ duration: 0.4, delay: idx * 0.08 }}
+                                    className="h-full"
+                                >
+                                    <Link 
+                                        href={card.link}
+                                        className={`flex flex-col justify-between w-full h-full p-6 sm:p-8 rounded-3xl border bg-gradient-to-br transition-all duration-500 group relative overflow-hidden text-left card-premium-interactive ${card.color}`}
+                                        style={{ '--card-glow': `rgba(59, 130, 246, 0.1)` }}
+                                    >
+                                        {/* Animated background orb */}
+                                        <motion.div
+                                            initial={{ scale: 0.5, opacity: 0 }}
+                                            whileInView={{ scale: 1, opacity: 1 }}
+                                            viewport={{ once: true }}
+                                            animate={{ scale: [1, 1.05, 1] }}
+                                            transition={{ duration: 4, repeat: Infinity, delay: idx * 0.3 }}
+                                            className="absolute top-0 right-0 w-24 h-24 bg-white/[0.02] rounded-bl-full pointer-events-none group-hover:scale-150 transition-transform duration-700"
+                                            style={{ background: `linear-gradient(135deg, transparent 50%, ${card.gradient.replace('to', 'to')} 100%)` }}
+                                        />
+                                        
+                                        <div className="relative z-10">
+                                            <motion.div
+                                                whileHover={{ scale: 1.1, rotate: 2 }}
+                                                transition={{ duration: 0.3 }}
+                                                className="inline-flex p-3 rounded-2xl bg-glass border border-white/10 mb-6 group-hover:border-blue-500/30 group-hover:bg-blue-500/10 transition-all duration-500"
+                                            >
+                                                <Icon size={24} className={card.iconColor} />
+                                            </motion.div>
+                                            <h3 className="text-lg font-bold text-white mb-2 tracking-tight group-hover:text-amber-400 transition-colors duration-300">{card.title}</h3>
+                                            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-6 font-medium">{card.desc}</p>
+                                        </div>
+                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5 relative z-10">
+                                            <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 px-3 py-1 rounded-full bg-glass border border-white/10 group-hover:text-white group-hover:bg-white/10 transition-colors">
+                                                {card.badge}
+                                            </span>
+                                            <motion.span
+                                                whileHover={{ x: 4 }}
+                                                className="text-xs font-bold text-white group-hover:translate-x-1.5 transition-transform flex items-center gap-1"
+                                            >
+                                                Launch
+                                                <ChevronRight size={14} />
+                                            </motion.span>
+                                        </div>
+                                    </Link>
+                                </motion.div>
+                            )
+                        })}
+                    </AnimatePresence>
+                </motion.div>
+            </div>
+        </section>
+    )
+}

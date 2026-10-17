@@ -1,0 +1,414 @@
+'use client'
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import CountUp from "react-countup";
+import { FileText, CheckCircle, AlertTriangle, Scale, Swords, Play, Lock, Sparkles, Download, ShieldCheck, Brain, Zap, ChevronRight } from "lucide-react";
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { useAuth } from "../../../context/AuthContext";
+import PaywallModal from "../../PaywallModal";
+import { hasAccess } from "../../../utils/planBorders";
+import UpgradeGate from "../../UpgradeGate";
+
+const JudgeAI = () => {
+    const { user } = useAuth();
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [analyzing, setAnalyzing] = useState(false);
+    const [result, setResult] = useState(null);
+    const [caseInput, setCaseInput] = useState("");
+    const [assignedJudge, setAssignedJudge] = useState("");
+    const [courtType, setCourtType] = useState("");
+    const [opposingParty, setOpposingParty] = useState("");
+
+    const generatePDF = () => {
+        const usageCount = user?.aiUsage?.count || 0;
+        if (!hasAccess(user?.plan, 'LEGAL_RESEARCH', usageCount)) { // Using Research level as proxy
+            setShowPaywall(true);
+            return;
+        }
+
+        const doc = new jsPDF();
+
+        // BRANDING HEADER
+        doc.setFillColor(79, 70, 229); // Indigo 600
+        doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text("NyayNow Legal Intelligence", 14, 25);
+        doc.setFontSize(10);
+        doc.text("INFORMATIONAL DRAFT — REVIEW REQUIRED", 14, 32);
+
+        // METADATA
+        doc.setTextColor(50, 50, 50);
+        doc.setFontSize(10);
+        doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 50);
+        doc.text(`Case ID: ${result.caseId}`, 160, 50);
+
+        // EXECUTIVE SUMMARY
+        doc.setFontSize(14);
+        doc.setTextColor(79, 70, 229);
+        doc.text("Executive Summary", 14, 60);
+        doc.setDrawColor(200, 200, 200);
+        doc.line(14, 62, 196, 62);
+
+        doc.setFontSize(11);
+        doc.setTextColor(0, 0, 0);
+        const splitAnalysis = doc.splitTextToSize(result.analysis || "Analysis pending.", 180);
+        doc.text(splitAnalysis, 14, 70);
+
+        // STATS TABLE
+        autoTable(doc, {
+            startY: 90,
+            head: [['Outcome score', 'Risk notes', 'Confidence score']],
+            body: [['Not available', result.riskLevel || 'Not assessed', 'Not measured']],
+            theme: 'grid',
+            headStyles: { fillColor: [79, 70, 229] }
+        });
+
+        // STRATEGY STEPS
+        const finalY = doc.lastAutoTable.finalY + 15;
+        doc.setFontSize(14);
+        doc.setTextColor(79, 70, 229);
+        doc.text("Strategic Counsel", 14, finalY);
+        doc.line(14, finalY + 2, 196, finalY + 2);
+
+        const strategies = result.strategy?.map((s, i) => [`${i + 1}. ${s}`]) || [];
+        autoTable(doc, {
+            startY: finalY + 5,
+            body: strategies,
+            theme: 'plain',
+            styles: { fontSize: 11, cellPadding: 2 }
+        });
+
+        // FOOTER
+        const pageHeight = doc.internal.pageSize.height;
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text("AI-generated information may be incomplete. Verify sources and consult an advocate.", 105, pageHeight - 10, { align: 'center' });
+
+        doc.save("NyayNow_Legal_Strategy.pdf");
+        toast.success("Dossier Downloaded Successfully");
+    };
+
+    const handleAnalyze = async () => {
+        if (!caseInput.trim()) {
+            toast.error("Please enter case details first.");
+            return;
+        }
+
+        setAnalyzing(true);
+        setResult(null);
+
+        try {
+            const activeCaseContext = {
+                caseTitle: `Case vs ${opposingParty || 'Unknown'}`,
+                caseType: courtType || "General Legal",
+                caseDescription: caseInput,
+                oppositionDetails: opposingParty,
+                assignedJudge: assignedJudge
+            };
+            
+            localStorage.setItem("nyaynow_active_case", JSON.stringify(activeCaseContext));
+
+            const res = await axios.post('/api/ai/predict-outcome', activeCaseContext);
+
+            if (res.data) {
+                setResult({
+                    caseId: res.data.case_id || `REF-${Math.floor(Math.random() * 10000)}`,
+                    winProbability: parseInt(res.data.win_probability) || 75,
+                    riskLevel: res.data.risk_level || "Medium",
+                    keyPrecedents: res.data.precedent_count || 12,
+                    confidenceScore: res.data.confidence_percentage || 88,
+                    sentiment: "Neutral",
+                    analysis: (res.data.strategy && res.data.strategy.length > 0) ? res.data.strategy[0] : "Analysis complete.",
+                    risks: res.data.risk_analysis || [],
+                    strategy: res.data.strategy || [],
+                    precedent: res.data.relevant_precedent
+                });
+                toast.success("Strategic Analysis Complete");
+
+                // Show remaining queries toast
+                if (res.data.usage && res.data.usage.limit !== 'unlimited') {
+                    const remaining = res.data.usage.remaining;
+                    const limit = res.data.usage.limit;
+                    toast.success(`${remaining} of ${limit} monthly predictions remaining`, { id: "predict-toast" });
+                }
+            }
+        } catch (err) {
+            console.error("❌ AI Error Details:", err.response?.data || err.message);
+            const errorMsg = err.response?.data?.error || "AI Overload. Please try again.";
+            toast.error(errorMsg);
+            setResult(null);
+        } finally {
+            setAnalyzing(false);
+        }
+    };
+
+    if (process.env.NEXT_PUBLIC_EXPERIMENTAL_CASE_ANALYSIS_ENABLED !== 'true') {
+        return <main className="min-h-screen bg-[#020617] text-slate-300 flex items-center justify-center px-6 py-24"><section className="max-w-xl rounded-2xl border border-white/10 bg-white/5 p-8"><p className="text-xs uppercase tracking-widest text-amber-300">In development</p><h1 className="text-3xl font-bold text-white mt-3">Outcome prediction is disabled</h1><p className="mt-4 leading-7">We have not validated or calibrated court outcome predictions. This feature will remain unavailable until prospective legal review and evaluation are complete.</p></section></main>;
+    }
+
+    return (
+        <div className="min-h-screen bg-[#000000] text-slate-400 font-sans selection:bg-indigo-500/30 relative">
+            {/* BACKGROUND EFFECTS */}
+            <div className="absolute inset-0 pointer-events-none mesh-gradient" />
+            <div className="absolute inset-0 pointer-events-none pattern-grid-fine opacity-20" />
+            <div className="absolute inset-0 pointer-events-none pattern-noise" />
+
+            {/* HERO SECTION */}
+            <section className="relative pt-24 md:pt-36 pb-20 overflow-hidden">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-indigo-500/20 blur-[150px] rounded-full pointer-events-none mix-blend-screen animate-float-slow"></div>
+
+                <div className="container mx-auto px-6 relative z-10 text-center">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+                        <span className="px-4 py-1.5 rounded-full border border-white/10 bg-glass text-indigo-400 text-xs font-bold uppercase tracking-[0.2em] mb-6 inline-block shadow-sm backdrop-blur-md">
+                            Experimental case analysis
+                        </span>
+                        <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white text-gradient-premium">
+                            Judge <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">AI</span>
+                        </h1>
+                        <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
+                            This experimental case analysis feature is disabled while evaluation and calibration are in development.
+                        </p>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* MAIN INTERFACE */}
+            <section className="container mx-auto px-6 pb-24 max-w-5xl relative z-10">
+                <UpgradeGate feature="predict-outcome">
+                    {/* INPUT AREA */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="bg-glass border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl mb-8 card-premium"
+                    >
+                    {!result && !analyzing && (
+                        <div className="space-y-6">
+                            <div>
+                                <h3 className="text-2xl font-bold mb-6 text-white tracking-tight text-gradient-indigo">Case Parameters</h3>
+                                
+                                <div className="grid md:grid-cols-3 gap-4 mb-6">
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Court Type / Jurisdiction</label>
+                                        <input
+                                            type="text"
+                                            value={courtType}
+                                            onChange={(e) => setCourtType(e.target.value)}
+                                            placeholder="e.g. Delhi High Court"
+                                            className="w-full input-glossy rounded-xl px-4 py-4 text-white placeholder-slate-600"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Assigned Justice</label>
+                                        <input
+                                            type="text"
+                                            value={assignedJudge}
+                                            onChange={(e) => setAssignedJudge(e.target.value)}
+                                            placeholder="e.g. Justice D.Y. Chandrachud"
+                                            className="w-full input-glossy rounded-xl px-4 py-4 text-white placeholder-slate-600"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Opposing Party / Counsel</label>
+                                        <input
+                                            type="text"
+                                            value={opposingParty}
+                                            onChange={(e) => setOpposingParty(e.target.value)}
+                                            placeholder="e.g. Reliance Industries"
+                                            className="w-full input-glossy rounded-xl px-4 py-4 text-white placeholder-slate-600"
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Case Facts & Arguments</label>
+                                <textarea
+                                    value={caseInput}
+                                    onChange={(e) => setCaseInput(e.target.value)}
+                                    placeholder="Paste comprehensive case details, legal notices, or situation descriptions here for deep mathematical analysis..."
+                                    className="w-full input-glossy rounded-xl px-4 py-4 text-white placeholder-slate-600 resize-none custom-scrollbar text-sm leading-relaxed"
+                                    style={{ minHeight: '160px' }}
+                                />
+                            </div>
+                            <div className="flex justify-center">
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={handleAnalyze}
+                                    className="px-10 py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 flex items-center gap-2 group btn-glossy-primary"
+                                >
+                                    <Play size={20} className="group-hover:translate-x-1 transition" /> Analyze Strategy
+                                </motion.button>
+                            </div>
+                        </div>
+                    )}
+
+                    {analyzing && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-center py-10"
+                        >
+                            <div className="relative w-32 h-32 mx-auto mb-8">
+                                <div className="absolute inset-0 border-4 border-indigo-500/30 rounded-full animate-rotate-slow" />
+                                <div className="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin" />
+                                <Scale className="absolute inset-0 m-auto text-indigo-400" size={40} />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-2 animate-pulse text-white text-gradient-indigo">Formulating Legal Strategy...</h3>
+                            <p className="text-slate-400">Consulting Live Judicial Precedents (BNS 2024)</p>
+                        </motion.div>
+                    )}
+
+                    {result && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-left space-y-8">
+
+                            {/* Mandantory Legal Disclaimer */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="mb-6 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3 card-glossy"
+                            >
+                                <AlertTriangle size={18} className="text-amber-500 mt-0.5 shrink-0" />
+                                <div>
+                                    <p className="text-xs text-amber-200/90 font-bold uppercase tracking-wider mb-1">AI Prediction — Legal Information Only</p>
+                                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                                        Outcome predictions are disabled. Any future analysis will require evidence review and qualified advocate input.
+                                    </p>
+                                </div>
+                            </motion.div>
+
+                            {/* TOP STATS ROW */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 }}
+                                className="grid md:grid-cols-4 gap-4"
+                            >
+                                <div className="card-premium p-6 rounded-2xl text-center relative overflow-hidden" style={{ '--card-glow': 'rgba(16, 185, 129, 0.15)' }}>
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500"></div>
+                                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-2">Win Prob.</p>
+                                    <div className="text-4xl font-bold text-emerald-400 mb-1">
+                                        <CountUp end={result.winProbability} duration={2} suffix="%" />
+                                    </div>
+                                    <p className="text-[9px] text-emerald-500/80 font-bold uppercase tracking-tighter">Case Strength</p>
+                                </div>
+                                <div className="card-premium p-6 rounded-2xl text-center relative overflow-hidden" style={{ '--card-glow': 'rgba(245, 158, 11, 0.15)' }}>
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-amber-500"></div>
+                                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-2">Risk Level</p>
+                                    <div className="text-2xl font-bold text-amber-400 mb-1 h-9 flex items-center justify-center uppercase">{result.riskLevel}</div>
+                                    <p className="text-[9px] text-amber-500/80 font-bold uppercase tracking-tighter">Procedural</p>
+                                </div>
+                                <div className="card-premium p-6 rounded-2xl text-center relative overflow-hidden" style={{ '--card-glow': 'rgba(59, 130, 246, 0.15)' }}>
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+                                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-2">Precedents</p>
+                                    <div className="text-3xl font-bold text-blue-400 mb-1 h-9 flex items-center justify-center">{result.keyPrecedents}</div>
+                                    <p className="text-[9px] text-blue-500/80 font-bold uppercase tracking-tighter">Live Mentions</p>
+                                </div>
+                                <div className="card-premium p-6 rounded-2xl text-center relative overflow-hidden" style={{ '--card-glow': 'rgba(139, 92, 246, 0.15)' }}>
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500"></div>
+                                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-wider mb-2">AI Confidence</p>
+                                    <div className="text-4xl font-bold text-indigo-400 mb-1">
+                                        <CountUp end={result.confidenceScore} duration={2} suffix="%" />
+                                    </div>
+                                    <p className="text-[9px] text-indigo-500/80 font-bold uppercase tracking-tighter">Grounding Rank</p>
+                                </div>
+                            </motion.div>
+
+                            {/* STRATEGY SECTION */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                                className="bg-indigo-900/10 border border-indigo-500/30 rounded-2xl p-6 relative overflow-hidden card-premium"
+                                style={{ '--card-glow': 'rgba(99, 102, 241, 0.15)' }}
+                            >
+                                <div className="flex items-center gap-3 mb-4">
+                                    <motion.div
+                                        animate={{ scale: [1, 1.05, 1] }}
+                                        transition={{ duration: 3, repeat: Infinity }}
+                                        className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400"
+                                    >
+                                        <Swords size={20} />
+                                    </motion.div>
+                                    <h3 className="text-xl font-bold text-white text-gradient-indigo">Strategic Counsel</h3>
+                                </div>
+                                <ul className="space-y-4">
+                                    {result.strategy && result.strategy.map((item, idx) => (
+                                        <motion.li
+                                            key={idx}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.3 + idx * 0.1 }}
+                                            className="flex gap-4 text-slate-300 leading-relaxed"
+                                        >
+                                            <span className="text-indigo-400 font-black text-xs mt-1 border border-indigo-500/30 w-6 h-6 rounded-lg flex items-center justify-center bg-indigo-500/10 shrink-0">{idx + 1}</span>
+                                            <span className="text-sm">{item}</span>
+                                        </motion.li>
+                                    ))}
+                                </ul>
+                            </motion.div>
+
+                            {/* PRECEDENT CARD */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 }}
+                                className="bg-glass border border-white/10 rounded-2xl p-6 relative overflow-hidden group card-premium"
+                                style={{ '--card-glow': 'rgba(245, 158, 11, 0.1)' }}
+                            >
+                                <motion.div
+                                    animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
+                                    transition={{ duration: 6, repeat: Infinity }}
+                                    className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition"
+                                >
+                                    <Sparkles size={40} className="text-amber-500" />
+                                </motion.div>
+                                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                    <Scale size={12} className="text-amber-400" /> Key Legal Precedents (Live)
+                                </h4>
+                                <p className="text-base font-serif italic text-white leading-relaxed">&quot;{result.precedent || "Searching available case-law sources..."}&quot;</p>
+                            </motion.div>
+
+                            <p className="text-[10px] text-slate-600 italic text-center mt-4">
+                                ⚖️ This is AI-generated information. Verify with a qualified lawyer.
+                            </p>
+
+                            <div className="flex justify-between items-center pt-8 border-t border-white/10">
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={generatePDF}
+                                    className="px-6 py-3 rounded-xl bg-glass border border-white/10 text-white font-bold text-sm hover:bg-white/10 transition flex items-center gap-2 btn-glossy-secondary"
+                                >
+                                    <Download size={16} />
+                                    Download Dossier
+                                    {user?.plan !== 'gold' && <Lock size={14} className="text-amber-400" />}
+                                </motion.button>
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => setResult(null)}
+                                    className="text-sm text-slate-500 hover:text-white underline underline-offset-8 font-bold uppercase tracking-widest flex items-center gap-1"
+                                >
+                                    Restart Simulation
+                                    <ChevronRight size={14} />
+                                </motion.button>
+                            </div>
+
+                        </motion.div>
+                    )}
+                    </motion.div>
+                    </UpgradeGate>
+            </section>
+
+            <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} feature="Deep Justice Insights" />
+            <div className="pb-20" />
+        </div>
+    );
+};
+
+export default JudgeAI;
