@@ -126,7 +126,7 @@ export default function BookingModal({ lawyer, client, onClose }) {
                         contact: client?.phone || ""
                     },
                     theme: {
-                        color: "#6366f1"
+                        color: "#C9A24B"
                     }
                 };
 
@@ -145,19 +145,19 @@ export default function BookingModal({ lawyer, client, onClose }) {
     };
 
     return (
-        <div className="fixed inset-0 bg-[#020617]/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-            <div className="bg-[#0f172a] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl relative animate-in fade-in zoom-in duration-200">
-                <button onClick={onClose} className="absolute top-4 right-4 text-slate-500 hover:text-white transition">✕</button>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+            <div className="mi-glass-card animate-in fade-in zoom-in relative w-full max-w-md rounded-[var(--radius-lg)] p-6 shadow-2xl duration-200">
+                <button onClick={onClose} className="absolute right-4 top-4 text-[var(--text-muted)] transition hover:text-[var(--text)]">✕</button>
 
-                <h2 className="text-xl font-bold text-white mb-1">Book Appointment</h2>
-                <p className="text-sm text-slate-400 mb-6">Schedule a consultation with {lawyer.name}</p>
+                <h2 className="mi-body mb-1 text-xl font-bold text-[var(--text)]">Book Appointment</h2>
+                <p className="mb-6 text-sm text-[var(--text-muted)]">Schedule a consultation with {lawyer.name}</p>
 
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Select Date</label>
+                        <label className="mb-1 block text-xs font-semibold uppercase text-[var(--text-muted)]">Select Date</label>
                         <input
                             type="date"
-                            className="w-full bg-[#020617] border border-white/10 rounded-lg p-3 outline-none focus:border-indigo-500 text-white placeholder:text-slate-600"
+                            className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--bg)] p-3 text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]"
                             min={new Date().toISOString().split("T")[0]}
                             value={date}
                             onChange={e => {
@@ -168,7 +168,7 @@ export default function BookingModal({ lawyer, client, onClose }) {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Select Time Slot</label>
+                        <label className="mb-1 block text-xs font-semibold uppercase text-[var(--text-muted)]">Select Time Slot</label>
                         <div className="grid grid-cols-3 gap-2">
                             {TIME_SLOTS.map(t => {
                                 const isBooked = bookedSlots.includes(t);
@@ -177,11 +177,11 @@ export default function BookingModal({ lawyer, client, onClose }) {
                                         key={t}
                                         onClick={() => setSlot(t)}
                                         disabled={isBooked || !date}
-                                        className={`py-2 text-xs font-medium rounded-lg border transition ${slot === t
-                                            ? "bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-600/20"
+                                        className={`mi-focus rounded-[var(--radius-sm)] border py-2 text-xs font-medium transition ${slot === t
+                                            ? "border-[var(--gold)] bg-[var(--gold)] text-[#0B1220] shadow-lg"
                                             : isBooked
-                                                ? "bg-[#020617] text-slate-600 border-white/5 cursor-not-allowed decoration-slice line-through"
-                                                : "bg-[#020617] text-slate-300 border-white/10 hover:bg-white/5 hover:text-white"
+                                                ? "cursor-not-allowed border-[var(--gold-hairline)] bg-[var(--bg)] text-[var(--text-muted)] line-through"
+                                                : "border-[var(--gold-hairline)] bg-[var(--bg)] text-[var(--text)] hover:bg-[var(--surface-2)]"
                                             }`}
                                     >
                                         {t}
@@ -192,10 +192,10 @@ export default function BookingModal({ lawyer, client, onClose }) {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Notes (Optional)</label>
+                        <label className="mb-1 block text-xs font-semibold uppercase text-[var(--text-muted)]">Notes (Optional)</label>
                         <textarea
                             rows={2}
-                            className="w-full bg-[#020617] border border-white/10 rounded-lg p-3 outline-none focus:border-indigo-500 resize-none text-white placeholder:text-slate-600"
+                            className="mi-focus w-full resize-none rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--bg)] p-3 text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]"
                             placeholder="Briefly describe your issue..."
                             value={notes}
                             onChange={e => setNotes(e.target.value)}
@@ -205,7 +205,7 @@ export default function BookingModal({ lawyer, client, onClose }) {
                     <button
                         onClick={handleBook}
                         disabled={loading}
-                        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-indigo-600/20 disabled:opacity-50"
+                        className="mi-tap mi-focus w-full rounded-[var(--radius-md)] bg-[var(--gold)] py-3 font-semibold text-[#0B1220] shadow-lg transition hover:brightness-110 disabled:opacity-50"
                     >
                         {loading ? "Booking..." : "Confirm Booking"}
                     </button>

@@ -6,59 +6,18 @@ const verifyToken = require("../middleware/authMiddleware");
 const User = require("../models/User");
 const Payment = require("../models/Payment");
 const { verifySignature } = require("../services/paymentService");
+const {
+  SUBSCRIPTION_PLANS: PLAN_CONFIG,
+  LISTING_CONFIG,
+  CREDIT_PACKS,
+} = require("../config/plans");
 
 const razorpay = process.env.RZP_KEY_ID
   ? new Razorpay({ key_id: process.env.RZP_KEY_ID, key_secret: process.env.RZP_KEY_SECRET })
   : null;
 
-// ─── PLAN CONFIG ──────────────────────────────────────────────────────────────
-const PLAN_CONFIG = {
-  pro: {
-    name: "Nyay Pro",
-    amount: { monthly: 29900, yearly: 249900 }, // ₹299/mo | ₹2499/yr
-    period: "monthly",
-    interval: 1,
-    description: "AI-assisted information, document workflows, and search features subject to current availability",
-    features: ["AI query access subject to fair use", "Precedent search subject to source availability", "Document drafting tools", "Case PDF tools", "NyayVoice access subject to availability", "Outcome prediction: in development, not included"]
-  },
-  gold: {
-    name: "Nyay Gold",
-    amount: { monthly: 79900, yearly: 699900 }, // ₹799/mo | ₹6999/yr
-    period: "monthly",
-    interval: 1,
-    description: "Everything in Pro with expanded workflow access, subject to current availability",
-    features: ["AI query access subject to fair use", "Precedent search subject to source availability", "Document drafting tools", "Case PDF tools", "Outcome prediction: in development, not included"]
-  },
-  firm: {
-    name: "Nyay Firm",
-    amount: { monthly: 299900, yearly: 2499900 }, // ₹2999/mo | ₹24999/yr
-    period: "monthly",
-    interval: 1,
-    description: "Everything in Gold; firm-specific services require separate confirmation",
-    features: ["Everything in Gold", "Team seats: in development", "Contract heatmap: in development", "Public API: not currently offered", "White-label: not currently offered", "Dedicated support: by separate agreement"]
-  }
-};
-
-// Lawyer listing upgrade prices
-const LISTING_CONFIG = {
-  standard: {
-    name: "Pro Lawyer Listing",
-    amount: 199900, // ₹1999/month
-    description: "Priority listing, verified badge, unlimited leads"
-  },
-  premium: {
-    name: "Elite Lawyer Listing",
-    amount: 499900, // ₹4999/month
-    description: "Featured homepage + category top + analytics"
-  }
-};
-
-// AI credit packs (single source of truth for create + verify)
-const CREDIT_PACKS = {
-  starter:  { credits: 20,  amountPaise: 9900,  label: "20 Queries" },
-  standard: { credits: 100, amountPaise: 39900, label: "100 Queries" },
-  pro:      { credits: 500, amountPaise: 149900, label: "500 Queries" }
-};
+// Plan / listing / credit catalogues are defined once in server/config/plans.js
+// (single source of truth shared with the one-time payments route).
 
 const YEARLY_DAYS = 365;
 const MONTHLY_DAYS = 30;

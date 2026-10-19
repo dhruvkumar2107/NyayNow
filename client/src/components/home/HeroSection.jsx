@@ -6,6 +6,7 @@ import { motion, useSpring, useMotionValue } from "framer-motion"
 import { useAuth } from "../../context/AuthContext"
 import { useLanguage } from "../../context/LanguageContext"
 import { ShieldCheck, ChevronRight, Sparkles, Scale, BookOpen } from "lucide-react"
+import FirstAnswerBox from "./FirstAnswerBox"
 
 export default function HeroSection() {
     const { user } = useAuth()
@@ -151,6 +152,9 @@ export default function HeroSection() {
                         </Link>
                     </MagneticButton>
                 </motion.div>
+
+                {/* FIRST-ANSWER BOX (no sign-up) */}
+                <FirstAnswerBox />
 
                 {/* MICRO-TRUST LINE */}
                 <motion.p

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const paymentSchema = new mongoose.Schema(
     {
         orderId: { type: String, required: true },
-        paymentId: { type: String, required: true },
+        paymentId: { type: String, required: true, unique: true }, // DB-level replay guard
         signature: { type: String, required: true },
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
         amount: { type: Number, required: true }, // in rupees

@@ -24,6 +24,18 @@ import toast from "react-hot-toast";
 import { API_HOST } from "../config";
 import PremiumLoader from "../components/PremiumLoader";
 import {
+  MIBackdrop,
+  Panel,
+  StatTile,
+  Pill,
+  SidebarItem,
+  GoldButton,
+  GhostButton,
+  Avatar,
+  EmptySlot,
+  AnimatedNumber,
+} from "../components/dashboard/mi/MIPrimitives";
+import {
   LayoutDashboard,
   Users,
   MessageSquare,
@@ -40,9 +52,9 @@ import {
   LogOut,
   Settings,
   User as UserIcon,
-  Video,
   BookOpen,
-  Globe
+  Globe,
+  X,
 } from "lucide-react";
 
 
@@ -302,9 +314,9 @@ export default function LawyerDashboard() {
       toast.success("Lead Accepted! Client has been notified.");
       fetchLeads();
       fetchAcceptedCases(uId);
-    } catch (err) { 
+    } catch (err) {
       const errMsg = err.response?.data?.error || "Failed to accept lead.";
-      toast.error(errMsg); 
+      toast.error(errMsg);
     }
   };
 
@@ -314,97 +326,92 @@ export default function LawyerDashboard() {
   const userName = user?.name || "Counsel";
   const userInitials = userName[0] || "?";
 
+  const revenueNet = invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0);
+  const unread = notifications.filter(n => !n.read).length;
+  const analytics = crmData?.analytics || [];
+  const revenueSeries = analytics.map(a => Number(a.revenue) || 0);
+
   return (
-    <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
+    <div className="relative min-h-screen bg-[var(--bg)] font-sans text-[var(--text)] selection:bg-[var(--gold)]/25">
+      <MIBackdrop />
 
       {/* SIDEBAR NAVIGATION (Fixed Left) */}
-      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#030712] border-r border-white/5 flex flex-col z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} overflow-y-auto custom-scrollbar`}>
+      <aside className={`mi-scroll fixed left-0 top-0 z-50 flex h-screen w-64 flex-col overflow-y-auto border-r border-[var(--gold-hairline)] bg-[var(--surface)]/80 backdrop-blur-xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6">
-          <div className="flex items-center gap-3 mb-8 px-2">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-600/20">
-              <Gavel className="text-white w-5 h-5" />
-            </div>
+          <div className="mb-8 flex items-center gap-3 px-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--gold)]/10 text-[var(--gold)]">
+              <Gavel size={18} />
+            </span>
             <div>
-              <span className="text-white font-black text-lg tracking-tighter uppercase">Nyay<span className="text-indigo-500">Dash</span></span>
-              <p className="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em] leading-none mt-0.5">Counsel OS</p>
+              <span className="mi-body text-lg font-bold tracking-tight text-[var(--text)]">Nyay<span className="text-[var(--gold)]">Dash</span></span>
+              <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] leading-none text-[var(--text-muted)]">Counsel OS</p>
             </div>
           </div>
 
-          <div className="space-y-6">
-            {/* Command Center section */}
+          <nav className="space-y-6">
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Command Center</p>
+              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">Command Center</p>
               <div className="space-y-1">
-                <NavItem icon={<LayoutDashboard size={18} />} label="Dashboard" active={activeTab === 'board'} onClick={() => setActiveTab('board')} />
-                <NavItem icon={<Zap size={18} />} label="Lead Pool" count={leads.length} active={activeTab === 'leads'} onClick={() => setActiveTab('leads')} />
-                <NavItem icon={<Users size={18} />} label="Client CRM" active={activeTab === 'clients'} onClick={() => setActiveTab('clients')} />
+                <SidebarItem icon={<LayoutDashboard size={18} />} label="Dashboard" active={activeTab === 'board'} onClick={() => setActiveTab('board')} />
+                <SidebarItem icon={<Zap size={18} />} label="Lead Pool" count={leads.length} active={activeTab === 'leads'} onClick={() => setActiveTab('leads')} />
+                <SidebarItem icon={<Users size={18} />} label="Client CRM" active={activeTab === 'clients'} onClick={() => setActiveTab('clients')} />
               </div>
             </div>
 
-            {/* Communication section */}
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Communication</p>
+              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">Communication</p>
               <div className="space-y-1">
-                <NavItem icon={<MessageSquare size={18} />} label="Messages" to="/messages" />
-                <NavItem icon={<Calendar size={18} />} label="Calendar" to="/calendar" />
-                <NavItem icon={<Globe size={18} />} label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
+                <SidebarItem icon={<MessageSquare size={18} />} label="Messages" to="/messages" />
+                <SidebarItem icon={<Calendar size={18} />} label="Calendar" to="/calendar" />
+                <SidebarItem icon={<Globe size={18} />} label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
               </div>
             </div>
 
-            {/* AI Practice Suite section */}
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">AI Practice Suite</p>
+              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">AI Practice Suite</p>
               <div className="space-y-1">
-                <NavItem icon={<BookOpen size={18} className="text-indigo-400" />} label="Live Research" active={activeTab === 'research'} onClick={() => setActiveTab('research')} />
-                <NavItem icon={<FileText size={18} />} label="AI Drafter" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} />
+                <SidebarItem icon={<BookOpen size={18} />} label="Live Research" active={activeTab === 'research'} onClick={() => setActiveTab('research')} />
+                <SidebarItem icon={<FileText size={18} />} label="AI Drafter" active={activeTab === 'notices'} onClick={() => setActiveTab('notices')} />
               </div>
             </div>
 
-            {/* Finance & Account section */}
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Finance & Account</p>
+              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">Finance & Account</p>
               <div className="space-y-1">
-                <NavItem icon={<DollarSign size={18} />} label="Financials" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
+                <SidebarItem icon={<DollarSign size={18} />} label="Financials" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
               </div>
             </div>
-          </div>
+          </nav>
         </div>
 
-        <div className="mt-auto p-4 relative">
-          <div
-            className="flex items-center gap-3 p-3 bg-white/5 border border-white/5 rounded-2xl cursor-pointer hover:bg-white/10 transition group"
-            onClick={() => setShowProfileMenu(!showProfileMenu)}
-          >
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-inner group-hover:scale-105 transition duration-300">
-              {user.name?.[0]}
-            </div>
+        <div className="relative mt-auto p-4">
+          <div className="mi-glass-card flex cursor-pointer items-center gap-3 p-3 transition hover:border-[var(--gold)]/50" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+            <Avatar name={user.name} size={40} />
             <div className="flex-1 overflow-hidden">
-              <p className="text-white font-bold text-xs truncate">{user.name}</p>
-              <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest truncate">{user.specialization || "Partner"}</p>
+              <p className="truncate text-xs font-bold text-[var(--text)]">{user.name}</p>
+              <p className="truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--gold)]">{user.specialization || "Partner"}</p>
             </div>
-            <ChevronDown size={14} className={`text-slate-500 transform transition-transform duration-300 ${showProfileMenu ? 'rotate-180' : ''}`} />
+            <ChevronDown size={14} className={`text-[var(--text-muted)] transition-transform ${showProfileMenu ? 'rotate-180' : ''}`} />
           </div>
 
           <AnimatePresence>
             {showProfileMenu && (
               <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                initial={{ opacity: 0, y: 10, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute bottom-20 left-4 right-4 bg-[#1e293b] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 backdrop-blur-xl"
+                exit={{ opacity: 0, y: 10, scale: 0.96 }}
+                className="mi-glass-card absolute bottom-20 left-4 right-4 z-50 origin-bottom p-2"
               >
-                <div className="p-2 space-y-1">
-                  <button onClick={handleViewProfile} className="w-full flex items-center gap-3 px-3 py-2 text-xs font-bold text-slate-300 hover:bg-indigo-600/10 hover:text-indigo-400 rounded-xl transition text-left">
-                    <UserIcon size={14} /> Profile
-                  </button>
-                  <button onClick={handleEditProfile} className="w-full flex items-center gap-3 px-3 py-2 text-xs font-bold text-slate-300 hover:bg-indigo-600/10 hover:text-indigo-400 rounded-xl transition text-left">
-                    <Settings size={14} /> Settings
-                  </button>
-                  <div className="h-px bg-white/5 my-1 mx-2"></div>
-                  <button onClick={logout} className="w-full flex items-center gap-3 px-3 py-2 text-xs font-bold text-red-400 hover:bg-red-500/10 rounded-xl transition text-left">
-                    <LogOut size={14} /> Log Out
-                  </button>
-                </div>
+                <button onClick={handleViewProfile} className="flex w-full items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2 text-left text-xs font-semibold text-[var(--text)] transition hover:bg-[var(--surface-2)]">
+                  <UserIcon size={14} /> Profile
+                </button>
+                <button onClick={handleEditProfile} className="flex w-full items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2 text-left text-xs font-semibold text-[var(--text)] transition hover:bg-[var(--surface-2)]">
+                  <Settings size={14} /> Settings
+                </button>
+                <div className="mi-hairline my-1" />
+                <button onClick={logout} className="flex w-full items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2 text-left text-xs font-bold text-[var(--sos)] transition hover:bg-[color-mix(in_srgb,var(--sos)_12%,transparent)]">
+                  <LogOut size={14} /> Log Out
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -413,79 +420,64 @@ export default function LawyerDashboard() {
 
       {/* Mobile Sidebar Backdrop */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* MAIN CONTENT AREA */}
-      <main className="lg:pl-64 pt-6 px-4 sm:px-6 pb-6 min-h-screen">
+      <main className="relative z-10 min-h-screen px-4 pb-8 pt-6 sm:px-6 lg:pl-64">
 
         {/* HEADER */}
-        <header className="flex justify-between items-center mb-8 px-2 sm:px-6">
-          {/* MOBILE MENU TOGGLE */}
+        <header className="mb-8 flex items-center justify-between gap-4 px-2 sm:px-6">
           <button
-            className="lg:hidden fixed top-4 left-4 z-[60] p-2.5 bg-[#0f172a] border border-white/10 rounded-xl text-slate-400 hover:text-white transition shadow-xl"
+            className="mi-focus fixed left-4 top-4 z-[60] rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--surface)]/80 p-2.5 text-[var(--text-muted)] backdrop-blur-xl transition hover:text-[var(--text)] lg:hidden"
             onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle navigation"
           >
-            {sidebarOpen ? '✕' : '☰'}
+            {sidebarOpen ? <X size={18} /> : '☰'}
           </button>
+
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight">
-              Command <span className="text-indigo-500">Center</span>.
+            <h1 className="mi-display text-xl font-bold tracking-tight sm:text-3xl">
+              Command <span className="mi-gold-headline">Center</span>
             </h1>
           </motion.div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* VIDEO CALL BUTTON */}
-            {/* <button
-              onClick={() => router.push('/video-call')}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 group active:scale-95"
-            >
-              <Video size={14} className="group-hover:rotate-12 transition" />
-              Virtual Court
-            </button> */}
-
-            {/* NOTIFICATION BELL */}
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="p-3 bg-white/5 border border-white/5 rounded-2xl text-slate-400 hover:text-white hover:bg-white/10 transition relative group"
+                className="mi-focus relative rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface)]/70 p-3 text-[var(--text-muted)] transition hover:text-[var(--text)]"
+                aria-label="Notifications"
               >
-                <Bell size={18} className="group-hover:rotate-12 transition" />
-                {notifications.filter(n => !n.read).length > 0 && (
-                  <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
-                )}
+                <Bell size={18} />
+                {unread > 0 && <span className="absolute right-2 top-2 h-2 w-2 animate-ping rounded-full bg-[var(--sos)]" />}
               </button>
 
               <AnimatePresence>
                 {showNotifications && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    initial={{ opacity: 0, y: 10, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 mt-4 w-80 bg-[#1e293b]/90 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl z-[100] overflow-hidden origin-top-right ring-1 ring-white/10"
+                    exit={{ opacity: 0, y: 10, scale: 0.96 }}
+                    className="mi-glass-card absolute right-0 z-[100] mt-4 w-80 origin-top-right overflow-hidden"
                   >
-                    <div className="p-5 border-b border-white/5 flex justify-between items-center bg-white/5">
-                      <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Alert Pulse</h4>
-                      <button onClick={handleMarkAllRead} className="text-[9px] text-indigo-400 font-bold hover:underline tracking-tighter uppercase">Clear All</button>
+                    <div className="flex items-center justify-between border-b border-[var(--gold-hairline)] px-5 py-4">
+                      <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text)]">Alert Pulse</h4>
+                      <button onClick={handleMarkAllRead} className="text-[9px] font-bold uppercase tracking-tight text-[var(--gold)] hover:underline">Clear All</button>
                     </div>
-                    <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                    <div className="mi-scroll max-h-[400px] overflow-y-auto">
                       {notifications.length === 0 ? (
-                        <div className="p-10 text-center opacity-30">
-                          <p className="text-[10px] font-black uppercase tracking-widest">No Active Alerts</p>
-                        </div>
+                        <div className="p-10 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">No Active Alerts</div>
                       ) : (
                         notifications.map(n => (
-                          <div
+                          <button
                             key={n._id}
                             onClick={() => handleNotificationClick(n)}
-                            className={`p-5 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}
+                            className={`block w-full border-b border-[var(--gold-hairline)] px-5 py-4 text-left transition last:border-0 hover:bg-[var(--surface-2)]/60 ${!n.read ? 'bg-[var(--gold)]/5' : ''}`}
                           >
-                            <p className="text-xs text-slate-300 leading-relaxed font-medium">{n.message}</p>
-                            <p className="text-[9px] text-slate-600 mt-2 font-bold uppercase tracking-wider">{new Date(n.createdAt).toLocaleTimeString()}</p>
-                          </div>
+                            <p className="text-xs leading-relaxed text-[var(--text)]">{n.message}</p>
+                            <p className="mt-1.5 text-[9px] uppercase tracking-wider text-[var(--text-muted)]">{new Date(n.createdAt).toLocaleTimeString()}</p>
+                          </button>
                         ))
                       )}
                     </div>
@@ -494,164 +486,125 @@ export default function LawyerDashboard() {
               </AnimatePresence>
             </div>
 
-            <div className="h-10 w-px bg-white/10 mx-2" />
+            <div className="mx-2 hidden h-10 w-px bg-[var(--gold-hairline)] sm:block" />
 
-            <div className="text-right hidden sm:block">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-0.5">Revenue Net</p>
-              <p className="text-xl font-black text-white tracking-tighter">₹{invoices.filter(i => i.status === 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+            <div className="hidden text-right sm:block">
+              <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">Revenue Net</p>
+              <p className="text-xl font-bold tracking-tight text-[var(--text)]"><AnimatedNumber value={revenueNet} prefix="₹" /></p>
             </div>
+
+            <GoldButton onClick={() => setShowInvoiceModal(true)} className="hidden sm:inline-flex">
+              <DollarSign size={15} /> Invoice
+            </GoldButton>
           </div>
         </header>
 
         {/* BENTO GRID LAYOUT */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 px-2 sm:px-4">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
 
           {/* PRIMARY CONTENT (8 COLS) */}
-          <div className="col-span-1 lg:col-span-8 space-y-6">
+          <div className="col-span-1 space-y-6 lg:col-span-8">
 
             {activeTab === 'board' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
 
                 {/* PRACTICE OVERVIEW CARDS */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <StatCard
-                    label="Active Matters"
-                    value={acceptedCases.length}
-                    sub="Ongoing lifecycle"
-                    icon={<Briefcase className="text-indigo-400" size={20} />}
-                    color="indigo"
-                  />
-                  <StatCard
-                    label="Pending Leads"
-                    value={leads.length}
-                    sub="Action required"
-                    icon={<Zap className="text-amber-400" size={20} />}
-                    color="amber"
-                  />
-                  <StatCard
-                    label="Today's Agenda"
-                    value={appointments.length}
-                    sub="Virtual court sessions"
-                    icon={<Calendar className="text-emerald-400" size={20} />}
-                    color="emerald"
-                  />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <StatTile label="Active Matters" value={acceptedCases.length} sub="Ongoing lifecycle" icon={<Briefcase size={18} />} tone="gold" />
+                  <StatTile label="Pending Leads" value={leads.length} sub="Action required" icon={<Zap size={18} />} tone="warn" />
+                  <StatTile label="Today's Agenda" value={appointments.length} sub="Virtual court sessions" icon={<Calendar size={18} />} tone="emerald" />
                 </div>
 
                 {/* ANALYTICS WIDGET */}
-                <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[80px] rounded-full -mr-20 -mt-20 group-hover:bg-indigo-500/10 transition duration-700"></div>
-                  <div className="flex justify-between items-center mb-8 relative z-10">
-                    <div>
-                      <h3 className="font-black text-xl text-white tracking-tight">Performance Analytics</h3>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Growth & Conversion Metrics</p>
-                    </div>
-                    <select className="bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest rounded-xl px-4 py-2 text-slate-400 outline-none focus:border-indigo-500 transition">
-                      <option>Quarterly</option>
-                      <option>Monthly</option>
+                <Panel
+                  title="Performance Analytics"
+                  subtitle="Growth & conversion metrics"
+                  icon={<TrendingUp size={16} />}
+                  action={
+                    <select className="rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-transparent px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] outline-none">
+                      <option className="bg-[var(--surface)]">Quarterly</option>
+                      <option className="bg-[var(--surface)]">Monthly</option>
                     </select>
-                  </div>
-                  <div className="h-64 w-full relative z-10">
+                  }
+                >
+                  <div className="h-64 w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={crmData?.analytics || []}>
+                      <AreaChart data={analytics}>
                         <defs>
-                          <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                          <linearGradient id="miRevenue" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#C9A24B" stopOpacity={0.35} />
+                            <stop offset="95%" stopColor="#C9A24B" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <XAxis dataKey="name" tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} dy={10} />
-                        <YAxis tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} />
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
+                        <XAxis dataKey="name" tick={{ fill: '#8FA3C7', fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} dy={10} />
+                        <YAxis tick={{ fill: '#8FA3C7', fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(201,162,75,0.12)" />
                         <Tooltip
-                          contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
-                          itemStyle={{ color: '#fff', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase' }}
+                          contentStyle={{ backgroundColor: '#111A2E', border: '1px solid rgba(201,162,75,0.28)', borderRadius: '1rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6)' }}
+                          itemStyle={{ color: '#F7F3EA', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase' }}
+                          labelStyle={{ color: '#8FA3C7', fontSize: '10px', fontWeight: 700 }}
                         />
-                        <Area type="monotone" dataKey="revenue" stroke="#6366f1" fillOpacity={1} fill="url(#colorRevenue)" strokeWidth={3} name="Revenue" />
+                        <Area type="monotone" dataKey="revenue" stroke="#C9A24B" fillOpacity={1} fill="url(#miRevenue)" strokeWidth={3} name="Revenue" />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
-                </div>
+                </Panel>
 
                 {/* INTELLIGENCE PANEL */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   {crmData ? (
                     <>
                       <WorkloadMonitor workload={crmData.workload} />
                       <CaseIntelligencePanel insights={crmData.caseInsights} />
                     </>
                   ) : (
-                    <div className="col-span-2 h-48 bg-white/5 animate-pulse rounded-[2rem]"></div>
+                    <div className="col-span-2 h-48 animate-pulse rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/40" />
                   )}
                 </div>
 
                 {/* KANBAN BOARD */}
-                <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl">
-                  <div className="flex justify-between items-center mb-8">
-                    <div>
-                      <h3 className="font-black text-xl text-white tracking-tight">Case Lifecycle</h3>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Operational Pipeline</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
-                      <div className="w-2 h-2 bg-slate-700 rounded-full"></div>
-                      <div className="w-2 h-2 bg-slate-700 rounded-full"></div>
-                    </div>
-                  </div>
+                <Panel title="Case Lifecycle" subtitle="Operational pipeline" icon={<LayoutDashboard size={16} />}
+                  action={<div className="flex gap-2"><span className="h-2 w-2 animate-pulse rounded-full bg-[var(--gold)]" /><span className="h-2 w-2 rounded-full bg-[var(--gold-hairline)]" /><span className="h-2 w-2 rounded-full bg-[var(--gold-hairline)]" /></div>}
+                >
                   <KanbanBoard cases={acceptedCases} onUpdate={() => fetchAcceptedCases(user._id || user.id)} />
-                </div>
+                </Panel>
               </motion.div>
             )}
 
             {activeTab === 'feed' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-8 space-y-6">
-                <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden">
-                  <div className="flex justify-between items-center mb-8 relative z-10">
-                    <div>
-                      <h3 className="font-black text-2xl text-white tracking-tight">Legal Pulse</h3>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Community Insights & Intelligence</p>
-                    </div>
-                    <button className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Broadcast Update</button>
-                  </div>
-
-                  <div className="space-y-6 relative z-10">
-                    <LegalReels />
-                    {/* Placeholder for posts logic if needed, or reuse LegalReels */}
-                    <div className="py-10 text-center border-2 border-dashed border-white/5 rounded-[2rem]">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">The pulse is synchronizing...</p>
-                    </div>
-                  </div>
-                </div>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                <Panel title="Legal Pulse" subtitle="Community insights & intelligence" icon={<Globe size={16} />}
+                  action={<GhostButton>Broadcast Update</GhostButton>}
+                >
+                  <LegalReels />
+                </Panel>
               </motion.div>
             )}
 
             {activeTab === 'invoices' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
-                  <div className="flex justify-between items-center mb-8">
-                    <h3 className="font-bold text-2xl text-white">Financial Ledger</h3>
-                    <button onClick={() => setShowInvoiceModal(true)} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-500 transition">Generate New Invoice</button>
-                  </div>
-                  <div className="space-y-4">
+                <Panel title="Financial Ledger" subtitle={`${invoices.length} records`} icon={<DollarSign size={16} />}
+                  action={<GoldButton onClick={() => setShowInvoiceModal(true)}>Generate Invoice</GoldButton>}
+                >
+                  <div className="space-y-3">
                     {invoices.length === 0 ? (
-                      <div className="py-20 text-center">
-                        <p className="text-slate-500 font-bold uppercase tracking-widest">No transaction history found</p>
-                      </div>
+                      <EmptySlot icon="₹" title="No transaction history found" hint="Generated invoices will appear here." />
                     ) : (
                       invoices.map(inv => (
-                        <div key={inv._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-white/10 transition">
+                        <div key={inv._id} className="mi-card-hover flex items-center justify-between rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-5">
                           <div>
-                            <p className="text-white font-bold">{inv.clientName || 'Private Client'}</p>
-                            <p className="text-xs text-slate-500">{new Date(inv.createdAt).toLocaleDateString()} • {inv.description}</p>
+                            <p className="font-semibold text-[var(--text)]">{inv.clientName || 'Private Client'}</p>
+                            <p className="text-xs text-[var(--text-muted)]">{new Date(inv.createdAt).toLocaleDateString()} • {inv.description}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-xl font-bold text-white">₹{inv.amount}</p>
-                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${inv.status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>{inv.status}</span>
+                            <p className="text-xl font-bold text-[var(--text)]">₹{inv.amount}</p>
+                            <Pill tone={inv.status === 'paid' ? 'emerald' : 'warn'} className="mt-1">{inv.status}</Pill>
                           </div>
                         </div>
                       ))
                     )}
                   </div>
-                </div>
+                </Panel>
               </motion.div>
             )}
 
@@ -659,35 +612,31 @@ export default function LawyerDashboard() {
 
             {activeTab === 'leads' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                <h3 className="font-bold text-lg text-white mb-2">Legal Matter Lead Pool</h3>
-                {leads.map(lead => (
-                  <div key={lead._id} className="bg-[#0f172a] border border-white/10 rounded-2xl p-6 hover:shadow-lg hover:border-indigo-500/50 transition group relative overflow-hidden">
-                    <div className="flex justify-between items-start mb-2">
+                <div className="mb-2 flex items-center justify-between">
+                  <h3 className="mi-body text-lg font-semibold text-[var(--text)]">Legal Matter Lead Pool</h3>
+                  <Pill tone="warn">{leads.length} open</Pill>
+                </div>
+                {leads.length === 0 ? (
+                  <EmptySlot icon="⚡" title="No open legal matters found" hint="New leads appear here in real time." />
+                ) : leads.map(lead => (
+                  <div key={lead._id} className="mi-glass-card mi-card-hover group relative overflow-hidden p-6">
+                    <div className="mb-3 flex items-start justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold">
-                          ⚖️
-                        </div>
+                        <span className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--gold)]/10 text-xl">⚖️</span>
                         <div>
-                          <h4 className="font-bold text-lg text-white group-hover:text-indigo-400 transition">{lead.title}</h4>
-                          <span className="px-2.5 py-0.5 bg-indigo-500/10 text-indigo-400 rounded-full text-[10px] font-bold uppercase tracking-wider border border-indigo-500/20">
-                            {lead.category || "General"}
-                          </span>
+                          <h4 className="text-lg font-semibold text-[var(--text)] transition group-hover:text-[var(--gold)]">{lead.title}</h4>
+                          <Pill tone="gold" className="mt-1">{lead.category || "General"}</Pill>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-lg font-bold text-white">{lead.budget ? `Budget: ${lead.budget}` : "Budget: Negotiable"}</div>
-                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{lead.location || "Remote"}</span>
+                        <div className="text-lg font-bold text-[var(--text)]">{lead.budget ? `Budget: ${lead.budget}` : "Budget: Negotiable"}</div>
+                        <span className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">{lead.location || "Remote"}</span>
                       </div>
                     </div>
-                    <p className="text-slate-300 text-sm mb-4 bg-black/20 p-4 rounded-xl border border-white/5">{lead.desc || "No description provided."}</p>
-                    <div className="flex gap-3">
-                      <button onClick={() => acceptLead(lead._id)} className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">
-                        Accept Lead & Contact Client
-                      </button>
-                    </div>
+                    <p className="mb-4 rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/40 p-4 text-sm text-[var(--text-muted)]">{lead.desc || "No description provided."}</p>
+                    <GoldButton onClick={() => acceptLead(lead._id)} className="w-full">Accept Lead & Contact Client</GoldButton>
                   </div>
                 ))}
-                {leads.length === 0 && <p className="text-center text-slate-500 py-10">No open legal matters found in the lead pool.</p>}
               </motion.div>
             )}
 
@@ -709,75 +658,52 @@ export default function LawyerDashboard() {
 
           {/* RIGHT SIDEBAR (4 COLS) — Hidden on full-width tabs */}
           {(activeTab !== 'notices' && activeTab !== 'research') && (
-            <div className="col-span-1 lg:col-span-4 space-y-6">
-              
-              {/* eCourts Integration */}
+            <div className="col-span-1 space-y-6 lg:col-span-4">
+
               <ECourtsWidget />
 
-              {/* CALENDAR */}
-              <div className="bg-[#0f172a] rounded-[2rem] p-6 border border-white/5 shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-32 h-32 bg-indigo-500/5 blur-[50px] rounded-full -ml-10 -mt-10"></div>
-                <div className="relative z-10 h-[340px]">
-                  <CalendarWidget user={user} />
-                </div>
-              </div>
+              <Panel hover={false} title="Calendar" subtitle="Scheduling" icon={<Calendar size={16} />}>
+                <div className="h-[340px]"><CalendarWidget user={user} /></div>
+              </Panel>
 
-              {/* UPCOMING MEETINGS */}
-              <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-400">
-                    <Calendar size={16} />
-                  </div>
-                  <h3 className="font-black text-lg text-white tracking-tight">Today&apos;s Agenda</h3>
-                </div>
+              <Panel hover={false} title="Today's Agenda" icon={<Calendar size={16} />}>
                 {appointments.length === 0 ? (
-                  <div className="py-10 text-center opacity-30 border-2 border-dashed border-white/5 rounded-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-widest">No Scheduled Briefings</p>
-                  </div>
+                  <EmptySlot icon="🗓️" title="No scheduled briefings" />
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {appointments.slice(0, 3).map(apt => (
-                      <div key={apt._id} className="p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between hover:bg-white/10 transition group">
+                      <div key={apt._id} className="flex items-center justify-between rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[10px] font-bold text-slate-400">
-                            {apt.clientId?.name?.[0] || "C"}
-                          </div>
+                          <Avatar name={apt.clientId?.name || 'C'} size={32} />
                           <div>
-                            <p className="font-black text-xs text-white leading-none mb-1">{apt.clientId?.name || "Private Client"}</p>
-                            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">{apt.slot}</p>
+                            <p className="text-xs font-bold leading-none text-[var(--text)]">{apt.clientId?.name || "Private Client"}</p>
+                            <p className="mt-1 text-[9px] uppercase tracking-tight text-[var(--text-muted)]">{apt.slot}</p>
                           </div>
                         </div>
-                        {apt.status === 'confirmed' ? (
-                          <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500/60 px-3 py-1 bg-emerald-500/5 rounded-lg border border-emerald-500/10">Confirmed</span>
-                        ) : (
-                          <span className="text-[8px] font-black uppercase tracking-widest text-amber-500/60 px-3 py-1 bg-amber-500/5 rounded-lg border border-amber-500/10">Pending</span>
-                        )}
+                        {apt.status === 'confirmed' ? <Pill tone="emerald">Confirmed</Pill> : <Pill tone="warn">Pending</Pill>}
                       </div>
                     ))}
                   </div>
                 )}
-              </div>
+              </Panel>
 
-              {/* RECENT ACTIVITY FEED (NEW) */}
-              <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400">
-                    <Zap size={16} />
-                  </div>
-                  <h3 className="font-black text-lg text-white tracking-tight">Recent Pulse</h3>
-                </div>
-                <div className="space-y-6 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-white/5">
-                  {notifications.slice(0, 4).map((n, idx) => (
-                    <div key={idx} className="relative pl-8 group">
-                      <div className="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-[#0f172a] border-2 border-white/10 flex items-center justify-center z-10 group-hover:border-indigo-500 transition duration-300">
-                        <div className="w-1.5 h-1.5 rounded-full bg-slate-600 group-hover:bg-indigo-500 transition duration-300"></div>
+              <Panel hover={false} title="Recent Pulse" icon={<Zap size={16} />}>
+                {notifications.length === 0 ? (
+                  <EmptySlot icon="✦" title="Nothing new" />
+                ) : (
+                  <div className="relative space-y-6 before:absolute before:bottom-2 before:left-[11px] before:top-2 before:w-0.5 before:bg-[var(--gold-hairline)]">
+                    {notifications.slice(0, 4).map((n, idx) => (
+                      <div key={idx} className="group relative pl-8">
+                        <div className="absolute left-0 top-1.5 z-10 flex h-6 w-6 items-center justify-center rounded-full border-2 border-[var(--gold-hairline)] bg-[var(--surface)] transition group-hover:border-[var(--gold)]">
+                          <div className="h-1.5 w-1.5 rounded-full bg-[var(--gold-hairline)] transition group-hover:bg-[var(--gold)]" />
+                        </div>
+                        <p className="text-[11px] leading-relaxed text-[var(--text-muted)] transition group-hover:text-[var(--text)]">{n.message}</p>
+                        <p className="mt-1 text-[8px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{new Date(n.createdAt).toLocaleTimeString()}</p>
                       </div>
-                      <p className="text-[11px] text-slate-400 leading-relaxed font-medium group-hover:text-slate-200 transition">{n.message}</p>
-                      <p className="text-[8px] text-slate-600 mt-1 font-black uppercase tracking-widest">{new Date(n.createdAt).toLocaleTimeString()}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                    ))}
+                  </div>
+                )}
+              </Panel>
             </div>
           )}
 
@@ -788,98 +714,41 @@ export default function LawyerDashboard() {
       <AnimatePresence>
         {showInvoiceModal && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowInvoiceModal(false)}></div>
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-[#0f172a] border border-white/10 rounded-3xl p-8 max-w-lg w-full relative z-10 shadow-2xl">
-              <h3 className="font-bold text-2xl text-white mb-6">Generate Invoice</h3>
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowInvoiceModal(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }} className="mi-glass-card relative z-10 w-full max-w-lg p-8">
+              <div className="mb-6 flex items-center justify-between">
+                <h3 className="mi-body text-xl font-semibold text-[var(--text)]">Generate Invoice</h3>
+                <button onClick={() => setShowInvoiceModal(false)} className="text-[var(--text-muted)] hover:text-[var(--text)]"><X size={18} /></button>
+              </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Select Client</label>
+                  <label className="mb-1 block text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Select Client</label>
                   <select
-                    className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition"
+                    className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-transparent p-4 text-[var(--text)] outline-none"
                     value={newInvoice.clientId}
                     onChange={e => setNewInvoice({ ...newInvoice, clientId: e.target.value })}
                   >
-                    <option value="">Select a client</option>
+                    <option value="" className="bg-[var(--surface)]">Select a client</option>
                     {connections.map(c => (
-                      <option key={c._id} value={c._id}>{c.name}</option>
+                      <option key={c._id} value={c._id} className="bg-[var(--surface)]">{c.name}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Description</label>
-                  <input type="text" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="e.g. Consultation Fee" value={newInvoice.description} onChange={e => setNewInvoice({ ...newInvoice, description: e.target.value })} />
+                  <label className="mb-1 block text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Description</label>
+                  <input type="text" className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-transparent p-4 text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]" placeholder="e.g. Consultation Fee" value={newInvoice.description} onChange={e => setNewInvoice({ ...newInvoice, description: e.target.value })} />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Amount (INR)</label>
-                  <input type="number" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="2000" value={newInvoice.amount} onChange={e => setNewInvoice({ ...newInvoice, amount: e.target.value })} />
+                  <label className="mb-1 block text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Amount (INR)</label>
+                  <input type="number" className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-transparent p-4 text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]" placeholder="2000" value={newInvoice.amount} onChange={e => setNewInvoice({ ...newInvoice, amount: e.target.value })} />
                 </div>
-                <button onClick={handleCreateInvoice} className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/25 mt-2">
-                  Send Invoice
-                </button>
+                <GoldButton onClick={handleCreateInvoice} className="w-full">Send Invoice</GoldButton>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
 
-    </div>
-  );
-}
-
-function NavItem({ icon, label, to, count, active, onClick, badge }) {
-  const router = useRouter();
-  const handleClick = () => {
-    if (onClick) onClick();
-    if (to) router.push(to);
-  };
-
-  return (
-    <div
-      onClick={handleClick}
-      className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl cursor-pointer transition-all duration-200 group ${active
-          ? 'bg-indigo-500/10 text-white border border-indigo-500/25 shadow-sm font-semibold'
-          : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'
-        }`}
-    >
-      <div className="flex items-center gap-3">
-        <span className={`transition-colors duration-200 ${active ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300'}`}>
-          {icon}
-        </span>
-        <span className="text-[13px] tracking-normal font-medium">
-          {label}
-        </span>
-      </div>
-      <div className="flex items-center gap-2">
-        {count !== undefined && (
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${active ? 'bg-indigo-500/20 text-white' : 'bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500/15 group-hover:text-white'
-            } transition-colors border border-indigo-500/20`}>
-            {count}
-          </span>
-        )}
-        {badge && <span className="text-[9px] font-bold bg-indigo-500/15 text-indigo-400 border border-indigo-500/25 px-1.5 py-0.5 rounded uppercase tracking-wider">{badge}</span>}
-      </div>
-    </div>
-  )
-}
-
-function StatCard({ label, value, sub, icon, color }) {
-  const colors = {
-    indigo: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-indigo-500/10",
-    amber: "bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-amber-500/10",
-    emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/10"
-  };
-
-  return (
-    <div className={`p-6 rounded-[2rem] border ${colors[color]} shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-default group`}>
-      <div className="flex justify-between items-start mb-4">
-        <div className="p-3 bg-white/5 rounded-2xl group-hover:rotate-12 transition duration-500">
-          {icon}
-        </div>
-        <TrendingUp size={14} className="opacity-30" />
-      </div>
-      <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">{label}</p>
-      <h4 className="text-3xl font-black text-white tracking-tighter">{value}</h4>
-      <p className="text-[9px] font-bold uppercase tracking-tighter opacity-40 mt-1">{sub}</p>
     </div>
   );
 }

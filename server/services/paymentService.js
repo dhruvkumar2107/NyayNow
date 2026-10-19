@@ -1,23 +1,22 @@
 const crypto = require("crypto");
 const User = require("../models/User");
 const Payment = require("../models/Payment");
+const { PLAN_PRICES_PAISE } = require("../config/plans");
 
-// Server-authoritative plan→amount map (paise). Never trust client-supplied amounts.
-const PLAN_PRICES_PAISE = {
-  silver:     Number(process.env.RZP_AMOUNT_SILVER  || 29900),
-  gold:       Number(process.env.RZP_AMOUNT_GOLD    || 59900),
-  diamond:    Number(process.env.RZP_AMOUNT_DIAMOND || 99900),
-  credits_1:  9900,
-  credits_20: 19900,
-};
+// Server-authoritative plan→amount map (paise) lives in config/plans.js.
+// Never trust client-supplied amounts. Re-exported here for backward compat.
 
 function verifySignature(orderId, paymentId, signature) {
+  if (!process.env.RZP_KEY_SECRET || typeof signature !== "string") return false;
   const body = `${orderId}|${paymentId}`;
   const expected = crypto
     .createHmac("sha256", process.env.RZP_KEY_SECRET)
     .update(body)
     .digest("hex");
-  return expected === signature;
+  const expectedBuf = Buffer.from(expected, "utf8");
+  const providedBuf = Buffer.from(signature, "utf8");
+  // Constant-time comparison; length mismatch short-circuits (timingSafeEqual throws otherwise).
+  return expectedBuf.length === providedBuf.length && crypto.timingSafeEqual(expectedBuf, providedBuf);
 }
 
 /**

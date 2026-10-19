@@ -15,6 +15,7 @@ if (process.env.NODE_ENV !== 'test' && (!process.env.JWT_SECRET || KNOWN_BAD_SEC
 
 const express = require("express");
 const cors = require("cors");
+const { buildAllowedOrigins, logOriginConfig } = require("./utils/corsConfig");
 const path = require("path");
 const fs = require("fs");
 const mongoose = require("mongoose");
@@ -31,15 +32,7 @@ const app = express();
 app.set("trust proxy", 1); // Trust first proxy (Required for Render/Vercel)
 const server = http.createServer(app);
 
-const allowedOrigins = [
-  "https://nyaynow.in",
-  "https://www.nyaynow.in",
-  "https://nyaynow.com",
-  process.env.CLIENT_URL,
-  // Extra explicit origins (e.g. staging/preview) via comma-separated env var
-  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",").map(o => o.trim()) : []),
-  ...(process.env.NODE_ENV !== 'production' ? ["http://localhost:3000", "http://localhost:5173"] : []),
-].filter(Boolean);
+const allowedOrigins = buildAllowedOrigins();
 
 const isAllowedOrigin = (origin) => {
   if (!origin) return true;
@@ -242,7 +235,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json({ limit: "10mb" }));
+// Capture the raw request body so webhook signature verification (Razorpay) can
+// HMAC the exact bytes Razorpay signed. express.json() otherwise consumes the
+// stream and only exposes the parsed object.
+app.use(express.json({
+  limit: "10mb",
+  verify: (req, res, buf) => {
+    if (buf && buf.length) req.rawBody = buf;
+  },
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(sanitizeMiddleware);
@@ -522,6 +523,7 @@ loadRoute("/api/verification", "./routes/verification"); // REAL DIGILOCKER ROUT
 loadRoute("/api/confessions", "./routes/confessions"); // ANONYMOUS CONFESSION BOOTH
 loadRoute("/api/ecourts", "./routes/ecourts"); // ECOURTS INTEGRATION
 loadRoute("/api/translate", "./routes/translate"); // BHASHINI MULTILINGUAL TRANSLATION
+loadRoute("/api/ipc-bns", "./routes/ipcBns"); // IPC-to-BNS SECTION REFERENCE MAP
 loadRoute("/api/subscriptions", "./routes/subscriptions"); // 💰 RECURRING SUBSCRIPTIONS
 loadRoute("/api/leads", "./routes/leads"); // 💰 PAY-PER-LEAD SYSTEM
 loadRoute("/api", "./routes/public"); // Aggregate public metrics and gated proof receipts
@@ -568,12 +570,13 @@ if (fs.existsSync(clientDist)) {
         { path: "/blog", freq: "daily", priority: "0.8" },
         { path: "/research", freq: "weekly", priority: "0.7" },
         { path: "/drafting", freq: "weekly", priority: "0.7" },
-        { path: "/courtroom-battle", freq: "weekly", priority: "0.7" },
         { path: "/nyaycourt-simulator", freq: "weekly", priority: "0.7" },
         { path: "/nyayvoice", freq: "weekly", priority: "0.7" },
         { path: "/judge-pro", freq: "weekly", priority: "0.7" },
         { path: "/moot-court", freq: "weekly", priority: "0.7" },
         { path: "/ecourts", freq: "weekly", priority: "0.7" },
+        { path: "/ipc-to-bns", freq: "weekly", priority: "0.9" },
+        { path: "/nyayproof", freq: "monthly", priority: "0.7" },
         { path: "/case-studies", freq: "monthly", priority: "0.6" },
         { path: "/about", freq: "monthly", priority: "0.6" },
         { path: "/pricing", freq: "monthly", priority: "0.6" },
@@ -738,6 +741,7 @@ if (process.env.NODE_ENV !== 'test') {
 
     server.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
+      logOriginConfig(allowedOrigins);
     });
   });
 }
