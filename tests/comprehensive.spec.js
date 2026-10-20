@@ -12,7 +12,7 @@ const PAGES = [
     { path: '/refund', title: /Refund/i, canonical: 'https://nyaynow.in/refund' },
     { path: '/login', title: /Sign In|Login/i, canonical: 'https://nyaynow.in/login' },
     { path: '/register', title: /Create an Account/i, canonical: 'https://nyaynow.in/register' },
-    { path: '/judge-ai', title: /Case analysis research|Judge AI/i, canonical: 'https://nyaynow.in/judge-ai', waitText: 'Judge AI' },
+    { path: '/judge-ai', title: /Case analysis research|Judge AI/i, canonical: 'https://nyaynow.in/judge-ai', waitText: 'Outcome prediction is disabled' },
     { path: '/drafting', title: /Draft/i, canonical: 'https://nyaynow.in/drafting', waitText: 'Drafting Lab' },
     { path: '/nearby', title: /Nearby/i, canonical: 'https://nyaynow.in/nearby' },
     { path: '/nyaycourt-simulator', title: /Courtroom practice simulation|NyayCourt Simulator/i, canonical: 'https://nyaynow.in/nyaycourt-simulator' },
