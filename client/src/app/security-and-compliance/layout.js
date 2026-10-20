@@ -1,6 +1,6 @@
 export const metadata = {
-    title: 'Security, Encryption & Privacy Compliance - NyayNow',
-    description: 'Learn about NyayNow\'s enterprise-grade security protocols, end-to-end encryption (AES-256), data confidentiality policies, and DPDP Act compliance.',
+    title: 'Security and Privacy - NyayNow',
+    description: 'Review NyayNow security controls, data handling disclosures, hosting dependencies, and privacy contact information.',
     alternates: {
         canonical: 'https://nyaynow.in/security-and-compliance',
     },

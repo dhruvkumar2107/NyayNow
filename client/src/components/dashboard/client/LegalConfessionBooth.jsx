@@ -10,12 +10,6 @@ import toast from 'react-hot-toast';
 
 const CATEGORIES = ["All", "Criminal", "Family", "Property", "Consumer", "Employment", "Cyber", "Tenant", "Business", "Financial", "Other"];
 
-const CATEGORY_COLORS = {
-    Criminal: "rose", Family: "pink", Property: "amber", Consumer: "blue",
-    Employment: "orange", Cyber: "violet", Tenant: "teal", Business: "indigo",
-    Financial: "emerald", Other: "slate", All: "slate"
-};
-
 const CATEGORY_ICONS = {
     Criminal: "⚖️", Family: "👨‍👩‍👧", Property: "🏠", Consumer: "🛒",
     Employment: "💼", Cyber: "💻", Tenant: "🔑", Business: "🏢",
@@ -124,34 +118,34 @@ export default function LegalConfessionBooth() {
         <div className="space-y-5">
 
             {/* ── HERO HEADER ── */}
-            <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-0 left-1/4 w-72 h-72 bg-violet-600/10 rounded-full blur-3xl" />
-                    <div className="absolute bottom-0 right-0 w-48 h-48 bg-indigo-600/8 rounded-full blur-2xl" />
+            <div className="mi-glass-card relative overflow-hidden rounded-[var(--radius-lg)] p-6">
+                <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute left-1/4 top-0 h-72 w-72 rounded-full bg-[var(--gold)]/10 blur-3xl" />
+                    <div className="absolute bottom-0 right-0 h-48 w-48 rounded-full bg-[var(--emerald)]/10 blur-2xl" />
                 </div>
-                <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="relative flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-2xl">🎭</div>
+                        <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--gold)]/10 text-2xl">🎭</div>
                         <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <h2 className="text-xl font-bold text-white">Anonymous Legal Confession Booth</h2>
-                                <span className="text-[10px] px-2 py-0.5 bg-violet-500/20 border border-violet-500/30 text-violet-300 rounded-full font-bold uppercase tracking-wider flex items-center gap-1">
+                            <div className="mb-1 flex items-center gap-2">
+                                <h2 className="text-xl font-bold text-[var(--text)]">Anonymous Legal Confession Booth</h2>
+                                <span className="flex items-center gap-1 rounded-full border border-[var(--gold-hairline)] bg-[var(--gold)]/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--gold-soft)]">
                                     <Lock size={9} />Anonymous
                                 </span>
                             </div>
-                            <p className="text-slate-500 text-sm">Your identity is never revealed. AI + verified lawyers respond.</p>
+                            <p className="text-sm text-[var(--text-muted)]">Review the privacy terms before sharing sensitive details. Replies may be AI-generated and are not necessarily reviewed by a lawyer.</p>
                         </div>
                     </div>
                     <button
                         onClick={() => setShowForm(!showForm)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-violet-600/20 hover:shadow-violet-600/30 transition shrink-0"
+                        className="mi-tap mi-focus flex shrink-0 items-center gap-2 rounded-[var(--radius-md)] bg-[var(--gold)] px-5 py-2.5 text-sm font-semibold text-[#0B1220] shadow-lg transition hover:brightness-110"
                     >
                         <ShieldOff size={16} /> Confess Anonymously
                     </button>
                 </div>
 
                 {/* Stats row */}
-                <div className="relative flex gap-6 mt-4 pt-4 border-t border-white/5">
+                <div className="relative mt-4 flex gap-6 border-t border-[var(--gold-hairline)] pt-4">
                     {[
                         { label: "Active Issues", value: confessions.filter(c => c.status === 'open').length, icon: "🔥" },
                         { label: "AI Responses", value: confessions.reduce((a, c) => a + c.replies.filter(r => r.responderRole === 'ai').length, 0), icon: "🤖" },
@@ -160,8 +154,8 @@ export default function LegalConfessionBooth() {
                     ].map(({ label, value, icon }) => (
                         <div key={label} className="text-center">
                             <p className="text-lg">{icon}</p>
-                            <p className="text-white font-bold text-base">{value}</p>
-                            <p className="text-slate-600 text-xs">{label}</p>
+                            <p className="text-base font-bold text-[var(--text)]">{value}</p>
+                            <p className="text-xs text-[var(--text-muted)]">{label}</p>
                         </div>
                     ))}
                 </div>
@@ -176,12 +170,12 @@ export default function LegalConfessionBooth() {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                     >
-                        <div className="bg-[#0f172a] rounded-2xl p-6 border border-violet-500/20 shadow-lg shadow-violet-500/5">
-                            <div className="flex items-center gap-3 mb-5">
-                                <div className="w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center text-sm">🎭</div>
+                        <div className="mi-glass-card rounded-[var(--radius-lg)] p-6">
+                            <div className="mb-5 flex items-center gap-3">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--gold)]/20 text-sm">🎭</div>
                                 <div>
-                                    <p className="text-white font-bold text-sm">Posting Anonymously</p>
-                                    <p className="text-slate-600 text-xs">Your name, email, and device info are never stored or shown</p>
+                                    <p className="text-sm font-semibold text-[var(--text)]">Posting Anonymously</p>
+                                    <p className="text-xs text-[var(--text-muted)]">Your name, email, and device info are never stored or shown</p>
                                 </div>
                             </div>
 
@@ -191,7 +185,7 @@ export default function LegalConfessionBooth() {
                                     onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
                                     maxLength={150}
                                     placeholder="One-line title of your issue (e.g. 'Landlord withholding my security deposit')"
-                                    className="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/60 transition"
+                                    className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--bg)] px-4 py-3 text-sm text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]"
                                 />
 
                                 <textarea
@@ -200,52 +194,52 @@ export default function LegalConfessionBooth() {
                                     rows={5}
                                     maxLength={2000}
                                     placeholder="Describe your situation in detail. Include relevant dates, amounts, or key events. The more context you give, the better the legal information..."
-                                    className="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/60 transition resize-none"
+                                    className="mi-focus w-full resize-none rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--bg)] px-4 py-3 text-sm text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]"
                                 />
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-xs text-slate-500 mb-1.5">Legal Category</label>
+                                        <label className="mb-1.5 block text-xs text-[var(--text-muted)]">Legal Category</label>
                                         <select
                                             value={form.category}
                                             onChange={e => setForm(p => ({ ...p, category: e.target.value }))}
-                                            className="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-violet-500/60 transition"
+                                            className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--bg)] px-4 py-2.5 text-sm text-[var(--text)] outline-none"
                                         >
                                             {CATEGORIES.filter(c => c !== 'All').map(c => (
-                                                <option key={c} value={c}>{CATEGORY_ICONS[c]} {c}</option>
+                                                <option key={c} value={c} className="bg-[var(--surface)]">{CATEGORY_ICONS[c]} {c}</option>
                                             ))}
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-xs text-slate-500 mb-1.5">Tags (comma separated)</label>
+                                        <label className="mb-1.5 block text-xs text-[var(--text-muted)]">Tags (comma separated)</label>
                                         <input
                                             value={form.tags}
                                             onChange={e => setForm(p => ({ ...p, tags: e.target.value }))}
                                             placeholder="e.g. rent, deposit, Mumbai"
-                                            className="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/60 transition"
+                                            className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--bg)] px-4 py-2.5 text-sm text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]"
                                         />
                                     </div>
                                 </div>
 
-                                <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
-                                    <AlertTriangle size={14} className="text-amber-500 mt-0.5 shrink-0" />
-                                    <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
-                                        <span className="text-amber-500 font-bold uppercase tracking-wider">Legal Warning:</span> Posts in this booth are public and <span className="text-white underline">NOT</span> protected by attorney-client privilege. Information may be shared if required by law.
+                                <div className="flex items-start gap-3 rounded-[var(--radius-md)] border border-[color-mix(in_srgb,var(--warn)_30%,transparent)] bg-[color-mix(in_srgb,var(--warn)_8%,transparent)] p-3">
+                                    <AlertTriangle size={14} className="mt-0.5 shrink-0 text-[var(--warn)]" />
+                                    <p className="text-[11px] font-medium leading-relaxed text-[var(--text-muted)]">
+                                        <span className="font-semibold uppercase tracking-wider text-[var(--warn)]">Legal Warning:</span> Posts in this booth are public and <span className="text-[var(--text)] underline">NOT</span> protected by attorney-client privilege. Information may be shared if required by law.
                                     </p>
                                 </div>
 
-                                <div className="flex justify-between items-center pt-2">
-                                    <p className="text-slate-600 text-xs flex items-center gap-1.5">
+                                <div className="flex items-center justify-between pt-2">
+                                    <p className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
                                         <Lock size={10} /> AI analysis will appear within seconds of posting
                                     </p>
                                     <div className="flex gap-2">
-                                        <button onClick={() => setShowForm(false)} className="px-4 py-2 text-slate-400 hover:text-white text-sm transition">Cancel</button>
+                                        <button onClick={() => setShowForm(false)} className="mi-focus rounded-[var(--radius-md)] px-4 py-2 text-sm text-[var(--text-muted)] transition hover:text-[var(--text)]">Cancel</button>
                                         <motion.button
                                             onClick={handlePost}
                                             disabled={posting}
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
-                                            className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-sm rounded-xl shadow-lg transition disabled:opacity-60"
+                                            className="mi-focus flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--gold)] px-5 py-2 text-sm font-semibold text-[#0B1220] shadow-lg transition disabled:opacity-60"
                                         >
                                             {posting ? <><Loader2 size={14} className="animate-spin" /> Posting...</> : <><ShieldOff size={14} /> Post Anonymously</>}
                                         </motion.button>
@@ -258,13 +252,13 @@ export default function LegalConfessionBooth() {
             </AnimatePresence>
 
             {/* ── FILTER BAR ── */}
-            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-                <div className="flex gap-2 flex-wrap">
+            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+                <div className="flex flex-wrap gap-2">
                     {CATEGORIES.map(cat => (
                         <button
                             key={cat}
                             onClick={() => setCategory(cat)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition border ${category === cat ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300' : 'bg-white/3 border-white/8 text-slate-500 hover:text-slate-300 hover:border-white/20'}`}
+                            className={`mi-focus rounded-[var(--radius-sm)] border px-3 py-1.5 text-xs font-semibold transition ${category === cat ? 'border-[var(--gold-hairline)] bg-[var(--gold)]/15 text-[var(--gold-soft)]' : 'border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 text-[var(--text-muted)] hover:text-[var(--text)]'}`}
                         >
                             {cat !== 'All' && CATEGORY_ICONS[cat]} {cat}
                         </button>
@@ -275,7 +269,7 @@ export default function LegalConfessionBooth() {
                         <button
                             key={val}
                             onClick={() => setSort(val)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition border ${sort === val ? 'bg-white/10 border-white/20 text-white' : 'bg-transparent border-white/5 text-slate-500 hover:text-slate-300'}`}
+                            className={`mi-focus rounded-[var(--radius-sm)] border px-3 py-1.5 text-xs font-semibold transition ${sort === val ? 'border-[var(--gold-hairline)] bg-[var(--gold)]/15 text-[var(--gold-soft)]' : 'border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 text-[var(--text-muted)] hover:text-[var(--text)]'}`}
                         >
                             {label}
                         </button>
@@ -286,13 +280,13 @@ export default function LegalConfessionBooth() {
             {/* ── CONFESSION FEED ── */}
             {loading ? (
                 <div className="flex items-center justify-center py-16">
-                    <Loader2 className="animate-spin text-violet-400" size={28} />
+                    <Loader2 className="animate-spin text-[var(--gold)]" size={28} />
                 </div>
             ) : confessions.length === 0 ? (
-                <div className="text-center py-16">
-                    <p className="text-5xl mb-4">🎭</p>
-                    <p className="text-slate-400 font-medium">No confessions yet in this category.</p>
-                    <p className="text-slate-600 text-sm mt-1">Be the first to post anonymously!</p>
+                <div className="py-16 text-center">
+                    <p className="mb-4 text-5xl">🎭</p>
+                    <p className="font-medium text-[var(--text-muted)]">No confessions yet in this category.</p>
+                    <p className="mt-1 text-sm text-[var(--text-muted)]">Be the first to post anonymously!</p>
                 </div>
             ) : (
                 <div className="space-y-4">
@@ -319,7 +313,6 @@ export default function LegalConfessionBooth() {
 
 function ConfessionCard({ c, expandedId, setExpandedId, replyText, setReplyText, replyLoading, handleReply, handleUpvote, handleHelpful, handleResolve }) {
     const isExpanded = expandedId === c._id;
-    const catColor = CATEGORY_COLORS[c.category] || 'slate';
     const aiReply = c.replies?.find(r => r.responderRole === 'ai');
     const lawyerReplies = c.replies?.filter(r => r.responderRole !== 'ai') || [];
 
@@ -328,53 +321,53 @@ function ConfessionCard({ c, expandedId, setExpandedId, replyText, setReplyText,
             layout
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`bg-[#0f172a] rounded-2xl border transition-all duration-300 overflow-hidden ${isExpanded ? 'border-violet-500/30 shadow-lg shadow-violet-500/5' : 'border-white/8 hover:border-white/15'}`}
+            className={`mi-glass-card overflow-hidden rounded-[var(--radius-lg)] transition-all duration-300 ${isExpanded ? 'border-[var(--gold)]/40' : 'hover:border-[var(--gold)]/30'}`}
         >
             {/* Card Header */}
             <div
-                className="p-5 cursor-pointer"
+                className="cursor-pointer p-5"
                 onClick={() => setExpandedId(isExpanded ? null : c._id)}
             >
                 <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                         {/* Badges */}
-                        <div className="flex items-center gap-2 flex-wrap mb-2">
-                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider bg-${catColor}-500/15 text-${catColor}-400 border border-${catColor}-500/20`}>
+                        <div className="mb-2 flex flex-wrap items-center gap-2">
+                            <span className="rounded-md border border-[var(--gold-hairline)] bg-[var(--gold)]/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--gold-soft)]">
                                 {CATEGORY_ICONS[c.category]} {c.category}
                             </span>
                             {c.status === 'resolved' && (
-                                <span className="text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                                <span className="flex items-center gap-1 rounded-md border border-[color-mix(in_srgb,var(--emerald)_35%,transparent)] bg-[color-mix(in_srgb,var(--emerald)_12%,transparent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--emerald)]">
                                     <CheckCircle size={9} /> Resolved
                                 </span>
                             )}
                             {c.tags?.map(tag => (
-                                <span key={tag} className="text-[9px] px-2 py-0.5 bg-white/5 text-slate-500 rounded border border-white/5">#{tag}</span>
+                                <span key={tag} className="rounded border border-[var(--gold-hairline)] bg-[var(--surface-2)]/40 px-2 py-0.5 text-[9px] text-[var(--text-muted)]">#{tag}</span>
                             ))}
                         </div>
 
-                        <h3 className="text-white font-bold text-sm leading-snug mb-2">{c.title}</h3>
-                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-2">{c.body}</p>
+                        <h3 className="mb-2 text-sm font-bold leading-snug text-[var(--text)]">{c.title}</h3>
+                        <p className="line-clamp-2 text-xs leading-relaxed text-[var(--text-muted)]">{c.body}</p>
                     </div>
-                    <div className="shrink-0 flex flex-col items-center gap-1 pt-1">
+                    <div className="flex shrink-0 flex-col items-center gap-1 pt-1">
                         <button
                             onClick={e => { e.stopPropagation(); handleUpvote(c._id); }}
-                            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold border transition ${c._upvoted ? 'bg-violet-500/20 border-violet-500/40 text-violet-400' : 'bg-white/5 border-white/10 text-slate-500 hover:text-violet-400'}`}
+                            className={`mi-focus flex items-center gap-1 rounded-[var(--radius-sm)] border px-2.5 py-1.5 text-xs font-semibold transition ${c._upvoted ? 'border-[var(--gold)]/40 bg-[var(--gold)]/20 text-[var(--gold-soft)]' : 'border-[var(--gold-hairline)] bg-[var(--surface-2)]/40 text-[var(--text-muted)] hover:text-[var(--gold)]'}`}
                         >
                             <ThumbsUp size={11} /> {c.upvotes?.length || 0}
                         </button>
-                        {isExpanded ? <ChevronUp size={16} className="text-slate-600 mt-1" /> : <ChevronDown size={16} className="text-slate-600 mt-1" />}
+                        {isExpanded ? <ChevronUp size={16} className="mt-1 text-[var(--text-muted)]" /> : <ChevronDown size={16} className="mt-1 text-[var(--text-muted)]" />}
                     </div>
                 </div>
 
                 {/* Footer meta */}
-                <div className="flex items-center gap-4 mt-3 text-xs text-slate-600">
+                <div className="mt-3 flex items-center gap-4 text-xs text-[var(--text-muted)]">
                     <span className="flex items-center gap-1"><Clock size={10} />{TIME_AGO(c.createdAt)}</span>
                     <span className="flex items-center gap-1"><MessageCircle size={10} />{c.replies?.length || 0} replies</span>
-                    <span className="flex items-center gap-1 text-violet-500"><Lock size={10} />Anonymous</span>
-                    {aiReply && <span className="flex items-center gap-1 text-indigo-400"><Sparkles size={10} />AI Analyzed</span>}
+                    <span className="flex items-center gap-1 text-[var(--gold)]"><Lock size={10} />Anonymous</span>
+                    {aiReply && <span className="flex items-center gap-1 text-[var(--gold-soft)]"><Sparkles size={10} />AI Analyzed</span>}
                     <button
                         onClick={(e) => { e.stopPropagation(); toast.success("Confession reported for review."); }}
-                        className="flex items-center gap-1 hover:text-rose-500 transition ml-auto"
+                        className="ml-auto flex items-center gap-1 transition hover:text-[var(--sos)]"
                         title="Report this confession"
                     >
                         <AlertTriangle size={10} /> Report
@@ -391,66 +384,66 @@ function ConfessionCard({ c, expandedId, setExpandedId, replyText, setReplyText,
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                     >
-                        <div className="px-5 pb-5 space-y-4 border-t border-white/5 pt-4">
+                        <div className="space-y-4 border-t border-[var(--gold-hairline)] px-5 pb-5 pt-4">
 
                             {/* Full body */}
-                            <div className="text-slate-300 text-sm leading-relaxed">{c.body}</div>
+                            <div className="text-sm leading-relaxed text-[var(--text)]">{c.body}</div>
 
                             {/* AI Analysis Block */}
                             {aiReply ? (
-                                <div className="bg-indigo-950/50 border border-indigo-500/20 rounded-2xl p-4">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <div className="w-7 h-7 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-xs">🤖</div>
+                                <div className="rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--gold)]/5 p-4">
+                                    <div className="mb-3 flex items-center gap-2">
+                                        <div className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--gold-hairline)] bg-[var(--gold)]/20 text-xs">🤖</div>
                                         <div>
-                                            <p className="text-indigo-300 font-bold text-xs">NyayNow AI — Preliminary Analysis</p>
-                                            <p className="text-indigo-600 text-[10px]">Automated response • Not a substitute for legal counsel</p>
+                                            <p className="text-xs font-bold text-[var(--gold-soft)]">NyayNow AI — Preliminary Analysis</p>
+                                            <p className="text-[10px] text-[var(--text-muted)]">Automated response • Not a substitute for legal counsel</p>
                                         </div>
-                                        <Sparkles size={14} className="text-indigo-400 ml-auto" />
+                                        <Sparkles size={14} className="ml-auto text-[var(--gold)]" />
                                     </div>
-                                    <div className="text-slate-300 text-xs leading-relaxed whitespace-pre-wrap font-sans">
+                                    <div className="whitespace-pre-wrap font-sans text-xs leading-relaxed text-[var(--text)]">
                                         {aiReply.text}
                                     </div>
                                 </div>
                             ) : (
-                                <div className="bg-indigo-950/30 border border-indigo-500/10 rounded-2xl p-4 flex items-center gap-3">
-                                    <Loader2 className="animate-spin text-indigo-400 shrink-0" size={16} />
-                                    <p className="text-indigo-400 text-xs">AI analysis is being generated...</p>
+                                <div className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-4">
+                                    <Loader2 className="shrink-0 animate-spin text-[var(--gold)]" size={16} />
+                                    <p className="text-xs text-[var(--gold-soft)]">AI analysis is being generated...</p>
                                 </div>
                             )}
 
                             {/* Lawyer / Community Replies */}
                             {lawyerReplies.length > 0 && (
                                 <div className="space-y-3">
-                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Community Responses ({lawyerReplies.length})</p>
+                                    <p className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Community Responses ({lawyerReplies.length})</p>
                                     {lawyerReplies.map(reply => (
-                                        <div key={reply._id} className="bg-white/3 border border-white/8 rounded-xl p-4">
-                                            <div className="flex items-center justify-between mb-2">
+                                        <div key={reply._id} className="rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-4">
+                                            <div className="mb-2 flex items-center justify-between">
                                                 <div className="flex items-center gap-2">
-                                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${reply.responderRole === 'lawyer' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-700 text-slate-400'}`}>
+                                                    <div className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${reply.responderRole === 'lawyer' ? 'border border-[color-mix(in_srgb,var(--warn)_30%,transparent)] bg-[color-mix(in_srgb,var(--warn)_15%,transparent)] text-[var(--warn)]' : 'bg-[var(--surface-2)] text-[var(--text-muted)]'}`}>
                                                         {reply.responderRole === 'lawyer' ? '⚖' : '👤'}
                                                     </div>
-                                                    <span className={`text-xs font-bold ${reply.responderRole === 'lawyer' ? 'text-amber-400' : 'text-slate-400'}`}>
+                                                    <span className={`text-xs font-bold ${reply.responderRole === 'lawyer' ? 'text-[var(--warn)]' : 'text-[var(--text-muted)]'}`}>
                                                         {reply.responderName || (reply.responderRole === 'lawyer' ? 'Legal Expert' : 'Community Member')}
                                                     </span>
-                                                    <span className="text-slate-700 text-[10px]">{TIME_AGO(reply.createdAt)}</span>
+                                                    <span className="text-[10px] text-[var(--text-muted)]">{TIME_AGO(reply.createdAt)}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <button
                                                         onClick={() => handleHelpful(c._id, reply._id)}
-                                                        className="flex items-center gap-1 text-[10px] text-slate-600 hover:text-emerald-400 transition px-2 py-1 rounded-lg hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20"
+                                                        className="mi-focus flex items-center gap-1 rounded-[var(--radius-sm)] border border-transparent px-2 py-1 text-[10px] text-[var(--text-muted)] transition hover:border-[color-mix(in_srgb,var(--emerald)_20%,transparent)] hover:bg-[color-mix(in_srgb,var(--emerald)_10%,transparent)] hover:text-[var(--emerald)]"
                                                     >
                                                         <ThumbsUp size={10} /> {reply.helpful?.length || 0} Helpful
                                                     </button>
                                                     <button
                                                         onClick={() => toast.success("Content reported. Our team will review it within 24 hours.")}
-                                                        className="flex items-center gap-1 text-[10px] text-slate-700 hover:text-rose-500 transition px-2 py-1 rounded-lg hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20"
+                                                        className="mi-focus flex items-center gap-1 rounded-[var(--radius-sm)] border border-transparent px-2 py-1 text-[10px] text-[var(--text-muted)] transition hover:border-[color-mix(in_srgb,var(--sos)_20%,transparent)] hover:bg-[color-mix(in_srgb,var(--sos)_10%,transparent)] hover:text-[var(--sos)]"
                                                         title="Report inappropriate content"
                                                     >
                                                         <AlertTriangle size={10} /> Report
                                                     </button>
                                                 </div>
                                             </div>
-                                            <p className="text-slate-300 text-xs leading-relaxed">{reply.text}</p>
+                                            <p className="text-xs leading-relaxed text-[var(--text)]">{reply.text}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -463,12 +456,12 @@ function ConfessionCard({ c, expandedId, setExpandedId, replyText, setReplyText,
                                     onChange={e => setReplyText(p => ({ ...p, [c._id]: e.target.value }))}
                                     onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleReply(c._id)}
                                     placeholder="Share advice or ask a follow-up..."
-                                    className="flex-1 bg-[#020617] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/40 transition"
+                                    className="mi-focus flex-1 rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--bg)] px-4 py-2.5 text-xs text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]"
                                 />
                                 <button
                                     onClick={() => handleReply(c._id)}
                                     disabled={replyLoading[c._id]}
-                                    className="px-4 py-2.5 bg-violet-600 text-white rounded-xl hover:bg-violet-500 transition disabled:opacity-50"
+                                    className="mi-focus rounded-[var(--radius-md)] bg-[var(--gold)] px-4 py-2.5 text-[#0B1220] transition hover:brightness-110 disabled:opacity-50"
                                 >
                                     {replyLoading[c._id] ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
                                 </button>
@@ -478,7 +471,7 @@ function ConfessionCard({ c, expandedId, setExpandedId, replyText, setReplyText,
                             {c.status !== 'resolved' && (
                                 <button
                                     onClick={() => handleResolve(c._id)}
-                                    className="flex items-center gap-2 text-xs text-emerald-500 hover:text-emerald-400 transition font-medium px-3 py-1.5 rounded-lg hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20"
+                                    className="mi-focus flex items-center gap-2 rounded-[var(--radius-sm)] border border-transparent px-3 py-1.5 text-xs font-medium text-[var(--emerald)] transition hover:border-[color-mix(in_srgb,var(--emerald)_20%,transparent)] hover:bg-[color-mix(in_srgb,var(--emerald)_10%,transparent)]"
                                 >
                                     <CheckCircle size={13} /> Mark as Resolved
                                 </button>

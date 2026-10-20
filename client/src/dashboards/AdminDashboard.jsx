@@ -5,10 +5,23 @@ import axios from "axios";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
-import { 
-    Shield, Users, CreditCard, Lock, CheckCircle, XCircle, 
+import { motion } from "framer-motion";
+import {
+    Shield, Users, CreditCard, Lock, CheckCircle, XCircle,
     Trash2, Edit2, Activity, Settings, Save, AlertTriangle, Search
 } from "lucide-react";
+import {
+    MIBackdrop,
+    Panel,
+    StatTile,
+    Pill,
+    SidebarItem,
+    GoldButton,
+    Avatar,
+    EmptySlot,
+    AnimatedNumber,
+    SectionHeading,
+} from "../components/dashboard/mi/MIPrimitives";
 
 export default function AdminDashboard() {
     const { user } = useAuth();
@@ -22,7 +35,7 @@ export default function AdminDashboard() {
     const [matrixConfig, setMatrixConfig] = useState({});
     const [editingFeature, setEditingFeature] = useState(null);
 
-    useEffect(() => { 
+    useEffect(() => {
         fetchData();
         fetchFeatureMatrix();
         fetchAuditLogs();
@@ -142,338 +155,342 @@ export default function AdminDashboard() {
     };
 
     // Filter audit logs for specific user
-    const filteredLogs = selectedUserLogs 
+    const filteredLogs = selectedUserLogs
         ? auditLogs.filter(log => log.userId === selectedUserLogs._id)
         : auditLogs;
 
     return (
-        <DashboardLayout
-            /* LEFT SIDEBAR - Navigation & Stats */
-            leftSidebar={
-                <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl space-y-8">
-                    <div className="text-center">
-                        <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-rose-700 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 shadow-lg border border-white/5">🛡️</div>
-                        <h2 className="text-lg font-black text-white tracking-tight">Super Admin</h2>
-                        <div className="flex items-center justify-center gap-1.5 mt-2">
-                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Operational Mode</p>
+        <div className="relative min-h-screen bg-[var(--bg)] selection:bg-[var(--gold)]/25">
+            <MIBackdrop />
+            <DashboardLayout
+                /* LEFT SIDEBAR - Navigation & Stats */
+                leftSidebar={
+                    <div className="mi-glass-card space-y-8 p-6">
+                        <div className="text-center">
+                            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-gradient-to-br from-[var(--sos)]/30 to-[var(--gold)]/20 text-[var(--sos)]">
+                                <Shield size={26} />
+                            </div>
+                            <h2 className="mi-body text-lg font-bold tracking-tight text-[var(--text)]">Super Admin</h2>
+                            <div className="mt-2 flex items-center justify-center gap-1.5">
+                                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--emerald)]"></span>
+                                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">Operational Mode</p>
+                            </div>
                         </div>
+
+                        <nav className="space-y-1">
+                            {[
+                                { id: 'lawyers', label: 'Verification Queue', icon: <Shield size={15} />, count: pendingLawyers.length },
+                                { id: 'lawyer-registry', label: 'Lawyer Registry', icon: <Users size={15} />, count: null },
+                                { id: 'clients', label: 'Client Registry', icon: <Users size={15} />, count: null },
+                                { id: 'matrix', label: 'Feature Matrix', icon: <Settings size={15} />, count: null },
+                                { id: 'logs', label: 'User Activity Logs', icon: <Activity size={15} />, count: null },
+                            ].map(tab => (
+                                <SidebarItem
+                                    key={tab.id}
+                                    icon={tab.icon}
+                                    label={tab.label}
+                                    count={tab.count}
+                                    active={activeTab === tab.id}
+                                    onClick={() => {
+                                        setActiveTab(tab.id);
+                                        setSelectedUserLogs(null); // Reset user filter when switching tabs
+                                    }}
+                                />
+                            ))}
+                        </nav>
                     </div>
+                }
 
-                    <nav className="space-y-1">
-                        {[
-                            { id: 'lawyers', label: 'Verification Queue', icon: <Shield size={15} />, count: pendingLawyers.length },
-                            { id: 'lawyer-registry', label: 'Lawyer Registry', icon: <Users size={15} />, count: null },
-                            { id: 'clients', label: 'Client Registry', icon: <Users size={15} />, count: null },
-                            { id: 'matrix', label: 'Feature Matrix', icon: <Settings size={15} />, count: null },
-                            { id: 'logs', label: 'User Activity Logs', icon: <Activity size={15} />, count: null },
-                        ].map(tab => (
-                            <button
-                                key={tab.id}
-                                onClick={() => {
-                                    setActiveTab(tab.id);
-                                    setSelectedUserLogs(null); // Reset user filter when switching tabs
-                                }}
-                                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all
-                                ${activeTab === tab.id
-                                        ? 'bg-white text-slate-950 font-black shadow-lg'
-                                        : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
-                            >
-                                <div className="flex items-center gap-2.5">{tab.icon} {tab.label}</div>
-                                {tab.count > 0 && <span className="bg-red-500 text-white text-[9px] px-2 py-0.5 rounded-full">{tab.count}</span>}
-                            </button>
-                        ))}
-                    </nav>
-                </div>
-            }
-
-            /* CENTER PANEL - Dynamic Views */
-            mainFeed={
-                <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl min-h-[600px] relative overflow-hidden">
-                    
-                    {/* 1. LAWYER VERIFICATION QUEUE */}
-                    {activeTab === 'lawyers' && (
-                        <div className="space-y-6">
-                            <h3 className="text-xl font-black text-white uppercase tracking-wider">Pending Lawyer Verification</h3>
-                            <div className="grid gap-4">
-                                {pendingLawyers.map(lawyer => (
-                                    <div key={lawyer._id} className="bg-black/20 p-5 rounded-2xl border border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <h4 className="font-bold text-white text-base">{lawyer.name}</h4>
-                                                {lawyer.isStudent && <span className="text-[9px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded font-black border border-purple-500/20 uppercase">Student</span>}
+                /* CENTER PANEL - Dynamic Views */
+                mainFeed={
+                    <Panel hover={false} className="min-h-[600px]">
+                        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                            {/* 1. LAWYER VERIFICATION QUEUE */}
+                            {activeTab === 'lawyers' && (
+                                <div className="space-y-6">
+                                    <SectionHeading eyebrow="Trust & Safety" title="Pending Lawyer Verification" />
+                                    <div className="grid gap-4">
+                                        {pendingLawyers.map(lawyer => (
+                                            <div key={lawyer._id} className="flex flex-col justify-between gap-4 rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-5 md:flex-row md:items-center">
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <h4 className="text-base font-semibold text-[var(--text)]">{lawyer.name}</h4>
+                                                        {lawyer.isStudent && <Pill tone="gold">Student</Pill>}
+                                                    </div>
+                                                    <p className="mt-1 text-xs text-[var(--text-muted)]">Email: {maskEmail(lawyer.email)}</p>
+                                                    <p className="mt-0.5 font-mono text-xs text-[var(--text-muted)]">{lawyer.isStudent ? `Roll No: ${lawyer.studentRollNumber}` : `Bar Council ID: ${lawyer.barCouncilId}`}</p>
+                                                </div>
+                                                <div className="flex w-full items-center gap-2 md:w-auto">
+                                                    {lawyer.idCardImage && (
+                                                        <a href={lawyer.idCardImage} target="_blank" rel="noreferrer" className="mi-focus mr-2 rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--gold)]/5 px-4 py-2 text-xs font-semibold text-[var(--gold-soft)] transition hover:bg-[var(--gold)]/10">
+                                                            View ID Document
+                                                        </a>
+                                                    )}
+                                                    <button onClick={() => verifyLawyer(lawyer._id, 'rejected')} className="mi-focus rounded-[var(--radius-md)] border border-[color-mix(in_srgb,var(--sos)_40%,transparent)] bg-[color-mix(in_srgb,var(--sos)_12%,transparent)] p-2.5 text-[var(--sos)] transition hover:bg-[var(--sos)] hover:text-[#0B1220]"><XCircle size={16} /></button>
+                                                    <button onClick={() => verifyLawyer(lawyer._id, 'approved')} className="mi-focus rounded-[var(--radius-md)] border border-[color-mix(in_srgb,var(--emerald)_40%,transparent)] bg-[color-mix(in_srgb,var(--emerald)_12%,transparent)] p-2.5 text-[var(--emerald)] transition hover:bg-[var(--emerald)] hover:text-[#0B1220]"><CheckCircle size={16} /></button>
+                                                </div>
                                             </div>
-                                            <p className="text-slate-500 text-xs mt-1">Email: {maskEmail(lawyer.email)}</p>
-                                            <p className="text-slate-500 text-xs font-mono mt-0.5">{lawyer.isStudent ? `Roll No: ${lawyer.studentRollNumber}` : `Bar Council ID: ${lawyer.barCouncilId}`}</p>
-                                        </div>
-                                        <div className="flex items-center gap-2 w-full md:w-auto">
-                                            {lawyer.idCardImage && (
-                                                <a href={lawyer.idCardImage} target="_blank" rel="noreferrer" className="text-xs text-indigo-400 hover:underline px-4 py-2 bg-indigo-500/5 rounded-xl border border-indigo-500/10 font-bold mr-2">
-                                                    View ID Document
-                                                </a>
-                                            )}
-                                            <button onClick={() => verifyLawyer(lawyer._id, 'rejected')} className="p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition"><XCircle size={16} /></button>
-                                            <button onClick={() => verifyLawyer(lawyer._id, 'approved')} className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white transition"><CheckCircle size={16} /></button>
-                                        </div>
+                                        ))}
+                                        {pendingLawyers.length === 0 && <EmptySlot icon="✓" title="Verification queue is empty" hint="All submitted credentials have been reviewed." />}
                                     </div>
-                                ))}
-                                {pendingLawyers.length === 0 && <p className="text-slate-500 text-sm italic">Verification queue is empty.</p>}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 2. LAWYER REGISTRY */}
-                    {activeTab === 'lawyer-registry' && (
-                        <div className="space-y-6">
-                            <h3 className="text-xl font-black text-white uppercase tracking-wider">Lawyer Directory</h3>
-                            <div className="grid gap-4">
-                                {allLawyers.map(lawyer => (
-                                    <div key={lawyer._id} className="bg-black/20 p-5 rounded-2xl border border-white/5 flex justify-between items-center">
-                                        <div>
-                                            <h4 className="font-bold text-white text-base">{lawyer.name}</h4>
-                                            <p className="text-slate-500 text-xs">Email: {maskEmail(lawyer.email)}</p>
-                                            <div className="flex gap-2 mt-1">
-                                                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${lawyer.verified ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}`}>
-                                                    {lawyer.verified ? 'Verified' : 'Unverified'}
-                                                </span>
-                                                <span className="text-[9px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-black uppercase">
-                                                    {lawyer.plan}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <button onClick={() => removeUser(lawyer._id)} className="p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition" title="Remove Lawyer">
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </div>
-                                ))}
-                                {allLawyers.length === 0 && <p className="text-slate-500 text-sm italic">No lawyers found in system registry.</p>}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 3. CLIENT REGISTRY */}
-                    {activeTab === 'clients' && (
-                        <div className="space-y-6">
-                            <h3 className="text-xl font-black text-white uppercase tracking-wider">Registered Clients</h3>
-                            <div className="grid gap-4">
-                                {clients.map(client => (
-                                    <div key={client._id} className="bg-black/20 p-5 rounded-2xl border border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                        <div>
-                                            <h4 className="font-bold text-white text-base">{client.name}</h4>
-                                            <p className="text-slate-500 text-xs">Email: {maskEmail(client.email)}</p>
-                                        </div>
-                                        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                                            {/* Edit Plan Dropdown */}
-                                            <div className="flex items-center gap-1.5">
-                                                <span className="text-[10px] text-slate-500 font-bold uppercase">Plan:</span>
-                                                <select
-                                                    value={client.plan}
-                                                    onChange={(e) => handlePlanChange(client._id, e.target.value)}
-                                                    className="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-indigo-500/50"
-                                                >
-                                                    {['free', 'pro', 'gold', 'firm'].map(p => (
-                                                        <option key={p} value={p} className="bg-slate-950 text-white">{p.toUpperCase()}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-
-                                            {/* View activity logs */}
-                                            <button 
-                                                onClick={() => {
-                                                    setSelectedUserLogs(client);
-                                                    setActiveTab('logs');
-                                                }}
-                                                className="px-3.5 py-1.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5"
-                                            >
-                                                <Activity size={12} /> Activity Log
-                                            </button>
-
-                                            {/* Delete Client */}
-                                            <button onClick={() => removeUser(client._id)} className="p-2 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition" title="Remove Client">
-                                                <Trash2 size={14} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 4. FEATURE MATRIX EDITOR */}
-                    {activeTab === 'matrix' && (
-                        <div className="space-y-6">
-                            <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                                <div>
-                                    <h3 className="text-xl font-black text-white uppercase tracking-wider">Dynamic Feature Matrix Limits</h3>
-                                    <p className="text-xs text-slate-500 mt-1">Control search, predictor, and drafting counts dynamically for all plan tiers.</p>
                                 </div>
-                                {editingFeature && (
-                                    <button 
-                                        onClick={handleSaveMatrix}
-                                        className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition flex items-center gap-1.5"
-                                    >
-                                        <Save size={14} /> Save Configuration
-                                    </button>
-                                )}
-                            </div>
+                            )}
 
-                            <div className="overflow-x-auto rounded-2xl border border-white/5 bg-black/20">
-                                <table className="w-full text-left border-collapse text-xs">
-                                    <thead>
-                                        <tr className="border-b border-white/10 bg-white/5 text-slate-400">
-                                            <th className="p-4 font-black uppercase">Feature Name</th>
-                                            <th className="p-4 font-black uppercase">Free Limit</th>
-                                            <th className="p-4 font-black uppercase">Pro Limit</th>
-                                            <th className="p-4 font-black uppercase">Gold Limit</th>
-                                            <th className="p-4 font-black uppercase">Firm Limit</th>
-                                            <th className="p-4 font-black uppercase text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {Object.entries(matrixConfig).map(([key, feature]) => {
-                                            const isEditing = editingFeature === key;
-                                            return (
-                                                <tr key={key} className="border-b border-white/5 hover:bg-white/[0.01]">
-                                                    <td className="p-4">
-                                                        <span className="font-bold text-white block text-sm">{feature.label || key}</span>
-                                                        <span className="text-[10px] text-slate-500 mt-0.5 block">{feature.upgradeMessage || "No upgrade message config."}</span>
-                                                    </td>
-                                                    {['free', 'pro', 'gold', 'firm'].map(tier => {
-                                                        const val = feature.limits[tier];
-                                                        return (
-                                                            <td key={tier} className="p-4">
-                                                                {isEditing ? (
-                                                                    <select
-                                                                        value={val === false ? 'blocked' : val === 'unlimited' ? 'unlimited' : val}
-                                                                        onChange={(e) => {
-                                                                            const rawVal = e.target.value;
-                                                                            const parsed = rawVal === 'blocked' ? false : rawVal === 'unlimited' ? 'unlimited' : parseInt(rawVal);
-                                                                            setMatrixConfig(prev => ({
-                                                                                ...prev,
-                                                                                [key]: {
-                                                                                    ...prev[key],
-                                                                                    limits: {
-                                                                                        ...prev[key].limits,
-                                                                                        [tier]: parsed
-                                                                                    }
-                                                                                }
-                                                                            }));
-                                                                        }}
-                                                                        className="bg-[#020617] border border-white/10 rounded-lg p-1.5 text-white w-20 outline-none"
-                                                                    >
-                                                                        <option value="blocked">Blocked</option>
-                                                                        <option value="unlimited">Unlimited</option>
-                                                                        {[0, 1, 3, 5, 10, 20, 25, 30, 50, 100].map(n => (
-                                                                            <option key={n} value={n}>{n}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                ) : (
-                                                                    <span className={`px-2 py-1 rounded font-bold text-[10px] ${
-                                                                        val === false ? 'bg-red-500/10 text-red-400' :
-                                                                        val === 'unlimited' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-blue-500/10 text-blue-400'
-                                                                    }`}>
-                                                                        {val === false ? 'Blocked' : val === 'unlimited' ? 'Unlimited' : `${val} / mo`}
-                                                                    </span>
-                                                                )}
-                                                            </td>
-                                                        );
-                                                    })}
-                                                    <td className="p-4 text-center">
-                                                        <button 
-                                                            onClick={() => setEditingFeature(isEditing ? null : key)}
-                                                            className="p-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:text-white"
+                            {/* 2. LAWYER REGISTRY */}
+                            {activeTab === 'lawyer-registry' && (
+                                <div className="space-y-6">
+                                    <SectionHeading eyebrow="Directory" title="Lawyer Registry" />
+                                    <div className="grid gap-4">
+                                        {allLawyers.map(lawyer => (
+                                            <div key={lawyer._id} className="flex justify-between rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-5">
+                                                <div className="flex items-start gap-3">
+                                                    <Avatar name={lawyer.name} size={40} />
+                                                    <div>
+                                                        <h4 className="text-base font-semibold text-[var(--text)]">{lawyer.name}</h4>
+                                                        <p className="text-xs text-[var(--text-muted)]">Email: {maskEmail(lawyer.email)}</p>
+                                                        <div className="mt-1 flex gap-2">
+                                                            <Pill tone={lawyer.verified ? 'emerald' : 'warn'}>{lawyer.verified ? 'Verified' : 'Unverified'}</Pill>
+                                                            <Pill tone="muted">{lawyer.plan}</Pill>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button onClick={() => removeUser(lawyer._id)} className="mi-focus h-fit rounded-[var(--radius-md)] border border-[color-mix(in_srgb,var(--sos)_40%,transparent)] bg-[color-mix(in_srgb,var(--sos)_12%,transparent)] p-2.5 text-[var(--sos)] transition hover:bg-[var(--sos)] hover:text-[#0B1220]" title="Remove Lawyer">
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {allLawyers.length === 0 && <EmptySlot icon="⚖️" title="No lawyers found in system registry" />}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 3. CLIENT REGISTRY */}
+                            {activeTab === 'clients' && (
+                                <div className="space-y-6">
+                                    <SectionHeading eyebrow="Directory" title="Registered Clients" />
+                                    <div className="grid gap-4">
+                                        {clients.map(client => (
+                                            <div key={client._id} className="flex flex-col justify-between gap-4 rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-5 md:flex-row md:items-center">
+                                                <div className="flex items-start gap-3">
+                                                    <Avatar name={client.name} size={40} />
+                                                    <div>
+                                                        <h4 className="text-base font-semibold text-[var(--text)]">{client.name}</h4>
+                                                        <p className="text-xs text-[var(--text-muted)]">Email: {maskEmail(client.email)}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-wrap items-center gap-3 md:w-auto">
+                                                    {/* Edit Plan Dropdown */}
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">Plan:</span>
+                                                        <select
+                                                            value={client.plan}
+                                                            onChange={(e) => handlePlanChange(client._id, e.target.value)}
+                                                            className="mi-focus rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-transparent px-3 py-1.5 text-xs text-[var(--text)] outline-none"
                                                         >
-                                                            <Edit2 size={12} />
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    )}
+                                                            {['free', 'pro', 'gold', 'firm'].map(p => (
+                                                                <option key={p} value={p} className="bg-[var(--surface)] text-[var(--text)]">{p.toUpperCase()}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
 
-                    {/* 5. CLIENT ACTIVITY AUDIT LOGS */}
-                    {activeTab === 'logs' && (
-                        <div className="space-y-6">
-                            <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                                <div>
-                                    <h3 className="text-xl font-black text-white uppercase tracking-wider">
-                                        {selectedUserLogs ? `Activity Log: ${selectedUserLogs.name}` : "User Activity Logs"}
-                                    </h3>
-                                    <p className="text-xs text-slate-500 mt-1">Immutable session logs containing exact searches, request payloads, and API status codes.</p>
-                                </div>
-                                {selectedUserLogs && (
-                                    <button 
-                                        onClick={() => setSelectedUserLogs(null)}
-                                        className="text-xs text-indigo-400 hover:text-white underline font-bold uppercase tracking-wider"
-                                    >
-                                        Show All Users
-                                    </button>
-                                )}
-                            </div>
+                                                    {/* View activity logs */}
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedUserLogs(client);
+                                                            setActiveTab('logs');
+                                                        }}
+                                                        className="mi-focus flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/50 px-3.5 py-1.5 text-xs font-semibold text-[var(--text)] transition hover:bg-[var(--surface-2)]"
+                                                    >
+                                                        <Activity size={12} /> Activity Log
+                                                    </button>
 
-                            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                                {filteredLogs.map((log, i) => (
-                                    <div key={i} className="bg-black/20 p-4 rounded-xl border border-white/5 text-xs space-y-2">
-                                        <div className="flex justify-between items-center">
-                                            <span className="font-bold text-indigo-400 font-mono">{log.method} {log.endpoint}</span>
-                                            <span className="text-slate-500">{new Date(log.timestamp).toLocaleString()}</span>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px] text-slate-400 leading-relaxed">
-                                            <div>
-                                                <strong className="text-white block mb-0.5">Payload:</strong>
-                                                <pre className="bg-black/40 p-2.5 rounded-lg border border-white/5 overflow-x-auto whitespace-pre-wrap font-mono max-h-20">{log.requestBody}</pre>
+                                                    {/* Delete Client */}
+                                                    <button onClick={() => removeUser(client._id)} className="mi-focus rounded-[var(--radius-md)] border border-[color-mix(in_srgb,var(--sos)_40%,transparent)] bg-[color-mix(in_srgb,var(--sos)_12%,transparent)] p-2 text-[var(--sos)] transition hover:bg-[var(--sos)] hover:text-[#0B1220]" title="Remove Client">
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <strong className="text-white block mb-0.5">AI Response Preview:</strong>
-                                                <pre className="bg-black/40 p-2.5 rounded-lg border border-white/5 overflow-x-auto whitespace-pre-wrap font-mono max-h-20">{log.responseBody}</pre>
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-4 text-[10px] text-slate-500 font-semibold pt-1">
-                                            <span>User ID: <span className="font-mono text-slate-300">{log.userId}</span></span>
-                                            <span>Duration: <span className="text-emerald-400">{log.durationMs}ms</span></span>
-                                            <span>Status: <span className={log.responseStatus >= 400 ? "text-red-400" : "text-emerald-400"}>{log.responseStatus}</span></span>
-                                        </div>
+                                        ))}
                                     </div>
-                                ))}
-                                {filteredLogs.length === 0 && <p className="text-slate-500 text-sm italic text-center py-20">No activity logs recorded yet.</p>}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            }
+                                </div>
+                            )}
 
-            /* RIGHT PANEL - Stats Summary */
-            rightSidebar={
-                <div className="space-y-6">
-                    <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl">
-                        <h3 className="font-bold text-white mb-6 text-xs uppercase tracking-widest opacity-50">Platform Health</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
-                                <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Users</span>
-                                <p className="text-2xl font-black text-white mt-1">{stats.users}</p>
+                            {/* 4. FEATURE MATRIX EDITOR */}
+                            {activeTab === 'matrix' && (
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between border-b border-[var(--gold-hairline)] pb-4">
+                                        <div>
+                                            <h3 className="mi-body text-xl font-semibold tracking-tight text-[var(--text)]">Dynamic Feature Matrix Limits</h3>
+                                            <p className="mt-1 text-xs text-[var(--text-muted)]">Control search, predictor, and drafting counts dynamically for all plan tiers.</p>
+                                        </div>
+                                        {editingFeature && (
+                                            <GoldButton onClick={handleSaveMatrix}>
+                                                <Save size={14} /> Save Configuration
+                                            </GoldButton>
+                                        )}
+                                    </div>
+
+                                    <div className="mi-scroll overflow-x-auto rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30">
+                                        <table className="w-full border-collapse text-left text-xs">
+                                            <thead>
+                                                <tr className="border-b border-[var(--gold-hairline)] bg-[var(--gold)]/5 text-[var(--text-muted)]">
+                                                    <th className="p-4 font-semibold uppercase tracking-[0.14em]">Feature Name</th>
+                                                    <th className="p-4 font-semibold uppercase tracking-[0.14em]">Free Limit</th>
+                                                    <th className="p-4 font-semibold uppercase tracking-[0.14em]">Pro Limit</th>
+                                                    <th className="p-4 font-semibold uppercase tracking-[0.14em]">Gold Limit</th>
+                                                    <th className="p-4 font-semibold uppercase tracking-[0.14em]">Firm Limit</th>
+                                                    <th className="p-4 text-center font-semibold uppercase tracking-[0.14em]">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {Object.entries(matrixConfig).map(([key, feature]) => {
+                                                    const isEditing = editingFeature === key;
+                                                    return (
+                                                        <tr key={key} className="border-b border-[var(--gold-hairline)] last:border-0 hover:bg-[var(--surface-2)]/40">
+                                                            <td className="p-4">
+                                                                <span className="block text-sm font-semibold text-[var(--text)]">{feature.label || key}</span>
+                                                                <span className="mt-0.5 block text-[10px] text-[var(--text-muted)]">{feature.upgradeMessage || "No upgrade message config."}</span>
+                                                            </td>
+                                                            {['free', 'pro', 'gold', 'firm'].map(tier => {
+                                                                const val = feature.limits[tier];
+                                                                return (
+                                                                    <td key={tier} className="p-4">
+                                                                        {isEditing ? (
+                                                                            <select
+                                                                                value={val === false ? 'blocked' : val === 'unlimited' ? 'unlimited' : val}
+                                                                                onChange={(e) => {
+                                                                                    const rawVal = e.target.value;
+                                                                                    const parsed = rawVal === 'blocked' ? false : rawVal === 'unlimited' ? 'unlimited' : parseInt(rawVal);
+                                                                                    setMatrixConfig(prev => ({
+                                                                                        ...prev,
+                                                                                        [key]: {
+                                                                                            ...prev[key],
+                                                                                            limits: {
+                                                                                                ...prev[key].limits,
+                                                                                                [tier]: parsed
+                                                                                            }
+                                                                                        }
+                                                                                    }));
+                                                                                }}
+                                                                                className="mi-focus w-20 rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--bg)] p-1.5 text-[var(--text)] outline-none"
+                                                                            >
+                                                                                <option value="blocked">Blocked</option>
+                                                                                <option value="unlimited">Unlimited</option>
+                                                                                {[0, 1, 3, 5, 10, 20, 25, 30, 50, 100].map(n => (
+                                                                                    <option key={n} value={n}>{n}</option>
+                                                                                ))}
+                                                                            </select>
+                                                                        ) : (
+                                                                            <span className={`rounded px-2 py-1 text-[10px] font-bold ${
+                                                                                val === false ? 'bg-[color-mix(in_srgb,var(--sos)_12%,transparent)] text-[var(--sos)]' :
+                                                                                val === 'unlimited' ? 'bg-[color-mix(in_srgb,var(--emerald)_12%,transparent)] text-[var(--emerald)]' : 'bg-[var(--gold)]/10 text-[var(--gold-soft)]'
+                                                                            }`}>
+                                                                                {val === false ? 'Blocked' : val === 'unlimited' ? 'Unlimited' : `${val} / mo`}
+                                                                            </span>
+                                                                        )}
+                                                                    </td>
+                                                                );
+                                                            })}
+                                                            <td className="p-4 text-center">
+                                                                <button
+                                                                    onClick={() => setEditingFeature(isEditing ? null : key)}
+                                                                    className="mi-focus rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/50 p-2 text-[var(--text-muted)] transition hover:text-[var(--text)]"
+                                                                >
+                                                                    <Edit2 size={12} />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 5. CLIENT ACTIVITY AUDIT LOGS */}
+                            {activeTab === 'logs' && (
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between border-b border-[var(--gold-hairline)] pb-4">
+                                        <div>
+                                            <h3 className="mi-body text-xl font-semibold tracking-tight text-[var(--text)]">
+                                                {selectedUserLogs ? `Activity Log: ${selectedUserLogs.name}` : "User Activity Logs"}
+                                            </h3>
+                                            <p className="mt-1 text-xs text-[var(--text-muted)]">Immutable session logs containing exact searches, request payloads, and API status codes.</p>
+                                        </div>
+                                        {selectedUserLogs && (
+                                            <button
+                                                onClick={() => setSelectedUserLogs(null)}
+                                                className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--gold)] underline transition hover:text-[var(--gold-soft)]"
+                                            >
+                                                Show All Users
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="mi-scroll max-h-[500px] space-y-3 overflow-y-auto pr-2">
+                                        {filteredLogs.map((log, i) => (
+                                            <div key={i} className="space-y-2 rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-4 text-xs">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="font-mono font-bold text-[var(--gold)]">{log.method} {log.endpoint}</span>
+                                                    <span className="text-[var(--text-muted)]">{new Date(log.timestamp).toLocaleString()}</span>
+                                                </div>
+                                                <div className="grid grid-cols-1 gap-4 text-[11px] leading-relaxed text-[var(--text-muted)] md:grid-cols-2">
+                                                    <div>
+                                                        <strong className="mb-0.5 block text-[var(--text)]">Payload:</strong>
+                                                        <pre className="mi-scroll max-h-20 overflow-x-auto whitespace-pre-wrap rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--bg)] p-2.5 font-mono">{log.requestBody}</pre>
+                                                    </div>
+                                                    <div>
+                                                        <strong className="mb-0.5 block text-[var(--text)]">AI Response Preview:</strong>
+                                                        <pre className="mi-scroll max-h-20 overflow-x-auto whitespace-pre-wrap rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--bg)] p-2.5 font-mono">{log.responseBody}</pre>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-4 pt-1 text-[10px] font-semibold text-[var(--text-muted)]">
+                                                    <span>User ID: <span className="font-mono text-[var(--text)]">{log.userId}</span></span>
+                                                    <span>Duration: <span className="text-[var(--emerald)]">{log.durationMs}ms</span></span>
+                                                    <span>Status: <span className={log.responseStatus >= 400 ? "text-[var(--sos)]" : "text-[var(--emerald)]"}>{log.responseStatus}</span></span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {filteredLogs.length === 0 && <p className="py-20 text-center text-sm italic text-[var(--text-muted)]">No activity logs recorded yet.</p>}
+                                    </div>
+                                </div>
+                            )}
+                        </motion.div>
+                    </Panel>
+                }
+
+                /* RIGHT PANEL - Stats Summary */
+                rightSidebar={
+                    <div className="space-y-6">
+                        <Panel hover={false} title="Platform Health" subtitle="Live Metrics" icon={<Activity size={16} />}>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-4">
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">Total Users</span>
+                                    <p className="mt-1 text-2xl font-bold text-[var(--text)]"><AnimatedNumber value={stats.users} /></p>
+                                </div>
+                                <div className="rounded-[var(--radius-md)] border border-[color-mix(in_srgb,var(--emerald)_35%,transparent)] bg-[color-mix(in_srgb,var(--emerald)_10%,transparent)] p-4">
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--emerald)]">Est. Revenue</span>
+                                    <p className="mt-1 text-2xl font-bold text-[var(--emerald)]"><AnimatedNumber value={stats.revenue} prefix="₹" /></p>
+                                </div>
                             </div>
-                            <div className="bg-emerald-500/10 p-4 rounded-2xl border border-emerald-500/20">
-                                <span className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Est. Revenue</span>
-                                <p className="text-2xl font-black text-emerald-400 mt-1">₹{stats.revenue}</p>
+                            <div className="mt-4">
+                                <StatTile label="Pending Verifications" value={stats.pending} sub="Awaiting review" icon={<Shield size={18} />} tone="warn" />
                             </div>
+                        </Panel>
+
+                        <div className="rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--gold)]/5 p-6">
+                            <div className="mb-3 flex items-center gap-2">
+                                <Lock size={16} className="text-[var(--gold)]" />
+                                <h4 className="mi-body text-xs font-semibold uppercase tracking-[0.18em] text-[var(--gold-soft)]">Security Compliance</h4>
+                            </div>
+                            <p className="text-xs leading-relaxed text-[var(--text-muted)]">
+                                All user queries are audited and capped to respect confidentiality standards and the DPDP Act (2023).
+                            </p>
                         </div>
                     </div>
-
-                    <div className="bg-indigo-900/20 border border-indigo-500/20 p-6 rounded-3xl">
-                        <div className="flex items-center gap-2 mb-3">
-                            <Shield size={16} className="text-indigo-400" />
-                            <h4 className="text-indigo-400 text-xs font-black uppercase tracking-widest font-serif">Security Compliance</h4>
-                        </div>
-                        <p className="text-indigo-200/60 text-xs leading-relaxed">
-                            All user queries are audited and capped to respect confidentiality standards and the DPDP Act (2023).
-                        </p>
-                    </div>
-                </div>
-            }
-        />
+                }
+            />
+        </div>
     );
 }

@@ -10,32 +10,32 @@ export default function TrustTimeline({ stage }) {
     const currentIdx = steps.findIndex(s => s.stage === stage) || 0;
 
     return (
-        <div className="bg-[#0f172a] border border-white/10 rounded-xl p-5 shadow-sm mb-6">
-            <h3 className="font-bold text-white mb-4">Case Progress</h3>
+        <div className="mb-6 rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-5">
+            <h3 className="mb-4 font-semibold text-[var(--text)]">Case Progress</h3>
 
             <div className="relative flex justify-between">
-                <div className="absolute top-1/2 left-0 w-full h-1 bg-white/10 -z-10 rounded-full"></div>
+                <div className="absolute left-0 top-1/2 -z-10 h-1 w-full rounded-full bg-[var(--gold-hairline)]"></div>
                 <div
-                    className="absolute top-1/2 left-0 h-1 bg-blue-600 -z-10 rounded-full transition-all duration-1000"
+                    className="absolute left-0 top-1/2 -z-10 h-1 rounded-full bg-[var(--gold)] transition-all duration-1000"
                     style={{ width: `${(currentIdx / (steps.length - 1)) * 100}%` }}
                 ></div>
 
                 {steps.map((step, idx) => (
                     <div key={step.label} className="flex flex-col items-center">
-                        <divItem
+                        <StepDot
                             active={idx <= currentIdx}
                             current={idx === currentIdx}
                             index={idx + 1}
                         />
-                        <span className={`mt-2 text-[10px] font-bold uppercase tracking-wider ${idx <= currentIdx ? 'text-slate-300' : 'text-slate-600'}`}>
+                        <span className={`mt-2 text-[10px] font-semibold uppercase tracking-wider ${idx <= currentIdx ? 'text-[var(--text)]' : 'text-[var(--text-muted)]'}`}>
                             {step.label}
                         </span>
                     </div>
                 ))}
             </div>
 
-            <div className="mt-6 bg-blue-500/10 p-3 rounded-lg border border-blue-500/20 text-sm text-slate-300">
-                <span className="font-bold text-blue-400">Current Status:</span> {
+            <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--gold)]/5 p-3 text-sm text-[var(--text-muted)]">
+                <span className="font-semibold text-[var(--gold)]">Current Status:</span> {
                     stage === 'New Lead' ? "Your lawyer is reviewing the initial details." :
                         stage === 'Discovery' ? "Gathering evidence and facts for the case." :
                             stage === 'Filing' ? "Preparing official documents for the court." :
@@ -47,23 +47,23 @@ export default function TrustTimeline({ stage }) {
     );
 }
 
-function divItem({ active, current, index }) {
+function StepDot({ active, current, index }) {
     if (current) {
         return (
-            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs ring-4 ring-blue-900/50 shadow-md transform scale-110 transition-all">
+            <div className="flex h-8 w-8 scale-110 items-center justify-center rounded-full bg-[var(--gold)] text-xs font-bold text-[#0B1220] shadow-md ring-4 ring-[var(--gold)]/20 transition-all">
                 {index}
             </div>
         );
     }
     if (active) {
         return (
-            <div className="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--emerald)] text-xs font-bold text-[#0B1220]">
                 ✓
             </div>
         );
     }
     return (
-        <div className="w-8 h-8 rounded-full bg-[#0f172a] border-2 border-white/10 text-slate-600 flex items-center justify-center font-bold text-xs">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--gold-hairline)] bg-[var(--surface)] text-xs font-bold text-[var(--text-muted)]">
             {index}
         </div>
     );

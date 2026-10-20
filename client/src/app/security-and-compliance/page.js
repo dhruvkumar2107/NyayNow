@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link"
-import { Shield, Lock, Server, FileText, CheckCircle } from "lucide-react"
+import { Shield, Lock, Server, FileText } from "lucide-react"
 
 export default function SecurityCompliance() {
     return (
@@ -18,7 +18,7 @@ export default function SecurityCompliance() {
                         Security and Compliance
                     </h1>
                     <p className="text-slate-400 text-lg">
-                        Our technical architectures, data retention policies, and third-party frameworks are designed to guarantee complete confidentiality and DPDP Act 2023 compliance.
+                        This page describes the safeguards present in the application code and the items that still depend on deployment configuration. It is not a certification or a claim of complete legal compliance.
                     </p>
                 </div>
 
@@ -27,27 +27,22 @@ export default function SecurityCompliance() {
                     <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
                         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
                             <Lock className="text-blue-400" size={22} />
-                            State-of-the-art encryption
+                            Transport and storage security
                         </h2>
                         <p className="text-slate-400 leading-relaxed mb-4 text-sm md:text-base">
-                            All network channels use TLS 1.3 / SSL encryption to secure data in transit. Files, documents, case summaries, and conversations are encrypted at rest using AES-256 keys, ensuring that no unauthorized parties can intercept or read your records.
+                            Production HTTPS is provided by the hosting and service providers. Encryption at rest, key management, backup access, and retention depend on each provider’s configuration and have not been independently audited in this repository. The application uses authenticated API routes and HTTP security headers; these controls do not guarantee confidentiality.
                         </p>
-                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm font-semibold text-slate-300">
-                            <li className="flex items-center gap-2"><CheckCircle size={14} className="text-emerald-400" /> End-to-End SSL Transmission</li>
-                            <li className="flex items-center gap-2"><CheckCircle size={14} className="text-emerald-400" /> AES-256 rest encryption</li>
-                            <li className="flex items-center gap-2"><CheckCircle size={14} className="text-emerald-400" /> Secure key rotation policy</li>
-                            <li className="flex items-center gap-2"><CheckCircle size={14} className="text-emerald-400" /> Strictly isolated client databases</li>
-                        </ul>
+                        <p className="text-slate-500 text-xs">Do not submit highly sensitive case information until you have reviewed the applicable service and provider terms.</p>
                     </div>
 
                     {/* Section 2: Data Residency */}
                     <div className="p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
                         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
                             <Server className="text-emerald-400" size={22} />
-                            Indian data residency & sovereign clouds
+                            Hosting locations
                         </h2>
                         <p className="text-slate-400 leading-relaxed text-sm md:text-base">
-                            In alignment with the Digital Personal Data Protection (DPDP) Act 2023, NyayNow hosts all databases, case files, and account information strictly within sovereign data centers located inside India (Mumbai and Delhi regions). No user data leaves India’s national borders.
+                            The repository does not establish that all production data is hosted in India. Hosting regions and cross-border processing depend on the current frontend, backend, database, AI, analytics, storage, and communications provider configurations. Confirm those regions and subprocessors before using the service for restricted data.
                         </p>
                     </div>
 
@@ -64,13 +59,13 @@ export default function SecurityCompliance() {
                             <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-xs md:text-sm">
                                 <strong className="text-white block mb-1">Gemini API (Google Cloud Platform)</strong>
                                 <span className="text-slate-500 leading-relaxed">
-                                    Used as our main legal LLM compiler. Data passed to the API is encrypted, strictly transient, and Google does not use our prompts, documents, or legal queries to train any public models.
+                                    Used by the backend to generate responses. Review Google’s terms for the configured account and region to understand processing, retention, and data use. Avoid sending sensitive information unless the applicable terms have been reviewed.
                                 </span>
                             </div>
                             <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-xs md:text-sm">
                                 <strong className="text-white block mb-1">Twilio API</strong>
                                 <span className="text-slate-500 leading-relaxed">
-                                    Used exclusively for generating OTP tokens and sending emergency triage warnings. All numbers and messages are logged temporarily for transport security.
+                                    Used in selected messaging and verification flows. Processing and retention are governed by the configured account and Twilio terms.
                                 </span>
                             </div>
                         </div>
@@ -81,7 +76,7 @@ export default function SecurityCompliance() {
                         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-bl-full pointer-events-none" />
                         <h2 className="text-xl font-bold text-white mb-3 tracking-tight">Your data rights (DPDP Act)</h2>
                         <p className="text-slate-400 text-sm md:text-base leading-relaxed mb-6">
-                            Under the DPDP Act 2023, you hold the right to access, rectify, or completely delete your information at any time. If you wish to request a complete export or a permanent takedown of your account history, please contact our Grievance Redressal Officer.
+                            For access, correction, or deletion requests, contact NyayNow through the contact page. Requests are handled subject to identity verification, applicable law, and the data systems currently in use. Review the privacy policy for the published process.
                         </p>
                         <Link 
                             href="/contact"

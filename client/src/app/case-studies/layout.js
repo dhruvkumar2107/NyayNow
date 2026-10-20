@@ -1,6 +1,6 @@
 export const metadata = {
-    title: 'Client Success Stories & Legal Tech Case Studies - NyayNow',
-    description: 'Read case studies on how Indian businesses, solo advocates, and citizens leverage NyayNow to streamline legal research, contract drafting, and dispute analysis.',
+    title: 'Legal technology pilot opportunities - NyayNow',
+    description: 'Explore proposed legal technology workflows and pilot opportunities. NyayNow does not yet publish measured customer outcomes.',
     alternates: {
         canonical: 'https://nyaynow.in/case-studies',
     },

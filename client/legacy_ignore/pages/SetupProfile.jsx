@@ -210,7 +210,7 @@ export default function SetupProfile() {
                                     <Shield className="text-indigo-400" size={20} /> Identity Verification
                                 </h3>
                                 <p className="text-xs text-slate-400 mb-6 max-w-sm">
-                                    Verify your identity via <span className="text-indigo-400 font-bold">DigiLocker</span> (Govt. of India) to get the Verified Badge instantly.
+                                    DigiLocker is not connected here. Any profile document submitted for review does not prove identity or current advocate enrolment; confirm credentials directly with the relevant State Bar Council.
                                 </p>
 
                                 <div className="space-y-4">

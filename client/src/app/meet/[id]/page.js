@@ -1,3 +1,5 @@
+'use client';
+
 import dynamic from 'next/dynamic';
 
 const VideoCall = dynamic(() => import("../../../../legacy_ignore/pages/VideoCall"), {
@@ -6,7 +8,7 @@ const VideoCall = dynamic(() => import("../../../../legacy_ignore/pages/VideoCal
         <div className="h-screen flex items-center justify-center bg-[#020617] text-white">
             <div className="flex flex-col items-center">
                 <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="mt-4 text-indigo-300 font-bold uppercase tracking-widest text-xs">Launching Secure Meeting...</p>
+                <p className="mt-4 text-indigo-300 font-bold uppercase tracking-widest text-xs">Connecting to third-party video provider...</p>
             </div>
         </div>
     )

@@ -766,7 +766,7 @@ export default function CourtroomBattleClient() {
                                                 <div className="grid md:grid-cols-2 gap-5 mb-6">
                                                     <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-5">
                                                         <p className="text-slate-500 text-[10px] font-black uppercase tracking-wider mb-3 flex items-center gap-2">
-                                                            <Star size={12} className="text-amber-400" /> Judge's Summary
+                                                            <Star size={12} className="text-amber-400" /> Judge&apos;s Summary
                                                         </p>
                                                         <p className="text-slate-300 text-sm leading-relaxed">{result.verdict?.judge_summary}</p>
                                                     </div>

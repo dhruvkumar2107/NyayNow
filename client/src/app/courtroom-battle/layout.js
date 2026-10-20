@@ -1,6 +1,6 @@
 export const metadata = {
-    title: 'Courtroom Battle Simulator | Interactive AI Trial - NyayNow',
-    description: 'Engage in a live, interactive courtroom simulation. Argue cases against AI opposing counsel, present evidence, and receive real-time judge scoring.',
+    title: 'Courtroom practice simulation — in development | NyayNow',
+    description: 'The courtroom simulation is disabled while source verification and scoring evaluation remain in development.',
     alternates: {
         canonical: 'https://nyaynow.in/courtroom-battle',
     },

@@ -6,17 +6,19 @@ import ChooserCards from "../components/home/ChooserCards"
 
 import TrustSection from "../components/home/TrustSection"
 import LegalSOSSection from "../components/home/LegalSOSSection"
+import LegalIntelligenceDemo from "../components/home/LegalIntelligenceDemo"
+import LiveMetrics from "../components/home/LiveMetrics"
 
 export const metadata = {
     title: 'NyayNow | AI Legal Assistant & Lawyer Marketplace India',
-    description: 'NyayNow: India\'s AI legal platform. Free BNS 2024 & IPC answers, contract drafting, Bar Council verified lawyers, eCourts case tracking — Hindi, Tamil & English.',
-    keywords: 'free legal advice India, AI legal assistant, BNS 2024, IPC sections, bar council verified lawyers, find lawyer online, legal sos, supreme court judgments, court data, legal help Hindi, NyayNow',
+    description: 'NyayNow provides AI-assisted legal information, document workflows, and a lawyer marketplace for India. Verify citations and seek advocate review before acting.',
+    keywords: 'legal information India, AI legal assistant, BNS, Indian law, find lawyer online, legal document drafting, legal research, NyayNow',
     alternates: {
         canonical: 'https://nyaynow.in',
     },
     openGraph: {
         title: 'NyayNow | AI Legal Assistant & Lawyer Marketplace India',
-        description: 'Free BNS 2024 & IPC legal answers, Bar Council verified advocates, contract drafting, Legal SOS, and Supreme Court case tracking in 14 Indian languages.',
+        description: 'AI-assisted legal information, document workflows, and a lawyer marketplace for India.',
         url: 'https://nyaynow.in',
         images: [
             {
@@ -29,8 +31,8 @@ export const metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'NyayNow | Free AI Legal Assistant India',
-        description: 'BNS 2024 & IPC answers, Bar Council verified lawyers, Legal SOS & Supreme Court case tracking. Free legal advice in Hindi, Tamil & English.',
+        title: 'NyayNow | AI Legal Information and Lawyer Marketplace India',
+        description: 'AI-assisted legal information, document workflows, and a lawyer marketplace for India.',
         site: '@NyayNow'
     }
 }
@@ -41,6 +43,8 @@ export default function Home() {
             {/* HERO SECTION */}
             <main id="main-content" role="main" aria-label="NyayNow AI Legal Assistant Homepage">
                 <HeroSection />
+                <LegalIntelligenceDemo />
+                <LiveMetrics />
 
                 {/* VALUE PROPOSITION FEATURE CARDS */}
                 <section aria-label="Legal AI Features">

@@ -35,7 +35,7 @@ const PrivacyPolicy = () => {
                             2. Data Security & Encryption
                         </h2>
                         <p className="leading-relaxed">
-                            Communications are secured using industry-standard encryption protocols. However, "End-to-End Encryption" (E2EE) is only applied to specific messaging channels. AI queries are processed through secure servers but are subject to processing by our AI infrastructure providers.
+                            Production HTTPS is provided by the hosting and service providers. Encryption at rest and messaging encryption depend on configured providers and have not been independently audited in this repository. AI queries are processed by third-party AI providers; review their terms before sending sensitive information.
                         </p>
                     </section>
 
@@ -78,7 +78,7 @@ const PrivacyPolicy = () => {
                     <section>
                         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
                             <Shield size={20} className="text-purple-400" />
-                            6. Children's Personal Data
+                            6. Children&apos;s Personal Data
                         </h2>
                         <p className="leading-relaxed">
                             In accordance with Section 9 of the Digital Personal Data Protection (DPDP) Act 2023, we do not knowingly collect or process personal data of children (individuals under 18 years of age) without verifiable parental/guardian consent. We do not engage in tracking, behavioral monitoring, or targeted advertising directed at children.

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from "react"
+import React, { useState, useMemo, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, MapPin, ShieldCheck, Filter, X, HelpCircle, CheckCircle, Star, Award } from "lucide-react"
@@ -17,14 +17,7 @@ export default function MarketplaceClient({ initialLawyers }) {
     const [sortBy, setSortBy] = useState("rating")
     const [loading, setLoading] = useState(false)
 
-    // Fetch lawyers on mount if initial data is empty
-    useEffect(() => {
-        if (rawLawyers.length === 0 && !loading) {
-            fetchLawyers()
-        }
-    }, [])
-
-    const fetchLawyers = async () => {
+    const fetchLawyers = useCallback(async () => {
         setLoading(true)
         try {
             const res = await fetch(`/api/lawyers?all=true`)
@@ -37,7 +30,12 @@ export default function MarketplaceClient({ initialLawyers }) {
         } finally {
             setLoading(false)
         }
-    }
+    }, [])
+
+    // Fetch lawyers on mount if initial data is empty.
+    useEffect(() => {
+        if (rawLawyers.length === 0) fetchLawyers()
+    }, [rawLawyers.length, fetchLawyers])
 
     // Filters State
     const [selectedSpecialization, setSelectedSpecialization] = useState([])
@@ -436,45 +434,11 @@ export default function MarketplaceClient({ initialLawyers }) {
                                 >
                                     <ShieldCheck className="text-indigo-400" size={28} aria-hidden="true" />
                                 </motion.div>
-                                <h3 className="text-2xl font-bold text-white tracking-tight">NyayNow Advocate Verification</h3>
+                                <h3 className="text-2xl font-bold text-white tracking-tight">About profile status</h3>
                             </div>
 
                             <div className="space-y-6 text-sm text-slate-300 leading-relaxed">
-                                <p>
-                                    Every lawyer carrying the <strong className="text-indigo-400">Verified Badge</strong> on NyayNow has completed our rigorous compliance check to ensure authentic representation:
-                                </p>
-
-                                <div className="space-y-4">
-                                    <div className="flex gap-4">
-                                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <CheckCircle size={16} aria-hidden="true" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-bold text-white text-sm">Bar Registration Checks</h4>
-                                            <p className="text-xs text-slate-400 mt-1">Cross-referenced with the Bar Council of India (BCI) database and respective State Bar Councils to verify enrollment validity.</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex gap-4">
-                                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <CheckCircle size={16} aria-hidden="true" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-bold text-white text-sm">Identity & Credentials Auditing</h4>
-                                            <p className="text-xs text-slate-400 mt-1">DigiLocker integration verifies Aadhaar, digital COP (Certificate of Practice) card credentials, and professional identity markers.</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex gap-4">
-                                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <CheckCircle size={16} aria-hidden="true" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-bold text-white text-sm">Annual Renewal Schedule</h4>
-                                            <p className="text-xs text-slate-400 mt-1">Enrollment states and certifications are dynamically audited annually. Disciplinary cases result in immediate suspension.</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <p>Profile information is supplied by users. NyayNow does not currently verify advocate enrolment through DigiLocker or a Bar Council database. A platform profile status is not proof of a current licence or Certificate of Practice. Confirm credentials and engagement terms directly with the relevant State Bar Council and advocate before proceeding.</p>
                             </div>
 
                             <motion.button 

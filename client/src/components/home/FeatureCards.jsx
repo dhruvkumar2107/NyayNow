@@ -9,7 +9,7 @@ export default function FeatureCards() {
         {
             icon: <Sparkles className="text-amber-400" size={28} />,
             title: "AI Legal Intelligence",
-            desc: "Ask legal queries in plain language across 12+ Indian languages. Get instant answers grounded strictly in BNS 2024, IPC sections, and Supreme Court / High Court precedents — zero hallucination.",
+            desc: "Ask legal questions in plain language and receive AI-generated information. Selected routes can include legal search context; check sources and verify citations before relying on an answer.",
             glow: "rgba(245,158,11,0.15)",
             gradient: "from-amber-500/10 to-orange-500/10",
             borderColor: "border-amber-500/30",
@@ -18,8 +18,8 @@ export default function FeatureCards() {
         },
         {
             icon: <ShieldCheck className="text-blue-400" size={28} />,
-            title: "BCI Verified Advocates",
-            desc: "Connect with Bar Council of India (BCI) verified lawyers. Every advocate is KYC-matched against official Bar Council records before listing on the platform.",
+            title: "Lawyer Marketplace",
+            desc: "Browse lawyer profiles and review the verification status shown on each profile before contacting an advocate.",
             glow: "rgba(96,165,250,0.15)",
             gradient: "from-blue-500/10 to-indigo-500/10",
             borderColor: "border-blue-500/30",
@@ -28,8 +28,8 @@ export default function FeatureCards() {
         },
         {
             icon: <FileText className="text-emerald-400" size={28} />,
-            title: "Autonomous Drafting",
-            desc: "Generate legally enforceable agreements, rent deeds, notices, and affidavits — drafted to BNS 2024 standards. E-sign and print in minutes, ready for court submission.",
+            title: "AI-assisted Drafting",
+            desc: "Create a first draft of selected legal documents. Have an advocate review it for your facts, jurisdiction, and current law before signing or filing.",
             glow: "rgba(52,211,153,0.15)",
             gradient: "from-emerald-500/10 to-teal-500/10",
             borderColor: "border-emerald-500/30",
@@ -38,8 +38,8 @@ export default function FeatureCards() {
         },
         {
             icon: <AlertTriangle className="text-red-400" size={28} />,
-            title: "24/7 Legal SOS Response",
-            desc: "Emergency legal gateway using court data and BNS 2024 to instantly classify your crisis, deliver rights analysis in 14 languages, draft an FIR, and connect you to a verified advocate — in 60 seconds.",
+            title: "Legal SOS information and contacts",
+            desc: "Find legal help and use the available SOS workflow to describe an urgent issue. For immediate danger, contact local emergency services directly.",
             glow: "rgba(248,113,113,0.15)",
             gradient: "from-red-500/10 to-rose-500/10",
             borderColor: "border-red-500/30",
@@ -62,7 +62,7 @@ export default function FeatureCards() {
                         Next-Gen Legal Operating System
                     </h2>
                     <p className="text-slate-400 text-base md:text-lg mt-4 font-light leading-relaxed">
-                        NyayNow merges artificial intelligence with India's legal directory framework to deliver absolute transparency, speed, and safety.
+                        NyayNow combines AI-assisted tools with lawyer discovery and document workflows for Indian legal needs.
                     </p>
                 </div>
 

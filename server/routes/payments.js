@@ -4,6 +4,8 @@ const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const verifyToken = require("../middleware/authMiddleware");
 const User = require("../models/User");
+const WebhookEvent = require("../models/WebhookEvent");
+const { buildWebhookDedupKey } = require("../utils/webhookDedup");
 const { PLAN_PRICES_PAISE, verifySignature, applyPaymentOutcome } = require("../services/paymentService");
 
 /* -------------------- RAZORPAY INIT -------------------- */
@@ -194,11 +196,30 @@ router.post("/verify", verifyToken, async (req, res) => {
 
 /* -------------------- RAZORPAY WEBHOOK -------------------- */
 /**
+ * Record a webhook as processed. Returns true if it is a duplicate that was
+ * already handled. On any non-duplicate store error we log and allow processing
+ * (dedup is a guard, not a gate that should drop legitimate events).
+ */
+async function isDuplicateWebhook(key, eventType) {
+  if (!key) return false;
+  try {
+    await WebhookEvent.create({ key, event: eventType });
+    return false;
+  } catch (err) {
+    if (err && err.code === 11000) return true;
+    console.warn("[Webhook] dedup store failed, continuing:", err.message);
+    return false;
+  }
+}
+
+/**
  * POST /api/payments/webhook
  * Razorpay sends events here. Must be registered in the Razorpay Dashboard.
- * NOTE: This route must receive the RAW body - do NOT add express.json() before this route.
+ * The exact bytes Razorpay signed are captured as `req.rawBody` by the global
+ * express.json({ verify }) middleware in server/index.js. We must HMAC those raw
+ * bytes (not the re-serialized JSON object) or the signature will never match.
  */
-router.post("/webhook", express.raw({ type: "application/json", limit: "100kb" }), async (req, res) => {
+router.post("/webhook", async (req, res) => {
   try {
     const webhookSecret = process.env.RZP_WEBHOOK_SECRET;
     if (!webhookSecret) {
@@ -211,19 +232,38 @@ router.post("/webhook", express.raw({ type: "application/json", limit: "100kb" }
       return res.status(400).json({ error: "Missing Razorpay signature header" });
     }
 
-    // Verify HMAC-SHA256 signature
+    const rawBody = req.rawBody || (Buffer.isBuffer(req.body) ? req.body : null);
+    if (!rawBody) {
+      console.error("❌ Webhook received without a capturable raw body - cannot verify signature.");
+      return res.status(400).json({ error: "Unverifiable webhook payload" });
+    }
+
+    // Verify HMAC-SHA256 signature against the raw bytes (constant-time compare)
     const expectedSignature = crypto
       .createHmac("sha256", webhookSecret)
-      .update(req.body) // raw Buffer
+      .update(rawBody)
       .digest("hex");
 
-    if (expectedSignature !== signature) {
+    const expectedBuf = Buffer.from(expectedSignature, "utf8");
+    const providedBuf = Buffer.from(String(signature), "utf8");
+    const signatureValid =
+      expectedBuf.length === providedBuf.length &&
+      crypto.timingSafeEqual(expectedBuf, providedBuf);
+
+    if (!signatureValid) {
       console.warn("⚠️  Razorpay webhook signature mismatch - possible forgery");
       return res.status(400).json({ error: "Invalid webhook signature" });
     }
 
-    const event = JSON.parse(req.body.toString());
+    const event = JSON.parse(rawBody.toString());
     const eventType = event.event;
+
+    // Idempotency: ignore events we have already processed (retries / dupes).
+    const dedupKey = buildWebhookDedupKey(event);
+    if (await isDuplicateWebhook(dedupKey, eventType)) {
+      console.log(`[Webhook] Duplicate event ignored: ${dedupKey}`);
+      return res.status(200).json({ received: true, duplicate: true });
+    }
 
     console.log(`[Webhook] Received Razorpay event: ${eventType}`);
 

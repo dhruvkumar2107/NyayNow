@@ -1,0 +1,29 @@
+# W1 claim changes — 17 October 2026
+
+- Replaced the homepage’s implied verified/legal-data/SOC/BCI trust claims with clear AI limitations and independent source-checking language.
+- Removed unsupported proof badges in translated hero copy and removed visible AES-256 and BCI compliance assertions.
+- Replaced the headline around “instant legal answers”/“verified lawyers” with a lower-claim product direction in locale files; several non-English translations still need qualified translation review.
+- Removed outcome-probability and historical-data claims from homepage feature copy; labeled Judge AI as experimental, not validated, in the route metadata and core promotional cards.
+- Replaced “court-ready”, “FIR filed”, and “legally enforceable” wording in identified client pricing and SOS copy with lawyer-reviewable complaint-draft wording. The backend generator now prohibits invented FIR numbers, filing dates, statutes, and legal status.
+- Removed the under-60-seconds emergency response claim; clarified the tool does not dispatch help or file a complaint; added 112 and NALSA 15100 direct-call links to the SOS screen.
+- Removed unsupported ROI/customer stories and set case-study page to pilot invitation/product-use cases.
+- Removed invented relevance percentages and fabricated research fallback facts; search and summaries are labeled by source provenance.
+- Removed unsupported jurisdiction/security assurances from DPDP page and listed current gaps rather than asserting complete DPDP compliance.
+- Added canonical factual disclosure around Gemini/optional Indian Kanoon in methodology; third-party corpus permission remains [NEEDED].
+- Removed unsubstantiated 10,000 API calls and 99.9% SLA from Firm pricing; removed unsupported student-discount and money-back guarantee FAQ claims.
+- Marked citation-proof, temporal legal mapping, benchmark, pilot impact, privacy governance, and data-residency features as in development or [NEEDED].
+- Added an unlisted investor page with a cited, timestamped NJDG dashboard snapshot and live DB-derived traction fields (shown as unavailable when the API cannot return a measured value).
+- Added this register and W0 gap report; no logo, testimonial, partner, grant award, investor, or certification was added as a factual claim.
+- Removed static homepage sample cases, statutory citations, and punishment claims that were presented without a verifiable source record. BNS explainer routes now withhold section summaries pending counsel review and link to the official Act.
+- Replaced unsupported Bar Council/DigiLocker lawyer-verification promises with profile-review and independent-credential-check language. Replaced the Aadhaar/OTP mock screen and verification API with explicit unavailable responses; the endpoint no longer marks anyone verified.
+- Removed unsupported language-count and exclusive Bhashini-provider claims; language and machine-translation quality are described as variable.
+- Replaced simulated voice-file transcription and unverified security/retention statements with a clear “in development” status.
+- Updated agreement record text and actions to describe ordinary account-linked storage, non-verified signature metadata, and unavailable e-signing; removed the false secure-vault action label.
+- Removed the unsupported “Est. Nov 2025” footer date and outdated archived brand-guide claims about court-ready output and DigiLocker/biometric verification.
+- Replaced browser tests that asserted obsolete features and metadata with route smoke checks and assertions for unavailable/unverified status.
+- Rewrote the live About and Help content to remove unsubstantiated model, encryption, legal-accuracy, lawyer-count, and response-time claims; replaced the blog article cards with an editorial-status stub.
+- Removed fabricated BNS citation badges from assistant responses and added a per-answer warning that citations are not verified for every response.
+- Changed video-meeting copy to disclose the third-party Jitsi provider and caution against sharing confidential case information; removed the false end-to-end-encryption/secure-channel labels.
+- Removed prompt excerpts, generated-text snippets, and user query excerpts from server logs. AI audit now writes request/response sizes and route metadata only, never body contents.
+- Gated the courtroom simulator off by default in both client and API. Its prior generated “judgment,” named fictional judge, and heuristic scores were not supported by a verified source or evaluation method.
+- Gated moot-court feedback off by default on both client and API; removed forced mock accuracy scores for locked agreement analyses.

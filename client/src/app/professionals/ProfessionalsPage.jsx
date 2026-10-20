@@ -166,7 +166,7 @@ function TestimonialCard({ quote, name, role, court, delay }) {
           <Star key={i} size={14} className="text-amber-400 fill-amber-400" />
         ))}
       </div>
-      <p className="text-slate-300 text-sm leading-relaxed mb-6 font-medium italic">"{quote}"</p>
+      <p className="text-slate-300 text-sm leading-relaxed mb-6 font-medium italic">&quot;{quote}&quot;</p>
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
           {name[0]}
@@ -201,30 +201,30 @@ export default function ProfessionalsPage() {
   const featureDetails = {
     ai: {
       title: 'AI Legal Intelligence Engine',
-      subtitle: 'Powered by Gemini 1.5 Pro with real-time legal grounding',
+      subtitle: 'AI-assisted workflows; verify outputs against primary sources',
       features: [
-        { name: 'Judge AI — Case Outcome Prediction', desc: 'Upload case files and get AI-powered win probability, risk analysis, and strategic recommendations.', icon: Scale },
-        { name: 'NyayVoice — Multilingual Assistant', desc: 'Voice-first legal assistant in Hindi, Tamil, Telugu, Kannada, Marathi & English.', icon: Mic },
+        { name: 'Case outcome prediction (in development)', desc: 'Outcome prediction is disabled while evaluation and calibration are developed.', icon: Scale },
+        { name: 'NyayVoice — Multilingual Assistant', desc: 'Voice input and output availability varies; verify transcription and language support before use.', icon: Mic },
         { name: 'Devil\'s Advocate Critique', desc: 'AI stress-tests your arguments from the opposition\'s perspective.', icon: Brain },
-        { name: 'BNS/IPC Instant Analysis', desc: 'Section-level analysis grounded in BNS 2024 and legacy IPC for all criminal matters.', icon: Zap },
+        { name: 'BNS/IPC Instant Analysis', desc: 'AI-assisted legal information; applicable laws and code transitions require source verification.', icon: Zap },
       ]
     },
     court: {
       title: 'Courtroom Simulation Suite',
       subtitle: 'Practice, prepare, and perfect your courtroom strategy',
       features: [
-        { name: 'NyayCourt Battle Simulator', desc: 'Real-time adversarial arguments between Prosecution and Defence AI with live scoring.', icon: Swords },
+        { name: 'NyayCourt Battle Simulator', desc: 'Interactive courtroom practice simulation; not legal advice or a prediction of court performance.', icon: Swords },
         { name: 'Moot Court VR Practice', desc: 'Full moot court simulation with AI judges giving structured feedback on arguments.', icon: Video },
-        { name: 'eCourts Live Integration', desc: 'Real-time case status tracking from eCourts.gov.in directly inside your dashboard.', icon: Globe },
-        { name: 'Virtual Courtroom Meetings', desc: 'Encrypted video consultations with clients directly on the platform.', icon: Video },
+        { name: 'eCourts Live Integration', desc: 'Case status links and tracking availability depend on configured integrations and court records.', icon: Globe },
+        { name: 'Virtual Courtroom Meetings', desc: 'Meeting availability and security properties depend on the configured provider.', icon: Video },
       ]
     },
     research: {
       title: 'Legal Research Hub',
-      subtitle: 'Precedent search powered by real-time web grounding',
+      subtitle: 'Search integrations when configured; confirm source and coverage',
       features: [
-        { name: 'Grounded Precedent Engine', desc: 'Search thousands of Supreme Court and High Court judgements with AI summarization.', icon: BookOpen },
-        { name: 'Live Legal Feed', desc: 'Stay updated with breaking legal news, landmark judgements, and bar council circulars.', icon: Bell },
+        { name: 'Grounded Precedent Engine', desc: 'Search returned records and open source links; coverage and summaries require user verification.', icon: BookOpen },
+        { name: 'Live Legal Feed', desc: 'Information feeds may not be complete or current; check the issuing authority.', icon: Bell },
         { name: 'Section Cross-Reference', desc: 'Instantly cross-reference IPC/BNS sections with supporting case law and punishments.', icon: Database },
         { name: 'AI-Powered Case Intelligence', desc: 'Automatically generate strategy briefs, arguments, and counter-arguments from case documents.', icon: Cpu },
       ]
@@ -233,20 +233,20 @@ export default function ProfessionalsPage() {
       title: 'Client CRM & Pipeline',
       subtitle: 'Full-stack practice management for modern law firms',
       features: [
-        { name: 'Lead Pool & Case Intake', desc: 'Receive verified client leads directly. Accept and convert in one click.', icon: Users },
+        { name: 'Lead Pool & Case Intake', desc: 'Manage leads submitted through the platform; user identity and credentials require independent checks.', icon: Users },
         { name: 'Kanban Case Lifecycle Board', desc: 'Visual drag-and-drop pipeline to manage every case stage from intake to closure.', icon: Layers },
         { name: 'Appointment Scheduler', desc: 'Integrated calendar with client-facing booking, reminders, and video links.', icon: Clock },
-        { name: 'Connection Network', desc: 'Build your professional network with verified advocates and co-counselors.', icon: Building2 },
+        { name: 'Connection Network', desc: 'Browse advocate profiles; confirm enrolment and credentials before engagement.', icon: Building2 },
       ]
     },
     docs: {
       title: 'AI Document Suite',
-      subtitle: 'Generate court-ready documents in seconds',
+      subtitle: 'Editable AI-assisted drafts for advocate review',
       features: [
-        { name: 'Legal Notice Generator', desc: 'AI-drafted Section 80 notices, demand notices, and RTI applications with auto-filling.', icon: FileText },
+        { name: 'Legal Notice Generator', desc: 'Generate editable drafts from supplied details; verify facts, laws, deadlines, and format with an advocate.', icon: FileText },
         { name: 'AI Drafting Lab', desc: 'Full contract, affidavit, and agreement drafting with clause-by-clause AI guidance.', icon: FileText },
-        { name: 'Rent Agreement Builder', desc: 'Generate legally valid rent agreements with digital signatures in minutes.', icon: FileText },
-        { name: 'Smart Invoice System', desc: 'Generate, send, and track professional invoices with Razorpay-powered escrow payments.', icon: TrendingUp },
+        { name: 'Rent Agreement Builder', desc: 'Prepare agreement drafts; local requirements, stamping, registration, and signatures need separate review.', icon: FileText },
+        { name: 'Smart Invoice System', desc: 'Invoice and payment features depend on configured services; no escrow protection is represented here.', icon: TrendingUp },
       ]
     },
     analytics: {
@@ -255,8 +255,8 @@ export default function ProfessionalsPage() {
       features: [
         { name: 'Revenue Analytics Dashboard', desc: 'Track earnings, invoice status, payment velocity, and practice revenue trends.', icon: BarChart3 },
         { name: 'Case Workload Monitor', desc: 'Visualize case distribution, stage breakdowns, and time-to-resolution metrics.', icon: TrendingUp },
-        { name: 'Client Intelligence Panel', desc: 'Client satisfaction, case outcomes, and relationship health scoring.', icon: Award },
-        { name: 'Win/Loss Predictor Accuracy', desc: 'Compare Judge AI predictions against actual outcomes to calibrate your strategy.', icon: CheckCircle },
+        { name: 'Client Intelligence Panel', desc: 'Practice activity views; no validated outcome or relationship scoring is claimed.', icon: Award },
+        { name: 'Win/Loss Predictor Accuracy', desc: 'Outcome prediction evaluation is in development; no accuracy or calibration results are available.', icon: CheckCircle },
       ]
     }
   };
@@ -365,18 +365,18 @@ export default function ProfessionalsPage() {
                   Up and running in minutes, not months.
                 </h2>
                 <p className="text-slate-400 leading-relaxed">
-                  NyayNow is designed to plug into your existing practice without disruption. From onboarding to first AI analysis — it takes under 10 minutes.
+                  Explore the available practice tools and profile workflows. Feature availability depends on your account and configured services.
                 </p>
               </motion.div>
 
               <WorkflowStep number="01" color="indigo" delay={0} title="Create Your Profile"
-                desc="Sign up, complete your Bar Council verified professional profile, and get your DigiLocker-verified advocate badge." />
+                desc="Create a profile and provide your details. Users should independently confirm enrolment and credentials before engagement." />
               <WorkflowStep number="02" color="cyan" delay={0.1} title="Set Up Your Practice"
-                desc="Configure your specializations, fee structure, availability, and connect your eCourts case list for automatic syncing." />
+                desc="Add practice information and availability. External case-list integrations depend on configuration and authorization." />
               <WorkflowStep number="03" color="emerald" delay={0.2} title="Receive & Accept Leads"
-                desc="Get notified of incoming client leads filtered by your practice area. Accept in one tap and initiate AI case analysis instantly." />
+                desc="Manage requests submitted through the platform. No response time or lead volume is guaranteed." />
               <WorkflowStep number="04" color="amber" delay={0.3} title="Leverage AI Intelligence"
-                desc="Run Judge AI predictions, generate documents, research precedents, and prepare courtroom strategies — all powered by AI." />
+                desc="Use available AI-assisted research and drafting tools. Outcome prediction is disabled; verify outputs before use." />
             </div>
 
             <div className="flex flex-col gap-6">

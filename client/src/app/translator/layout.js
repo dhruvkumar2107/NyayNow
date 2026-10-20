@@ -1,6 +1,6 @@
 export const metadata = {
     title: 'Bhashini Indian Language Legal Translator - NyayNow',
-    description: 'Translate complex legal documents, notices, petitions, and case files across 14+ Indian regional languages instantly. Backed by Bhashini AI models.',
+    description: 'Translate legal text using the available language tools. Review translations carefully before relying on them for legal decisions.',
     alternates: {
         canonical: 'https://nyaynow.in/translator',
     },

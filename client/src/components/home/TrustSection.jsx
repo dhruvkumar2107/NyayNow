@@ -24,15 +24,15 @@ export default function TrustSection() {
         {
             step: "01",
             title: "Ask in Plain Language",
-            desc: "Type or speak your legal query in English, Hindi, or 12 regional Indian languages. No complex legalese needed.",
+            desc: "Type or speak a legal query in supported languages. Availability and output quality can vary by feature and language.",
             icon: MessageSquare,
             color: "from-blue-500 to-indigo-500",
             glow: "rgba(59, 130, 246, 0.15)",
         },
         {
             step: "02",
-            title: "Review AI Guidance",
-            desc: "Instant breakdown of your legal situation, grounded strictly in BNS (2024) codes and relevant High Court/Supreme Court precedents.",
+            title: "Review AI Information",
+            desc: "Review AI-generated information carefully. Sources and legal currency are not verified across every answer; confirm important details independently.",
             icon: Sparkles,
             color: "from-indigo-500 to-purple-500",
             glow: "rgba(139, 92, 246, 0.15)",
@@ -40,7 +40,7 @@ export default function TrustSection() {
         {
             step: "03",
             title: "Consult Vetted Lawyers",
-            desc: "If needed, connect securely with a verified lawyer specialized in your case area for representation or formal advice.",
+            desc: "Browse advocate profiles and independently confirm credentials, availability, and engagement terms before seeking advice.",
             icon: ShieldCheck,
             color: "from-purple-500 to-pink-500",
             glow: "rgba(236, 72, 153, 0.15)",
@@ -50,8 +50,8 @@ export default function TrustSection() {
     const lawyerSteps = [
         {
             step: "01",
-            title: "Secure DigiLocker KYC",
-            desc: "Verify your license credentials using digital signature and Bar Council of India database matching in under 2 minutes.",
+            title: "Create a lawyer profile",
+            desc: "Add professional profile details. NyayNow does not currently verify enrolment through DigiLocker or a Bar Council database.",
             icon: UserCheck,
             color: "from-emerald-500 to-teal-500",
             glow: "rgba(16, 185, 129, 0.15)",
@@ -67,7 +67,7 @@ export default function TrustSection() {
         {
             step: "03",
             title: "Acquire Vetted Clients",
-            desc: "Receive qualified consultation inquiries matching your specialization and consult securely via internal HD video/chat.",
+            desc: "Use available profile and communication features. Enquiries are not guaranteed to be qualified, and privacy/security controls should be reviewed before sharing sensitive information.",
             icon: ChevronRight,
             color: "from-cyan-500 to-blue-500",
             glow: "rgba(59, 130, 246, 0.15)",
@@ -90,8 +90,7 @@ export default function TrustSection() {
                             Simplifying Justice in 3 Steps
                         </h2>
                         <p className="text-slate-400 text-sm md:text-base leading-relaxed font-medium mt-4">
-                            Every step is guided by Bar Council of India compliance, BNS 2024 legal standards,
-                            and Supreme Court precedents — so you always have accurate, trusted legal guidance.
+                            Legal workflows and lawyer marketplace rules require independent review. AI output may be incomplete; verify primary sources and consult an advocate before acting.
                         </p>
                         
                         {/* Tab Switcher */}
@@ -121,7 +120,7 @@ export default function TrustSection() {
 
                     {/* Step Cards Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <AnimatePresence mode="wait">
+                        <AnimatePresence>
                             {(activeTab === 'citizen' ? citizenSteps : lawyerSteps).map((step, idx) => {
                                 const Icon = step.icon;
                                 return (
@@ -186,18 +185,18 @@ export default function TrustSection() {
                     className="border-t border-white/5 pt-16"
                 >
                     <div className="text-center mb-12">
-                        <p className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em] mb-4">Trusted by Legal Professionals</p>
+                        <p className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em] mb-4">Product principles</p>
                         <h3 className="text-3xl md:text-4xl font-bold text-white tracking-tight text-gradient-emerald">
-                            Verified. Compliant. Secure.
+                            Source aware. Human reviewed. Improving.
                         </h3>
                     </div>
                     
                     <div className="grid md:grid-cols-4 gap-6">
                         {[
-                            { icon: ShieldCheck, title: "BCI Verified", desc: "Every lawyer verified against Bar Council of India records", color: "text-blue-400", glow: "rgba(59, 130, 246, 0.15)" },
-                            { icon: Award, title: "DigiLocker KYC", desc: "Aadhaar & COP verification via government infrastructure", color: "text-emerald-400", glow: "rgba(16, 185, 129, 0.15)" },
-                            { icon: Scale, title: "BNS 2024 Compliant", desc: "All AI responses grounded in current Indian criminal law", color: "text-purple-400", glow: "rgba(139, 92, 246, 0.15)" },
-                            { icon: Star, title: "Bank-Grade Security", desc: "End-to-end encryption & SOC 2 compliant infrastructure", color: "text-amber-400", glow: "rgba(245, 158, 11, 0.15)" },
+                            { icon: ShieldCheck, title: "Review profile details", desc: "Check each lawyer’s profile and verification status before engaging.", color: "text-blue-400", glow: "rgba(59, 130, 246, 0.15)" },
+                            { icon: Award, title: "AI-assisted research", desc: "Selected legal routes can include search context when configured.", color: "text-emerald-400", glow: "rgba(16, 185, 129, 0.15)" },
+                            { icon: Scale, title: "Indian law workflows", desc: "Tools designed around legal questions, documents, and advocate workflows in India.", color: "text-purple-400", glow: "rgba(139, 92, 246, 0.15)" },
+                            { icon: Star, title: "Verify before acting", desc: "AI responses can be wrong; check primary sources and seek advocate review.", color: "text-amber-400", glow: "rgba(245, 158, 11, 0.15)" },
                         ].map((item, i) => (
                             <motion.div
                                 key={item.title}

@@ -16,7 +16,7 @@
 | `/blog` | Blog | Legal news and articles |
 | `/career` | Careers | Job openings |
 | `/professionals` | For Professionals | Luxury feature showcase for lawyers |
-| `/case-studies` | Case Studies | Real-world platform impact |
+| `/case-studies` | Product use cases | Proposed workflows and pilot opportunities; no measured customer impact is claimed |
 | `/methodology` | Methodology | How NyayNow AI works |
 | `/security-and-compliance` | Security & Compliance | DPDP, privacy, legal compliance |
 
@@ -24,7 +24,7 @@
 | Route | Page | Description |
 |-------|------|-------------|
 | `/assistant` | NyaySathi AI | Main AI legal assistant chatbot |
-| `/judge-ai` | Judge AI | Case outcome predictor (ML-based) |
+| `/judge-ai` | Judge AI | Experimental AI-assisted case analysis; not a validated outcome predictor |
 | `/judge-pro` | Judge Pro | Advanced case analysis for lawyers |
 | `/research` | Legal Research | AI-powered case law and statute search |
 | `/drafting` | Document Drafting | AI contract and document generator |
@@ -39,9 +39,9 @@
 ### Lawyer & Marketplace
 | Route | Page | Description |
 |-------|------|-------------|
-| `/marketplace` | Lawyer Marketplace | Find & filter verified lawyers (Algolia search) |
+| `/marketplace` | Lawyer Marketplace | Browse lawyer profiles; verify credentials independently |
 | `/lawyer/:id` | Lawyer Profile | Individual lawyer public profile page |
-| `/legal-sos` | Legal SOS | Emergency legal help, 24/7 panic button |
+| `/legal-sos` | Legal SOS | Legal help discovery; not an emergency response service |
 | `/nearby` | Nearby Services | AI-powered map of courts, lawyers, police stations |
 | `/ecourts` | eCourts | Live Indian court case status tracker |
 | `/meet` | Video Meet | Jitsi-based secure video consultation |

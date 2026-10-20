@@ -33,7 +33,7 @@ export default function LegalNoticeGenerator() {
         recipientAddress: '',
         facts: '',
         amount: '',
-        complianceDays: '15',
+        complianceDays: '',
         additionalClauses: '',
     });
 
@@ -148,7 +148,7 @@ export default function LegalNoticeGenerator() {
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(9);
         doc.setTextColor(80, 80, 120);
-        doc.text('DATE OF NOTICE', pageWidth / 2 + 10, sigY + 8);
+        doc.text('DRAFT DATE', pageWidth / 2 + 10, sigY + 8);
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(11);
         doc.setTextColor(50, 50, 80);
@@ -157,7 +157,7 @@ export default function LegalNoticeGenerator() {
         doc.setFontSize(8);
         doc.setTextColor(130, 130, 150);
         doc.text(`Notice Type: ${form.noticeType.split('(')[0].trim()}`, pageWidth / 2 + 10, sigY + 30);
-        doc.text(`Compliance: ${form.complianceDays} days`, pageWidth / 2 + 10, sigY + 36);
+        doc.text(form.complianceDays ? `User-supplied period: ${form.complianceDays} days — verify` : 'Deadline: to be set by advocate', pageWidth / 2 + 10, sigY + 36);
 
         // — Watermark —
         doc.setFont('helvetica', 'bold');
@@ -173,7 +173,7 @@ export default function LegalNoticeGenerator() {
         doc.setFontSize(7);
         doc.setTextColor(180, 180, 220);
         doc.text(
-            `This notice was generated via NyayNow AI Legal Platform. Confidential & Privileged Communication. | nyaynow.in`,
+            `AI-generated editable draft. Not legal advice, not filed, not advocate-approved. Verify all facts, law, deadlines, and signatures. | nyaynow.in`,
             pageWidth / 2, footerY, { align: 'center' }
         );
 
@@ -204,7 +204,7 @@ export default function LegalNoticeGenerator() {
                                 <h2 className="text-3xl font-bold text-white tracking-tight font-serif">Aethelgard AI Drafter</h2>
                                 <span className="px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-300 text-[10px] font-black uppercase tracking-[0.2em]">Quantum Drafting</span>
                             </div>
-                            <p className="text-slate-500 text-sm max-w-xl leading-relaxed">Synthesize court-ready legal notices, bail applications, and petitions with high-precision AI. Automatically optimized for Indian Judicial Standards (BNS/BNSS).</p>
+                            <p className="text-slate-500 text-sm max-w-xl leading-relaxed">Prepare an AI-generated draft for advocate review. Legal authorities, deadlines, jurisdiction, and filing requirements are not independently verified by this tool.</p>
                         </div>
                     </div>
 
@@ -462,7 +462,7 @@ export default function LegalNoticeGenerator() {
                             {[
                                 { label: 'Instrument Class', value: form.noticeType.split('(')[0].trim(), icon: '📜', color: 'indigo' },
                                 { label: 'Primary Target', value: form.recipientName, icon: '👤', color: 'rose' },
-                                { label: 'Execution Window', value: `${form.complianceDays} Standard Days`, icon: '⚡', color: 'emerald' },
+                                { label: 'User-supplied period', value: form.complianceDays ? `${form.complianceDays} days — verify with advocate` : 'Not specified; advocate review', icon: '⚡', color: 'emerald' },
                             ].map(({ label, value, icon, color }) => (
                                 <div key={label} className="bg-[#0f172a]/80 backdrop-blur-md rounded-[2rem] p-8 border border-white/5 shadow-xl hover:border-indigo-500/20 transition-all group overflow-hidden relative">
                                     <div className={`absolute top-0 right-0 w-24 h-24 bg-${color}-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} />

@@ -57,38 +57,38 @@ export default function ClientCRM() {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#0f172a] p-6 rounded-[2rem] border border-white/10 shadow-2xl">
+            <div className="mi-glass-card flex flex-col items-start justify-between gap-4 p-6 md:flex-row md:items-center">
                 <div>
-                    <h3 className="text-2xl font-black text-white tracking-tighter">Client Registry</h3>
-                    <div className="flex gap-4 mt-3">
+                    <h3 className="mi-body text-2xl font-bold tracking-tight text-[var(--text)]">Client Registry</h3>
+                    <div className="mt-3 flex gap-4">
                         <button
                             onClick={() => setFilterTab('active')}
-                            className={`text-[10px] font-black uppercase tracking-[0.2em] pb-1 border-b-2 transition ${filterTab === 'active' ? 'text-indigo-400 border-indigo-500' : 'text-slate-600 border-transparent'}`}
+                            className={`border-b-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] transition ${filterTab === 'active' ? 'border-[var(--gold)] text-[var(--gold)]' : 'border-transparent text-[var(--text-muted)]'}`}
                         >
-                            Secured Vault
+                            Active Clients
                         </button>
                         <button
                             onClick={() => setFilterTab('pending')}
-                            className={`text-[10px] font-black uppercase tracking-[0.2em] pb-1 border-b-2 transition ${filterTab === 'pending' ? 'text-indigo-400 border-indigo-500' : 'text-slate-600 border-transparent'}`}
+                            className={`border-b-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] transition ${filterTab === 'pending' ? 'border-[var(--gold)] text-[var(--gold)]' : 'border-transparent text-[var(--text-muted)]'}`}
                         >
                             Incoming Requests
-                            {pendingCount > 0 && <span className="ml-2 px-1.5 py-0.5 bg-indigo-500 text-white text-[8px] rounded-full animate-pulse">{pendingCount}</span>}
+                            {pendingCount > 0 && <span className="ml-2 animate-pulse rounded-full bg-[var(--sos)] px-1.5 py-0.5 text-[8px] text-white">{pendingCount}</span>}
                         </button>
                     </div>
                 </div>
 
-                <div className="flex gap-3 w-full md:w-auto">
+                <div className="flex w-full gap-3 md:w-auto">
                     <div className="relative flex-1 md:w-64">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={16} />
                         <input
                             type="text"
                             placeholder="Search identities..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/5 rounded-2xl text-sm text-white focus:outline-none focus:border-indigo-500/50 transition"
+                            className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/40 py-3 pl-10 pr-4 text-sm text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]"
                         />
                     </div>
-                    <button className="p-3 bg-white/5 border border-white/5 rounded-2xl text-slate-400 hover:text-white hover:bg-white/10 transition">
+                    <button className="mi-focus rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/40 p-3 text-[var(--text-muted)] transition hover:text-[var(--text)]">
                         <Filter size={18} />
                     </button>
                 </div>
@@ -96,9 +96,9 @@ export default function ClientCRM() {
 
             <div className="grid grid-cols-1 gap-4">
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-24 bg-[#0f172a]/50 rounded-[2.5rem] border border-white/5 backdrop-blur-sm">
-                        <Loader2 className="animate-spin text-indigo-500 mb-4" size={40} />
-                        <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-xs">Accessing Neural Database...</p>
+                    <div className="flex flex-col items-center justify-center rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 py-24 backdrop-blur-sm">
+                        <Loader2 className="mb-4 animate-spin text-[var(--gold)]" size={40} />
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--text-muted)]">Loading clients...</p>
                     </div>
                 ) : (
                     <AnimatePresence mode="popLayout">
@@ -109,80 +109,80 @@ export default function ClientCRM() {
                                 initial={{ opacity: 0, scale: 0.98 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.98 }}
-                                className="bg-[#0f172a] border border-white/5 rounded-[2rem] p-8 hover:border-indigo-500/30 transition group relative overflow-hidden shadow-xl"
+                                className="mi-card-hover group relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-8"
                             >
-                                <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-[80px] pointer-events-none group-hover:bg-indigo-500/10 transition-colors duration-700" />
+                                <div className="pointer-events-none absolute right-0 top-0 h-48 w-48 translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--gold)]/5 blur-[80px] transition-colors duration-700 group-hover:bg-[var(--gold)]/10" />
 
-                                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 relative z-10">
+                                <div className="relative z-10 flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
                                     <div className="flex items-center gap-5">
-                                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 flex items-center justify-center text-indigo-400 font-black text-2xl shadow-2xl group-hover:scale-105 transition duration-500">
+                                        <div className="flex h-16 w-16 items-center justify-center rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-gradient-to-br from-[var(--gold)]/30 to-[var(--emerald)]/20 text-2xl font-bold text-[var(--text)] shadow-2xl transition duration-500 group-hover:scale-105">
                                             {client.name?.[0]}
                                         </div>
                                         <div>
-                                            <h4 className="font-black text-white text-xl tracking-tighter">{client.name}</h4>
-                                            <div className="flex items-center gap-2 mt-2">
-                                                <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.15em]">{client.location?.city || "Remote Entity"}</span>
-                                                <span className="w-1 h-1 rounded-full bg-slate-700"></span>
-                                                <span className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.15em]">{client.plan || "Standard"} Protocol</span>
+                                            <h4 className="text-xl font-bold tracking-tight text-[var(--text)]">{client.name}</h4>
+                                            <div className="mt-2 flex items-center gap-2">
+                                                <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--text-muted)]">{client.location?.city || "Remote"}</span>
+                                                <span className="h-1 w-1 rounded-full bg-[var(--gold-hairline)]"></span>
+                                                <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--gold)]">{client.plan || "Standard"} Plan</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-3 w-full lg:w-auto">
+                                    <div className="flex w-full items-center gap-3 lg:w-auto">
                                         {filterTab === 'pending' ? (
                                             <>
                                                 <button
                                                     onClick={() => handleUpdateStatus(client.connectionId, 'active')}
-                                                    className="flex-1 lg:flex-none px-6 py-3 bg-emerald-500 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 transition flex items-center gap-2"
+                                                    className="mi-focus flex flex-1 items-center gap-2 rounded-[var(--radius-md)] bg-[var(--emerald)] px-6 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#0B1220] shadow-lg transition hover:brightness-110 lg:flex-none"
                                                 >
                                                     <CheckCircle size={14} /> Accept Request
                                                 </button>
                                                 <button
                                                     onClick={() => handleUpdateStatus(client.connectionId, 'rejected')}
-                                                    className="flex-1 lg:flex-none px-6 py-3 bg-white/5 border border-white/10 text-slate-400 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-500/10 hover:text-red-400 transition flex items-center gap-2"
+                                                    className="mi-focus flex flex-1 items-center gap-2 rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/40 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] transition hover:bg-[color-mix(in_srgb,var(--sos)_12%,transparent)] hover:text-[var(--sos)] lg:flex-none"
                                                 >
                                                     <XCircle size={14} /> Decline
                                                 </button>
                                             </>
                                         ) : (
-                                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/5 text-indigo-400 border border-indigo-500/10 shadow-inner">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
-                                                <span className="text-[10px] font-black uppercase tracking-[0.15em]">Neural Link: Active</span>
+                                            <div className="flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--emerald)_35%,transparent)] bg-[color-mix(in_srgb,var(--emerald)_10%,transparent)] px-4 py-2 text-[var(--emerald)]">
+                                                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--emerald)]"></div>
+                                                <span className="text-[10px] font-bold uppercase tracking-[0.15em]">Connection Active</span>
                                             </div>
                                         )}
-                                        <button className="p-3 text-slate-500 hover:text-white hover:bg-white/5 rounded-xl transition">
+                                        <button className="mi-focus rounded-[var(--radius-md)] p-3 text-[var(--text-muted)] transition hover:bg-[var(--surface-2)]/60 hover:text-[var(--text)]">
                                             <MoreVertical size={20} />
                                         </button>
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-10 pt-8 border-t border-white/5 relative z-10">
-                                    <div className="flex items-center gap-4 text-slate-400 group/item">
-                                        <div className="p-3 bg-white/5 rounded-xl group-hover/item:bg-indigo-500/10 group-hover/item:text-indigo-400 transition-colors"><Phone size={16} /></div>
+                                <div className="relative z-10 mt-10 grid grid-cols-1 gap-6 border-t border-[var(--gold-hairline)] pt-8 md:grid-cols-4">
+                                    <div className="group/item flex items-center gap-4 text-[var(--text-muted)]">
+                                        <div className="rounded-[var(--radius-sm)] bg-[var(--surface-2)]/50 p-3 transition-colors group-hover/item:bg-[var(--gold)]/10 group-hover/item:text-[var(--gold)]"><Phone size={16} /></div>
                                         <div className="flex flex-col">
-                                            <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Secure Line</span>
-                                            <span className="text-xs font-bold text-white/80">{client.phone || "Encrypted"}</span>
+                                            <span className="text-[8px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Phone</span>
+                                            <span className="text-xs font-bold text-[var(--text)]">{client.phone || "Not provided"}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4 text-slate-400 group/item">
-                                        <div className="p-3 bg-white/5 rounded-xl group-hover/item:bg-indigo-500/10 group-hover/item:text-indigo-400 transition-colors"><Mail size={16} /></div>
+                                    <div className="group/item flex items-center gap-4 text-[var(--text-muted)]">
+                                        <div className="rounded-[var(--radius-sm)] bg-[var(--surface-2)]/50 p-3 transition-colors group-hover/item:bg-[var(--gold)]/10 group-hover/item:text-[var(--gold)]"><Mail size={16} /></div>
                                         <div className="flex flex-col">
-                                            <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Encryption P0</span>
-                                            <span className="text-xs font-bold text-white/80 truncate max-w-[140px]">{client.email}</span>
+                                            <span className="text-[8px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Email</span>
+                                            <span className="max-w-[140px] truncate text-xs font-bold text-[var(--text)]">{client.email}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4 text-slate-400 group/item">
-                                        <div className="p-3 bg-white/5 rounded-xl group-hover/item:bg-indigo-500/10 group-hover/item:text-indigo-400 transition-colors"><Calendar size={16} /></div>
+                                    <div className="group/item flex items-center gap-4 text-[var(--text-muted)]">
+                                        <div className="rounded-[var(--radius-sm)] bg-[var(--surface-2)]/50 p-3 transition-colors group-hover/item:bg-[var(--gold)]/10 group-hover/item:text-[var(--gold)]"><Calendar size={16} /></div>
                                         <div className="flex flex-col">
-                                            <span className="text-[8px] font-black uppercase tracking-widest text-slate-600">Interaction Log</span>
-                                            <span className="text-xs font-bold text-white/80 italic">{new Date(client.createdAt || Date.now()).toLocaleDateString()}</span>
+                                            <span className="text-[8px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Connected Since</span>
+                                            <span className="text-xs font-bold italic text-[var(--text)]">{new Date(client.createdAt || Date.now()).toLocaleDateString()}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center justify-end gap-3 flex-wrap">
-                                        <button className="px-5 py-3 bg-indigo-600 border border-indigo-500 rounded-xl text-[10px] text-white font-black uppercase tracking-[0.2em] hover:bg-indigo-500 transition duration-500 shadow-lg flex items-center gap-2">
+                                    <div className="flex flex-wrap items-center justify-end gap-3">
+                                        <button className="mi-focus flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--gold)] px-5 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#0B1220] shadow-lg transition hover:brightness-110">
                                             <MessageSquare size={14} /> Secure Message
                                         </button>
-                                        <button className="px-5 py-3 bg-white/5 text-slate-300 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition duration-500 flex items-center gap-2">
+                                        <button className="mi-focus flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/40 px-5 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text)] transition hover:bg-[var(--surface-2)]">
                                             <FileText size={14} /> Case Files
                                         </button>
                                     </div>
@@ -193,11 +193,11 @@ export default function ClientCRM() {
                 )}
 
                 {!loading && filteredClients.length === 0 && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24 bg-[#0f172a]/30 rounded-[2.5rem] border border-white/5 backdrop-blur-sm">
-                        <div className="w-16 h-16 bg-white/5 flex items-center justify-center rounded-full mx-auto mb-6 text-slate-600">
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/20 py-24 text-center backdrop-blur-sm">
+                        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--surface-2)]/50 text-[var(--text-muted)]">
                             <Search size={32} />
                         </div>
-                        <p className="text-slate-600 font-black uppercase tracking-[0.3em] text-xs">No identities found in the current sector</p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--text-muted)]">No clients found</p>
                     </motion.div>
                 )}
             </div>

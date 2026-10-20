@@ -75,7 +75,7 @@ export default async function Image() {
 
                 {/* Feature pills */}
                 <div style={{ display: 'flex', gap: '16px', marginTop: '40px' }}>
-                    {['AI Legal Assistant', 'Verified Lawyers', 'Document Drafting', 'Legal SOS'].map(tag => (
+                    {['AI Legal Assistant', 'Lawyer Profiles', 'Document Drafting', 'Legal SOS'].map(tag => (
                         <div
                             key={tag}
                             style={{

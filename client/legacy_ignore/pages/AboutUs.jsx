@@ -5,41 +5,41 @@ import { Scale, Shield, Users, Globe, Award, Zap, Target, Heart, Code2, ArrowRig
 
 
 const STATS = [
-    { number: "BNS/BNSS", label: "Statutory Accuracy", icon: <Scale size={20} />, color: 'text-indigo-400' },
-    { number: "256-Bit", label: "End-to-End Encryption", icon: <Shield size={20} />, color: 'text-emerald-400' },
-    { number: "24/7", label: "AI Availability", icon: <Globe size={20} />, color: 'text-purple-400' },
+    { number: "AI-assisted", label: "Legal workflows", icon: <Scale size={20} />, color: 'text-indigo-400' },
+    { number: "In development", label: "Source verification", icon: <Shield size={20} />, color: 'text-emerald-400' },
+    { number: "Human review", label: "Required before action", icon: <Globe size={20} />, color: 'text-purple-400' },
 ];
 
 const VALUES = [
     {
         icon: <Target size={28} />,
         title: "Radical Accessibility",
-        desc: "Legal knowledge should not be a luxury. We price our tools to make professional-grade legal intelligence accessible to every Indian citizen.",
+        desc: "We are building approachable AI-assisted legal workflows. Access, language coverage, and product capabilities vary by feature and plan.",
         color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20"
     },
     {
         icon: <Shield size={28} />,
-        title: "Privacy First",
-        desc: "Your case data is yours. We use AES-256 encryption, process your files in isolated sandboxes, and never train our models on your private documents.",
+        title: "Privacy in progress",
+        desc: "Privacy controls and provider handling require further review. Read the current policy and do not submit sensitive case material unless you understand the available controls.",
         color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
     },
     {
         icon: <Heart size={28} />,
         title: "Human-Centered AI",
-        desc: "We build AI that empowers lawyers and citizens, not replaces them. Every output includes sourced references so you can verify and question everything.",
+        desc: "AI outputs are for human review and may be incomplete or incorrect. Sources are not verified for every answer; consult an advocate before acting.",
         color: "text-rose-400 bg-rose-500/10 border-rose-500/20"
     },
     {
         icon: <Code2 size={28} />,
         title: "Built for India",
-        desc: "Trained on BNS, BNSS, BSA, IPC, CrPC, CPC and every major Indian state law. Not a Western AI wrapped with an Indian flag — built from the ground up.",
+        desc: "The product is designed for Indian legal workflows. The current implementation uses third-party AI and search providers; a proprietary legal model and comprehensive licensed corpus are not established.",
         color: "text-amber-400 bg-amber-500/10 border-amber-500/20"
     },
 ];
 
 const TIMELINE = [
-    { year: "November 2025", label: "NyayNow Founded", desc: "Official launch of India's premier AI legal intelligence platform." },
-    { year: "Active", label: "NyayVoice + NyayCourt", desc: "Multilingual voice AI and AI Courtroom Battle Simulator released." },
+    { year: "Current focus", label: "Product development", desc: "Building AI-assisted legal workflows while improving source provenance, privacy controls, and evaluation." },
+    { year: "In development", label: "Verification and evaluation", desc: "Counsel-reviewed source-linked explanations and reproducible product benchmarks are not yet available." },
 ];
 
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } };
@@ -75,7 +75,7 @@ export default function AboutUs() {
                         transition={{ delay: 0.2 }}
                         className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-light mb-12"
                     >
-                        NyayNow is building the world's most advanced legal operating system for India. We bridge the gap between complex legal systems and 1.4 billion people who deserve access to justice.
+                        NyayNow is building AI-assisted legal workflows for India. The current product is an early-stage foundation; it does not yet provide comprehensive verified legal intelligence or a proprietary legal model.
                     </motion.p>
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -114,7 +114,7 @@ export default function AboutUs() {
                         </div>
                         <h3 className="text-2xl font-bold text-white mb-6 font-serif">The Problem</h3>
                         <p className="text-slate-400 leading-relaxed text-lg">
-                            Legal services have historically been opaque, expensive, and inaccessible. For the average citizen, navigating the court system is daunting. For lawyers, hours are wasted on repetitive research that AI can do in seconds.
+                            Legal processes can be difficult to navigate. Citizens and legal professionals need tools that make information and routine workflows easier to review, while preserving the need for qualified legal advice.
                         </p>
                         <div className="mt-6 space-y-2">
                             {["Transparency in Legal Proceedings", "Accessibility for Every Citizen", "Empowering Judicial Efficiency"].map((p, i) => (
@@ -131,7 +131,7 @@ export default function AboutUs() {
                         </div>
                         <h3 className="text-2xl font-bold text-white mb-6 font-serif">Our Solution</h3>
                         <p className="text-slate-400 leading-relaxed text-lg">
-                            We deploy Large Legal Models trained on 50 years of Indian case law. Our AI doesn't just retrieve information; it reasons, drafts, and predicts outcomes with unprecedented precision — in English, Hindi, and regional languages.
+                            The product combines a Next.js client, Node API, Gemini generation, and selected search integrations. A proprietary legal model, licensed comprehensive corpus, validated outcome predictions, and counsel-reviewed multilingual benchmark remain to be built.
                         </p>
                         <div className="mt-6 space-y-2">
                             {["Legal Q&A in Regional Languages", "Neural Precedent Matching", "Autonomous Document Synthesis"].map((p, i) => (
@@ -203,7 +203,7 @@ export default function AboutUs() {
                 <motion.div {...fadeUp} className="max-w-3xl mx-auto px-6 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold text-white font-serif mb-6">Be part of the Legal Revolution</h2>
                     <p className="text-slate-400 mb-10 text-lg leading-relaxed">
-                        NyayNow is democratizing justice with AI. Join us in our mission to build the world's most advanced legal operating system for India.
+                        NyayNow is developing AI-assisted legal workflows and the source, evaluation, and privacy systems needed to make them more dependable.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <a href="/contact" className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 inline-flex items-center justify-center gap-2 transition shadow-xl">

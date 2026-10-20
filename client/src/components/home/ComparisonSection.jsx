@@ -53,7 +53,7 @@ export function ComparisonSection() {
 
                             <div className="space-y-6 mb-12">
                                 {[
-                                    { t: "Predictive Analytics", d: "Outcome probability based on 20 years of data." },
+                                    { t: "Experimental case analysis", d: "AI-assisted analysis for independent advocate review; no outcome forecasts are validated." },
                                     { t: "Risk Auditing", d: "Detect procedural flaws before they arise." },
                                     { t: "Winning Strategy", d: "Formulate bulletproof legal pathways." }
                                 ].map((item, i) => (
@@ -87,9 +87,9 @@ export function ComparisonSection() {
 
                             <div className="space-y-6 mb-12">
                                 {[
-                                    { t: "Instant Opinions", d: "Get high-fidelity legal views in plain English." },
-                                    { t: "Precedent Research", d: "Semantic search across 5M+ judicial records." },
-                                    { t: "Compliance Mapping", d: "Audit adherence to statutory regulations." }
+                                    { t: "AI-assisted information", d: "Review generated explanations and verify important details with primary sources." },
+                                    { t: "Legal research", d: "Search availability and source coverage vary; results are not a relevance or accuracy guarantee." },
+                                    { t: "Document drafts", d: "Prepare editable text for review by a qualified professional." }
                                 ].map((item, i) => (
                                     <div key={i} className="flex gap-4">
                                         <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
@@ -108,23 +108,7 @@ export function ComparisonSection() {
                     </Link>
                 </motion.div>
 
-                {/* TRUST BAND */}
-                <div className="mt-20 flex flex-wrap items-center justify-center gap-12 text-[#94a3b8] font-bold text-[10px] uppercase tracking-[0.4em]">
-                    <div className="flex items-center gap-3">
-                        <Shield size={14} className="text-blue-500" />
-                        End-to-End Privacy
-                    </div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
-                    <div className="flex items-center gap-3">
-                        <Lock size={14} className="text-blue-500" />
-                        Institutional Security
-                    </div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
-                    <div className="flex items-center gap-3">
-                        <Shield size={14} className="text-blue-500" />
-                        Verified Success
-                    </div>
-                </div>
+                <p className="mt-12 text-center text-xs text-slate-500">AI outputs may be incomplete or incorrect. Verify legal information before acting. Privacy and security controls are described in the current policy.</p>
             </div>
         </section>
     )

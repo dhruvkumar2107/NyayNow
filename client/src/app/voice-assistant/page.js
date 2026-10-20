@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     Mic, MicOff, Volume2, Shield, ArrowLeft, Loader2, Sparkles,
-    Upload, AlertCircle, Edit3, Check, RefreshCw, VolumeX, AlertTriangle, FileAudio
+    AlertCircle, Edit3, Check, RefreshCw, VolumeX, AlertTriangle
 } from 'lucide-react'
 import Link from 'next/link'
 import axios from 'axios'
@@ -161,7 +161,6 @@ export default function NyayVoicePage() {
     const dashboardLink = user?.role === 'lawyer' ? '/lawyer/dashboard' : '/client/dashboard';
     const [isListening, setIsListening] = useState(false)
     const [transcript, setTranscript] = useState('')
-    const [confidence, setConfidence] = useState(1.0)
     const [response, setResponse] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -172,12 +171,9 @@ export default function NyayVoicePage() {
     const [isEditing, setIsEditing] = useState(false)
     const [editedText, setEditedText] = useState('')
     
-    // Upload fallback state
-    const [uploading, setUploading] = useState(false)
-    const [uploadedFile, setUploadedFile] = useState(null)
 
     const recognitionRef = useRef(null)
-    const fileInputRef = useRef(null)
+    const processVoiceCommandRef = useRef(null)
 
     useEffect(() => {
         // Initialize SpeechRecognition
@@ -198,14 +194,11 @@ export default function NyayVoicePage() {
                     const current = event.resultIndex
                     const result = event.results[current]
                     const transcriptResult = result[0].transcript
-                    const conf = result[0].confidence || 0.9
-                    
                     setTranscript(transcriptResult)
-                    setConfidence(conf)
 
                     if (result.isFinal) {
                         setEditedText(transcriptResult)
-                        processVoiceCommand(transcriptResult)
+                        processVoiceCommandRef.current?.(transcriptResult)
                     }
                 }
 
@@ -239,7 +232,6 @@ export default function NyayVoicePage() {
             setError(null)
             setIsListening(true)
             setIsEditing(false)
-            setUploadedFile(null)
             try {
                 recognitionRef.current?.start()
             } catch (err) {
@@ -295,83 +287,28 @@ export default function NyayVoicePage() {
         if (!editedText.trim()) return
         setTranscript(editedText)
         setIsEditing(false)
-        setConfidence(1.0) // Manual override confidence
         processVoiceCommand(editedText)
         toast.success("Query updated!")
-    }
-
-    // File Upload Fallback
-    const handleFileUpload = (e) => {
-        const file = e.target.files?.[0]
-        if (!file) return
-
-        if (!file.type.startsWith('audio/')) {
-            toast.error("Please upload an audio file (.mp3, .wav, .m4a)")
-            return
-        }
-
-        setUploadedFile(file)
-        setTranscript('')
-        setResponse('')
-        setError(null)
-        setUploading(true)
-
-        // Simulate high-fidelity audio transcription processing
-        setTimeout(() => {
-            setUploading(false)
-            // Pick a preset question based on language for simulation
-            const selectedLangObj = SUPPORTED_LANGUAGES.find(l => l.code === language)
-            const sampleText = selectedLangObj?.examples[0] || "What are my rights in police custody?"
-            
-            setTranscript(sampleText)
-            setEditedText(sampleText)
-            setConfidence(0.92)
-            processVoiceCommand(sampleText)
-            toast.success("Audio transcribed successfully!")
-        }, 2500)
     }
 
     // Example chip selection
     const handleExampleClick = (example) => {
         setTranscript(example)
         setEditedText(example)
-        setConfidence(1.0)
         setError(null)
-        setUploadedFile(null)
         processVoiceCommand(example)
     }
 
-    // Color code words based on transcription confidence
+    processVoiceCommandRef.current = processVoiceCommand
+
+    // Ask the user to review browser speech recognition output; do not present a confidence score.
     const renderConfidenceColoredText = () => {
         if (!transcript) return null
-        
-        // Split words
-        const words = transcript.split(' ')
-        
-        // Define color based on overall confidence
-        let colorClass = "text-emerald-400" // high confidence
-        let statusText = "High accuracy"
-        if (confidence < 0.75) {
-            colorClass = "text-rose-400 underline decoration-rose-500/50 decoration-wavy"
-            statusText = "Low accuracy - tap to correct"
-        } else if (confidence < 0.9) {
-            colorClass = "text-amber-400"
-            statusText = "Medium accuracy"
-        }
 
         return (
             <div className="space-y-2">
-                <p className="text-xl font-medium leading-relaxed">
-                    {words.map((word, idx) => (
-                        <span key={idx} className={`${colorClass} transition-colors duration-300 mr-1.5`}>
-                            {word}
-                        </span>
-                    ))}
-                </p>
-                <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                    <span className={`w-2 h-2 rounded-full ${confidence >= 0.9 ? 'bg-emerald-500' : confidence >= 0.75 ? 'bg-amber-500' : 'bg-red-500'}`} />
-                    <span>Confidence: {Math.round(confidence * 100)}% ({statusText})</span>
-                </div>
+                <p className="text-xl font-medium leading-relaxed text-slate-200">{transcript}</p>
+                <p className="text-[10px] text-amber-300 font-bold uppercase tracking-wider">Review and correct the transcript before submitting.</p>
             </div>
         )
     }
@@ -514,7 +451,7 @@ export default function NyayVoicePage() {
                                     onClick={() => handleExampleClick(example)}
                                     className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-left text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 hover:border-white/10 transition-all active:scale-[0.98]"
                                 >
-                                    "{example}"
+                                    &quot;{example}&quot;
                                 </button>
                             ))}
                         </div>
@@ -610,7 +547,7 @@ export default function NyayVoicePage() {
                                 {response}
                             </p>
                             <div className="mt-6 pt-6 border-t border-white/5 flex items-center gap-4 text-xs text-slate-500">
-                                <span>⚖️ Grounded in BNS (2024). Verification required.</span>
+                                <span>AI-generated information may be incomplete. Check legal sources before relying.</span>
                             </div>
                         </motion.div>
                     )}
@@ -624,46 +561,14 @@ export default function NyayVoicePage() {
                         >
                             <div className="flex items-center gap-3 text-amber-500">
                                 <AlertTriangle size={20} />
-                                <h3 className="font-bold text-sm text-white">Upload Audio Fallback</h3>
+                                <h3 className="font-bold text-sm text-white">Voice input unavailable</h3>
                             </div>
                             <p className="text-xs text-slate-400 leading-relaxed">
-                                Record your query on your phone or computer and upload the voice file. Our neural transcription compiler will process it and return the legal answer.
+                                This browser does not provide speech recognition. Audio-file transcription is in development. You can type your question in the <Link href="/assistant" className="text-blue-300 underline">AI assistant</Link>.
                             </p>
                             
                             <div className="flex flex-col items-center justify-center p-8 border border-dashed border-white/10 rounded-2xl bg-white/[0.01] hover:bg-white/[0.02] hover:border-blue-500/30 transition-all relative">
-                                <input 
-                                    type="file" 
-                                    ref={fileInputRef}
-                                    onChange={handleFileUpload}
-                                    accept="audio/*"
-                                    className="hidden"
-                                />
-                                
-                                {uploading ? (
-                                    <div className="flex flex-col items-center justify-center gap-3">
-                                        <Loader2 className="animate-spin text-blue-400" size={32} />
-                                        <p className="text-xs font-bold text-slate-300">Compiling Voice Waveform...</p>
-                                    </div>
-                                ) : uploadedFile ? (
-                                    <div className="flex flex-col items-center justify-center gap-2">
-                                        <FileAudio className="text-emerald-400" size={32} />
-                                        <p className="text-xs font-bold text-slate-300 truncate max-w-xs">{uploadedFile.name}</p>
-                                        <button 
-                                            onClick={() => fileInputRef.current?.click()}
-                                            className="text-[10px] text-blue-400 hover:underline mt-2 font-bold uppercase tracking-wider"
-                                        >
-                                            Choose Another File
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <button 
-                                        onClick={() => fileInputRef.current?.click()}
-                                        className="flex flex-col items-center justify-center gap-3 focus:outline-none"
-                                    >
-                                        <Upload className="text-slate-500" size={32} />
-                                        <span className="text-xs font-bold text-slate-400">Click to upload voice note (.mp3, .wav, .m4a)</span>
-                                    </button>
-                                )}
+                                <p className="text-sm text-slate-300">Use microphone input where supported, or continue with text.</p>
                             </div>
                         </motion.div>
                     )}
@@ -675,12 +580,12 @@ export default function NyayVoicePage() {
                 <div className="inline-flex flex-wrap justify-center gap-6 text-slate-500 text-[10px] font-black uppercase tracking-widest">
                     <div className="flex items-center gap-1.5 underline underline-offset-4 decoration-blue-500/50">
                         <Shield size={10} />
-                        <span>Biometric Voice Isolation</span>
+                        <span>Browser speech input</span>
                     </div>
                     <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-800 self-center" />
-                    <span>End-to-End Encrypted</span>
+                    <span>Review privacy terms before use</span>
                     <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-800 self-center" />
-                    <span>No data retention on voice audio files</span>
+                    <span>Transcript text is sent to the AI assistant service</span>
                 </div>
             </footer>
         </div>

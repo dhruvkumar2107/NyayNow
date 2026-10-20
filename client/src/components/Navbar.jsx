@@ -55,15 +55,15 @@ export default function Navbar() {
   };
 
   const services = [
-    { name: "AI Legal Assistant", desc: "Instant answers grounded in BNS & IPC", href: "/assistant", icon: Sparkles, color: "text-blue-400", gradient: "from-blue-500 to-indigo-500" },
-    { name: "Smart Document Drafting", desc: "Draft legal agreements & notices", href: "/drafting", icon: FileText, color: "text-emerald-400", gradient: "from-emerald-500 to-teal-500" },
-    { name: "Outcome Predictor (Judge AI)", desc: "Predict win probabilities & analyze risk", href: "/judge-ai", icon: Gavel, color: "text-indigo-400", gradient: "from-indigo-500 to-violet-500" },
+    { name: "AI Legal Assistant", desc: "AI-generated legal information; verify sources independently", href: "/assistant", icon: Sparkles, color: "text-blue-400", gradient: "from-blue-500 to-indigo-500" },
+    { name: "Smart Document Drafting", desc: "Prepare editable drafts for human review", href: "/drafting", icon: FileText, color: "text-emerald-400", gradient: "from-emerald-500 to-teal-500" },
+    { name: "Case Analysis Research", desc: "Outcome analysis is disabled while research is in development", href: "/judge-ai", icon: Gavel, color: "text-indigo-400", gradient: "from-indigo-500 to-violet-500" },
     { name: "Courtroom Simulator", desc: "Simulate a live AI trial argument", href: "/nyaycourt-simulator", icon: Scale, color: "text-violet-400", gradient: "from-violet-500 to-fuchsia-500" },
-    { name: "Multilingual Voice Assist", desc: "Voice search in 14+ Indian languages", href: "/nyayvoice", icon: Mic, color: "text-cyan-400", gradient: "from-cyan-500 to-blue-500" },
-    { name: "Nearby Radar Map", desc: "Find nearest police, courts & advocates", href: "/nearby", icon: MapPin, color: "text-amber-400", gradient: "from-amber-500 to-orange-500" },
-    { name: "Legal Precedent Search", desc: "Search through 1.2M court judgments", href: "/research", icon: Search, color: "text-pink-400", gradient: "from-pink-500 to-rose-500" },
-    { name: "NJDG Case Tracker", desc: "Track e-Courts case status live", href: "/ecourts", icon: Activity, color: "text-rose-400", gradient: "from-rose-500 to-red-500" },
-    { name: "Bhashini Translator", desc: "Translate text across Indian languages", href: "/translator", icon: Languages, color: "text-sky-400", gradient: "from-sky-500 to-cyan-500" }
+    { name: "Voice Assist", desc: "Voice input availability varies by browser, language, and feature", href: "/nyayvoice", icon: Mic, color: "text-cyan-400", gradient: "from-cyan-500 to-blue-500" },
+    { name: "Nearby Map", desc: "Check listing details and contact information before travel", href: "/nearby", icon: MapPin, color: "text-amber-400", gradient: "from-amber-500 to-orange-500" },
+    { name: "Legal Research", desc: "Search Indian legal materials", href: "/research", icon: Search, color: "text-pink-400", gradient: "from-pink-500 to-rose-500" },
+    { name: "Court Case Search", desc: "Search availability depends on the source and case", href: "/ecourts", icon: Activity, color: "text-rose-400", gradient: "from-rose-500 to-red-500" },
+    { name: "Legal Text Translator", desc: "Machine translations can be inaccurate; get legal text reviewed", href: "/translator", icon: Languages, color: "text-sky-400", gradient: "from-sky-500 to-cyan-500" }
   ];
 
   const navItems = [

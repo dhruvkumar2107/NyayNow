@@ -1,120 +1,70 @@
-import { BookOpen, Scale, Award, Database, RefreshCw } from "lucide-react"
+import Link from "next/link"
+import { BookOpen, Scale, ShieldCheck, Database, ArrowRight, FlaskConical } from "lucide-react"
 
 export const metadata = {
-    title: 'Technical Methodology | NyayNow',
-    description: 'Learn how NyayNow calibrates AI neural networks to ground legal answers in verified Indian gazettes, statutory records, and case laws.',
-    alternates: {
-        canonical: 'https://nyaynow.in/methodology',
-    },
+    title: 'AI Methodology & Evaluation | NyayNow',
+    description: 'How NyayNow currently generates Indian legal information, uses optional legal search context, and plans to validate citation quality.',
+    alternates: { canonical: 'https://nyaynow.in/methodology' },
 }
 
+const stages = [
+    { n: '01', title: 'Understand the question', body: 'The API receives the user’s question and selected language. The assistant can also receive a short conversation history and user-provided case context.' },
+    { n: '02', title: 'Retrieve when configured', body: 'When an Indian Kanoon API key is configured, selected routes search Indian Kanoon and pass a small number of returned snippets and links to the model. Without that key, this retrieval step is skipped.' },
+    { n: '03', title: 'Generate and disclose limits', body: 'The backend calls Google Gemini through a model fallback helper. The answer is generated text and can be wrong or incomplete; users should open cited sources and ask a qualified advocate about case-specific decisions.' },
+]
+
 export default function Methodology() {
-    const metrics = [
-        { title: "Statute Alignment", value: "98.4%", desc: "Accurate linking to BNS 2024 sections without hallucinated legal provisions." },
-        { title: "Retrieval Latency", value: "1.2s", desc: "Average time to fetch, parse, and verify Indian case law citations." },
-        { title: "Dialect Comprehension", value: "14+", desc: "Supported Indian languages and regional dialects parsed accurately." },
-        { title: "Precedents Indexed", value: "1.2M+", desc: "Supreme Court, High Court, and district court judgments cataloged." }
-    ]
-
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-300 font-sans flex flex-col pt-24">
-
-            <main className="flex-1 max-w-4xl mx-auto px-6 py-16 w-full relative z-10">
-                <div className="absolute top-0 inset-x-0 h-[300px] bg-[radial-gradient(ellipse_at_top,_rgba(99,102,241,0.05),_transparent_70%)] pointer-events-none" />
-
-                <div className="mb-16">
+        <main className="min-h-screen bg-[#020617] text-slate-300 font-sans pt-24">
+            <div className="max-w-4xl mx-auto px-6 py-16">
+                <div className="mb-12">
                     <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-6">
-                        <BookOpen size={12} /> Technical Methodology
+                        <BookOpen size={12} /> AI methodology
                     </span>
-                    <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">
-                        Grounding and Calibration Methodology
-                    </h1>
-                    <p className="text-slate-400 text-lg">
-                        Learn how NyayNow calibrates neural networks to ground responses in verified Indian gazettes, statutory records, and case laws.
-                    </p>
+                    <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">How NyayNow works today</h1>
+                    <p className="text-slate-400 text-lg">We describe the deployed architecture and its current limits plainly. This page is updated as retrieval, evaluation, and data partnerships are built and validated.</p>
                 </div>
 
-                {/* METRICS GRID */}
-                <div className="grid grid-cols-2 gap-6 mb-16">
-                    {metrics.map((m) => (
-                        <div key={m.title} className="p-6 rounded-2xl bg-white/5 border border-white/5">
-                            <span className="text-3xl md:text-5xl font-bold text-white block mb-2">{m.value}</span>
-                            <span className="text-sm font-bold text-slate-400 block mb-1">{m.title}</span>
-                            <span className="text-xs text-slate-500 leading-relaxed block">{m.desc}</span>
-                        </div>
-                    ))}
-                </div>
+                <section className="space-y-4 mb-12" aria-label="Current request flow">
+                    {stages.map((stage) => <article key={stage.n} className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                        <span className="text-xs text-blue-400 font-bold tracking-widest">STEP {stage.n}</span>
+                        <h2 className="text-xl font-bold text-white mt-2 mb-2">{stage.title}</h2>
+                        <p className="text-slate-400 leading-relaxed">{stage.body}</p>
+                    </article>)}
+                </section>
 
-                <div className="space-y-12">
-                    {/* Retrival & Augmentation */}
-                    <div className="space-y-4">
-                        <h2 className="text-xl font-bold text-white flex items-center gap-3">
-                            <RefreshCw className="text-blue-400" size={20} />
-                            Hybrid RAG retrieval pipeline
-                        </h2>
-                        <p className="text-slate-400 leading-relaxed text-sm md:text-base">
-                            NyayNow uses a custom-tuned Retrieval-Augmented Generation (RAG) framework. When you enter a legal question or case description, our system converts the input into vector representations and performs semantic lookups against our database of Indian statutes. 
-                            This filters out irrelevant noise, matching the case facts with exact BNS 2024 citations and Supreme Court rulings.
-                        </p>
-                    </div>
-
-                    {/* How Accuracy is Measured */}
-                    <div className="space-y-4">
-                        <h2 className="text-xl font-bold text-white flex items-center gap-3">
-                            <Award className="text-amber-400" size={20} />
-                            How Statute Alignment (98.4%) is Measured
-                        </h2>
-                        <p className="text-slate-400 leading-relaxed text-sm md:text-base">
-                            Our 98.4% Statute Alignment rate is verified using an automated benchmarking suite that evaluates generated responses against a curated dataset of 2,500+ complex scenario questions. 
-                        </p>
-                        <p className="text-slate-400 leading-relaxed text-sm md:text-base mt-2">
-                            The metric measures:
-                        </p>
-                        <ul className="list-disc pl-6 space-y-2 text-slate-400 text-sm md:text-base">
-                            <li><strong>Citation Fidelity:</strong> Ensuring the AI references actual, existing sections of the BNS/IPC codes without hallucinating provision numbers or sub-clauses.</li>
-                            <li><strong>Semantic Matching:</strong> Validating that the context of the cited statute exactly aligns with the facts of the scenario, verified by legal experts.</li>
-                            <li><strong>Negative Rejection:</strong> Checking if the model correctly declines to answer or flags insufficient information when a scenario does not map to any statutory provision, avoiding false citations.</li>
+                <section className="grid md:grid-cols-2 gap-4 mb-12">
+                    <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                        <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-3"><Database className="text-emerald-400" size={19} /> What is implemented</h2>
+                        <ul className="space-y-2 text-sm text-slate-400 list-disc pl-5">
+                            <li>Gemini-based generation in the Node API.</li>
+                            <li>Optional Indian Kanoon search in selected legal routes, when configured.</li>
+                            <li>Some routes request Google Search grounding through Gemini; availability depends on model and API configuration.</li>
+                            <li>A separate FastAPI service exists, but the main assistant route inspected here uses the Node service.</li>
                         </ul>
                     </div>
-
-                    {/* Datasets */}
-                    <div className="space-y-4">
-                        <h2 className="text-xl font-bold text-white flex items-center gap-3">
-                            <Database className="text-emerald-400" size={20} />
-                            Verified Indian legal data corpora
-                        </h2>
-                        <p className="text-slate-400 leading-relaxed text-sm md:text-base">
-                            Our database is synchronized weekly with official federal repositories:
-                        </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="p-4 rounded-xl bg-white/5 border border-white/5 text-xs md:text-sm">
-                                <strong className="text-white block mb-1">BNS 2024 & New Criminal Codes</strong>
-                                <span className="text-slate-500">
-                                     Bharatiya Nyaya Sanhita, Bharatiya Nagarik Suraksha Sanhita, and Bharatiya Sakshya Adhiniyam codes cataloged.
-                                </span>
-                            </div>
-                            <div className="p-4 rounded-xl bg-white/5 border border-white/5 text-xs md:text-sm">
-                                <strong className="text-white block mb-1">e-Courts Precedent Gazette</strong>
-                                <span className="text-slate-500">
-                                    Citations and summaries of rulings from Supreme Court and state High Courts.
-                                </span>
-                            </div>
-                        </div>
+                    <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                        <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-3"><FlaskConical className="text-amber-400" size={19} /> What is not yet substantiated</h2>
+                        <ul className="space-y-2 text-sm text-slate-400 list-disc pl-5">
+                            <li>No public, reproducible benchmark currently supports a legal accuracy percentage.</li>
+                            <li>The inspected assistant path does not implement a custom vector database or embedding retrieval pipeline.</li>
+                            <li>Corpus size, update cadence, and comprehensive court coverage are not independently verified here.</li>
+                            <li>AI output is not a substitute for legal advice and does not predict a court outcome reliably.</li>
+                        </ul>
                     </div>
+                </section>
 
-                    {/* Educational Simulator Notice */}
-                    <div className="p-8 rounded-2xl bg-white/5 border border-[#dc2626]/20 bg-red-500/5 relative overflow-hidden">
-                        <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                            <Scale className="text-red-400" size={20} />
-                            Simulator boundaries & warnings
-                        </h2>
-                        <p className="text-slate-400 text-sm md:text-base leading-relaxed">
-                            All metrics, analysis cards, courtroom simulations, and legal notices generated by NyayNow are intended as simulated educational resources. NyayNow operates in compliance with the Bar Council of India guidelines, meaning we do not offer formal legal advice or advocate ranking lists. Always seek standard professional advice from a registered advocate.
-                        </p>
-                    </div>
-                </div>
-            </main>
+                <section className="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20 mb-12">
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-3"><ShieldCheck className="text-blue-400" size={20} /> Evaluation before stronger claims</h2>
+                    <p className="text-sm text-slate-400 leading-relaxed">A credible legal AI evaluation should publish the dataset provenance and cutoff date, task definitions, citation-level scoring rules, expert review process, sample size, baselines, error categories, and confidence intervals. NyayNow will publish performance claims only after that protocol is run and independently reviewable.</p>
+                </section>
 
-        </div>
+                <section className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-3"><Scale className="text-red-400" size={20} /> User safety</h2>
+                    <p className="text-sm text-slate-400 leading-relaxed mb-4">Treat generated content as an informational starting point. Verify every statute and judgment against its source, especially before filing, signing, paying, or taking urgent action. Do not enter highly sensitive personal information unless you have reviewed the applicable privacy terms.</p>
+                    <Link href="/disclaimer" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-400 hover:text-blue-300">Read the legal disclaimer <ArrowRight size={15} /></Link>
+                </section>
+            </div>
+        </main>
     )
 }

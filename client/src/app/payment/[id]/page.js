@@ -246,7 +246,7 @@ export default function InvoicePaymentPage() {
             <div className="p-6 bg-gradient-to-br from-midnight-950/50 to-midnight-900/50 rounded-2xl border border-white/5 flex justify-between items-center">
               <div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Settlement Amount</span>
-                <span className="text-xs text-slate-400">Includes all secure escrow transaction fees</span>
+                <span className="text-xs text-slate-400">Payment processing is handled through the configured payment provider. No escrow protection is represented.</span>
               </div>
               <div className="text-right">
                 <span className="text-2xl font-black text-white tracking-tight">₹{invoice.amount.toLocaleString()}</span>

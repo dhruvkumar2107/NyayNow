@@ -74,13 +74,13 @@ export default function ForgotPassword() {
                         </div>
                         <div className="space-y-2">
                             <p className="text-white font-bold text-lg">Check your inbox</p>
-                            <p className="text-slate-400 text-sm leading-relaxed px-4">If an account exists for {email}, you'll receive a password reset link shortly.</p>
+                            <p className="text-slate-400 text-sm leading-relaxed px-4">If an account exists for {email}, you&apos;ll receive a password reset link shortly.</p>
                         </div>
                         <button 
                             onClick={() => setSubmitted(false)}
                             className="text-gold-500 font-bold text-xs uppercase tracking-widest hover:underline"
                         >
-                            Didn't get it? Try again
+                            Didn&apos;t get it? Try again
                         </button>
                     </div>
                 )}

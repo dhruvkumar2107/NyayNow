@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
-import { User, Briefcase, MapPin, Globe, Award, Linkedin, Upload, Save, Eye } from "lucide-react";
+import { User, Briefcase, MapPin, Globe, Award, Linkedin, Upload, Save, Eye, CheckCircle } from "lucide-react";
 
 export default function EditProfile() {
     const { user, loginWithToken } = useAuth();
@@ -93,7 +93,7 @@ export default function EditProfile() {
                 isProfileComplete: true
             };
 
-            const res = await axios.put(`/api/users/${user.id || user._id}`, dataToSend);
+            const res = await axios.put(`/api/users/me`, dataToSend);
             const currentToken = localStorage.getItem("token");
             loginWithToken(res.data, currentToken);
 
@@ -348,7 +348,7 @@ export default function EditProfile() {
                             <div className="mt-8 space-y-2">
                                 <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Professional Bio</h4>
                                 <p className="text-sm text-slate-400 leading-relaxed line-clamp-4 font-medium italic">
-                                    "{formData.bio || "No professional biography has been established yet."}"
+                                    &quot;{formData.bio || "No professional biography has been established yet."}&quot;
                                 </p>
                             </div>
 

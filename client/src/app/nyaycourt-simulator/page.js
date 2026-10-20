@@ -1,30 +1,33 @@
-import dynamic from 'next/dynamic';
+import NyayCourtSimulatorClient from './NyayCourtSimulatorClient';
+import InDevelopmentNotice from '../../components/InDevelopmentNotice';
 
 export const metadata = {
-    title: 'NyayCourt Simulator — AI Trial Simulation',
-    description: 'Simulate a full courtroom trial with AI legal agents arguing both sides of your case. Powered by Indian law and real judicial precedents.',
+    title: 'Courtroom practice simulation — in development | NyayNow',
+    description: 'The courtroom simulation is disabled while source verification and scoring evaluation remain in development.',
     alternates: {
         canonical: 'https://nyaynow.in/nyaycourt-simulator',
     },
     openGraph: {
-        title: 'NyayCourt Simulator — AI Trial Simulation | NyayNow',
-        description: 'Simulate a full courtroom trial with AI legal agents arguing both sides of your case. Powered by Indian law and real judicial precedents.',
+        title: 'Courtroom practice simulation — in development | NyayNow',
+        description: 'The courtroom simulation is disabled while source verification and scoring evaluation remain in development.',
         url: 'https://nyaynow.in/nyaycourt-simulator',
     }
 }
 
-const CourtroomBattle = dynamic(() => import('../courtroom-battle/page'), {
-    ssr: false,
-    loading: () => (
-        <div className="h-screen flex items-center justify-center bg-[#020617] text-white">
-            <div className="flex flex-col items-center">
-                <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="mt-4 text-blue-300 font-bold uppercase tracking-widest text-xs">Convening the High Court...</p>
-            </div>
-        </div>
-    )
-});
+const ENABLED = process.env.NEXT_PUBLIC_EXPERIMENTAL_COURTROOM_SIMULATION_ENABLED === 'true';
 
 export default function NyayCourtSimulatorPage() {
-    return <CourtroomBattle />;
+    if (!ENABLED) {
+        return (
+            <InDevelopmentNotice
+                eyebrow="Experimental simulation in development"
+                title="Courtroom practice is not available yet"
+            >
+                The current simulation does not have a validated legal-source layer or reviewed
+                scoring method. It cannot determine case outcomes or issue rulings. Do not submit
+                confidential case information.
+            </InDevelopmentNotice>
+        );
+    }
+    return <NyayCourtSimulatorClient />;
 }
