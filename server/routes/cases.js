@@ -4,12 +4,25 @@ const Case = require("../models/Case");
 const User = require("../models/User");
 const verifyToken = require("../middleware/authMiddleware");
 
+// SECURITY: whitelist client-writable fields. Ownership (client), assignment
+// (lawyer, acceptedBy) and workflow (stage, timeline) are server-controlled and
+// must never be mass-assignable from the request body. postedBy is a legacy
+// display-only string (phone/email), not an ownership field.
+const CREATE_CASE_FIELDS = ["title", "desc", "category", "location", "budget", "postedBy"];
+
 // CREATE CASE (Securely linked to Client)
 router.post("/", verifyToken, async (req, res) => {
   try {
+    const data = {};
+    for (const f of CREATE_CASE_FIELDS) {
+      if (req.body && req.body[f] !== undefined) data[f] = req.body[f];
+    }
+    if (typeof data.postedBy !== "string") data.postedBy = "";
+    data.postedBy = data.postedBy.slice(0, 200);
     const c = new Case({
-      ...req.body,
-      client: req.userId // Force ownership
+      ...data,
+      client: req.userId, // Force ownership
+      postedAt: new Date(),
     });
     await c.save();
 

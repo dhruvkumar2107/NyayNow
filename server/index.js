@@ -505,6 +505,7 @@ loadRoute("/api/payments", "./routes/payments");
 loadRoute("/api/uploads", "./routes/uploads");
 loadRoute("/api/users", "./routes/users");
 loadRoute("/api/cases", "./routes/cases");
+loadRoute("/api/matters", "./routes/matters"); // Matter Intelligence workspace
 loadRoute("/api/posts", "./routes/posts");
 loadRoute("/api/topics", "./routes/topics");
 loadRoute("/api/appointments", "./routes/appointments"); // NEW

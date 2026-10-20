@@ -13,6 +13,10 @@ const CalendarWidget = dynamic(() => import("../components/dashboard/CalendarWid
 const TrustTimeline = dynamic(() => import("../components/dashboard/client/TrustTimeline"), { ssr: false });
 const LegalConfessionBooth = dynamic(() => import("../components/dashboard/client/LegalConfessionBooth"), { ssr: false });
 const BookingModal = dynamic(() => import("../components/dashboard/BookingModal"), { ssr: false });
+const ClientMattersPanel = dynamic(
+  () => import("../components/dashboard/MatterWorkspace").then((m) => m.ClientMattersPanel),
+  { ssr: false }
+);
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -56,6 +60,7 @@ import {
   Settings,
   User as UserIcon,
   LogOut,
+  FolderPlus,
 } from "lucide-react";
 
 
@@ -433,6 +438,7 @@ export default function ClientDashboard() {
               <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">Cases & Escrow</p>
               <div className="space-y-1">
                 <SidebarItem icon={<Briefcase size={18} />} label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} count={activeCases.length} />
+                <SidebarItem icon={<FolderPlus size={18} />} label="Matter Workspace" active={activeTab === 'matters'} onClick={() => setActiveTab('matters')} />
                 <SidebarItem icon={<DollarSign size={18} />} label="Smart Escrow" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
                 <SidebarItem icon={<Folder size={18} />} label="Quantum Vault" to="/agreements" locked={!hasAccess(user.plan, 'gold')} onLocked={() => { setPaywallFeature("Agreement Vault"); setShowPaywall(true); }} />
               </div>
@@ -734,6 +740,12 @@ export default function ClientDashboard() {
                   )}
                 </div>
               </Panel>
+            </motion.div>
+          )}
+
+          {activeTab === 'matters' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-12">
+              <ClientMattersPanel />
             </motion.div>
           )}
 

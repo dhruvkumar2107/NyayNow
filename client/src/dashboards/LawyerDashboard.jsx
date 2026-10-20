@@ -16,6 +16,10 @@ const LegalNoticeGenerator = dynamic(() => import("../components/dashboard/lawye
 const LegalReels = dynamic(() => import("../components/dashboard/LegalReels"), { ssr: false });
 const LegalResearchHub = dynamic(() => import("../components/dashboard/lawyer/LegalResearchHub"), { ssr: false });
 const ECourtsWidget = dynamic(() => import("../components/dashboard/lawyer/ECourtsWidget"), { ssr: false });
+const LawyerMattersPanel = dynamic(
+  () => import("../components/dashboard/MatterWorkspace").then((m) => m.LawyerMattersPanel),
+  { ssr: false }
+);
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import io from "socket.io-client";
@@ -55,6 +59,7 @@ import {
   BookOpen,
   Globe,
   X,
+  FolderPlus,
 } from "lucide-react";
 
 
@@ -355,6 +360,7 @@ export default function LawyerDashboard() {
                 <SidebarItem icon={<LayoutDashboard size={18} />} label="Dashboard" active={activeTab === 'board'} onClick={() => setActiveTab('board')} />
                 <SidebarItem icon={<Zap size={18} />} label="Lead Pool" count={leads.length} active={activeTab === 'leads'} onClick={() => setActiveTab('leads')} />
                 <SidebarItem icon={<Users size={18} />} label="Client CRM" active={activeTab === 'clients'} onClick={() => setActiveTab('clients')} />
+                <SidebarItem icon={<FolderPlus size={18} />} label="Matter Review" active={activeTab === 'matters'} onClick={() => setActiveTab('matters')} />
               </div>
             </div>
 
@@ -609,6 +615,8 @@ export default function LawyerDashboard() {
             )}
 
             {activeTab === 'clients' && <ClientCRM />}
+
+            {activeTab === 'matters' && <LawyerMattersPanel />}
 
             {activeTab === 'leads' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
