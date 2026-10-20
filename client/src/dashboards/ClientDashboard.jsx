@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
@@ -19,8 +19,21 @@ import toast from "react-hot-toast";
 import PremiumLoader from "../components/PremiumLoader";
 import { hasAccess } from "../utils/planBorders";
 import PaywallModal from "../components/PaywallModal";
-import { useRef } from "react";
 import { API_BASE, API_HOST } from "../config";
+import {
+  MIBackdrop,
+  Panel,
+  StatTile,
+  Pill,
+  SectionHeading,
+  SidebarItem,
+  GoldButton,
+  GhostButton,
+  Avatar,
+  EmptySlot,
+  AnimatedNumber,
+  ProgressRing,
+} from "../components/dashboard/mi/MIPrimitives";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -35,7 +48,14 @@ import {
   Folder,
   ShieldCheck,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  Bell,
+  Plus,
+  X,
+  Calendar,
+  Settings,
+  User as UserIcon,
+  LogOut,
 } from "lucide-react";
 
 
@@ -320,7 +340,7 @@ export default function ClientDashboard() {
           contact: user?.phone || ""
         },
         theme: {
-          color: "#6366f1"
+          color: "#C9A24B"
         }
       };
 
@@ -362,100 +382,104 @@ export default function ClientDashboard() {
 
   const activeCase = activeCases.find(c => c.stage !== 'Closed') || activeCases[0];
 
+  const totalSpent = invoices.reduce((acc, i) => acc + (Number(i.amount) || 0), 0);
+  const pendingAmount = invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0);
+  const unread = notifications.filter(n => !n.read).length;
+  const setupSteps = [
+    { done: true, label: 'Account verified and initial setup complete' },
+    { done: !!activeCase, label: 'Brief your first active legal matter', cta: { label: 'Brief Now', onClick: () => setShowPostModal(true) } },
+    { done: false, label: 'Review experimental AI-assisted case analysis (not a validated outcome prediction)', cta: { label: 'Launch', to: '/judge-ai' } },
+  ];
+  const setupPct = Math.round((setupSteps.filter(s => s.done).length / setupSteps.length) * 100);
+
   return (
-    <div className="min-h-screen bg-[#020617] font-sans text-slate-400 selection:bg-indigo-500/30">
+    <div className="relative min-h-screen bg-[var(--bg)] font-sans text-[var(--text)] selection:bg-[var(--gold)]/25">
+      <MIBackdrop />
 
       {/* SIDEBAR NAVIGATION (Fixed Left) */}
-      <aside className={`fixed left-0 top-0 h-screen w-72 bg-[#030712] border-r border-white/5 flex flex-col z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} overflow-y-auto custom-scrollbar`}>
+      <aside className={`mi-scroll fixed left-0 top-0 z-50 flex h-screen w-72 flex-col overflow-y-auto border-r border-[var(--gold-hairline)] bg-[var(--surface)]/80 backdrop-blur-xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6">
-          <Link href="/" className="flex items-center gap-3 group mb-8 px-2">
-            <div className="relative">
-              <div className="absolute inset-0 bg-indigo-500 blur-[15px] opacity-10 group-hover:opacity-30 transition duration-500"></div>
-              <img src="/logo.png" alt="NyayNow Logo" className="w-8 h-8 relative object-contain hover:scale-105 transition duration-300" />
-            </div>
-            <span className="text-xl font-black text-white tracking-tighter transition-colors group-hover:text-indigo-400">NyayNow</span>
+          <Link href="/" className="group mb-8 flex items-center gap-3 px-2">
+            <span className="relative flex h-9 w-9 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--gold)]/10 text-[var(--gold)]">
+              <Scale size={18} />
+            </span>
+            <span className="mi-body text-xl font-bold tracking-tight text-[var(--text)]">
+              Nyay<span className="text-[var(--gold)]">Now</span>
+            </span>
           </Link>
 
-          <div className="space-y-6">
-            {/* Workspace section */}
+          <nav className="space-y-6">
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Workspace</p>
+              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">Workspace</p>
               <div className="space-y-1">
-                <NavItem icon={<LayoutDashboard size={18} />} label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
-                <NavItem icon={<MessageSquare size={18} />} label="Messages" to="/messages" />
-                <NavItem icon={<Globe size={18} />} label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
+                <SidebarItem icon={<LayoutDashboard size={18} />} label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
+                <SidebarItem icon={<MessageSquare size={18} />} label="Messages" to="/messages" />
+                <SidebarItem icon={<Globe size={18} />} label="Legal Feed" active={activeTab === 'feed'} onClick={() => setActiveTab('feed')} />
               </div>
             </div>
 
-            {/* AI Legal Suite section */}
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">AI Legal Suite</p>
+              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">AI Legal Suite</p>
               <div className="space-y-1">
-                <NavItem icon={<Scale size={18} />} label="Judge AI Scan" to="/judge-ai" locked={!hasAccess(user.plan, 'LEGAL_RESEARCH', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Judge AI Analysis"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
-                <NavItem icon={<FileText size={18} />} label="Drafting Lab" to="/drafting" locked={!hasAccess(user.plan, 'DOCUMENT_DRAFTING', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Document Drafting Lab"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
-                <NavItem icon={<Mic size={18} />} label="NyayVoice" to="/nyayvoice" badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : "Live"} locked={!hasAccess(user.plan, 'NYAY_VOICE', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("NyayVoice Assistant"); setShowPaywall(true); }} />
-                <NavItem icon={<Gavel size={18} />} label="NyayCourt Arena" to="/nyaycourt-simulator" badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : "New"} locked={!hasAccess(user.plan, 'NYAY_COURT', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("NyayCourt Battle Simulator"); setShowPaywall(true); }} />
-                <NavItem icon={<Search size={18} />} label="Precedent Search" to="/research" locked={!hasAccess(user.plan, 'LEGAL_RESEARCH', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Precedent Research Engine"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
+                <SidebarItem icon={<Scale size={18} />} label="Judge AI Scan" to="/judge-ai" locked={!hasAccess(user.plan, 'LEGAL_RESEARCH', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Judge AI Analysis"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
+                <SidebarItem icon={<FileText size={18} />} label="Drafting Lab" to="/drafting" locked={!hasAccess(user.plan, 'DOCUMENT_DRAFTING', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Document Drafting Lab"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
+                <SidebarItem icon={<Mic size={18} />} label="NyayVoice" to="/nyayvoice" badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : "Live"} locked={!hasAccess(user.plan, 'NYAY_VOICE', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("NyayVoice Assistant"); setShowPaywall(true); }} />
+                <SidebarItem icon={<Gavel size={18} />} label="NyayCourt Arena" to="/nyaycourt-simulator" badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : "New"} locked={!hasAccess(user.plan, 'NYAY_COURT', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("NyayCourt Battle Simulator"); setShowPaywall(true); }} />
+                <SidebarItem icon={<Search size={18} />} label="Precedent Search" to="/research" locked={!hasAccess(user.plan, 'LEGAL_RESEARCH', user.aiUsage?.count)} onLocked={() => { setPaywallFeature("Precedent Research Engine"); setShowPaywall(true); }} badge={user.plan === 'free' && (user.aiUsage?.count || 0) === 0 ? "Trial" : ""} />
               </div>
             </div>
 
-            {/* Cases & Escrow section */}
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Cases & Escrow</p>
+              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">Cases & Escrow</p>
               <div className="space-y-1">
-                <NavItem icon={<Briefcase size={18} />} label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} />
-                <NavItem icon={<DollarSign size={18} />} label="Smart Escrow" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
-                <NavItem icon={<Folder size={18} />} label="Quantum Vault" to="/agreements" locked={!hasAccess(user.plan, 'gold')} onLocked={() => { setPaywallFeature("Agreement Vault"); setShowPaywall(true); }} />
+                <SidebarItem icon={<Briefcase size={18} />} label="My Matters" active={activeTab === 'cases'} onClick={() => setActiveTab('cases')} count={activeCases.length} />
+                <SidebarItem icon={<DollarSign size={18} />} label="Smart Escrow" active={activeTab === 'invoices'} onClick={() => setActiveTab('invoices')} />
+                <SidebarItem icon={<Folder size={18} />} label="Quantum Vault" to="/agreements" locked={!hasAccess(user.plan, 'gold')} onLocked={() => { setPaywallFeature("Agreement Vault"); setShowPaywall(true); }} />
               </div>
             </div>
 
-            {/* Utilities section */}
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Utilities</p>
+              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">Utilities</p>
               <div className="space-y-1">
-                <NavItem icon={<ShieldCheck size={18} />} label="Compliance Hub" to="/compliances" />
-                <NavItem icon={<TrendingUp size={18} />} label="Analytics" to="/analytics" locked={!hasAccess(user.plan, 'silver')} onLocked={() => { setPaywallFeature("Deep Analytics"); setShowPaywall(true); }} />
-                <NavItem icon={<Sparkles size={18} />} label="Confessions" active={activeTab === 'confessions'} onClick={() => setActiveTab('confessions')} />
+                <SidebarItem icon={<ShieldCheck size={18} />} label="Compliance Hub" to="/compliances" />
+                <SidebarItem icon={<TrendingUp size={18} />} label="Analytics" to="/analytics" locked={!hasAccess(user.plan, 'silver')} onLocked={() => { setPaywallFeature("Deep Analytics"); setShowPaywall(true); }} />
+                <SidebarItem icon={<Sparkles size={18} />} label="Confessions" active={activeTab === 'confessions'} onClick={() => setActiveTab('confessions')} />
               </div>
             </div>
-          </div>
+          </nav>
         </div>
 
-        <div className="mt-auto p-8 pt-0 relative">
-          <div className="bg-[#1e293b]/50 rounded-xl p-4 border border-white/10 mb-6 backdrop-blur-sm cursor-pointer hover:bg-white/5 transition group" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+        <div className="relative mt-auto p-6 pt-0">
+          <div className="mi-glass-card cursor-pointer p-4 transition hover:border-[var(--gold)]/50" onClick={() => setShowProfileMenu(!showProfileMenu)}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-lg group-hover:scale-105 transition">
-                {user.name?.[0]}
+              <Avatar name={user.name} size={40} />
+              <div className="flex-1 overflow-hidden">
+                <p className="truncate text-sm font-medium text-[var(--text)]">{user.name}</p>
+                <Pill tone="gold" className="mt-0.5">{(user.plan || 'free').toUpperCase()}</Pill>
               </div>
-              <div className="flex-1">
-                <p className="text-white font-medium text-sm leading-none mb-1">{user.name}</p>
-                <p className="text-xs text-indigo-400 font-bold uppercase tracking-wider">{user.plan || "Premium"}</p>
-              </div>
-              <div className={`text-slate-400 transform transition-transform ${showProfileMenu ? 'rotate-180' : ''}`}>▼</div>
+              <span className={`text-[var(--text-muted)] transition-transform ${showProfileMenu ? 'rotate-180' : ''}`}>▾</span>
             </div>
           </div>
 
           <AnimatePresence>
             {showProfileMenu && (
               <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                initial={{ opacity: 0, y: 10, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute bottom-24 left-8 right-8 bg-[#1e293b] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 origin-bottom"
+                exit={{ opacity: 0, y: 10, scale: 0.96 }}
+                className="mi-glass-card absolute bottom-24 left-6 right-6 z-50 origin-bottom overflow-hidden p-2"
               >
-                <div className="p-2 space-y-1">
-                  <div className="px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 mb-1">My Account</div>
-                  <Link href="/settings" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
-                    <span>⚙️</span> Settings
-                  </Link>
-                  <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-lg transition">
-                    <span>👤</span> Profile
-                  </Link>
-                  <div className="h-px bg-white/5 my-1"></div>
-                  <button onClick={logout} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition text-left">
-                    <span>🚪</span> Sign Out
-                  </button>
-                </div>
+                <div className="mb-1 border-b border-[var(--gold-hairline)] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">My Account</div>
+                <Link href="/settings" className="flex items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2 text-sm text-[var(--text)] transition hover:bg-[var(--surface-2)]">
+                  <Settings size={15} /> Settings
+                </Link>
+                <Link href="/profile" className="flex items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2 text-sm text-[var(--text)] transition hover:bg-[var(--surface-2)]">
+                  <UserIcon size={15} /> Profile
+                </Link>
+                <div className="mi-hairline my-1" />
+                <button onClick={logout} className="flex w-full items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2 text-left text-sm text-[var(--sos)] transition hover:bg-[color-mix(in_srgb,var(--sos)_12%,transparent)]">
+                  <LogOut size={15} /> Sign Out
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -464,50 +488,42 @@ export default function ClientDashboard() {
 
       {/* Mobile Sidebar Backdrop */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* MAIN CONTENT AREA */}
-      <main className="lg:pl-72 pt-8 px-4 sm:px-6 lg:pr-8 pb-8 min-h-screen">
+      <main className="relative z-10 min-h-screen px-4 pb-10 pt-8 sm:px-6 lg:pl-72 lg:pr-8">
 
         {/* HEADER */}
-        <header className="flex justify-between items-end mb-10 px-4 relative">
-          {/* MOBILE MENU TOGGLE */}
+        <header className="mb-8 flex items-end justify-between gap-4 px-2">
           <button
-            className="lg:hidden fixed top-4 left-4 z-[60] p-2.5 bg-[#0f172a] border border-white/10 rounded-xl text-slate-400 hover:text-white transition shadow-xl"
+            className="mi-focus fixed left-4 top-4 z-[60] rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--surface)]/80 p-2.5 text-[var(--text-muted)] backdrop-blur-xl transition hover:text-[var(--text)] lg:hidden"
             onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle navigation"
           >
             {sidebarOpen ? '✕' : '☰'}
           </button>
+
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-3">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-            <h1 className="text-2xl sm:text-4xl font-bold text-white leading-tight">
-              Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-white to-cyan-400">{user.name?.split(' ')[0]}</span>
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold)]">
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            </p>
+            <h1 className="mi-display text-2xl font-bold leading-tight sm:text-4xl">
+              Welcome back, <span className="mi-gold-headline">{user.name?.split(' ')[0]}</span>
             </h1>
           </motion.div>
-          <div className="flex items-center gap-2 sm:gap-6">
-            {/* VIDEO CALL BUTTON (PRO) */}
-            {/* <button
-              onClick={handleInstantConsult}
-              className="px-4 py-2 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-600 hover:text-white transition flex items-center gap-2"
-            >
-              <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_8px_#818cf8]"></span>
-              Secure Virtual Meeting
-            </button> */}
 
-            {/* NOTIFICATION BELL */}
+          <div className="flex items-center gap-3">
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="p-3 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition relative"
+                className="mi-focus relative rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface)]/70 p-3 text-[var(--text-muted)] transition hover:text-[var(--text)]"
+                aria-label="Notifications"
               >
-                <span>🔔</span>
-                {notifications.filter(n => !n.read).length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-indigo-500 text-white text-[10px] flex items-center justify-center rounded-full font-bold animate-bounce">
-                    {notifications.filter(n => !n.read).length}
+                <Bell size={18} />
+                {unread > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--sos)] px-1 text-[10px] font-bold text-white">
+                    {unread}
                   </span>
                 )}
               </button>
@@ -515,30 +531,28 @@ export default function ClientDashboard() {
               <AnimatePresence>
                 {showNotifications && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    initial={{ opacity: 0, y: 10, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 mt-4 w-80 bg-[#1e293b] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden origin-top-right"
+                    exit={{ opacity: 0, y: 10, scale: 0.96 }}
+                    className="mi-glass-card absolute right-0 z-50 mt-4 w-80 origin-top-right overflow-hidden"
                   >
-                    <div className="p-4 border-b border-white/5 bg-gradient-to-r from-white/5 to-transparent flex justify-between items-center">
-                      <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Pulse Notifications</h4>
-                      <button onClick={handleMarkAllRead} className="text-[10px] text-indigo-400 font-bold hover:underline">Mark read</button>
+                    <div className="flex items-center justify-between border-b border-[var(--gold-hairline)] px-4 py-3">
+                      <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text)]">Notifications</h4>
+                      <button onClick={handleMarkAllRead} className="text-[10px] font-semibold text-[var(--gold)] hover:underline">Mark read</button>
                     </div>
-                    <div className="max-h-96 overflow-y-auto custom-scrollbar">
+                    <div className="mi-scroll max-h-96 overflow-y-auto">
                       {notifications.length === 0 ? (
-                        <div className="p-8 text-center opacity-30">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">No new alerts</p>
-                        </div>
+                        <div className="p-8 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">No new alerts</div>
                       ) : (
                         notifications.map(n => (
-                          <div
+                          <button
                             key={n._id}
                             onClick={() => handleNotificationClick(n)}
-                            className={`p-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition cursor-pointer ${!n.read ? 'bg-indigo-500/5' : ''}`}
+                            className={`block w-full border-b border-[var(--gold-hairline)] px-4 py-3 text-left transition last:border-0 hover:bg-[var(--surface-2)]/60 ${!n.read ? 'bg-[var(--gold)]/5' : ''}`}
                           >
-                            <p className="text-xs text-white leading-relaxed font-medium">{n.message}</p>
-                            <p className="text-[10px] text-slate-600 mt-2 font-bold uppercase tracking-wider">{new Date(n.createdAt).toLocaleTimeString()}</p>
-                          </div>
+                            <p className="text-xs leading-relaxed text-[var(--text)]">{n.message}</p>
+                            <p className="mt-1.5 text-[10px] uppercase tracking-wider text-[var(--text-muted)]">{new Date(n.createdAt).toLocaleTimeString()}</p>
+                          </button>
                         ))
                       )}
                     </div>
@@ -547,183 +561,151 @@ export default function ClientDashboard() {
               </AnimatePresence>
             </div>
 
-            <button
-              onClick={() => setShowPostModal(true)}
-              className="bg-indigo-600 text-white px-3 sm:px-6 py-3 rounded-xl font-bold text-sm hover:bg-indigo-500 transition flex items-center gap-2 shadow-lg shadow-indigo-500/20 border border-indigo-500/50"
-            >
-              <span>+</span> <span className="hidden sm:inline">New Legal Matter</span><span className="sm:hidden">New</span>
-            </button>
+            <GoldButton onClick={() => setShowPostModal(true)}>
+              <Plus size={16} /> <span className="hidden sm:inline">New Legal Matter</span><span className="sm:hidden">New</span>
+            </GoldButton>
           </div>
         </header>
 
         {/* BENTO GRID LAYOUT */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 px-2 sm:px-4">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
 
           {/* PRIMARY CONTENT (8 COLS) */}
           {activeTab === 'overview' && (
-            <div className="col-span-1 lg:col-span-8 space-y-6">
+            <div className="col-span-1 space-y-6 lg:col-span-8">
 
-              {/* APPLE STYLE GETTING STARTED CHECKLIST */}
-              <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-sm relative overflow-hidden">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-white font-bold text-sm">Getting Started</h3>
-                    <p className="text-xs text-slate-500">Complete these steps to maximize your platform benefits.</p>
-                  </div>
-                  <span className="text-[10px] font-black text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                    {activeCase ? "50% Completed" : "25% Completed"}
-                  </span>
-                </div>
-                {/* Progress bar */}
-                <div className="w-full bg-white/5 rounded-full h-1 mb-6">
-                  <div className="bg-indigo-500 h-1 rounded-full transition-all duration-500" style={{ width: activeCase ? "50%" : "25%" }}></div>
+              {/* GETTING STARTED CHECKLIST */}
+              <Panel
+                title="Getting Started"
+                subtitle="Complete these steps to maximize your platform benefits"
+                icon={<Sparkles size={16} />}
+                action={<Pill tone={setupPct === 100 ? 'emerald' : 'gold'}>{setupPct}% complete</Pill>}
+              >
+                <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-[var(--surface-2)]">
+                  <div className="h-full rounded-full bg-gradient-to-r from-[var(--gold)] to-[var(--gold-soft)] transition-all duration-700" style={{ width: `${setupPct}%` }} />
                 </div>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-xs text-slate-300">
-                    <span className="text-emerald-400">✓</span>
-                    <span className="line-through text-slate-500">Account verified and initial setup complete</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-xs text-slate-300">
-                    <span className={activeCase ? "text-emerald-400" : "text-indigo-400 font-bold"}>{activeCase ? "✓" : "○"}</span>
-                    <span className={activeCase ? "line-through text-slate-500" : ""}>Brief your first active legal matter</span>
-                    {!activeCase && (
-                      <button onClick={() => setShowPostModal(true)} className="text-[10px] text-indigo-400 font-bold hover:underline ml-auto">Brief Now →</button>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-3 text-xs text-slate-300">
-                    <span className="text-slate-500">○</span>
-                    <span>Analyze win probability with Judge AI Outcome Predictor</span>
-                    <Link href="/judge-ai" className="text-[10px] text-indigo-400 font-bold hover:underline ml-auto">Launch Predictor →</Link>
-                  </div>
+                  {setupSteps.map((step, i) => (
+                    <div key={i} className="flex items-center gap-3 text-xs text-[var(--text)]">
+                      <span className={step.done ? 'text-[var(--emerald)]' : 'text-[var(--text-muted)]'}>{step.done ? '✓' : '○'}</span>
+                      <span className={step.done ? 'text-[var(--text-muted)] line-through' : ''}>{step.label}</span>
+                      {step.cta && (
+                        step.cta.to
+                          ? <Link href={step.cta.to} className="ml-auto text-[10px] font-semibold text-[var(--gold)] hover:underline">{step.cta.label} →</Link>
+                          : <button onClick={step.cta.onClick} className="ml-auto text-[10px] font-semibold text-[var(--gold)] hover:underline">{step.cta.label} →</button>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              </div>
+              </Panel>
 
               {/* HERO CARD: ACTIVE CASE */}
-              <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl opacity-50 pointer-events-none group-hover:bg-indigo-500/10 transition duration-1000"></div>
-
-                <div className="relative z-10 flex justify-between items-start mb-6">
+              <Panel hover={false} className="relative">
+                <div className="pointer-events-none absolute -right-10 -top-16 h-64 w-64 rounded-full bg-[var(--gold)]/5 blur-3xl" />
+                <div className="relative z-10 mb-6 flex items-start justify-between gap-4">
                   <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Active Matter Status</span>
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--emerald)] shadow-[0_0_10px_var(--emerald)]" />
+                      <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--emerald)]">Active Matter Status</span>
                     </div>
-                    <h2 className="text-xl font-bold text-white mb-1">
+                    <h2 className="mi-body text-xl font-semibold text-[var(--text)]">
                       {activeCase ? activeCase.title : "No Active Matters"}
                     </h2>
-                    <p className="text-xs text-slate-500 max-w-lg leading-relaxed">
-                      {activeCase ? activeCase.desc : "Brief your legal case or use our AI workspace suite below to start."}
+                    <p className="mt-1 max-w-lg text-xs leading-relaxed text-[var(--text-muted)]">
+                      {activeCase ? activeCase.desc : "Brief your legal case or use the AI workspace suite to start."}
                     </p>
                   </div>
-                  {activeCase && <div className="text-right">
-                    <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Budget Allocation</p>
-                    <p className="text-2xl font-bold text-white">₹{activeCase.budget}</p>
-                  </div>}
+                  {activeCase && (
+                    <div className="text-right">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">Budget</p>
+                      <p className="text-2xl font-bold text-[var(--text)]">₹{activeCase.budget}</p>
+                    </div>
+                  )}
                 </div>
 
-                {
-                  activeCase ? (
-                    <div className="bg-[#1e293b]/30 rounded-2xl p-5 border border-white/5">
-                      <TrustTimeline stage={activeCase.stage || 'New Lead'} />
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="p-4 bg-white/[0.02] rounded-2xl border border-white/[0.08] text-center hover:bg-white/[0.05] hover:border-indigo-500/30 transition cursor-pointer group" onClick={() => setShowPostModal(true)}>
-                        <div className="text-xl mb-1.5 group-hover:scale-110 transition">📝</div>
-                        <div className="font-bold text-xs text-white">Brief New Case Matter</div>
-                        <p className="text-[10px] text-slate-500 mt-0.5">Get matched with verified advocates</p>
-                      </div>
-                      {/* JUDGE AI MINI WIDGET */}
-                      <div className="p-4 bg-gradient-to-br from-indigo-950/20 to-slate-900/40 rounded-2xl border border-indigo-500/20 text-center hover:border-indigo-500/40 transition cursor-pointer group relative overflow-hidden" onClick={() => router.push('/judge-ai')}>
-                        <div className="relative z-10">
-                          <div className="text-xl mb-1.5">⚖️</div>
-                          <div className="font-bold text-xs text-white">Judge AI Win Predictor</div>
-                          <p className="text-[10px] text-indigo-300/80 mt-0.5">Analyze outcome & strategic strategy</p>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                }
-              </div>
-
-              {/* REELS SECTION (PRO THEME) */}
-              <LegalReels />
-
-              {/* SECONDARY ROW: FEED & STATS */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
-                {/* FEED SUMMARY */}
-                <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg h-[400px] overflow-y-auto custom-scrollbar">
-                  <div className="flex justify-between items-center mb-4 sticky top-0 bg-[#0f172a] pb-2 border-b border-white/10 z-10">
-                    <h3 className="font-bold text-lg text-white">Legal Pulse</h3>
-                    <button onClick={() => setActiveTab('feed')} className="text-[10px] font-black text-indigo-400 uppercase tracking-widest hover:underline">View All</button>
+                {activeCase ? (
+                  <div className="relative z-10 rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/40 p-5">
+                    <TrustTimeline stage={activeCase.stage || 'New Lead'} />
                   </div>
-                  <div className="space-y-4">
+                ) : (
+                  <div className="relative z-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <button onClick={() => setShowPostModal(true)} className="mi-card-hover mi-focus rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/40 p-4 text-center">
+                      <div className="mb-1.5 text-xl">📝</div>
+                      <div className="text-xs font-semibold text-[var(--text)]">Brief New Case Matter</div>
+                      <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">Browse lawyer profiles; verify credentials independently</p>
+                    </button>
+                    <button onClick={() => router.push('/judge-ai')} className="mi-card-hover mi-focus relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-gradient-to-br from-[var(--gold)]/10 to-transparent p-4 text-center">
+                      <div className="mb-1.5 text-xl">⚖️</div>
+                      <div className="text-xs font-semibold text-[var(--text)]">Judge AI Case Analysis</div>
+                      <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">Experimental — not a validated outcome prediction</p>
+                    </button>
+                  </div>
+                )}
+              </Panel>
+
+              <Panel hover={false} title="Legal Reels" subtitle="Short-form intelligence" icon={<Sparkles size={16} />}>
+                <LegalReels />
+              </Panel>
+
+              {/* SECONDARY ROW */}
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {/* FEED SUMMARY */}
+                <Panel hover={false} title="Legal Pulse" subtitle="Community activity" icon={<Globe size={16} />} action={<button onClick={() => setActiveTab('feed')} className="text-[10px] font-bold uppercase tracking-widest text-[var(--gold)] hover:underline">View All</button>} className="flex h-[400px] flex-col">
+                  <div className="mi-scroll h-full space-y-3 overflow-y-auto pr-1">
                     {posts.length === 0 ? (
-                      <p className="text-center text-slate-500 py-10 text-xs">No pulse activity detected.</p>
+                      <EmptySlot icon="🌐" title="No pulse activity detected" hint="Community updates will appear here." />
                     ) : posts.slice(0, 5).map(post => (
-                      <div key={post._id} className="pb-4 border-b border-white/5 last:border-0 hover:bg-white/5 p-3 -mx-3 rounded-xl transition cursor-pointer">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-[10px] font-bold text-indigo-300">{post.author?.name?.[0]}</div>
-                          <span className="text-xs font-bold text-white">{post.author?.name}</span>
-                          <span className="text-[10px] text-slate-500">{new Date(post.createdAt).toLocaleDateString()}</span>
+                      <div key={post._id} className="rounded-[var(--radius-md)] border border-[var(--gold-hairline)] p-3 transition hover:bg-[var(--surface-2)]/50">
+                        <div className="mb-2 flex items-center gap-2">
+                          <Avatar name={post.author?.name} size={22} />
+                          <span className="text-xs font-semibold text-[var(--text)]">{post.author?.name}</span>
+                          <span className="text-[10px] text-[var(--text-muted)]">{new Date(post.createdAt).toLocaleDateString()}</span>
                         </div>
-                        <p className="text-sm text-slate-400 line-clamp-2">{post.content}</p>
+                        <p className="line-clamp-2 text-sm text-[var(--text-muted)]">{post.content}</p>
                       </div>
                     ))}
                   </div>
-                </div>
+                </Panel>
 
                 {/* QUICK STATS & BOOKINGS */}
                 <div className="space-y-6">
-                  <div className="bg-gradient-to-br from-indigo-900 to-[#0f172a] rounded-3xl p-6 text-white shadow-xl relative overflow-hidden border border-white/10">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500 rounded-full blur-[60px] opacity-20"></div>
-                    <h3 className="font-bold text-lg mb-4 relative z-10">Financial Overview</h3>
-                    <div className="flex justify-between items-end relative z-10">
+                  <Panel hover={false} className="bg-gradient-to-br from-[var(--gold)]/10 to-transparent">
+                    <h3 className="mi-body mb-4 text-base font-semibold text-[var(--text)]">Financial Overview</h3>
+                    <div className="flex items-end justify-between">
                       <div>
-                        <p className="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Total Spent</p>
-                        <p className="text-3xl font-bold">₹{invoices.reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">Total Spent</p>
+                        <p className="text-3xl font-bold text-[var(--text)]"><AnimatedNumber value={totalSpent} prefix="₹" /></p>
                       </div>
                       <div className="text-right">
-                        <p className="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Pending</p>
-                        <p className="text-xl font-bold text-amber-400">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">Pending</p>
+                        <p className="text-xl font-bold text-[var(--warn)]"><AnimatedNumber value={pendingAmount} prefix="₹" /></p>
                       </div>
                     </div>
-                  </div>
+                  </Panel>
 
-                  <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg flex-1">
-                    <h3 className="font-bold text-lg text-white mb-4">Upcoming Meetings</h3>
+                  <Panel hover={false} title="Upcoming Meetings" icon={<Calendar size={16} />}>
                     {appointments.length === 0 ? (
-                      <p className="text-sm text-slate-500 text-center py-6">No meetings scheduled.</p>
+                      <p className="py-6 text-center text-sm text-[var(--text-muted)]">No meetings scheduled.</p>
                     ) : (
                       appointments.slice(0, 2).map(apt => (
-                        <div key={apt._id} className="flex items-center gap-3 mb-3 pb-3 border-b border-white/5 last:border-0 last:pb-0 last:mb-0">
-                          <div className="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex flex-col items-center justify-center text-xs font-bold border border-indigo-500/20">
+                        <div key={apt._id} className="mb-3 flex items-center gap-3 border-b border-[var(--gold-hairline)] pb-3 last:mb-0 last:border-0 last:pb-0">
+                          <div className="flex h-10 w-10 flex-col items-center justify-center rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--gold)]/10 text-xs font-bold text-[var(--gold)]">
                             <span>{new Date(apt.date).getDate()}</span>
-                            <span className="uppercase text-[8px]">{new Date(apt.date).toLocaleDateString('en-US', { month: 'short' })}</span>
+                            <span className="text-[8px] uppercase">{new Date(apt.date).toLocaleDateString('en-US', { month: 'short' })}</span>
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-bold text-white">{apt.lawyerName || apt.lawyerId?.name || "Legal Counsel"}</p>
-                            <p className="text-xs text-slate-500">{apt.slot}</p>
+                            <p className="text-sm font-semibold text-[var(--text)]">{apt.lawyerName || apt.lawyerId?.name || "Legal Counsel"}</p>
+                            <p className="text-xs text-[var(--text-muted)]">{apt.slot}</p>
                           </div>
                           {apt.paymentStatus === 'unpaid' && (apt.fee || 0) > 0 ? (
-                            <button
-                              onClick={() => handlePayAppointment(apt)}
-                              className="px-3 py-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-[10px] font-bold uppercase hover:bg-amber-600 hover:text-white transition"
-                            >
-                              Pay & Confirm
-                            </button>
+                            <button onClick={() => handlePayAppointment(apt)} className="rounded-lg border border-[color-mix(in_srgb,var(--warn)_40%,transparent)] bg-[color-mix(in_srgb,var(--warn)_12%,transparent)] px-3 py-1.5 text-[10px] font-bold uppercase text-[var(--warn)] transition hover:brightness-110">Pay</button>
                           ) : (apt.status === 'confirmed' || apt.status === 'completed' || (apt.fee || 0) === 0) && (
-                            <button
-                              onClick={() => router.push(`/meet/${apt._id}`)}
-                              className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px] font-bold uppercase hover:bg-emerald-600 hover:text-white transition"
-                            >
-                              Join Call
-                            </button>
+                            <button onClick={() => router.push(`/meet/${apt._id}`)} className="rounded-lg border border-[color-mix(in_srgb,var(--emerald)_40%,transparent)] bg-[color-mix(in_srgb,var(--emerald)_12%,transparent)] px-3 py-1.5 text-[10px] font-bold uppercase text-[var(--emerald)] transition hover:brightness-110">Join</button>
                           )}
                         </div>
                       ))
                     )}
-                  </div>
+                  </Panel>
                 </div>
               </div>
 
@@ -731,139 +713,109 @@ export default function ClientDashboard() {
           )}
 
           {activeTab === 'cases' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-8 space-y-6">
-              <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
-                <h3 className="font-bold text-2xl text-white mb-8">Active Case Files</h3>
-                <div className="space-y-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 space-y-6 lg:col-span-8">
+              <Panel title="Active Case Files" subtitle={`${activeCases.length} matters`} icon={<Briefcase size={16} />}>
+                <div className="space-y-3">
                   {activeCases.length === 0 ? (
-                    <div className="py-20 text-center opacity-30">
-                      <p className="text-sm font-bold uppercase tracking-widest">No active litigation records</p>
-                    </div>
+                    <EmptySlot icon="⚖️" title="No active litigation records" hint="Brief a new matter to begin." />
                   ) : (
                     activeCases.map(c => (
-                      <div key={c._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-indigo-500/10 transition cursor-pointer group">
+                      <div key={c._id} className="mi-card-hover group flex items-center justify-between rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">⚖️</div>
+                          <span className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--gold-hairline)] bg-[var(--gold)]/10 text-xl">⚖️</span>
                           <div>
-                            <h4 className="text-white font-bold group-hover:text-indigo-400 transition">{c.title}</h4>
-                            <p className="text-xs text-slate-500">{c.lawyerName || 'Awaiting Counsel'} • Updated {new Date(c.updatedAt || c.createdAt).toLocaleDateString()}</p>
+                            <h4 className="font-semibold text-[var(--text)] transition group-hover:text-[var(--gold)]">{c.title}</h4>
+                            <p className="text-xs text-[var(--text-muted)]">{c.lawyerName || 'Awaiting Counsel'} • Updated {new Date(c.updatedAt || c.createdAt).toLocaleDateString()}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded bg-indigo-500/10 text-indigo-400`}>{c.status || 'Active'}</span>
-                        </div>
+                        <Pill tone="gold">{c.status || 'Active'}</Pill>
                       </div>
                     ))
                   )}
                 </div>
-              </div>
+              </Panel>
             </motion.div>
           )}
 
           {activeTab === 'feed' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-8 space-y-6">
-              <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl">
-                <div className="flex justify-between items-center mb-8">
-                  <h3 className="font-bold text-2xl text-white tracking-tight">Legal Pulse</h3>
-                  <button onClick={() => setShowPostModal(true)} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/20">Post Update</button>
-                </div>
-
-                <div className="space-y-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 space-y-6 lg:col-span-8">
+              <Panel
+                title="Legal Pulse"
+                subtitle="Community insights & intelligence"
+                icon={<Globe size={16} />}
+                action={<GoldButton onClick={() => setShowPostModal(true)}><Plus size={14} /> Post Update</GoldButton>}
+              >
+                <div className="space-y-4">
                   {posts.length === 0 ? (
-                    <div className="py-20 text-center opacity-30">
-                      <p className="text-sm font-bold uppercase tracking-widest text-slate-500">The legal feed is currently silent.</p>
-                    </div>
+                    <EmptySlot icon="🌐" title="The legal feed is currently silent" hint="Be the first to share an update." />
                   ) : posts.map(post => (
-                    <div key={post._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition group">
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-sm font-bold text-indigo-400 border border-indigo-500/30 shadow-inner">
-                          {post.author?.name?.[0] || 'U'}
-                        </div>
+                    <div key={post._id} className="rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-5">
+                      <div className="mb-4 flex items-center gap-3">
+                        <Avatar name={post.author?.name || 'U'} size={40} />
                         <div>
-                          <p className="text-white font-bold text-sm leading-none mb-1">{post.author?.name}</p>
-                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{new Date(post.createdAt).toLocaleDateString()} • {post.author?.role}</p>
+                          <p className="text-sm font-semibold text-[var(--text)]">{post.author?.name}</p>
+                          <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">{new Date(post.createdAt).toLocaleDateString()} • {post.author?.role}</p>
                         </div>
                       </div>
-                      <p className="text-slate-300 text-sm leading-relaxed mb-4">{post.content}</p>
+                      <p className="mb-4 text-sm leading-relaxed text-[var(--text-muted)]">{post.content}</p>
 
                       {post.mediaUrl && (
-                        <div className="rounded-xl overflow-hidden mb-4 border border-white/10 bg-black/40">
+                        <div className="mb-4 overflow-hidden rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-black/40">
                           {post.type === 'reel' || post.mediaUrl.endsWith('.mp4') ? (
-                            <video src={`${API_HOST}${post.mediaUrl}`} controls className="w-full max-h-[400px] object-contain" />
+                            <video src={`${API_HOST}${post.mediaUrl}`} controls className="max-h-[400px] w-full object-contain" />
                           ) : (
                             <img src={`${API_HOST}${post.mediaUrl}`} className="w-full object-cover" alt="Post media" />
                           )}
                         </div>
                       )}
 
-                      <div className="flex items-center gap-6 pt-4 border-t border-white/5">
-                        <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-400 transition">
-                          <span>❤️</span> {post.likes?.length || 0} Likes
-                        </button>
-                        <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-400 transition">
-                          <span>💬</span> {post.comments?.length || 0} Comments
-                        </button>
-                        <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-indigo-400 transition ml-auto">
-                          <span>📤</span> Share
-                        </button>
+                      <div className="flex items-center gap-6 border-t border-[var(--gold-hairline)] pt-4">
+                        <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] transition hover:text-[var(--gold)]">❤️ {post.likes?.length || 0} Likes</button>
+                        <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] transition hover:text-[var(--gold)]">💬 {post.comments?.length || 0} Comments</button>
+                        <button className="ml-auto flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] transition hover:text-[var(--gold)]">📤 Share</button>
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
+              </Panel>
             </motion.div>
           )}
 
           {activeTab === 'invoices' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-8 space-y-6">
-              <div className="bg-[#0f172a] rounded-3xl p-8 border border-white/10 shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full -mr-20 -mt-20 pointer-events-none"></div>
-
-                <div className="flex justify-between items-center mb-8 relative z-10">
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <h3 className="font-bold text-2xl text-white tracking-tight">Smart Settlement Escrow</h3>
-                      <span className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Web3 Secured
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Immutable Blockchain Ledger</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Locked In Escrow</p>
-                    <p className="text-2xl font-black text-white tracking-tighter">₹{invoices.filter(i => i.status !== 'paid').reduce((acc, i) => acc + (Number(i.amount) || 0), 0).toLocaleString()}</p>
-                  </div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 space-y-6 lg:col-span-8">
+              <Panel
+                title="Smart Settlement Escrow"
+                subtitle="Track and authorise settlement milestones"
+                icon={<DollarSign size={16} />}
+                action={<Pill tone="emerald">Secure</Pill>}
+              >
+                <div className="mb-6 flex items-center justify-between">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">Pending settlement</p>
+                  <p className="text-2xl font-bold text-[var(--text)]"><AnimatedNumber value={pendingAmount} prefix="₹" /></p>
                 </div>
 
-                <div className="space-y-4 relative z-10">
+                <div className="space-y-3">
                   {invoices.length === 0 ? (
-                    <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-3xl opacity-30">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Your cryptographic vault is currently empty.</p>
-                    </div>
+                    <EmptySlot icon="₹" title="Your vault is currently empty" hint="Invoices issued by your counsel appear here." />
                   ) : (
                     invoices.map(inv => (
-                      <div key={inv._id} className="p-6 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center hover:bg-white/10 transition group">
+                      <div key={inv._id} className="mi-card-hover flex items-center justify-between rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/30 p-5">
                         <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm ${inv.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                          <span className={`flex h-12 w-12 items-center justify-center rounded-[var(--radius-sm)] border font-bold ${inv.status === 'paid' ? 'border-[color-mix(in_srgb,var(--emerald)_40%,transparent)] bg-[color-mix(in_srgb,var(--emerald)_12%,transparent)] text-[var(--emerald)]' : 'border-[color-mix(in_srgb,var(--warn)_40%,transparent)] bg-[color-mix(in_srgb,var(--warn)_12%,transparent)] text-[var(--warn)]'}`}>
                             {inv.status === 'paid' ? '✓' : '₹'}
-                          </div>
+                          </span>
                           <div>
-                            <p className="text-white font-bold text-sm">{inv.lawyerName || 'API Transaction'}</p>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{new Date(inv.createdAt).toLocaleDateString()} • {inv.description || `Ref: ${inv._id.slice(-6)}`}</p>
+                            <p className="text-sm font-semibold text-[var(--text)]">{inv.lawyerName || 'API Transaction'}</p>
+                            <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">{new Date(inv.createdAt).toLocaleDateString()} • {inv.description || `Ref: ${inv._id.slice(-6)}`}</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xl font-black text-white tracking-tight mb-1">₹{inv.amount}</p>
+                          <p className="mb-1 text-xl font-bold text-[var(--text)]">₹{inv.amount}</p>
                           <div className="flex items-center gap-3">
-                            <span className={`flex items-center gap-1 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border ${inv.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
-                              {inv.status === 'paid' ? '🔒 SETTLED' : '🔓 PENDING LOCK'}
-                            </span>
+                            <Pill tone={inv.status === 'paid' ? 'emerald' : 'warn'}>{inv.status === 'paid' ? 'Settled' : 'Pending'}</Pill>
                             {inv.status !== 'paid' && (
-                              <button
-                                onClick={() => router.push(`/payment/${inv._id}`)}
-                                className="text-[9px] font-black uppercase tracking-widest text-emerald-400 hover:text-white hover:bg-emerald-600 px-3 py-1 rounded-lg border border-emerald-500/30 transition shadow-lg shadow-emerald-500/10"
-                              >
-                                Authorize Contract
+                              <button onClick={() => router.push(`/payment/${inv._id}`)} className="rounded-lg border border-[var(--gold-hairline)] px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-[var(--gold)] transition hover:bg-[var(--gold)]/10">
+                                Authorize
                               </button>
                             )}
                           </div>
@@ -872,169 +824,98 @@ export default function ClientDashboard() {
                     ))
                   )}
                 </div>
-              </div>
+              </Panel>
             </motion.div>
           )}
 
           {/* CONFESSION BOOTH — Full Width */}
-          {
-            activeTab === 'confessions' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-12">
-                <LegalConfessionBooth />
-              </motion.div>
-            )
-          }
+          {activeTab === 'confessions' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-1 lg:col-span-12">
+              <LegalConfessionBooth />
+            </motion.div>
+          )}
 
           {/* RIGHT SIDEBAR (4 COLS) — hidden on confession tab */}
-          {
-            activeTab !== 'confessions' && (
-              <div className="col-span-1 lg:col-span-4 space-y-6">
-                {/* CALENDAR */}
-                <div className="bg-[#0f172a] rounded-3xl p-4 border border-white/10 shadow-lg">
-                  <CalendarWidget user={user} />
-                </div>
+          {activeTab !== 'confessions' && (
+            <div className="col-span-1 space-y-6 lg:col-span-4">
+              <Panel hover={false} title="Schedule" subtitle="Your calendar" icon={<Calendar size={16} />}>
+                <CalendarWidget user={user} />
+              </Panel>
 
-                {/* SUGGESTED LAWYERS */}
-                {/*
-                <div className="bg-[#0f172a] rounded-3xl p-6 border border-white/10 shadow-lg">
-                  <h3 className="font-bold text-lg text-white mb-4">Recommended Counsel</h3>
-                  <div className="space-y-4">
-                    {suggestedLawyers.map(l => {
-                      const conn = connections.find(c => c._id === l._id);
-                      return (
-                        <div key={l._id} className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -mx-2 rounded-xl transition">
-                          <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition">
-                            {l.name?.[0]}
-                          </div>
-                          <div className="flex-1" onClick={() => router.push(`/lawyer/${l._id}`)}>
-                            <h4 className="font-bold text-sm text-white group-hover:text-indigo-400 transition">{l.name}</h4>
-                            <p className="text-xs text-slate-500">{l.specialization || "Legal Expert"}</p>
-                          </div>
-                          {conn ? (
-                            <span className={`text-[10px] font-bold uppercase ${conn.connectionStatus === 'active' ? 'text-emerald-400' : 'text-amber-400'}`}>
-                              {conn.connectionStatus}
-                            </span>
-                          ) : (
-                            <button
-                              onClick={() => handleConnect(l._id)}
-                              className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:border-indigo-500 hover:text-indigo-400 transition"
-                              title="Send Connection Request"
-                            >
-                              +
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
+              <Panel hover={false} title="Readiness" subtitle="Setup progress" icon={<TrendingUp size={16} />}>
+                <div className="flex items-center gap-5">
+                  <ProgressRing value={setupPct} label="Setup" />
+                  <div className="space-y-1 text-xs text-[var(--text-muted)]">
+                    <p className="text-[var(--text)]">{setupSteps.filter(s => s.done).length} of {setupSteps.length} steps done</p>
+                    <p>Finish setup to unlock the full workspace.</p>
                   </div>
-                  <button onClick={() => router.push('/marketplace')} className="w-full mt-6 py-3 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-white/5 hover:text-white transition">
-                    View Marketplace
-                  </button>
                 </div>
-                */}
-              </div>
-            )
-          }
+              </Panel>
+            </div>
+          )}
 
         </div>
-      </main >
+      </main>
 
-      {/* MODAL FOR NEW CASE - Simple Glassmorphism */}
-      {
-        showPostModal && (
+      {/* MODAL FOR NEW CASE */}
+      <AnimatePresence>
+        {showPostModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPostModal(false)}></div>
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#0f172a] border border-white/10 rounded-3xl p-8 max-w-lg w-full relative z-10 shadow-2xl">
-              <h3 className="font-bold text-2xl text-white mb-6">Brief Your Legal Matter</h3>
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPostModal(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }} className="mi-glass-card relative z-10 w-full max-w-lg p-8">
+              <div className="mb-6 flex items-center justify-between">
+                <h3 className="mi-body text-xl font-semibold text-[var(--text)]">Brief Your Legal Matter</h3>
+                <button onClick={() => setShowPostModal(false)} className="text-[var(--text-muted)] hover:text-[var(--text)]"><X size={18} /></button>
+              </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Case Title</label>
-                  <input type="text" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="e.g. Property Dispute in Delhi" value={newCase.title} onChange={e => setNewCase({ ...newCase, title: e.target.value })} />
+                  <label className="mb-1 block text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Case Title</label>
+                  <input type="text" className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-transparent p-4 text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]" placeholder="e.g. Property Dispute in Delhi" value={newCase.title} onChange={e => setNewCase({ ...newCase, title: e.target.value })} />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Details</label>
-                  <textarea rows="4" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="Describe your situation..." value={newCase.desc} onChange={e => setNewCase({ ...newCase, desc: e.target.value })}></textarea>
+                  <label className="mb-1 block text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Details</label>
+                  <textarea rows="4" className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-transparent p-4 text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]" placeholder="Describe your situation..." value={newCase.desc} onChange={e => setNewCase({ ...newCase, desc: e.target.value })} />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Estimated Budget (INR)</label>
-                  <input type="number" className="w-full p-4 bg-black/20 border border-white/10 rounded-xl outline-none focus:border-indigo-500 text-white transition placeholder-slate-600" placeholder="5000" value={newCase.budget} onChange={e => setNewCase({ ...newCase, budget: e.target.value })} />
+                  <label className="mb-1 block text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Estimated Budget (INR)</label>
+                  <input type="number" className="mi-focus w-full rounded-[var(--radius-md)] border border-[var(--gold-hairline)] bg-transparent p-4 text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]" placeholder="5000" value={newCase.budget} onChange={e => setNewCase({ ...newCase, budget: e.target.value })} />
                 </div>
-                <button onClick={handlePostCase} className="w-full py-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/25 mt-2">
-                  Post Case
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )
-      }
-
-      {
-        showBookingModal && selectedLawyer && (
-          <BookingModal
-            lawyer={selectedLawyer}
-            client={user}
-            onClose={() => setShowBookingModal(false)}
-          />
-        )
-      }
-
-      {/* INSTANT CONSULT MODAL */}
-      <AnimatePresence>
-        {showInstantModal && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowInstantModal(false)}></div>
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="bg-[#0f172a] border border-white/10 rounded-3xl p-10 max-w-md w-full relative z-10 shadow-2xl text-center">
-              <div className="mb-6 relative mx-auto w-24 h-24">
-                <div className="absolute inset-0 bg-indigo-500 blur-[30px] opacity-20 animate-pulse"></div>
-                <div className="relative bg-white/5 border border-white/10 w-24 h-24 rounded-full flex items-center justify-center text-4xl shadow-inner">⚖️</div>
-              </div>
-              <h3 className="font-bold text-2xl text-white mb-3">Broadcasting Secure Uplink</h3>
-              <p className="text-slate-400 text-sm mb-8 leading-relaxed">
-                We are alerting our network of verified legal professionals. Stay on this screen; the first available expert will connect with you shortly.
-              </p>
-              <div className="flex flex-col gap-4">
-                <div className="flex justify-center gap-2 mb-2">
-                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-2 h-2 bg-indigo-500 rounded-full" />
-                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.5 }} className="w-2 h-2 bg-indigo-500 rounded-full" />
-                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.5, delay: 1 }} className="w-2 h-2 bg-indigo-500 rounded-full" />
-                </div>
-                <button onClick={() => setShowInstantModal(false)} className="py-3 px-6 border border-white/10 rounded-xl text-slate-500 font-bold hover:text-white hover:bg-white/5 transition">
-                  Cancel Request
-                </button>
+                <GoldButton onClick={handlePostCase} className="w-full">Post Case</GoldButton>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+
+      {showBookingModal && selectedLawyer && (
+        <BookingModal
+          lawyer={selectedLawyer}
+          client={user}
+          onClose={() => setShowBookingModal(false)}
+        />
+      )}
+
+      {/* INSTANT CONSULT MODAL */}
+      <AnimatePresence>
+        {showInstantModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowInstantModal(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="mi-glass-card relative z-10 w-full max-w-md p-10 text-center">
+              <div className="relative mx-auto mb-6 h-24 w-24">
+                <div className="absolute inset-0 animate-pulse rounded-full bg-[var(--gold)]/20 blur-[30px]" />
+                <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-[var(--gold-hairline)] bg-[var(--surface-2)]/60 text-4xl">⚖️</div>
+              </div>
+              <h3 className="mi-body mb-3 text-xl font-semibold text-[var(--text)]">Broadcasting Secure Uplink</h3>
+              <p className="mb-8 text-sm leading-relaxed text-[var(--text-muted)]">
+                This demo request does not confirm that an advocate has been contacted or will respond. Use the marketplace to browse profiles and confirm availability directly.
+              </p>
+              <GhostButton onClick={() => setShowInstantModal(false)} className="w-full">Cancel Request</GhostButton>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <PaywallModal isOpen={showPaywall} onClose={() => setShowPaywall(false)} title={`Upgrade for ${paywallFeature}`} />
     </div>
   );
-}
-
-function NavItem({ icon, label, to, active, onClick, badge, locked, onLocked }) {
-  const router = useRouter();
-  const handleClick = () => {
-    if (locked && onLocked) {
-      onLocked();
-      return;
-    }
-    if (onClick) onClick();
-    if (to) router.push(to);
-  };
-
-  return (
-    <div
-      onClick={handleClick}
-      className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl cursor-pointer transition-all duration-200 group ${active ? 'bg-indigo-500/10 text-white border border-indigo-500/20 shadow-sm font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'}`}
-    >
-      <div className="flex items-center gap-3">
-        <span className={`transition-colors duration-200 ${active ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300'}`}>{icon}</span>
-        <span className="text-[13px] tracking-normal font-medium">{label}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        {locked && <span className="text-[11px] text-slate-600">🔒</span>}
-        {badge && <span className="text-[9px] font-bold bg-indigo-500/15 text-indigo-400 border border-indigo-500/25 px-1.5 py-0.5 rounded uppercase tracking-wider">{badge}</span>}
-      </div>
-    </div>
-  )
 }

@@ -1,9 +1,9 @@
 export const metadata = {
     title: 'Legal SOS | India\'s First Emergency Legal AI - NyayNow',
-    description: 'Get instant legal rights, Article 22 protections, and an AI-drafted FIR in under 60 seconds. Free emergency legal assistance for every Indian citizen.',
+    description: 'Find legal information and available help through NyayNow. For immediate danger, contact local emergency services directly.',
     openGraph: {
         title: 'Legal SOS | Emergency Legal AI Assistant',
-        description: 'Arrested? Facing fraud? Activate Legal SOS for instant legal rights and FIR drafting.',
+        description: 'Use an AI-assisted legal information workflow and prepare a lawyer-reviewable complaint draft. For immediate danger call 112.',
         url: 'https://nyaynow.in/legal-sos',
         type: 'website',
         images: ['/logo.png'],
@@ -11,7 +11,7 @@ export const metadata = {
     twitter: {
         card: 'summary_large_image',
         title: 'Legal SOS | Emergency Legal AI',
-        description: 'Instant legal help for Indians in crisis. Free and confidential.',
+        description: 'Legal information tool, not emergency dispatch or a filed complaint. For immediate danger call 112; NALSA legal-aid helpline 15100.',
         images: ['/logo.png'],
     }
 }

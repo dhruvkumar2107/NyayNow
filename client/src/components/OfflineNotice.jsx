@@ -32,7 +32,7 @@ export default function OfflineNotice() {
             <div className="space-y-1">
                 <h4 className="font-bold text-sm text-white">Connection Interrupted</h4>
                 <p className="text-xs text-slate-400 leading-normal">
-                    You are currently offline. Some features like the AI Assistant and Lawyer Marketplace may not work. We'll automatically reconnect once network returns.
+                    You are currently offline. Some features like the AI Assistant and Lawyer Marketplace may not work. We&apos;ll automatically reconnect once network returns.
                 </p>
                 <div className="pt-2 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                     Check server status: <a href="https://status.nyaynow.in" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">status.nyaynow.in</a>

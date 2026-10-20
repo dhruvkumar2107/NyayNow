@@ -123,25 +123,25 @@ const Footer = () => {
                 {/* GLOBAL LEGAL DISCLAIMER STRIP */}
                 <div className="pt-8 pb-8 border-t border-white/5 text-center">
                     <p className="text-[11px] text-slate-500 max-w-3xl mx-auto leading-relaxed">
-                        ⚖️ Disclaimer: NyayNow provides AI-generated legal information grounded in BNS (2024), not professional legal advice. Always verify case details and drafts with a qualified advocate before taking legal action.
+                        ⚖️ Disclaimer: NyayNow provides AI-generated legal information that may be incomplete or unsupported. It is not professional legal advice. Verify law and drafts against primary sources and consult a qualified advocate before acting.
                     </p>
                 </div>
 
                 {/* BOTTOM BAR */}
                 <div className="pt-12 border-t border-white/5 flex flex-col lg:flex-row justify-between items-center gap-8">
                     <div className="flex flex-col md:flex-row items-center gap-6 text-slate-500 text-xs font-bold uppercase tracking-[0.2em]">
-                        <p>© {currentYear} NyayNow Legal Tech. Est. Nov 2025.</p>
+                        <p>© {currentYear} NyayNow.</p>
                         <div className="hidden md:block w-1 h-1 rounded-full bg-slate-800" />
                         <p>Made with Precision in India</p>
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
                         <div className="flex items-center gap-2 group cursor-default">
-                            <ShieldCheck size={14} className="text-slate-500 group-hover:text-blue-500 transition-colors" />
-                            <span className="group-hover:text-blue-500 transition-colors uppercase">AES-256 Encrypted</span>
+                            <ShieldCheck size={14} className="text-slate-500" />
+                            <span>Security details</span>
                         </div>
                         <span className="text-slate-700">|</span>
-                        <p className="text-slate-500">Secure Network: 128-Bit TLS/SSL</p>
+                        <p className="text-slate-500">AI outputs require source verification</p>
                     </div>
                 </div>
 

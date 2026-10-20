@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import {
-  Check, X, Zap, Scale, Building2, Users, Star, ArrowRight,
+  Check, X, Zap, Scale, Building2, Users, ArrowRight,
   Sparkles, Shield, Clock, FileText, Mic, Brain, Search,
   ChevronDown, ChevronUp, Crown, Gavel, BookOpen, MessageSquare,
   TrendingUp, Lock, Globe, Phone, BadgeCheck, Flame, Infinity
@@ -47,7 +47,7 @@ const PLANS = [
   {
     id: 'pro',
     name: 'Nyay Pro',
-    tagline: 'Your personal AI lawyer',
+    tagline: 'AI legal information and workflow tools',
     price: { monthly: 299, yearly: 2499 },
     priceDisplay: { monthly: '₹299', yearly: '₹2,499' },
     color: 'from-blue-600/30 to-indigo-600/20',
@@ -62,23 +62,23 @@ const PLANS = [
     description: 'For tenants, property buyers, employees & law students fighting legal battles.',
     features: [
       { label: 'AI Legal Assistant', value: 'Unlimited', included: true },
-      { label: 'Precedent Research (Indian Kanoon)', value: '30 searches/month', included: true },
+      { label: 'Case-law research (availability depends on configured source)', value: '30 searches/month', included: true },
       { label: 'Document Drafting', value: '10 drafts/month', included: true },
       { label: 'Case PDF Analysis', value: '5 docs/month', included: true },
       { label: 'NyayVoice Voice Assistant', value: '20 min/month', included: true },
       { label: 'BNS Section Converter', value: 'Unlimited', included: true },
       { label: 'FIRAC Case Profile Viewer', value: 'Unlimited', included: true },
-      { label: 'Judge AI Outcome Predictor', value: '3 predictions/month', included: true },
+      { label: 'Experimental case analysis (not an outcome prediction)', value: 'In development', included: false },
       { label: 'Chat History & Export', value: 'Unlimited', included: true },
       { label: 'Courtroom Battle Simulator', value: '3/month', included: true },
-      { label: 'Court-Ready Brief Generator', value: null, included: false },
+      { label: 'Lawyer-reviewable brief draft', value: null, included: false },
       { label: 'Visual Precedent Citation Map', value: null, included: false },
     ]
   },
   {
     id: 'gold',
     name: 'Nyay Gold',
-    tagline: 'The AI associate every advocate needs',
+    tagline: 'AI-assisted workflows for advocates',
     price: { monthly: 799, yearly: 6999 },
     priceDisplay: { monthly: '₹799', yearly: '₹6,999' },
     color: 'from-amber-500/30 to-yellow-500/10',
@@ -93,15 +93,15 @@ const PLANS = [
     description: 'For practising advocates, solo practitioners & junior associates in law firms.',
     features: [
       { label: 'AI Legal Assistant', value: 'Unlimited', included: true },
-      { label: 'Precedent Research (Indian Kanoon)', value: 'Unlimited', included: true },
+      { label: 'Case-law research (availability depends on configured source)', value: 'Unlimited', included: true },
       { label: 'Document Drafting', value: 'Unlimited (all templates)', included: true },
       { label: 'Case PDF Analysis', value: '25 docs/month', included: true },
-      { label: 'Judge AI Outcome Predictor', value: 'Unlimited', included: true },
-      { label: 'Court-Ready Brief Generator', value: '✨ New', included: true },
-      { label: 'Visual Precedent Citation Map', value: '✨ New', included: true },
-      { label: 'Case Timeline Generator', value: '✨ New', included: true },
+      { label: 'Experimental case analysis (not an outcome prediction)', value: 'In development', included: false },
+      { label: 'Lawyer-reviewable brief draft', value: 'In development', included: false },
+      { label: 'Verified citation map', value: 'In development', included: false },
+      { label: 'Case timeline automation', value: 'In development', included: false },
       { label: 'NyayVoice Voice Assistant', value: 'Unlimited', included: true },
-      { label: 'Client Case Portal (10 clients)', value: 'Unlimited', included: true },
+      { label: 'Client case portal', value: 'Current availability varies', included: true },
       { label: 'Moot Court / AI Judge Mode', value: 'Unlimited', included: true },
       { label: 'PDF Report Downloads', value: 'Unlimited', included: true },
     ]
@@ -109,7 +109,7 @@ const PLANS = [
   {
     id: 'firm',
     name: 'Nyay Firm',
-    tagline: 'Enterprise legal intelligence',
+    tagline: 'Team plan — availability to be confirmed',
     price: { monthly: 2999, yearly: 24999 },
     priceDisplay: { monthly: '₹2,999', yearly: '₹24,999' },
     color: 'from-violet-600/30 to-purple-600/20',
@@ -124,17 +124,17 @@ const PLANS = [
     description: 'For established law firms, corporate legal teams & legal tech organizations.',
     features: [
       { label: 'Everything in Gold', value: 'All included', included: true },
-      { label: 'Team Seats', value: '10 users included', included: true },
-      { label: 'Contract Heatmap & Redliner', value: '✨ Firm Only', included: true },
-      { label: 'AI Witness Cross-Examiner', value: '✨ Firm Only', included: true },
-      { label: 'Bulk Document Processing', value: '500 docs/month', included: true },
-      { label: 'White-label PDF Reports', value: 'Your firm branding', included: true },
-      { label: 'API Access', value: '10,000 calls/month', included: true },
-      { label: 'Custom Template Library', value: 'Upload your own', included: true },
-      { label: 'Shared Case Workspace', value: 'Team collaboration', included: true },
-      { label: 'Dedicated Account Manager', value: 'Included', included: true },
-      { label: 'GST/Invoice Billing', value: 'Included', included: true },
-      { label: 'SLA-backed 99.9% Uptime', value: 'Guaranteed', included: true },
+      { label: 'Team seats', value: 'In development', included: false },
+      { label: 'Contract heatmap and redliner', value: 'In development', included: false },
+      { label: 'AI witness cross-examiner', value: 'In development', included: false },
+      { label: 'Bulk document processing', value: 'In development', included: false },
+      { label: 'White-label PDF reports', value: 'In development', included: false },
+      { label: 'API Access', value: 'In development', included: false },
+      { label: 'Custom template library', value: 'In development', included: false },
+      { label: 'Shared case workspace', value: 'In development', included: false },
+      { label: 'Dedicated account manager', value: 'By separate agreement only', included: false },
+      { label: 'GST/invoice billing', value: 'Confirm before purchase', included: false },
+      { label: 'Service-level agreement', value: 'Available after contract review', included: false },
     ]
   }
 ]
@@ -142,11 +142,11 @@ const PLANS = [
 const FAQS = [
   {
     q: 'Can I switch plans anytime?',
-    a: 'Yes, you can upgrade or downgrade at any time. Upgrades take effect immediately. Downgrades take effect at the end of your current billing period.'
+    a: 'Plan changes depend on the current billing and payment flow. Contact support before purchase if you need a specific change or cancellation.'
   },
   {
     q: 'Is there a student discount?',
-    a: 'Yes! Law students with a valid college ID get 60% off the Nyay Pro plan — just ₹119/month. Contact us at support@nyaynow.in with your student ID to claim this discount.'
+    a: 'No student discount is published at this time. Contact support@nyaynow.in to ask about current offers.'
   },
   {
     q: 'What payment methods do you accept?',
@@ -154,46 +154,19 @@ const FAQS = [
   },
   {
     q: 'Is my data safe and confidential?',
-    a: 'Absolutely. All data is encrypted end-to-end with AES-256. Your legal queries and case data are never shared or sold. We are fully DPDP (India) compliant.'
+    a: 'Review our Privacy Policy and Security & Compliance page before submitting personal or case information. Data handling depends on the service providers and their configured terms; do not submit highly sensitive information unless you are comfortable with that processing.'
   },
   {
     q: 'What happens when I exceed my monthly limits on Free?',
     a: 'You will see a prompt to upgrade. Your existing chats and data are preserved. We never delete your data when a limit is reached — we just pause new queries until the next cycle or upgrade.'
   },
   {
-    q: 'Can the Firm plan support more than 10 users?',
-    a: 'Yes. The Firm plan includes 10 seats and you can add additional seats at ₹499/seat/month. For very large deployments (50+ seats), contact our enterprise sales team for a custom quote.'
+    q: 'Are firm team seats available?',
+    a: 'Team seats are in development and are not currently included as a verified entitlement.'
   },
   {
     q: 'Do you offer refunds?',
-    a: 'We offer a 7-day money-back guarantee on all paid plans. If you are not satisfied, contact us within 7 days of payment for a full refund, no questions asked.'
-  }
-]
-
-const TESTIMONIALS = [
-  {
-    name: 'Adv. Priya Sharma',
-    role: 'Senior Advocate, Delhi High Court',
-    plan: 'Nyay Gold',
-    planColor: 'text-amber-400',
-    text: 'NyayNow Gold has replaced my legal research assistant. The Indian Kanoon integration and FIRAC breakdowns save me 4-5 hours per case. At ₹799/month, it pays for itself in one brief.',
-    rating: 5
-  },
-  {
-    name: 'Rahul Verma',
-    role: 'Tenant, Pune',
-    plan: 'Nyay Pro',
-    planColor: 'text-blue-400',
-    text: 'My landlord was illegally withholding my deposit. The AI Assistant explained exactly which section of Transfer of Property Act applies and even drafted my legal notice. Saved ₹8,000 in lawyer fees.',
-    rating: 5
-  },
-  {
-    name: 'Nikhil & Associates',
-    role: 'Law Firm, Mumbai',
-    plan: 'Nyay Firm',
-    planColor: 'text-violet-400',
-    text: 'We onboarded our entire 8-person team. The white-label PDF reports with our firm\'s branding and the shared case workspace have genuinely transformed our client workflow.',
-    rating: 5
+    a: 'Refund eligibility is governed by the current refund policy and applicable payment terms. Review the Refund page before purchasing.'
   }
 ]
 
@@ -577,8 +550,8 @@ export default function PricingPage() {
               bg: 'bg-violet-500/5',
               icon: Building2,
               stat: '₹20,000+',
-              label: 'vs. one junior associate\'s monthly salary',
-              detail: 'Replace or augment a full-time legal intern with Firm. 10 team seats + unlimited everything for 85% less cost.'
+              label: 'Firm plan price',
+              detail: 'Team seats and firm entitlements are in development; confirm currently available features before purchase.'
             }
           ].map((item, i) => {
             const Icon = item.icon
@@ -600,48 +573,6 @@ export default function PricingPage() {
               </motion.div>
             )
           })}
-        </div>
-      </section>
-
-      {/* TESTIMONIALS */}
-      <section className="px-4 pb-24 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-4xl font-black text-white mb-3">Trusted by Legal Professionals</h2>
-          <p className="text-slate-500 text-lg">Real results from real users across India.</p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="p-6 rounded-3xl bg-white/[0.03] border border-white/5"
-            >
-              <div className="flex gap-1 mb-4">
-                {[...Array(t.rating)].map((_, si) => (
-                  <Star key={si} size={14} className="text-amber-400 fill-amber-400" />
-                ))}
-              </div>
-              <p className="text-slate-300 text-sm leading-relaxed mb-6">"{t.text}"</p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white font-black text-sm">
-                  {t.name.charAt(0)}
-                </div>
-                <div>
-                  <div className="text-white font-bold text-sm">{t.name}</div>
-                  <div className="text-slate-500 text-xs">{t.role}</div>
-                  <div className={`text-[10px] font-black uppercase tracking-wider mt-0.5 ${t.planColor}`}>{t.plan}</div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
         </div>
       </section>
 

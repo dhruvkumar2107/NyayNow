@@ -84,6 +84,10 @@ const userSchema = new mongoose.Schema(
     // --- NEW PROFILE FIELDS ---
     bio: { type: String, default: "" }, // About Me
 
+    headline: { type: String, default: "" }, // Short professional headline
+
+    awards: { type: [String], default: [] }, // Awards / recognitions
+
     profileImage: { type: String, default: "" }, // URL from Uploads
 
     languages: { type: [String], default: ["English", "Hindi"] },

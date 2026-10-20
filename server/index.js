@@ -15,6 +15,7 @@ if (process.env.NODE_ENV !== 'test' && (!process.env.JWT_SECRET || KNOWN_BAD_SEC
 
 const express = require("express");
 const cors = require("cors");
+const { buildAllowedOrigins, logOriginConfig } = require("./utils/corsConfig");
 const path = require("path");
 const fs = require("fs");
 const mongoose = require("mongoose");
@@ -31,18 +32,16 @@ const app = express();
 app.set("trust proxy", 1); // Trust first proxy (Required for Render/Vercel)
 const server = http.createServer(app);
 
-const allowedOrigins = [
-  "https://nyaynow.in",
-  "https://www.nyaynow.in",
-  "https://nyaynow.com",
-  process.env.CLIENT_URL,
-  ...(process.env.NODE_ENV !== 'production' ? ["http://localhost:3000", "http://localhost:5173"] : []),
-].filter(Boolean);
+const allowedOrigins = buildAllowedOrigins();
 
 const isAllowedOrigin = (origin) => {
   if (!origin) return true;
   if (allowedOrigins.includes(origin)) return true;
-  if (origin.endsWith(".vercel.app")) return true;
+  // SECURITY: Wildcard *.vercel.app is only tolerated outside production.
+  // With credentials enabled, allowing any vercel.app origin in production
+  // would let an attacker's preview deployment issue credentialed requests
+  // and defeat CSRF protection. Add specific preview URLs via ALLOWED_ORIGINS.
+  if (process.env.NODE_ENV !== 'production' && origin.endsWith(".vercel.app")) return true;
   return false;
 };
 
@@ -62,6 +61,7 @@ const io = new Server(server, {
 const compression = require("compression");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const { ipKeyGenerator } = rateLimit;
 const Sentry = require("@sentry/node");
 const { nodeProfilingIntegration } = require("@sentry/profiling-node");
 
@@ -176,7 +176,7 @@ function perUserKey(req) {
       if (decoded?.id) return `user_${decoded.id}`;
     } catch { /* fall through */ }
   }
-  return req.ip || 'unknown';
+  return ipKeyGenerator(req.ip || 'unknown');
 }
 
 // 🛡️ GLOBAL LIMITER
@@ -235,7 +235,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json({ limit: "10mb" }));
+// Capture the raw request body so webhook signature verification (Razorpay) can
+// HMAC the exact bytes Razorpay signed. express.json() otherwise consumes the
+// stream and only exposes the parsed object.
+app.use(express.json({
+  limit: "10mb",
+  verify: (req, res, buf) => {
+    if (buf && buf.length) req.rawBody = buf;
+  },
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(sanitizeMiddleware);
@@ -515,8 +523,10 @@ loadRoute("/api/verification", "./routes/verification"); // REAL DIGILOCKER ROUT
 loadRoute("/api/confessions", "./routes/confessions"); // ANONYMOUS CONFESSION BOOTH
 loadRoute("/api/ecourts", "./routes/ecourts"); // ECOURTS INTEGRATION
 loadRoute("/api/translate", "./routes/translate"); // BHASHINI MULTILINGUAL TRANSLATION
+loadRoute("/api/ipc-bns", "./routes/ipcBns"); // IPC-to-BNS SECTION REFERENCE MAP
 loadRoute("/api/subscriptions", "./routes/subscriptions"); // 💰 RECURRING SUBSCRIPTIONS
 loadRoute("/api/leads", "./routes/leads"); // 💰 PAY-PER-LEAD SYSTEM
+loadRoute("/api", "./routes/public"); // Aggregate public metrics and gated proof receipts
 
 // Custom Sentry Error Handler (Compatible with all versions)
 app.use((err, req, res, next) => {
@@ -560,12 +570,13 @@ if (fs.existsSync(clientDist)) {
         { path: "/blog", freq: "daily", priority: "0.8" },
         { path: "/research", freq: "weekly", priority: "0.7" },
         { path: "/drafting", freq: "weekly", priority: "0.7" },
-        { path: "/courtroom-battle", freq: "weekly", priority: "0.7" },
         { path: "/nyaycourt-simulator", freq: "weekly", priority: "0.7" },
         { path: "/nyayvoice", freq: "weekly", priority: "0.7" },
         { path: "/judge-pro", freq: "weekly", priority: "0.7" },
         { path: "/moot-court", freq: "weekly", priority: "0.7" },
         { path: "/ecourts", freq: "weekly", priority: "0.7" },
+        { path: "/ipc-to-bns", freq: "weekly", priority: "0.9" },
+        { path: "/nyayproof", freq: "monthly", priority: "0.7" },
         { path: "/case-studies", freq: "monthly", priority: "0.6" },
         { path: "/about", freq: "monthly", priority: "0.6" },
         { path: "/pricing", freq: "monthly", priority: "0.6" },
@@ -653,7 +664,7 @@ if (fs.existsSync(clientDist)) {
         }
       } else if (req.originalUrl === "/find-lawyers") {
         title = "Lawyer Directory | Find Verified Advocates - NyayNow";
-        description = "Browse and connect with verified lawyers across India. Filter by specialization, location, and experience.";
+        description = "Browse lawyer profile information by specialization, location, and experience. Confirm credentials and engagement terms independently.";
       } else if (req.originalUrl === "/assistant") {
         title = "AI Legal Assistant | Instant Legal Guidance - NyayNow";
         description = "Get instant answers to your legal queries with NyayNow's AI-powered assistant.";
@@ -721,11 +732,16 @@ process.on('SIGINT',  () => gracefulShutdown('SIGINT'));
 /* ================= START ================= */
 if (process.env.NODE_ENV !== 'test') {
   connectDB().finally(() => {
-    // Create demo master account on startup
-    ensureDemoUser().catch(err => console.error("Demo user creation failed:", err.message));
-    
+    // SECURITY: The demo master account uses hardcoded credentials and is therefore
+    // NEVER created in production. It can only be enabled explicitly for local/demo
+    // environments via DEMO_USER_ENABLED=true.
+    if (process.env.NODE_ENV !== 'production' && process.env.DEMO_USER_ENABLED === 'true') {
+      ensureDemoUser().catch(err => console.error("Demo user creation failed:", err.message));
+    }
+
     server.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
+      logOriginConfig(allowedOrigins);
     });
   });
 }

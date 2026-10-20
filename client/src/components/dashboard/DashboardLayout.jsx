@@ -1,7 +1,7 @@
 export default function DashboardLayout({ leftSidebar, mainFeed, rightSidebar }) {
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-400 pt-24 pb-12 px-0 md:px-0 selection:bg-indigo-500/30">
-            <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 px-4">
+        <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text-muted)] selection:bg-[var(--gold)]/25 pt-24 pb-12 px-0 md:px-0">
+            <div className="relative z-10 max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 px-4">
 
                 {/* LEFT SIDEBAR - PROFILE (1 col) */}
                 <aside className="md:col-span-1 space-y-6">

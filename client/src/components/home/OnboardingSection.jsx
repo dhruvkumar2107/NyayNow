@@ -109,7 +109,7 @@ export default function OnboardingSection() {
                     <FeatureCard
                         icon={Search}
                         title="Smart Case Research"
-                        description="Find real-world precedents and court rulings instantly using our intelligent search engine."
+                        description="Search available legal records and open source links; verify citations before relying."
                         forWho="Public"
                         delay={0.1}
                     />
@@ -117,7 +117,7 @@ export default function OnboardingSection() {
                     <FeatureCard
                         icon={MessageSquare}
                         title="Expert Consultation"
-                        description="Consult securely with verified lawyers for legal information and guidance tailored to your needs."
+                        description="Browse lawyer profiles and independently confirm credentials before engagement."
                         forWho="Universal"
                         delay={0.2}
                     />
@@ -125,23 +125,23 @@ export default function OnboardingSection() {
                     <FeatureCard
                         icon={FileText}
                         title="Instant Notice Drafting"
-                        description="Generate court-ready legal notices, contracts, and affidavits in seconds."
+                        description="Create editable document drafts and have an advocate review them before use."
                         forWho="Universal"
                         delay={0.3}
                     />
 
                     <FeatureCard
                         icon={Gavel}
-                        title="Judge AI Insights"
-                        description="Get a data-driven outlook on your case based on similar past judgments."
+                        title="Case Analysis Research"
+                        description="Outcome analysis is disabled while evaluation and calibration work remains in development."
                         forWho="Litigation"
                         delay={0.4}
                     />
 
                     <FeatureCard
                         icon={ShieldCheck}
-                        title="Verified Professionals"
-                        description="All lawyers on our platform are verified through official Bar Council records."
+                        title="Lawyer Profiles"
+                        description="Browse profile information and independently confirm enrolment with the relevant State Bar Council."
                         forWho="Trust"
                         delay={0.5}
                     />

@@ -177,7 +177,9 @@ router.post("/register", async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const normalizedPlan = plan ? plan.toLowerCase() : "free";
+    // SECURITY: entitlements are NEVER taken from the client. All accounts start
+    // on the free plan; paid plans are granted only by verified payment flows.
+    const normalizedPlan = "free";
 
     // Lawyers always start unverified and go through admin approval.
     // Never trust client-supplied verificationStatus.
@@ -272,11 +274,14 @@ router.post("/send-otp", async (req, res) => {
       console.log(`[OTP LOG] ${normalizedEmail} → [SENT] OTP: ${otp}`);
     }
 
-    const isMockOrFallback = result.mock || result.fallback || process.env.NODE_ENV !== 'production';
+    // SECURITY: Only surface the OTP in the response during local development/test
+    // runs where no real mailbox exists. Returning it whenever delivery "falls back"
+    // would let anyone verify any email address by reading the response body.
+    const shouldExposeDebugOtp = process.env.NODE_ENV !== 'production';
     res.json({
       success: true,
       message: "OTP sent via Email",
-      ...(isMockOrFallback ? { debugOtp: otp } : {})
+      ...(shouldExposeDebugOtp ? { debugOtp: otp } : {})
     });
   } catch (err) {
     console.error("[send-otp] error:", err);
@@ -497,7 +502,8 @@ router.post("/reset-password", async (req, res, next) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await User.findByIdAndUpdate(decoded.id, { password: hashedPassword });
+    // Revoke any existing sessions for this account (bump tokenVersion)
+    await User.findByIdAndUpdate(decoded.id, { password: hashedPassword, $inc: { tokenVersion: 1 } });
 
     res.json({ message: "Password updated successfully" });
   } catch (err) {

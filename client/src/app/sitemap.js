@@ -1,5 +1,7 @@
 import { API_BASE } from "../config"
 
+export const dynamic = 'force-dynamic'
+
 async function getLawyers() {
     // Skip fetching during build if on localhost (backend won't be there)
     if (typeof window === 'undefined' && API_BASE.includes('localhost')) {
@@ -41,13 +43,14 @@ export default async function sitemap() {
         { path: "/blog",                   freq: 'daily',   priority: 0.8 },
         { path: "/research",               freq: 'weekly',  priority: 0.7 },
         { path: "/drafting",               freq: 'weekly',  priority: 0.7 },
-        { path: "/courtroom-battle",       freq: 'weekly',  priority: 0.7 },
         { path: "/nyaycourt-simulator",    freq: 'weekly',  priority: 0.7 },
         { path: "/nyayvoice",              freq: 'weekly',  priority: 0.7 },
         { path: "/judge-pro",              freq: 'weekly',  priority: 0.7 },
         { path: "/moot-court",             freq: 'weekly',  priority: 0.7 },
         { path: "/ecourts",                freq: 'weekly',  priority: 0.7 },
         { path: "/translator",             freq: 'weekly',  priority: 0.8 },
+        { path: "/ipc-to-bns",             freq: 'weekly',  priority: 0.9 },
+        { path: "/nyayproof",              freq: 'monthly', priority: 0.7 },
         { path: "/bns",                    freq: 'weekly',  priority: 0.9 },
         { path: "/bns/section-103",        freq: 'weekly',  priority: 0.8 },
         { path: "/bns/section-303",        freq: 'weekly',  priority: 0.8 },

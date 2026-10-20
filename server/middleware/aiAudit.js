@@ -1,24 +1,8 @@
 const fs   = require('fs').promises;
 const path = require('path');
+const { assessAiResponse } = require('../utils/aiQualitySignals');
 
 const LOG_PATH     = path.join(__dirname, '../logs/ai_audit.log');
-const MAX_BODY_LEN = 500;   // chars — cap logged request/response size
-const PII_FIELDS   = new Set(['password', 'otp', 'email', 'phone', 'confession', 'idCardImage', 'token']);
-
-function redact(obj) {
-  if (!obj || typeof obj !== 'object') return obj;
-  const out = {};
-  for (const [k, v] of Object.entries(obj)) {
-    out[k] = PII_FIELDS.has(k) ? '[REDACTED]' : v;
-  }
-  return out;
-}
-
-function truncate(val) {
-  const s = typeof val === 'string' ? val : JSON.stringify(val);
-  return s && s.length > MAX_BODY_LEN ? s.slice(0, MAX_BODY_LEN) + '…' : s;
-}
-
 // Ensure log directory exists once at startup
 let _logDirReady = false;
 async function ensureLogDir() {
@@ -31,16 +15,25 @@ const aiAudit = async (req, res, next) => {
   const originalJson = res.json.bind(res);
   const startTime    = Date.now();
 
+  // Legal queries and AI answers are sensitive personal data. By default we
+  // audit only metadata (who/what/when/how long/how big), never the content.
+  // AI request and response contents are never written to this audit log.
+
   res.json = function (data) {
+    // Content-free quality signals (booleans/counts only; never the text itself).
+    const quality = assessAiResponse(data);
+
     const entry = {
       timestamp:        new Date().toISOString(),
-      userId:           req.user?.id ?? 'anonymous',
-      endpoint:         req.originalUrl,
+      endpoint:         req.path,
       method:           req.method,
-      requestBody:      truncate(redact(req.body)),
+      requestBodyBytes:  req.body ? Buffer.byteLength(JSON.stringify(req.body)) : 0,
       responseStatus:   res.statusCode,
-      responseBody:     truncate(data),
+      responseBodyBytes: data ? Buffer.byteLength(JSON.stringify(data)) : 0,
       durationMs:       Date.now() - startTime,
+      aiHasDisclaimer:   quality.hasDisclaimer,
+      aiCitationCount:   quality.citationLikeCount,
+      aiOutcomeClaim:    quality.hasOutcomeClaim,
     };
 
     ensureLogDir()

@@ -1,6 +1,6 @@
 export const metadata = {
-    title: 'Legal Insights, Tech & Case Law Blog - NyayNow',
-    description: 'Read the latest deep dives into LegalTech, summaries of landmark judgments, simplified explanations of BNS 2024 vs IPC, and digital rights guides on NyayNow.',
+    title: 'NyayNow Insights — in development',
+    description: 'Reviewed legal explainers and product articles are not yet published by NyayNow.',
     alternates: {
         canonical: 'https://nyaynow.in/blog',
     },

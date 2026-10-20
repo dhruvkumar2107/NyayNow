@@ -1,30 +1,29 @@
-import dynamic from 'next/dynamic';
+import JudgeAIClient from './JudgeAIClient';
+import InDevelopmentNotice from '../../components/InDevelopmentNotice';
 
 export const metadata = {
-    title: 'Judge AI — Predict Case Outcomes',
-    description: 'Use AI to predict case outcomes, analyze judicial trends, and prepare stronger legal arguments based on Indian court data.',
+    title: 'Case analysis research — in development | NyayNow',
+    description: 'Case outcome prediction is disabled while evaluation and calibration research is in development.',
     alternates: {
         canonical: 'https://nyaynow.in/judge-ai',
     },
     openGraph: {
-        title: 'Judge AI — Predict Case Outcomes | NyayNow',
-        description: 'Use AI to predict case outcomes, analyze judicial trends, and prepare stronger legal arguments based on Indian court data.',
+        title: 'Case analysis research — in development | NyayNow',
+        description: 'Outcome prediction is disabled pending evaluation and calibration research.',
         url: 'https://nyaynow.in/judge-ai',
     }
 }
 
-const JudgeAI = dynamic(() => import("../../components/dashboard/lawyer/JudgeAI"), {
-    ssr: false,
-    loading: () => (
-        <div className="h-screen flex items-center justify-center bg-[#020617] text-white">
-            <div className="flex flex-col items-center">
-                <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="mt-4 text-indigo-300 font-bold uppercase tracking-widest text-xs">Loading Judge AI...</p>
-            </div>
-        </div>
-    )
-});
+const ENABLED = process.env.NEXT_PUBLIC_EXPERIMENTAL_CASE_ANALYSIS_ENABLED === 'true';
 
 export default function JudgeAIPage() {
-    return <JudgeAI />;
+    if (!ENABLED) {
+        return (
+            <InDevelopmentNotice eyebrow="In development" title="Outcome prediction is disabled">
+                We have not validated or calibrated court outcome predictions. This feature will
+                remain unavailable until prospective legal review and evaluation are complete.
+            </InDevelopmentNotice>
+        );
+    }
+    return <JudgeAIClient />;
 }

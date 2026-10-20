@@ -58,7 +58,7 @@ if (!isHttpApi && BREVO_SMTP_USER && BREVO_SMTP_PASS) {
 async function sendVerificationEmail(email, otp) {
   // --- Mock Mode ---
   if (!BREVO_SMTP_PASS || (!BREVO_SMTP_USER && !isHttpApi) || process.env.NODE_ENV === 'test') {
-    console.log(`[Brevo MOCK] Verification email to ${email} → OTP: ${otp}`);
+    console.log(`[Brevo MOCK] Verification email to ${email}` + (process.env.NODE_ENV !== 'production' ? ` → OTP: ${otp}` : ''));
     return { success: true, mock: true };
   }
 
@@ -113,7 +113,9 @@ async function sendVerificationEmail(email, otp) {
       return { success: true };
     } catch (err) {
       console.error("[Brevo API] ❌ HTTP API error:", err.message);
-      console.log(`[Brevo MOCK FALLBACK] OTP for ${email}: ${otp}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[Brevo MOCK FALLBACK] OTP for ${email}: ${otp}`);
+      }
       return { success: true, fallback: true };
     }
   }
@@ -137,7 +139,9 @@ async function sendVerificationEmail(email, otp) {
   } catch (err) {
     console.error("[Brevo SMTP] ❌ sendVerificationEmail error:", err.message);
     // Fallback to mock so authentication flow doesn't break
-    console.log(`[Brevo MOCK FALLBACK] OTP for ${email}: ${otp}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[Brevo MOCK FALLBACK] OTP for ${email}: ${otp}`);
+    }
     return { success: true, fallback: true };
   }
 }
@@ -151,12 +155,12 @@ async function sendVerificationEmail(email, otp) {
  * @returns {Promise<{ success: boolean, error?: string }>}
  */
 async function sendPasswordResetEmail(email, token) {
-  const link = `${process.env.CLIENT_URL || "http://localhost:5173"}/reset-password/${token}`;
+  const link = `${process.env.CLIENT_URL || "http://localhost:3000"}/reset-password/${token}`;
   const htmlContent = `<p>Click <a href="${link}">here</a> to reset your password. Link expires in 15 mins.</p>`;
 
   // --- Mock Mode ---
   if (!BREVO_SMTP_PASS || (!BREVO_SMTP_USER && !isHttpApi) || process.env.NODE_ENV === 'test') {
-    console.log(`[Brevo MOCK] Password reset link to ${email} → Link: ${link}`);
+    console.log(`[Brevo MOCK] Password reset link to ${email}` + (process.env.NODE_ENV !== 'production' ? ` → Link: ${link}` : ''));
     return { success: true, mock: true };
   }
 
@@ -191,7 +195,9 @@ async function sendPasswordResetEmail(email, token) {
       return { success: true };
     } catch (err) {
       console.error("[Brevo API] ❌ HTTP API error:", err.message);
-      console.log(`[Brevo MOCK FALLBACK] Reset link for ${email}: ${link}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[Brevo MOCK FALLBACK] Reset link for ${email}: ${link}`);
+      }
       return { success: true, fallback: true };
     }
   }
@@ -214,7 +220,9 @@ async function sendPasswordResetEmail(email, token) {
     return { success: true };
   } catch (err) {
     console.error("[Brevo SMTP] ❌ sendPasswordResetEmail error:", err.message);
-    console.log(`[Brevo MOCK FALLBACK] Reset link for ${email}: ${link}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[Brevo MOCK FALLBACK] Reset link for ${email}: ${link}`);
+    }
     return { success: true, fallback: true };
   }
 }

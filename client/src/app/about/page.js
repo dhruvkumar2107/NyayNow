@@ -2,13 +2,13 @@ import AboutUs from "../../../legacy_ignore/pages/AboutUs";
 
 export const metadata = {
     title: 'About Us',
-    description: 'Learn about NyayNow\'s mission to democratize legal intelligence through institutional-grade AI and connect citizens with top legal professionals in India.',
+    description: 'NyayNow is building AI-assisted legal workflows for India. Source verification, evaluation, privacy controls, and provider details are still in development.',
     alternates: {
         canonical: 'https://nyaynow.in/about',
     },
     openGraph: {
         title: 'About Us | NyayNow',
-        description: 'Learn about NyayNow\'s mission to democratize legal intelligence through institutional-grade AI.',
+        description: 'NyayNow is building AI-assisted legal workflows for India.',
         url: 'https://nyaynow.in/about',
     }
 }

@@ -30,7 +30,8 @@
     "find_lawyer": "वकील शोधा",
     "disclaimer": "एआय मार्गदर्शन, कायदेशीर सल्ला नाही. प्रमाणित वकील उपलब्ध.",
     "integrated": "विश्वासार्ह कायदेशीर फ्रेमवर्कसह एकत्रित",
-    "encryption": "AES-256 एन्क्रिप्शन",
-    "bci": "बीसीआय मार्गदर्शक तत्त्वांचे पालन"
+    "encryption": "Review security details",
+    "bci": "Legal information, not legal advice"
   }
 }
+

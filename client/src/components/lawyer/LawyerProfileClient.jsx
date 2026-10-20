@@ -106,7 +106,7 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
                             <h1 className="text-3xl font-bold text-white mb-2 font-serif tracking-tight flex items-center justify-center gap-2">
                                 {lawyer.name}
                                 {(lawyer.verified || lawyer.verificationStatus === "verified") && (
-                                    <CheckCircle className="text-emerald-500 fill-emerald-500/10 shrink-0" size={24} title="Verified Professional" />
+                                    <CheckCircle className="text-emerald-500 fill-emerald-500/10 shrink-0" size={24} title="Platform profile reviewed" />
                                 )}
                             </h1>
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-500/20 text-indigo-300 rounded-full border border-indigo-500/30 text-xs font-bold mb-3 uppercase tracking-widest">
@@ -115,7 +115,7 @@ export default function LawyerProfileClient({ initialLawyer, lawyerId }) {
                             {lawyer.barCouncilId && (
                                 <div className="block mb-6">
                                     <span className="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3.5 py-1.5">
-                                        BCI Enrollment: {lawyer.barCouncilId}
+                                        Enrolment ID supplied by profile owner: {lawyer.barCouncilId} · not verified by NyayNow
                                     </span>
                                 </div>
                             )}

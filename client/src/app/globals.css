@@ -34,8 +34,8 @@
 
 /* Global resets */
 :root {
-  --font-sans: 'Inter', sans-serif;
-  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', Inter, ui-sans-serif, system-ui, sans-serif;
   --color-bg: #000000;
   --color-bg-elevated: #0a0f1e;
   --color-card: #0f172a;
@@ -758,4 +758,190 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ============================================================
+   MIDNIGHT IVORY DESIGN SYSTEM (Phase B)
+   Dark default + light theme. Gold hairline, frosted glass.
+   ============================================================ */
+:root,
+[data-theme='dark'] {
+  --bg: #0B1220;
+  --surface: #111A2E;
+  --surface-2: #16213A;
+  --ivory: #F7F3EA;
+  --text: #F7F3EA;
+  --text-muted: #8FA3C7;
+  --gold: #C9A24B;
+  --gold-soft: #E6CF8F;
+  --emerald: #1F9D75;
+  --sos: #D7263D;
+  --warn: #E0A030;
+  --radius-sm: 14px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --gold-hairline: rgba(201, 162, 75, 0.28);
+  --shadow-soft: 0 8px 32px rgba(2, 6, 23, 0.55);
+  --font-display: 'Fraunces', 'Playfair Display', serif;
+  --font-body: 'Inter', 'Noto Sans', sans-serif;
+}
+
+[data-theme='light'] {
+  --bg: #F7F3EA;
+  --surface: #FFFFFF;
+  --surface-2: #F1EADB;
+  --ivory: #0B1220;
+  --text: #0B1220;
+  --text-muted: #4A5A78;
+  --gold: #A9822F;
+  --gold-soft: #C9A24B;
+  --emerald: #15805E;
+  --sos: #B01F32;
+  --warn: #B87B1D;
+  --gold-hairline: rgba(169, 130, 47, 0.35);
+  --shadow-soft: 0 8px 32px rgba(11, 18, 32, 0.12);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #F7F3EA;
+    --surface: #FFFFFF;
+    --surface-2: #F1EADB;
+    --ivory: #0B1220;
+    --text: #0B1220;
+    --text-muted: #4A5A78;
+    --gold: #A9822F;
+    --gold-soft: #C9A24B;
+    --emerald: #15805E;
+    --sos: #B01F32;
+    --warn: #B87B1D;
+    --gold-hairline: rgba(169, 130, 47, 0.35);
+    --shadow-soft: 0 8px 32px rgba(11, 18, 32, 0.12);
+  }
+}
+
+/* Glass card with gold hairline */
+.mi-glass-card {
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--gold-hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Subtle film grain */
+.mi-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Gold gradient headline (key headlines only) */
+.mi-gold-headline {
+  background: linear-gradient(120deg, var(--gold-soft) 0%, var(--gold) 45%, var(--gold-soft) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Fluid type scale */
+.mi-display { font-family: var(--font-display); font-size: clamp(2.2rem, 1.4rem + 3vw, 4.2rem); line-height: 1.08; }
+.mi-body { font-family: var(--font-body); font-size: clamp(1rem, 0.95rem + 0.2vw, 1.125rem); }
+
+/* Focus visibility (WCAG) */
+.mi-focus:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Reduced motion respect */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Large text mode */
+html[data-large-text='true'] {
+  font-size: 118%;
+}
+
+/* Tap target minimum */
+.mi-tap { min-height: 44px; min-width: 44px; }
+
+/* ============================================================
+   DASHBOARDS (Phase E/F) — Midnight Ivory workspace chrome
+   ============================================================ */
+@keyframes mi-float-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(46px, -34px, 0) scale(1.06); }
+}
+@keyframes mi-float-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-56px, 26px, 0) scale(1.08); }
+}
+@keyframes mi-sheen {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes mi-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mi-orb-a { animation: mi-float-a 18s ease-in-out infinite; }
+.mi-orb-b { animation: mi-float-b 24s ease-in-out infinite; }
+
+.mi-sheen {
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    color-mix(in srgb, var(--gold) 24%, transparent) 50%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+  animation: mi-sheen 6s linear infinite;
+}
+
+.mi-rise { animation: mi-rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+.mi-card-hover {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s,
+    border-color 0.35s;
+}
+.mi-card-hover:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--gold) 55%, transparent);
+  box-shadow: 0 18px 50px rgba(2, 6, 23, 0.6);
+}
+
+/* Gold hairline divider */
+.mi-hairline {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold-hairline),
+    transparent
+  );
+}
+
+/* Sidebar scroll */
+.mi-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.mi-scroll::-webkit-scrollbar-track { background: transparent; }
+.mi-scroll::-webkit-scrollbar-thumb {
+  background: var(--gold-hairline);
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mi-orb-a, .mi-orb-b, .mi-sheen, .mi-rise { animation: none !important; }
 }

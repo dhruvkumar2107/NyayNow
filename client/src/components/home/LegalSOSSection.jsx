@@ -24,7 +24,7 @@ export default function LegalSOSSection() {
                     >
                         <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 mb-10">
                             <ShieldAlert size={14} className="text-red-500" />
-                            <span className="text-red-500 font-black text-[10px] tracking-[0.3em] uppercase">Emergency Response AI</span>
+                            <span className="text-red-500 font-black text-[10px] tracking-[0.3em] uppercase">Urgent legal help</span>
                         </div>
 
                         <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-8 tracking-tighter leading-[1.1]">
@@ -33,9 +33,7 @@ export default function LegalSOSSection() {
                         </h2>
 
                         <p className="text-slate-400 text-lg md:text-xl leading-relaxed mb-12 max-w-lg font-medium">
-                            Democratizing legal protection through instant, multi-dialect crisis response.
-                            Powered by real Supreme Court data and BNS 2024 legal standards, get immediate rights analysis
-                            in your language, an AI-drafted FIR, and a Bar Council verified advocate connection in 60 seconds.
+                            Use NyayNow to find legal information and locate available help. AI-generated content may be inaccurate and does not replace an advocate or emergency services.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-5">
@@ -58,14 +56,15 @@ export default function LegalSOSSection() {
                                 <span>Police 112</span>
                             </a>
                         </div>
+                        <p className="mt-4 text-sm text-slate-400">For legal aid, call NALSA at <a className="text-white underline" href="tel:15100">15100</a>. For immediate danger, call 112.</p>
 
                         <div className="mt-12 flex items-center gap-6 text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
                             <div className="flex items-center gap-2">
-                                <Lock size={12} /> Encrypted
+                                <Lock size={12} /> Review privacy terms
                             </div>
                             <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
                             <div className="flex items-center gap-2">
-                                <Zap size={12} /> Blitz Fast
+                                <Zap size={12} /> Check sources
                             </div>
                         </div>
                     </motion.div>
@@ -76,22 +75,22 @@ export default function LegalSOSSection() {
 
                         <SOSCard
                             step="01"
-                            title="Instant Triage"
-                            desc="Institutional AI classifies your legal crisis and jurisdiction in under 5 seconds."
+                            title="AI-assisted information"
+                            desc="Generated guidance may be incomplete or wrong; call emergency services for immediate danger."
                             color="bg-red-500"
                             delay={0.2}
                         />
                         <SOSCard
                             step="02"
-                            title="Rights Revelation"
-                            desc="Get a high-fidelity audit of your fundamental legal protections in 14+ dialects."
+                            title="General rights information"
+                            desc="Language coverage varies. Verify any legal rights or sections with an official source or advocate."
                             color="bg-rose-500"
                             delay={0.4}
                         />
                         <SOSCard
                             step="03"
-                            title="The FIR Engine"
-                            desc="Automated BNS/IPC drafting for direct police submission. Professional grade."
+                            title="Complaint draft"
+                            desc="Create an editable complaint draft from supplied facts. It is not an FIR and is not filed for you."
                             color="bg-red-400"
                             delay={0.6}
                         />

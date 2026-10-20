@@ -1,6 +1,6 @@
 export const metadata = {
-    title: 'AI Legal Assistant | BNS 2024 & IPC Indian Law Help - NyayNow',
-    description: 'Get instant, verified legal information on Bharatiya Nyaya Sanhita (BNS 2024) and IPC sections. Ask questions in 14+ Indian languages and resolve queries with AI.',
+    title: 'AI-assisted legal information | NyayNow',
+    description: 'Ask legal questions and receive AI-assisted information about Indian law. Verify citations against primary sources and consult an advocate before acting.',
     alternates: {
         canonical: 'https://nyaynow.in/assistant',
     },

@@ -1,10 +1,14 @@
 /** @type {import('next').NextConfig} */
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 // CSP is set dynamically per-request in src/middleware.js (nonce-based).
 // Only non-CSP security headers are set here.
 
 const nextConfig = {
     reactStrictMode: true,
+    outputFileTracingRoot: path.dirname(fileURLToPath(import.meta.url)),
+    output: 'standalone',
     experimental: {
         // Tree-shake large icon/animation packages to reduce unused JS bundle (PageSpeed)
         optimizePackageImports: ['lucide-react', 'framer-motion'],

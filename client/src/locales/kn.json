@@ -30,7 +30,8 @@
     "find_lawyer": "ವಕೀಲರನ್ನು ಹುಡುಕಿ",
     "disclaimer": "AI ಮಾರ್ಗದರ್ಶನ, ಕಾನೂನು ಸಲಹೆಯಲ್ಲ. ಪರಿಶೀಲಿಸಿದ ವಕೀಲರು ಲಭ್ಯವಿದ್ದಾರೆ.",
     "integrated": "ವಿಶ್ವಾಸಾರ್ಹ ಕಾನೂನು ಚೌಕಟ್ಟುಗಳೊಂದಿಗೆ ಸಂಯೋಜಿಸಲಾಗಿದೆ",
-    "encryption": "AES-256 ಎನ್‌ಕ್ರಿಪ್ಶನ್",
-    "bci": "BCI ಮಾರ್ಗಸೂಚಿಗಳ ಅನುಸರಣೆ"
+    "encryption": "Review security details",
+    "bci": "Legal information, not legal advice"
   }
 }
+

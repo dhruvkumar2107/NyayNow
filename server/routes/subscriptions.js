@@ -5,52 +5,46 @@ const crypto = require("crypto");
 const verifyToken = require("../middleware/authMiddleware");
 const User = require("../models/User");
 const Payment = require("../models/Payment");
+const { verifySignature } = require("../services/paymentService");
+const {
+  SUBSCRIPTION_PLANS: PLAN_CONFIG,
+  LISTING_CONFIG,
+  CREDIT_PACKS,
+} = require("../config/plans");
 
 const razorpay = process.env.RZP_KEY_ID
   ? new Razorpay({ key_id: process.env.RZP_KEY_ID, key_secret: process.env.RZP_KEY_SECRET })
   : null;
 
-// ─── PLAN CONFIG ──────────────────────────────────────────────────────────────
-const PLAN_CONFIG = {
-  pro: {
-    name: "Nyay Pro",
-    amount: { monthly: 29900, yearly: 249900 }, // ₹299/mo | ₹2499/yr
-    period: "monthly",
-    interval: 1,
-    description: "Unlimited AI queries, Judge AI, Drafting Lab, NyayVoice, FIRAC Research",
-    features: ["Unlimited AI Queries", "30 Precedent Searches/mo", "10 Document Drafts/mo", "5 Case PDFs/mo", "NyayVoice 20min/mo", "3 Judge AI Predictions/mo"]
-  },
-  gold: {
-    name: "Nyay Gold",
-    amount: { monthly: 79900, yearly: 699900 }, // ₹799/mo | ₹6999/yr
-    period: "monthly",
-    interval: 1,
-    description: "Everything in Pro + Unlimited research, Court-Ready Briefs, Visual Citation Map",
-    features: ["Unlimited AI Queries", "Unlimited Precedent Research", "Unlimited Document Drafting", "25 Case PDFs/mo", "Unlimited Judge AI", "Court-Ready Brief Generator", "Visual Precedent Citation Map"]
-  },
-  firm: {
-    name: "Nyay Firm",
-    amount: { monthly: 299900, yearly: 2499900 }, // ₹2999/mo | ₹24999/yr
-    period: "monthly",
-    interval: 1,
-    description: "Everything in Gold + Team seats, API access, white-label, Contract Heatmap",
-    features: ["Everything in Gold", "10 Team Seats", "Contract Heatmap & Redliner", "AI Witness Cross-Examiner", "API Access (10k calls/mo)", "White-label Reports", "Dedicated Account Manager"]
-  }
-};
+// Plan / listing / credit catalogues are defined once in server/config/plans.js
+// (single source of truth shared with the one-time payments route).
 
-// Lawyer listing upgrade prices
-const LISTING_CONFIG = {
-  standard: {
-    name: "Pro Lawyer Listing",
-    amount: 199900, // ₹1999/month
-    description: "Priority listing, verified badge, unlimited leads"
-  },
-  premium: {
-    name: "Elite Lawyer Listing",
-    amount: 499900, // ₹4999/month
-    description: "Featured homepage + category top + analytics"
+const YEARLY_DAYS = 365;
+const MONTHLY_DAYS = 30;
+
+/**
+ * Verify signature AND fetch the authoritative order from Razorpay so the
+ * amount/plan can never be trusted from the client body.
+ * Throws {status, message} on failure.
+ */
+async function fetchVerifiedOrder(razorpayInstance, orderId, paymentId, signature) {
+  if (!verifySignature(orderId, paymentId, signature)) {
+    throw { status: 400, message: "Invalid payment signature" };
   }
-};
+  let order;
+  try {
+    order = await razorpayInstance.orders.fetch(orderId);
+  } catch (e) {
+    throw { status: 400, message: "Could not verify order with payment provider" };
+  }
+  if (!order) throw { status: 400, message: "Order not found" };
+  return order;
+}
+
+/** Returns true when this paymentId has already been applied (replay guard). */
+async function alreadyProcessed(paymentId) {
+  return !!(await Payment.findOne({ paymentId }));
+}
 
 // ─── GET SUBSCRIPTION STATUS ──────────────────────────────────────────────────
 router.get("/status", verifyToken, async (req, res) => {
@@ -127,31 +121,40 @@ router.post("/create-subscription", verifyToken, async (req, res) => {
 // ─── VERIFY SUBSCRIPTION PAYMENT ─────────────────────────────────────────────
 router.post("/verify-subscription", verifyToken, async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, plan } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({ error: "Missing payment verification fields" });
     }
+    if (!razorpay) return res.status(500).json({ error: "Payment gateway not configured" });
 
-    // Verify HMAC signature
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSig = crypto
-      .createHmac("sha256", process.env.RZP_KEY_SECRET)
-      .update(body)
-      .digest("hex");
-
-    if (expectedSig !== razorpay_signature) {
-      return res.status(400).json({ error: "Invalid payment signature" });
+    // Replay/idempotency guard
+    if (await alreadyProcessed(razorpay_payment_id)) {
+      return res.json({ success: true, message: "Payment already processed" });
     }
 
+    // Fetch authoritative order (validates signature + amount + notes server-side)
+    const order = await fetchVerifiedOrder(razorpay, razorpay_order_id, razorpay_payment_id, razorpay_signature);
+    const notes = order.notes || {};
+
+    if (notes.userId !== req.userId) {
+      return res.status(403).json({ error: "Order does not belong to this user" });
+    }
+
+    const plan = notes.plan;
+    const billing = notes.billing === "yearly" ? "yearly" : "monthly";
     const config = PLAN_CONFIG[plan];
     if (!config) return res.status(400).json({ error: "Invalid plan" });
 
-    // Calculate subscription end date (30 days)
-    const subscriptionEndDate = new Date();
-    subscriptionEndDate.setDate(subscriptionEndDate.getDate() + 30);
+    const expectedAmount = typeof config.amount === "object" ? config.amount[billing] : config.amount;
+    if (order.amount !== expectedAmount) {
+      return res.status(400).json({ error: "Amount mismatch for plan" });
+    }
 
-    // Upgrade user plan
+    // Compute end date from the actual billing period (monthly=30d, yearly=365d)
+    const subscriptionEndDate = new Date();
+    subscriptionEndDate.setDate(subscriptionEndDate.getDate() + (billing === "yearly" ? YEARLY_DAYS : MONTHLY_DAYS));
+
     const updatedUser = await User.findByIdAndUpdate(
       req.userId,
       {
@@ -162,27 +165,27 @@ router.post("/verify-subscription", verifyToken, async (req, res) => {
       },
       { new: true }
     );
-
     if (!updatedUser) return res.status(404).json({ error: "User not found" });
 
-    // Record payment
     await Payment.create({
       orderId: razorpay_order_id,
       paymentId: razorpay_payment_id,
       signature: razorpay_signature,
       user: updatedUser._id,
-      amount: config.amount / 100,
+      amount: expectedAmount / 100,
       plan: `subscription_${plan}`,
-      type: "subscription"
+      status: "success"
     });
 
     res.json({
       success: true,
       plan: updatedUser.plan,
+      billing,
       subscriptionEndDate: updatedUser.subscriptionEndDate,
       message: `Successfully upgraded to ${plan.toUpperCase()} plan! Welcome aboard.`
     });
   } catch (err) {
+    if (err && err.status) return res.status(err.status).json({ error: err.message });
     console.error("Verify subscription error:", err.message);
     res.status(500).json({ error: "Subscription verification failed" });
   }
@@ -249,20 +252,28 @@ router.post("/upgrade-listing", verifyToken, async (req, res) => {
 // ─── VERIFY LISTING UPGRADE ───────────────────────────────────────────────────
 router.post("/verify-listing", verifyToken, async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, tier } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ error: "Missing payment verification fields" });
+    }
+    if (!razorpay) return res.status(500).json({ error: "Payment gateway not configured" });
 
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSig = crypto
-      .createHmac("sha256", process.env.RZP_KEY_SECRET)
-      .update(body)
-      .digest("hex");
-
-    if (expectedSig !== razorpay_signature) {
-      return res.status(400).json({ error: "Invalid payment signature" });
+    if (await alreadyProcessed(razorpay_payment_id)) {
+      return res.json({ success: true, message: "Payment already processed" });
     }
 
+    const order = await fetchVerifiedOrder(razorpay, razorpay_order_id, razorpay_payment_id, razorpay_signature);
+    const notes = order.notes || {};
+    if (notes.userId !== req.userId) return res.status(403).json({ error: "Order does not belong to this user" });
+    if (notes.type !== "listing_upgrade") return res.status(400).json({ error: "Order is not a listing upgrade" });
+
+    const tier = notes.tier;
+    const config = LISTING_CONFIG[tier];
+    if (!config) return res.status(400).json({ error: "Invalid listing tier" });
+    if (order.amount !== config.amount) return res.status(400).json({ error: "Amount mismatch for listing tier" });
+
     const listingEndDate = new Date();
-    listingEndDate.setDate(listingEndDate.getDate() + 30);
+    listingEndDate.setDate(listingEndDate.getDate() + MONTHLY_DAYS);
 
     const updatedUser = await User.findByIdAndUpdate(
       req.userId,
@@ -273,15 +284,16 @@ router.post("/verify-listing", verifyToken, async (req, res) => {
       },
       { new: true }
     );
+    if (!updatedUser) return res.status(404).json({ error: "User not found" });
 
     await Payment.create({
       orderId: razorpay_order_id,
       paymentId: razorpay_payment_id,
       signature: razorpay_signature,
       user: updatedUser._id,
-      amount: LISTING_CONFIG[tier].amount / 100,
+      amount: config.amount / 100,
       plan: `listing_${tier}`,
-      type: "listing"
+      status: "success"
     });
 
     res.json({
@@ -292,6 +304,7 @@ router.post("/verify-listing", verifyToken, async (req, res) => {
       message: `Listing upgraded to ${tier.toUpperCase()}! Your profile will now appear at the top.`
     });
   } catch (err) {
+    if (err && err.status) return res.status(err.status).json({ error: err.message });
     console.error("Verify listing error:", err.message);
     res.status(500).json({ error: "Listing upgrade verification failed" });
   }
@@ -300,12 +313,6 @@ router.post("/verify-listing", verifyToken, async (req, res) => {
 // ─── BUY CREDIT PACK ─────────────────────────────────────────────────────────
 router.post("/buy-credits", verifyToken, async (req, res) => {
   try {
-    const CREDIT_PACKS = {
-      starter: { credits: 20, amount: 9900, label: "20 Queries" },
-      standard: { credits: 100, amount: 39900, label: "100 Queries" },
-      pro: { credits: 500, amount: 149900, label: "500 Queries" }
-    };
-
     const { pack } = req.body;
     const selected = CREDIT_PACKS[pack];
     if (!selected) return res.status(400).json({ error: "Invalid credit pack" });
@@ -315,7 +322,7 @@ router.post("/buy-credits", verifyToken, async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     const order = await razorpay.orders.create({
-      amount: selected.amount,
+      amount: selected.amountPaise,
       currency: "INR",
       receipt: `credits_${pack}_${req.userId.substring(0, 8)}_${Date.now()}`,
       notes: { pack, credits: selected.credits, userId: req.userId, type: "credits" }
@@ -326,7 +333,7 @@ router.post("/buy-credits", verifyToken, async (req, res) => {
       amount: order.amount,
       currency: order.currency,
       key: process.env.RZP_KEY_ID,
-      pack: selected,
+      pack: { credits: selected.credits, amount: selected.amountPaise, label: selected.label },
       user: { name: user.name, email: user.email }
     });
   } catch (err) {
@@ -337,39 +344,41 @@ router.post("/buy-credits", verifyToken, async (req, res) => {
 // ─── VERIFY CREDIT PURCHASE ───────────────────────────────────────────────────
 router.post("/verify-credits", verifyToken, async (req, res) => {
   try {
-    const CREDIT_PACKS = {
-      starter: { credits: 20, amount: 99 },
-      standard: { credits: 100, amount: 399 },
-      pro: { credits: 500, amount: 1499 }
-    };
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ error: "Missing payment verification fields" });
+    }
+    if (!razorpay) return res.status(500).json({ error: "Payment gateway not configured" });
 
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, pack } = req.body;
+    if (await alreadyProcessed(razorpay_payment_id)) {
+      const existing = await User.findById(req.userId).select("credits");
+      return res.json({ success: true, credits: existing?.credits || 0, message: "Payment already processed" });
+    }
 
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSig = crypto
-      .createHmac("sha256", process.env.RZP_KEY_SECRET)
-      .update(body)
-      .digest("hex");
+    const order = await fetchVerifiedOrder(razorpay, razorpay_order_id, razorpay_payment_id, razorpay_signature);
+    const notes = order.notes || {};
+    if (notes.userId !== req.userId) return res.status(403).json({ error: "Order does not belong to this user" });
+    if (notes.type !== "credits") return res.status(400).json({ error: "Order is not a credit purchase" });
 
-    if (expectedSig !== razorpay_signature) return res.status(400).json({ error: "Invalid signature" });
-
-    const selected = CREDIT_PACKS[pack];
-    if (!selected) return res.status(400).json({ error: "Invalid pack" });
+    const selected = CREDIT_PACKS[notes.pack];
+    if (!selected) return res.status(400).json({ error: "Invalid credit pack" });
+    if (order.amount !== selected.amountPaise) return res.status(400).json({ error: "Amount mismatch for credit pack" });
 
     const updatedUser = await User.findByIdAndUpdate(
       req.userId,
       { $inc: { credits: selected.credits } },
       { new: true }
     );
+    if (!updatedUser) return res.status(404).json({ error: "User not found" });
 
     await Payment.create({
       orderId: razorpay_order_id,
       paymentId: razorpay_payment_id,
       signature: razorpay_signature,
       user: updatedUser._id,
-      amount: selected.amount,
-      plan: `credits_${pack}`,
-      type: "credits"
+      amount: selected.amountPaise / 100,
+      plan: `credits_${notes.pack}`,
+      status: "success"
     });
 
     res.json({
@@ -378,6 +387,8 @@ router.post("/verify-credits", verifyToken, async (req, res) => {
       message: `${selected.credits} AI queries added to your account!`
     });
   } catch (err) {
+    if (err && err.status) return res.status(err.status).json({ error: err.message });
+    console.error("Credit verification error:", err.message);
     res.status(500).json({ error: "Credit verification failed" });
   }
 });

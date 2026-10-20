@@ -8,12 +8,16 @@ import nearby
 load_dotenv()
 
 API_KEY = os.getenv("GEMINI_API_KEY")
-if not API_KEY:
-    raise RuntimeError("❌ GEMINI_API_KEY not set")
-
-llm.configure_genai(API_KEY)
+if API_KEY:
+    llm.configure_genai(API_KEY)
 
 app = FastAPI()
+
+
+def require_ai_configuration():
+    if not API_KEY:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=503, detail="AI service is not configured. Set GEMINI_API_KEY.")
 
 # ---------- MODELS ----------
 class AnalyzeReq(BaseModel):
@@ -31,6 +35,7 @@ class AgreementReq(BaseModel):
 # ---------- AI ASSISTANT ----------
 @app.post("/analyze")
 def analyze(req: AnalyzeReq):
+    require_ai_configuration()
     prompt = llm.build_prompt(
         req.user_text,
         req.ui_lang,
@@ -53,6 +58,7 @@ def analyze(req: AnalyzeReq):
 
 @app.post("/agreement")
 def agreement(req: AgreementReq):
+    require_ai_configuration()
     prompt = llm.build_agreement_prompt(req.details, req.ui_lang)
     raw = llm.call_gemini(prompt)
     parsed = llm.extract_json_from_text(raw)
@@ -63,6 +69,7 @@ def agreement(req: AgreementReq):
 # ---------- CASE ANALYSIS ----------
 @app.post("/case-analysis")
 def case_analysis(req: AnalyzeReq):
+    require_ai_configuration()
     # Reusing AnalyzeReq as it has user_text and ui_lang
     prompt = llm.build_case_analysis_prompt(req.user_text, req.ui_lang)
     

@@ -23,29 +23,29 @@ export default function CalendarWidget({ user }) {
     const today = new Date();
 
     return (
-        <div className="bg-[#0f172a] rounded-xl border border-white/10 shadow-sm p-5 h-full flex flex-col">
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold text-white">Your Schedule</h3>
-                <button className="text-xs text-blue-400 font-bold hover:text-blue-300 transition">+ Add Event</button>
+        <div className="flex h-full flex-col rounded-[var(--radius-lg)] border border-[var(--gold-hairline)] bg-[var(--surface-2)]/40 p-5">
+            <div className="mb-4 flex items-center justify-between">
+                <h3 className="font-semibold text-[var(--text)]">Your Schedule</h3>
+                <button className="text-xs font-semibold text-[var(--gold)] transition hover:text-[var(--gold-soft)]">+ Add Event</button>
             </div>
 
-            {loading ? <div className="animate-pulse bg-white/5 h-32 rounded-lg"></div> : (
-                <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar">
+            {loading ? <div className="h-32 animate-pulse rounded-[var(--radius-md)] bg-[var(--surface-2)]/60"></div> : (
+                <div className="mi-scroll flex-1 space-y-3 overflow-y-auto">
                     {events.length === 0 ? (
-                        <div className="text-center py-8">
-                            <div className="text-3xl mb-2 opacity-50">📅</div>
-                            <p className="text-slate-500 text-xs">No events scheduled.</p>
+                        <div className="py-8 text-center">
+                            <div className="mb-2 text-3xl opacity-50">📅</div>
+                            <p className="text-xs text-[var(--text-muted)]">No events scheduled.</p>
                         </div>
                     ) : (
                         events.map(ev => (
-                            <div key={ev._id} className="flex gap-3 items-start p-2 hover:bg-white/5 rounded-lg transition border-l-2 border-l-blue-500 pl-3">
-                                <div className="flex-col text-center min-w-[40px]">
-                                    <span className="block text-xs font-bold text-slate-500">{new Date(ev.start).toLocaleString('default', { month: 'short' })}</span>
-                                    <span className="block text-lg font-black text-white leading-none">{new Date(ev.start).getDate()}</span>
+                            <div key={ev._id} className="flex items-start gap-3 rounded-[var(--radius-sm)] border-l-2 border-l-[var(--gold)] py-2 pl-3 pr-2 transition hover:bg-[var(--surface-2)]/60">
+                                <div className="min-w-[40px] flex-col text-center">
+                                    <span className="block text-xs font-bold text-[var(--text-muted)]">{new Date(ev.start).toLocaleString('default', { month: 'short' })}</span>
+                                    <span className="block text-lg font-bold leading-none text-[var(--text)]">{new Date(ev.start).getDate()}</span>
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-200 text-sm line-clamp-1">{ev.title}</h4>
-                                    <p className="text-[10px] text-slate-500">{new Date(ev.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {ev.type}</p>
+                                    <h4 className="line-clamp-1 text-sm font-semibold text-[var(--text)]">{ev.title}</h4>
+                                    <p className="text-[10px] text-[var(--text-muted)]">{new Date(ev.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {ev.type}</p>
                                 </div>
                             </div>
                         ))
