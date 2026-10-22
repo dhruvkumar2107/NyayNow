@@ -1,0 +1,250 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Scrollbar */
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0c1220;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2d3755;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4a5a80;
+}
+
+/* Global resets */
+:root {
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Playfair Display', serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body,
+#root {
+  background-color: #0c1220;
+  /* Deep Premium Navy — low mid dark */
+  color: #cbd5e1;
+  /* Slate 300 — crisp and readable */
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  color: #f1f5f9;
+  /* Bright Slate 100 for premium headings */
+}
+
+/* Premium Utilities */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #EAB308 0%, #D4AF37 50%, #A16207 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-gold {
+  background: linear-gradient(135deg, #D4AF37 0%, #B4912F 100%);
+}
+
+.glass-premium {
+  background: rgba(18, 28, 50, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+.glass-card {
+  background: rgba(20, 32, 56, 0.8);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-input {
+  background: rgba(15, 25, 45, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+.glass-input:focus {
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+  outline: none;
+}
+
+/* LENIS SCROLL FIXES */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GLOBAL PREMIUM UTILITIES — NyayNow Design System
+═══════════════════════════════════════════════════════════ */
+
+/* Gradient text — indigo to violet */
+.text-gradient-indigo {
+  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow card — glowing border on hover */
+.glow-card {
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(16, 26, 46, 0.9);
+}
+
+.glow-card:hover {
+  box-shadow: 0 20px 50px -10px rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+/* Badge pill — small labeled indicator */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.1);
+  color: #4f46e5;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Section header pattern */
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.section-header h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 16px;
+}
+
+.section-header p {
+  color: #94a3b8;
+  font-size: 1.125rem;
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* Ambient glow orb */
+.glow-orb {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: 0.12;
+}
+
+.glow-orb-indigo {
+  background: #6366f1;
+}
+
+.glow-orb-violet {
+  background: #8b5cf6;
+}
+
+.glow-orb-amber {
+  background: #f59e0b;
+}
+
+.glow-orb-red {
+  background: #ef4444;
+}
+
+/* Custom scrollbar (named class for targeted use) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+/* Smooth hover lift */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.4);
+}
+
+/* Premium Glassmorphism */
+.premium-glass {
+  background: rgba(14, 22, 42, 0.85);
+  backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 50px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Glow Shadows */
+.gold-glow {
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+.indigo-glow {
+  text-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+}

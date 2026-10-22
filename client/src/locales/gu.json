@@ -1,0 +1,37 @@
+{
+  "brand": "NyayNow",
+  "tagline": "The Elite Legal Network",
+  "subtitle": "Explore legal tools and connect with independent advocates.",
+  "find_experts": "Find Experts",
+  "search_placeholder": "Search expertise...",
+  "navbar": {
+    "intelligence": "Intelligence",
+    "enterprise": "Enterprise",
+    "signin": "Sign in",
+    "get_started": "Get Started",
+    "signout": "Sign Out",
+    "dashboard": "Dashboard",
+    "settings": "Settings"
+  },
+  "pricing": {
+    "title": "Transparent, Predictable Pricing",
+    "subtitle": "Select a plan tailored to your legal requirements. Upgrade or cancel at any time.",
+    "free_tier": "Free",
+    "pro_tier": "Pro",
+    "firm_tier": "Firm"
+  },
+  "hero": {
+    "badge": "AI-assisted. Verify before relying.",
+    "title1": "AI-assisted legal information for India.",
+    "title2": "Browse lawyer profiles.",
+    "subtitle": "Ask questions, draft documents, and prepare arguments with AI assistance. Verify important information before relying on it.",
+    "grounded": "AI output is not citation-verified. Check sources before relying.",
+    "try_ai": "Try AI free",
+    "find_lawyer": "Find a lawyer",
+    "disclaimer": "AI-generated information is not legal advice. Verify sources and advocate credentials independently.",
+    "integrated": "AI-assisted legal workflows",
+    "encryption": "Review security details",
+    "bci": "Legal information, not legal advice"
+  }
+}
+

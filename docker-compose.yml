@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: nyay-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  python-ai:
+    build:
+      context: ./python service
+    container_name: nyay-python-ai
+    ports:
+      - "8000:8000"
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+
+  backend:
+    build:
+      context: ./server
+    container_name: nyay-backend
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      MONGO_URI: ${MONGO_URI:-mongodb://mongo:27017/nyaynow}
+      JWT_SECRET: ${JWT_SECRET:-dev_only_secret_key_fallback_for_local_development_nyaynow_9f8b4c2b9a7}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      PYTHON_AI_URL: http://python-ai:8000
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+      - python-ai
+
+  frontend:
+    build:
+      context: ./client
+      args:
+        NEXT_PUBLIC_API_URL: http://backend:4000/api
+    container_name: nyay-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:

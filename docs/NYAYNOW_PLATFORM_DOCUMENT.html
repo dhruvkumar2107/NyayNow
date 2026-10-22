@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NyayNow - Platform Technical Document</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary-color: #0f172a;
+      --secondary-color: #475569;
+      --border-color: #cbd5e1;
+      --bg-light: #f8fafc;
+      --bg-card: #ffffff;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --accent-color: #2563eb;
+    }
+
+    body {
+      background: #ffffff;
+      color: var(--text-dark);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      font-size: 10.5pt;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    /* --- COVER PAGE STYLE / HERO --- */
+    .header-section {
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 2.5rem;
+      margin-bottom: 3rem;
+      text-align: left;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--secondary-color);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1.5rem;
+    }
+
+    .header-section h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 36pt;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      letter-spacing: -1px;
+    }
+
+    .header-sub {
+      font-size: 14pt;
+      color: var(--secondary-color);
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
+
+    .metadata-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      background: var(--bg-light);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1.5rem;
+    }
+
+    .meta-item {
+      font-size: 12px;
+      color: var(--secondary-color);
+    }
+    .meta-item strong {
+      color: var(--primary-color);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .meta-item a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    .meta-item a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- NAVIGATION / TABLE OF CONTENTS --- */
+    .toc-container {
+      background: var(--bg-light);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .toc-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .toc-list a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toc-list a:hover {
+      color: var(--accent-color);
+    }
+
+    /* --- SECTIONS --- */
+    .section {
+      margin-bottom: 3.5rem;
+      page-break-inside: avoid;
+    }
+
+    .section-header {
+      border-bottom: 1px solid var(--primary-color);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .section-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 18pt;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .section-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12pt;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .section-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      margin-top: -1rem;
+    }
+
+    /* --- TABLES --- */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+      font-size: 12px;
+      text-align: left;
+      page-break-inside: avoid;
+    }
+
+    th {
+      background-color: var(--primary-color);
+      color: #ffffff;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      padding: 10px 12px;
+      border: 1px solid var(--primary-color);
+    }
+
+    td {
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    tr:nth-child(even) td {
+      background-color: var(--bg-light);
+    }
+
+    /* --- ROUTE CARDS --- */
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+      margin-bottom: 1.5rem;
+      page-break-inside: avoid;
+    }
+
+    .route-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+
+    .route-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-color);
+      margin-bottom: 4px;
+    }
+
+    .route-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 4px;
+    }
+
+    .route-desc {
+      font-size: 11px;
+      color: var(--secondary-color);
+    }
+
+    .group-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--secondary-color);
+      margin: 1.5rem 0 0.75rem 0;
+      border-left: 3px solid var(--primary-color);
+      padding-left: 8px;
+    }
+
+    /* --- DIAGRAMS --- */
+    .diagram-container {
+      background: var(--bg-light);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      white-space: pre;
+    }
+
+    /* --- LABELS & METHOD BADGES --- */
+    .method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-right: 4px;
+    }
+    .get { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .post { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .put { background: #fef9c3; color: #a16207; border: 1px solid #fef08a; }
+    .del { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+    /* --- DB SCHEMA PILLS --- */
+    .schema-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .schema-pill {
+      background: var(--bg-light);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      color: var(--primary-color);
+    }
+
+    /* --- SECURITY CARDS --- */
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .security-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1.25rem;
+    }
+
+    .security-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 6px;
+    }
+
+    .security-detail {
+      font-size: 11px;
+      color: var(--secondary-color);
+      line-height: 1.5;
+    }
+
+    /* --- TIMELINE --- */
+    .timeline {
+      border-left: 2px solid var(--border-color);
+      padding-left: 1.5rem;
+      margin-left: 0.5rem;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: calc(-1.5rem - 6px);
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary-color);
+    }
+
+    .timeline-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-color);
+    }
+
+    .timeline-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin: 2px 0;
+    }
+
+    .timeline-desc {
+      font-size: 11px;
+      color: var(--secondary-color);
+    }
+
+    /* --- FOOTER --- */
+    .footer {
+      border-top: 1px solid var(--border-color);
+      padding-top: 2rem;
+      margin-top: 4rem;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* --- PRINT OPTIMIZATIONS --- */
+    @media print {
+      body {
+        font-size: 10pt;
+        background: #ffffff;
+        color: #000000;
+      }
+      .container {
+        max-width: 100%;
+        padding: 0;
+      }
+      .toc-container {
+        display: none;
+      }
+      .section {
+        page-break-after: always;
+      }
+      .section:last-child {
+        page-break-after: avoid;
+      }
+      th {
+        background-color: #f1f5f9;
+        color: #0f172a;
+        border: 1px solid var(--border-color);
+      }
+      tr:nth-child(even) td {
+        background-color: #f8fafc;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="header-section">
+    <div class="badge">Live Platform Documentation</div>
+    <h1>NyayNow</h1>
+    <div class="header-sub">AI Legal Intelligence &amp; Lawyer Marketplace for India -- Technical Platform Document</div>
+    
+    <div class="metadata-grid">
+      <div class="meta-item">
+        <strong>Domain</strong>
+        <a href="https://nyaynow.in" target="_blank">nyaynow.in</a>
+      </div>
+      <div class="meta-item">
+        <strong>GitHub Repository</strong>
+        <a href="https://github.com/dhruvkumar2107/NyayNow" target="_blank">dhruvkumar2107/NyayNow</a>
+      </div>
+      <div class="meta-item">
+        <strong>API Health</strong>
+        <a href="https://nyaysathi-main.onrender.com/healthz" target="_blank">nyaysathi-main.onrender.com/healthz</a>
+      </div>
+      <div class="meta-item">
+        <strong>Document Version</strong>
+        2.0.0 (June 2026)
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== TABLE OF CONTENTS ==================== -->
+  <nav class="toc-container">
+    <div class="toc-title">Table of Contents</div>
+    <ul class="toc-list">
+      <li><a href="#sitemap">1. Site Map</a></li>
+      <li><a href="#techstack">2. Tech Stack</a></li>
+      <li><a href="#deployment">3. Deployment Architecture</a></li>
+      <li><a href="#api">4. API Route Catalogue</a></li>
+      <li><a href="#database">5. Database Schema</a></li>
+      <li><a href="#security">6. Security Infrastructure</a></li>
+      <li><a href="#versions">7. Version History</a></li>
+      <li><a href="#env">8. Environment Variables</a></li>
+    </ul>
+  </nav>
+
+  <!-- ==================== SITE MAP ==================== -->
+  <section class="section" id="sitemap">
+    <div class="section-header">
+      <h2 class="section-title">Site Map</h2>
+      <span class="section-num">01</span>
+    </div>
+    <div class="section-desc">All pages across the NyayNow platform, structured by functional area.</div>
+
+    <div class="group-title">Public Pages</div>
+    <div class="route-grid">
+      <div class="route-card"><div class="route-path">/</div><div class="route-name">Home</div><div class="route-desc">Landing page, hero sections, Bento grids</div></div>
+      <div class="route-card"><div class="route-path">/about</div><div class="route-name">About Us</div><div class="route-desc">Mission, team biography, company story</div></div>
+      <div class="route-card"><div class="route-path">/contact</div><div class="route-name">Contact</div><div class="route-desc">Contact forms with backend mail integrations</div></div>
+      <div class="route-card"><div class="route-path">/pricing</div><div class="route-name">Pricing</div><div class="route-desc">Subscription options and tier matrices</div></div>
+      <div class="route-card"><div class="route-path">/blog</div><div class="route-name">Blog</div><div class="route-desc">Platform and legal news updates</div></div>
+      <div class="route-card"><div class="route-path">/career</div><div class="route-name">Careers</div><div class="route-desc">Job listing and application boards</div></div>
+      <div class="route-card"><div class="route-path">/professionals</div><div class="route-name">For Professionals</div><div class="route-desc">Premium features showcase for lawyers</div></div>
+      <div class="route-card"><div class="route-path">/case-studies</div><div class="route-name">Case Studies</div><div class="route-desc">In-depth platform impact stories</div></div>
+      <div class="route-card"><div class="route-path">/methodology</div><div class="route-name">Methodology</div><div class="route-desc">Core AI algorithms and logic explanations</div></div>
+      <div class="route-card"><div class="route-path">/security-and-compliance</div><div class="route-name">Security &amp; Compliance</div><div class="route-desc">Compliance metrics (DPDP, GDPR)</div></div>
+    </div>
+
+    <div class="group-title">AI-Powered Tools</div>
+    <div class="route-grid">
+      <div class="route-card"><div class="route-path">/assistant</div><div class="route-name">NyaySathi AI</div><div class="route-desc">Primary AI legal chatbot interface</div></div>
+      <div class="route-card"><div class="route-path">/judge-ai</div><div class="route-name">Judge AI</div><div class="route-desc">Predictive outcome analytics engine</div></div>
+      <div class="route-card"><div class="route-path">/judge-pro</div><div class="route-name">Judge Pro</div><div class="route-desc">Advanced argument analyses for practitioners</div></div>
+      <div class="route-card"><div class="route-path">/research</div><div class="route-name">Legal Research</div><div class="route-desc">AI-powered search for case law and acts</div></div>
+      <div class="route-card"><div class="route-path">/drafting</div><div class="route-name">Document Drafting</div><div class="route-desc">AI contract generator templates</div></div>
+      <div class="route-card"><div class="route-path">/analyze</div><div class="route-name">Document Analyzer</div><div class="route-desc">PDF parser and summary engine</div></div>
+      <div class="route-card"><div class="route-path">/nyayvoice</div><div class="route-name">NyayVoice</div><div class="route-desc">Multilingual speech-to-text AI interface</div></div>
+      <div class="route-card"><div class="route-path">/voice-assistant</div><div class="route-name">Voice Assistant</div><div class="route-desc">Browser audio controls and interactions</div></div>
+      <div class="route-card"><div class="route-path">/courtroom-battle</div><div class="route-name">Courtroom Battle</div><div class="route-desc">Simulated legal dispute interface</div></div>
+      <div class="route-card"><div class="route-path">/moot-court</div><div class="route-name">Moot Court</div><div class="route-desc">Interactive oral argument trainer</div></div>
+      <div class="route-card"><div class="route-path">/nyaycourt-simulator</div><div class="route-name">NyayCourt Simulator</div><div class="route-desc">Full procedural simulation platform</div></div>
+      <div class="route-card"><div class="route-path">/devils-advocate</div><div class="route-name">Devil's Advocate</div><div class="route-desc">AI counter-argument mock processor</div></div>
+    </div>
+
+    <div class="group-title">Lawyer &amp; Marketplace</div>
+    <div class="route-grid">
+      <div class="route-card"><div class="route-path">/marketplace</div><div class="route-name">Marketplace</div><div class="route-desc">Lawyer search listings powered by Algolia</div></div>
+      <div class="route-card"><div class="route-path">/lawyer/:id</div><div class="route-name">Lawyer Profile</div><div class="route-desc">Individual profile pages, ratings, bio</div></div>
+      <div class="route-card"><div class="route-path">/legal-sos</div><div class="route-name">Legal SOS</div><div class="route-desc">Emergency distress dispatch panels</div></div>
+      <div class="route-card"><div class="route-path">/nearby</div><div class="route-name">Nearby Services</div><div class="route-desc">GIS mapping of courts, police, and lawyers</div></div>
+      <div class="route-card"><div class="route-path">/ecourts</div><div class="route-name">eCourts</div><div class="route-desc">Web scraping interface for Indian court status</div></div>
+      <div class="route-card"><div class="route-path">/meet</div><div class="route-name">Video Meet</div><div class="route-desc">Embedded Jitsi consultation client</div></div>
+      <div class="route-card"><div class="route-path">/video-call</div><div class="route-name">Video Call</div><div class="route-desc">Peer-to-peer webRTC client launcher</div></div>
+      <div class="route-card"><div class="route-path">/agreements</div><div class="route-name">Agreements</div><div class="route-desc">E-signature document manager portal</div></div>
+      <div class="route-card"><div class="route-path">/rent-agreement</div><div class="route-name">Rent Agreement</div><div class="route-desc">Wizard builder for tenancy contracts</div></div>
+    </div>
+
+    <div class="group-title">Dashboards (Authenticated)</div>
+    <div class="route-grid">
+      <div class="route-card"><div class="route-path">/client</div><div class="route-name">Client Dashboard</div><div class="route-desc">Case timelines, invoice list, message queue</div></div>
+      <div class="route-card"><div class="route-path">/messages</div><div class="route-name">Messages</div><div class="route-desc">Socket.io real-time chat interface</div></div>
+      <div class="route-card"><div class="route-path">/calendar</div><div class="route-name">Calendar</div><div class="route-desc">Court dates schedule and appointments</div></div>
+      <div class="route-card"><div class="route-path">/analytics</div><div class="route-name">Analytics</div><div class="route-desc">Platform usage graphs (Recharts)</div></div>
+      <div class="route-card"><div class="route-path">/settings</div><div class="route-name">Settings</div><div class="route-desc">Profile, payment setup, passwords</div></div>
+      <div class="route-card"><div class="route-path">/payment</div><div class="route-name">Payment</div><div class="route-desc">Razorpay portal interfaces</div></div>
+      <div class="route-card"><div class="route-path">/compliances</div><div class="route-name">Compliances</div><div class="route-desc">DPDP dashboard metrics</div></div>
+    </div>
+  </section>
+
+  <!-- ==================== TECH STACK ==================== -->
+  <section class="section" id="techstack">
+    <div class="section-header">
+      <h2 class="section-title">Tech Stack</h2>
+      <span class="section-num">02</span>
+    </div>
+    <div class="section-desc">Key dependencies, frameworks, libraries, and integrations.</div>
+
+    <div class="group-title">Frontend Stack</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Technology</th>
+          <th style="width: 15%;">Version</th>
+          <th>Purpose / Context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Next.js</strong></td><td>14.1.0</td><td>React production framework, hybrid SSR/SSG rendering</td></tr>
+        <tr><td><strong>Tailwind CSS</strong></td><td>3.4.3</td><td>Utility styling framework across all pages</td></tr>
+        <tr><td><strong>Framer Motion</strong></td><td>12.33.0</td><td>Interactive state transitions and client-side page animations</td></tr>
+        <tr><td><strong>Lenis</strong></td><td>1.3.17</td><td>Smooth scrolling integration for browsers</td></tr>
+        <tr><td><strong>Algolia InstantSearch</strong></td><td>7.23.2</td><td>Faceted client search interface for lawyer matchmaking</td></tr>
+        <tr><td><strong>Recharts</strong></td><td>2.12.2</td><td>Dashboard graphics and metrics representation</td></tr>
+        <tr><td><strong>Socket.io Client</strong></td><td>4.7.5</td><td>Client WebSockets for messaging and location tracking</td></tr>
+        <tr><td><strong>jsPDF</strong></td><td>4.2.0</td><td>Client-side compilation and formatting of legal PDFs</td></tr>
+        <tr><td><strong>React Leaflet</strong></td><td>4.2.1</td><td>Mapping visualization client for local lawyer locators</td></tr>
+      </tbody>
+    </table>
+
+    <div class="group-title">Backend &amp; Database</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Technology</th>
+          <th style="width: 15%;">Version</th>
+          <th>Purpose / Context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Node.js</strong></td><td>&gt;=18.0.0</td><td>JavaScript runtime environment</td></tr>
+        <tr><td><strong>Express.js</strong></td><td>4.18.2</td><td>HTTP REST endpoint builder and middleware manager</td></tr>
+        <tr><td><strong>Socket.io</strong></td><td>4.8.3</td><td>Real-time WebSocket broker server</td></tr>
+        <tr><td><strong>Mongoose</strong></td><td>7.8.8</td><td>Object Document Mapper (ODM) for MongoDB</td></tr>
+        <tr><td><strong>MongoDB Atlas</strong></td><td>Cloud</td><td>Primary server storage engine (NoSQL)</td></tr>
+        <tr><td><strong>Razorpay SDK</strong></td><td>2.9.6</td><td>Subscription generation and transaction validation</td></tr>
+        <tr><td><strong>Twilio SDK</strong></td><td>5.12.1</td><td>Sms notifications and Whatsapp dispatch logic</td></tr>
+        <tr><td><strong>Helmet.js</strong></td><td>8.1.0</td><td>Secure HTTP response headers management</td></tr>
+      </tbody>
+    </table>
+
+    <div class="group-title">Artificial Intelligence</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Service</th>
+          <th style="width: 25%;">Provider</th>
+          <th>Function</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Gemini 2.5 Flash</strong></td><td>Google AI Studio</td><td>Generative text API for assistant and analysis</td></tr>
+        <tr><td><strong>Gemini Vision</strong></td><td>Google AI Studio</td><td>OCR verification engine for Bar Council documentation</td></tr>
+        <tr><td><strong>Indian Kanoon API</strong></td><td>Indian Kanoon</td><td>Grounding engine for statutory references and case histories</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ==================== DEPLOYMENT ==================== -->
+  <section class="section" id="deployment">
+    <div class="section-header">
+      <h2 class="section-title">Deployment Architecture</h2>
+      <span class="section-num">03</span>
+    </div>
+    <div class="section-desc">Host configurations, pipelines, and external integrations in production.</div>
+
+    <div class="diagram-container">
+                     ┌──────────────────────────────────────────┐
+                     │           USERS  (Browser / Mobile)       │
+                     └──────────────────┬───────────────────────┘
+                                        │  HTTPS
+                     ┌──────────────────┼───────────────────────┐
+                     │                                          │
+         ┌───────────▼───────────┐              ┌──────────────▼──────────────┐
+         │  FRONTEND             │              │  BACKEND API                │
+         │  Vercel               │              │  Render.com                 │
+         │  nyaynow.in           │&lt;──REST───────│  nyaysathi-main             │
+         │  Next.js 14 SSR       │&lt;──WebSocket──│  .onrender.com              │
+         │  Global Edge CDN      │              │  Node.js + Express + WS     │
+         │  Auto HTTPS / TLS     │              │  Port 4000                  │
+         └───────────────────────┘              └──────────────┬──────────────┘
+                                                               │
+                   ┌───────────────────────────────────────────┤
+                   │                   │                        │
+       ┌───────────▼──────┐  ┌─────────▼────────┐  ┌──────────▼───────────┐
+       │  MongoDB Atlas    │  │  Cloudinary      │  │  Google Gemini AI    │
+       │  Cloud Database  │  │  File Storage    │  │  Gemini 2.5 Flash    │
+       │  cluster0.iofqvq │  │  Images &amp; PDFs   │  │  AI Legal Engine     │
+       └──────────────────┘  └──────────────────┘  └──────────────────────┘
+
+              ┌────────────────────────────────────────────────────────────┐
+              │                THIRD-PARTY INTEGRATIONS                    │
+              │                                                            │
+              │  Razorpay      Payments &amp; Subscriptions                    │
+              │  Algolia       Lawyer search &amp; ranking                     │
+              │  Twilio        WhatsApp alerts &amp; SMS                       │
+              │  DocuSign      Legal document e-signing                    │
+              │  Jitsi Meet    Secure video consultations                  │
+              │  Sentry        Error monitoring (frontend + backend)        │
+              │  PostHog       Product analytics &amp; user behaviour          │
+              │  DigiLocker    Bar Council ID verification                 │
+              └────────────────────────────────────────────────────────────┘
+    </div>
+
+    <div class="group-title">Service URL Inventory</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Service Name</th>
+          <th>Hosting Provider</th>
+          <th>Production URL / URI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Frontend</strong></td><td>Vercel Edge Network</td><td>`https://nyaynow.in`</td></tr>
+        <tr><td><strong>Backend API</strong></td><td>Render.com Services</td><td>`https://nyaysathi-main.onrender.com`</td></tr>
+        <tr><td><strong>Database Cluster</strong></td><td>MongoDB Atlas Cloud</td><td>`cluster0.iofqvq2.mongodb.net`</td></tr>
+        <tr><td><strong>Media / PDF Storage</strong></td><td>Cloudinary</td><td>`res.cloudinary.com`</td></tr>
+        <tr><td><strong>Payments Portal</strong></td><td>Razorpay API</td><td>`checkout.razorpay.com`</td></tr>
+        <tr><td><strong>Source Code Repository</strong></td><td>GitHub</td><td>`github.com/dhruvkumar2107/NyayNow`</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ==================== API ==================== -->
+  <section class="section" id="api">
+    <div class="section-header">
+      <h2 class="section-title">API Route Catalogue</h2>
+      <span class="section-num">04</span>
+    </div>
+    <div class="section-desc">Host route list targeting the production gateway base URL.</div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Endpoint Path</th>
+          <th style="width: 20%;">Methods</th>
+          <th>Functional Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>/healthz</td><td><span class="method get">GET</span></td><td>Performs server uptime and DB socket connection verification</td></tr>
+        <tr><td>/api/auth</td><td><span class="method post">POST</span></td><td>Registers new client/lawyer user roles, processes Google OAuth tokens</td></tr>
+        <tr><td>/api/ai</td><td><span class="method post">POST</span></td><td>Gemini interface controller (chatbots, predicting outcome, moot simulator)</td></tr>
+        <tr><td>/api/lawyers</td><td><span class="method get">GET</span> <span class="method post">POST</span> <span class="method put">PUT</span></td><td>Retrieves listing collections, modifies verified details, updates rankings</td></tr>
+        <tr><td>/api/users</td><td><span class="method get">GET</span> <span class="method put">PUT</span> <span class="method del">DEL</span></td><td>Access control profiles endpoints</td></tr>
+        <tr><td>/api/messages</td><td><span class="method get">GET</span> <span class="method post">POST</span></td><td>Returns conversation history streams</td></tr>
+        <tr><td>/api/chats</td><td><span class="method get">GET</span> <span class="method post">POST</span></td><td>Stores user session chats with Gemini models</td></tr>
+        <tr><td>/api/appointments</td><td><span class="method get">GET</span> <span class="method post">POST</span> <span class="method put">PUT</span></td><td>Scheduler, video room associations, updates status</td></tr>
+        <tr><td>/api/payments</td><td><span class="method post">POST</span></td><td>Generates Razorpay request hashes, validates webhooks</td></tr>
+        <tr><td>/api/subscriptions</td><td><span class="method get">GET</span> <span class="method post">POST</span> <span class="method del">DEL</span></td><td>Manages lawyer recurring packages</td></tr>
+        <tr><td>/api/leads</td><td><span class="method get">GET</span> <span class="method post">POST</span></td><td>Lead credits accounting and client matches</td></tr>
+        <tr><td>/api/cases</td><td><span class="method get">GET</span> <span class="method post">POST</span> <span class="method put">PUT</span></td><td>Manages case documentation metadata and file links</td></tr>
+        <tr><td>/api/agreements</td><td><span class="method get">GET</span> <span class="method post">POST</span></td><td>AI agreement generation, signing integrations</td></tr>
+        <tr><td>/api/crm</td><td><span class="method get">GET</span> <span class="method post">POST</span> <span class="method put">PUT</span></td><td>Customer Relationship Management client database tool for lawyers</td></tr>
+        <tr><td>/api/ecourts</td><td><span class="method get">GET</span></td><td>Aggregates case registry databases based on case numbers</td></tr>
+        <tr><td>/api/verification</td><td><span class="method get">GET</span> <span class="method post">POST</span></td><td>DigiLocker credential assertion webhooks</td></tr>
+        <tr><td>/api/whatsapp</td><td><span class="method post">POST</span></td><td>Receives and decodes Twilio webhook events</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ==================== DATABASE SCHEMA ==================== -->
+  <section class="section" id="database">
+    <div class="section-header">
+      <h2 class="section-title">Database Schema</h2>
+      <span class="section-num">05</span>
+    </div>
+    <div class="section-desc">Active collections instantiated in MongoDB Atlas.</div>
+
+    <div class="schema-grid">
+      <div class="schema-pill">User</div>
+      <div class="schema-pill">Case</div>
+      <div class="schema-pill">Appointment</div>
+      <div class="schema-pill">Message</div>
+      <div class="schema-pill">ChatHistory</div>
+      <div class="schema-pill">Connection</div>
+      <div class="schema-pill">Agreement</div>
+      <div class="schema-pill">Invoice</div>
+      <div class="schema-pill">Payment</div>
+      <div class="schema-pill">Notification</div>
+      <div class="schema-pill">Post</div>
+      <div class="schema-pill">Topic</div>
+      <div class="schema-pill">Event</div>
+      <div class="schema-pill">CRMClient</div>
+      <div class="schema-pill">CasePrediction</div>
+      <div class="schema-pill">AuditLog</div>
+      <div class="schema-pill">Confession</div>
+    </div>
+  </section>
+
+  <!-- ==================== SECURITY ==================== -->
+  <section class="section" id="security">
+    <div class="section-header">
+      <h2 class="section-title">Security Infrastructure</h2>
+      <span class="section-num">06</span>
+    </div>
+    <div class="section-desc">Technical mitigation measures protecting operations.</div>
+
+    <div class="security-grid">
+      <div class="security-card">
+        <div class="security-name">JWT Authentication</div>
+        <div class="security-detail">Stateless authorization signatures (jsonwebtoken version 9.0.3). Extracted and validated on every middleware request.</div>
+      </div>
+      <div class="security-card">
+        <div class="security-name">Password Encryption</div>
+        <div class="security-detail">Salting and hashing via bcryptjs. Raw strings are scrubbed before arriving at storage or logs.</div>
+      </div>
+      <div class="security-card">
+        <div class="security-name">Helmet.js Protection</div>
+        <div class="security-detail">Configures HTTP headers preventing clickjacking, enforcing content security policies, and upgrading connections to HTTPS.</div>
+      </div>
+      <div class="security-card">
+        <div class="security-name">Rate Limiting</div>
+        <div class="security-detail">Standard Express middleware limiting general endpoints to 300 requests per 15 minutes, auth to 10 per hour.</div>
+      </div>
+      <div class="security-card">
+        <div class="security-name">DPDP Compliance</div>
+        <div class="security-detail">Aligns storage lifetimes and cookie usage patterns to the guidelines of the Indian DPDP Act 2023.</div>
+      </div>
+      <div class="security-card">
+        <div class="security-name">WebSocket Guard</div>
+        <div class="security-detail">Enforces identical JWT assertions during the initial HTTP handshake of any WebSocket client request.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== VERSION HISTORY ==================== -->
+  <section class="section" id="versions">
+    <div class="section-header">
+      <h2 class="section-title">Version History</h2>
+      <span class="section-num">07</span>
+    </div>
+    <div class="section-desc">Git repository release tag milestones.</div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-tag">v1.0.0-initial</div>
+        <div class="timeline-title">Initial Release</div>
+        <div class="timeline-desc">commit 95b3c4a - Base routing structures, MongoDB integrations, client/lawyer UI frames</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-tag">v1.1.0-auth</div>
+        <div class="timeline-title">OAuth Integrations</div>
+        <div class="timeline-desc">commit fd71597 - Google One Tap verification modules, role setting database upgrades</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-tag">v1.2.0-features</div>
+        <div class="timeline-title">Core AI Services</div>
+        <div class="timeline-desc">commit 617d253 - Judge AI predictors, document scanner models, video room bindings</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-tag">v1.3.0-monetization</div>
+        <div class="timeline-title">Billing &amp; Locales</div>
+        <div class="timeline-desc">commit 020b87e - Razorpay gateways, regional AI assistants, automated calendar syncing</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-tag">v1.4.0-startup-upgrades</div>
+        <div class="timeline-title">Security Overhaul</div>
+        <div class="timeline-desc">commit 0015dd4 - Rate limit controls, logging scrubbing filters, input length verification</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-tag">v2.0.0-professionals</div>
+        <div class="timeline-title">Professionals Suite</div>
+        <div class="timeline-desc">commit 6846b87 - Premium legal marketing modules, UX upgrades, chatbot enhancements</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ENV ==================== -->
+  <section class="section" id="env">
+    <div class="section-header">
+      <h2 class="section-title">Environment Variables</h2>
+      <span class="section-num">08</span>
+    </div>
+    <div class="section-desc">Key environment variables necessary for system build and run states.</div>
+
+    <div class="group-title">Frontend (.env)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>NEXT_PUBLIC_API_URL</td><td>Base address pointing to Render backend API gateway</td></tr>
+        <tr><td>NEXT_PUBLIC_GOOGLE_CLIENT_ID</td><td>Google One Tap credential verification ID key</td></tr>
+      </tbody>
+    </table>
+
+    <div class="group-title">Backend (.env)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>MONGO_URI</td><td>Atlas connection string including user, cluster domain, and db collection names</td></tr>
+        <tr><td>JWT_SECRET</td><td>Secure private token key used during registration / handshake cycles</td></tr>
+        <tr><td>GEMINI_API_KEY</td><td>Google Generative AI access key token credentials</td></tr>
+        <tr><td>RZP_KEY_ID / RZP_KEY_SECRET</td><td>Razorpay production merchant billing credentials</td></tr>
+        <tr><td>CLOUDINARY_CLOUD_NAME / KEY / SECRET</td><td>API endpoints to upload file data profiles</td></tr>
+        <tr><td>SENTRY_DSN</td><td>Logging error reporting service address endpoints</td></tr>
+        <tr><td>TWILIO_ACCOUNT_SID / AUTH_TOKEN</td><td>SMS notification authentication credentials</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <p>NyayNow Tech Documentation | Domain: nyaynow.in</p>
+    <p style="margin-top: 5px;">Generated: June 2026. Version 2.0.0. Professional Technical Resource.</p>
+  </footer>
+
+</div>
+
+</body>
+</html>

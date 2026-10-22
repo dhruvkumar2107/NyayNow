@@ -1,0 +1,105 @@
+import google.generativeai as genai
+import json
+
+def configure_genai(api_key):
+    genai.configure(api_key=api_key)
+
+def build_prompt(user_text, ui_lang="English", anon=False, location=""):
+    base = f"You are a helpful legal AI assistant called Nyay Sathi. Answer the user's legal question in {ui_lang}."
+
+    if location:
+        base += f" The user is in {location}, so consider local laws if applicable."
+    if anon:
+        base += " The user wishes to remain anonymous, so do not ask for personal details."
+
+    base += f"""
+
+User Question:
+{user_text}
+
+Return ONLY valid JSON in this exact format:
+{{
+  "answer": "clear legal answer in markdown",
+  "related_questions": ["q1", "q2", "q3"],
+  "intent": "legal_topic"
+}}
+"""
+    return base
+
+
+
+def build_agreement_prompt(text, ui_lang="English"):
+    return f"""
+Analyze the following legal agreement in {ui_lang}.
+
+Return JSON:
+{{
+  "risks": [],
+  "clauses": [],
+  "redFlags": []
+}}
+
+Text:
+{text[:5000]}
+"""
+
+
+def build_case_analysis_prompt(text, ui_lang="English"):
+    return f"""
+Analyze the following legal issue/situation in {ui_lang}.
+
+Return JSON with these exact keys:
+{{
+  "summary": "Brief summary of the legal situation",
+  "laws": ["List of relevant acts/sections (e.g. IPC Section 420, Contract Act)"],
+  "advice": "Actionable legal information or next steps"
+}}
+
+User Situation:
+{text[:4000]}
+"""
+
+
+def call_gemini(prompt):
+    models_to_try = [
+        "gemini-2.5-pro",
+        "gemini-2.0-flash",
+        "gemini-1.5-pro",
+        "gemini-1.5-flash"
+    ]
+    
+    errors = []
+    for model_name in models_to_try:
+        try:
+            print(f"📡 Python Service: Attempting with {model_name}...")
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content(prompt)
+            if response and response.text:
+                print(f"✅ Python Service: Success with {model_name}")
+                return response.text
+        except Exception as e:
+            print(f"❌ Python Service: Error with {model_name}: {str(e)}")
+            errors.append(f"{model_name}: {str(e)}")
+            
+    # If all fail, return a JSON error
+    return json.dumps({
+        "answer": f"AI Service Exhausted. Details: {' | '.join(errors)}",
+        "related_questions": [], 
+        "intent": "error"
+    })
+
+
+def extract_json_from_text(text):
+    text = text.strip()
+
+    if text.startswith("```"):
+        text = text.replace("```json", "").replace("```", "")
+
+    try:
+        return json.loads(text)
+    except Exception:
+        return {
+            "answer": text,
+            "related_questions": [],
+            "intent": "unknown"
+        }

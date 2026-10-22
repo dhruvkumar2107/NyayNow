@@ -1,0 +1,1655 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NyayNow - Technology Stack, Product Scope &amp; Delivery Plan</title>
+<style>
+  :root {
+    --navy: #0f172a;
+    --navy-2: #1e293b;
+    --blue: #2563eb;
+    --gold: #d4af37;
+    --gold-soft: #fbf5df;
+    --slate: #334155;
+    --muted: #64748b;
+    --line: #dbe3ee;
+    --panel: #f8fafc;
+    --panel-2: #f1f5f9;
+    --green: #15803d;
+    --green-bg: #eaf7ee;
+    --amber: #b45309;
+    --amber-bg: #fef4e6;
+    --purple: #6d28d9;
+    --purple-bg: #f2ecff;
+    --red: #b91c1c;
+    --red-bg: #fdecec;
+  }
+
+  @page { size: A4; margin: 15mm 14mm 16mm; }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    margin: 0;
+    background: #dfe5ec;
+    color: #1e293b;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+    line-height: 1.5;
+  }
+
+  .sheet {
+    width: 210mm;
+    margin: 24px auto;
+    padding: 16mm 15mm 18mm;
+    background: #ffffff;
+    box-shadow: 0 18px 60px rgba(15, 23, 42, 0.18);
+  }
+
+  a { color: var(--blue); text-decoration: none; }
+
+  /* ---------- COVER ---------- */
+  .cover {
+    min-height: 245mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid var(--line);
+    padding: 14mm 13mm 12mm;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(212, 175, 55, 0.15), transparent 42%),
+      radial-gradient(circle at 0% 100%, rgba(37, 99, 235, 0.10), transparent 45%),
+      #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 7px;
+    background: linear-gradient(180deg, var(--navy) 0%, var(--blue) 55%, var(--gold) 100%);
+  }
+
+  .cover-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .brandmark { display: flex; align-items: center; gap: 12px; }
+
+  .monogram {
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--navy); color: #ffffff;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 26px; font-weight: 700;
+    border-radius: 4px; border-bottom: 3px solid var(--gold);
+  }
+
+  .brandname { font-size: 18px; font-weight: 800; letter-spacing: 0.16em; color: var(--navy); line-height: 1.15; }
+  .brandtag { margin-top: 4px; font-size: 8.5pt; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+  .conf {
+    font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 11px; white-space: nowrap; background: rgba(255,255,255,0.7);
+  }
+
+  .cover-main { padding-top: 26mm; }
+
+  .kicker { font-size: 9pt; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); font-weight: 700; margin-bottom: 10px; }
+
+  .cover h1 { margin: 0; color: var(--navy); font-size: 35pt; line-height: 1.08; letter-spacing: -0.8px; font-weight: 800; }
+
+  .cover h1 .thin {
+    display: block; font-family: Georgia, "Times New Roman", serif;
+    font-style: italic; font-weight: 400; color: var(--blue);
+    font-size: 31pt; margin-top: 4px;
+  }
+
+  .cover-sub { max-width: 150mm; margin: 16px 0 0; font-size: 11pt; line-height: 1.55; color: var(--slate); }
+
+  .cover-meta {
+    margin-top: 20mm; display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    border-top: 1px solid var(--line); border-left: 1px solid var(--line);
+  }
+
+  .cover-meta > div {
+    padding: 8px 10px; border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line); background: rgba(255,255,255,0.75);
+  }
+
+  .cover-meta span { display: block; font-size: 7pt; letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .cover-meta strong { display: block; font-size: 9.5pt; color: var(--navy); line-height: 1.35; }
+
+  .cover-bottom { border-top: 1px solid var(--line); padding-top: 9px; display: flex; justify-content: space-between; gap: 18px; align-items: flex-end; }
+  .disclaimer-mini { font-size: 7.6pt; line-height: 1.45; color: var(--muted); max-width: 130mm; }
+  .cover-stamp { font-family: Georgia, "Times New Roman", serif; font-style: italic; color: var(--navy); font-size: 11pt; white-space: nowrap; }
+
+  /* ---------- SECTIONS ---------- */
+  .major { page-break-before: always; break-before: page; }
+
+  h2 {
+    margin: 0 0 4mm; padding: 0 0 2.5mm;
+    border-bottom: 1.6px solid var(--gold);
+    color: var(--navy); font-size: 19pt; line-height: 1.15; letter-spacing: -0.3px;
+    page-break-after: avoid; break-after: avoid;
+  }
+
+  h2 .num { color: var(--gold); font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; margin-right: 7px; }
+
+  h3 { margin: 6mm 0 2mm; color: var(--navy); font-size: 12.5pt; line-height: 1.25; page-break-after: avoid; break-after: avoid; }
+  h4 { margin: 4mm 0 1.5mm; color: var(--navy-2); font-size: 10.5pt; page-break-after: avoid; break-after: avoid; }
+
+  p { margin: 0 0 2.6mm; }
+  p.lead { font-size: 11pt; color: var(--slate); line-height: 1.55; }
+  .small { font-size: 8.4pt; color: var(--muted); }
+  .tight { margin-bottom: 1.4mm; }
+
+  ul, ol { margin: 0 0 3mm; padding-left: 5mm; }
+  li { margin-bottom: 1.1mm; }
+  strong { color: #0b1220; }
+
+  /* ---------- CALLOUTS ---------- */
+  .callout {
+    border-left: 4px solid var(--blue); background: #f4f8ff;
+    padding: 3mm 4mm; margin: 3mm 0 4mm;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+
+  .callout.gold { border-left-color: var(--gold); background: var(--gold-soft); }
+  .callout.warn { border-left-color: var(--amber); background: var(--amber-bg); }
+  .callout.danger { border-left-color: var(--red); background: var(--red-bg); }
+
+  .callout .label {
+    display: block; font-size: 7pt; letter-spacing: 0.14em;
+    text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: 1.5mm;
+  }
+
+  .callout p:last-child, .callout ul:last-child { margin-bottom: 0; }
+
+  .quote {
+    font-family: Georgia, "Times New Roman", serif; font-size: 12.5pt;
+    font-style: italic; line-height: 1.5; color: var(--navy);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    padding: 4mm 0; margin: 4mm 0;
+  }
+
+  /* ---------- TABLES ---------- */
+  table.tbl {
+    width: 100%; border-collapse: collapse; table-layout: fixed;
+    font-size: 8.3pt; line-height: 1.35; margin: 2mm 0 4mm; page-break-inside: auto;
+  }
+
+  table.tbl thead { display: table-header-group; }
+
+  table.tbl th {
+    background: var(--navy); color: #ffffff; text-align: left;
+    font-weight: 600; letter-spacing: 0.02em; padding: 4.5px 6px;
+    border: 1px solid var(--navy); vertical-align: bottom;
+  }
+
+  table.tbl td {
+    padding: 4.5px 6px; border: 1px solid var(--line);
+    vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+  }
+
+  table.tbl tbody tr:nth-child(even) td { background: #f8fafc; }
+
+  table.tbl tbody tr.group td {
+    background: #e8eef7 !important; color: var(--navy); font-weight: 700;
+    font-size: 8.4pt; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 4px 6px; border-left: 4px solid var(--gold);
+  }
+
+  table.tbl tr { page-break-inside: avoid; break-inside: avoid; }
+
+  table.tbl.compact { font-size: 7.6pt; line-height: 1.3; }
+  table.tbl.compact th, table.tbl.compact td { padding: 3.5px 5px; }
+
+  table.kv td:first-child { width: 33%; background: var(--panel-2); font-weight: 600; color: var(--navy); }
+  table.kv tbody tr:nth-child(even) td { background: transparent; }
+  table.kv tbody tr:nth-child(even) td:first-child { background: var(--panel-2); }
+
+  .table-note { font-size: 7.8pt; color: var(--muted); margin-top: -2mm; margin-bottom: 3.5mm; }
+
+  /* ---------- BADGES ---------- */
+  .badge {
+    display: inline-block; padding: 1px 5px; border-radius: 3px;
+    font-size: 6.7pt; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; white-space: nowrap; border: 1px solid transparent;
+  }
+
+  .b-live { color: var(--green); background: var(--green-bg); border-color: #bfe3c9; }
+  .b-beta { color: var(--amber); background: var(--amber-bg); border-color: #f0d3a8; }
+  .b-exp { color: var(--purple); background: var(--purple-bg); border-color: #d9c8fb; }
+  .b-gated { color: var(--blue); background: #eaf1ff; border-color: #c3d6ff; }
+  .b-plan { color: var(--muted); background: #eef2f7; border-color: #d7dfe9; }
+
+  /* ---------- CARDS / GRIDS ---------- */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin: 2mm 0 4mm; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; margin: 2mm 0 4mm; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5mm; margin: 2mm 0 4mm; }
+
+  .card {
+    border: 1px solid var(--line); background: #ffffff; padding: 3mm 3.5mm;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+
+  .card.soft { background: var(--panel); }
+  .card h4 { margin: 0 0 1.5mm; font-size: 10pt; }
+  .card p { margin: 0; font-size: 8.7pt; color: var(--slate); line-height: 1.45; }
+
+  .card .tag {
+    display: block; font-size: 6.8pt; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 1.2mm;
+  }
+
+  .kpi {
+    border: 1px solid var(--line); border-top: 3px solid var(--gold);
+    padding: 3mm; background: #ffffff; page-break-inside: avoid; break-inside: avoid;
+  }
+
+  .kpi .v { font-size: 14pt; font-weight: 800; color: var(--navy); line-height: 1.1; }
+  .kpi .l { font-size: 7.4pt; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 1.2mm; }
+
+  /* ---------- TOC ---------- */
+  .toc { list-style: none; padding: 0; margin: 2mm 0 0; counter-reset: toc; }
+
+  .toc li {
+    display: flex; align-items: baseline; gap: 8px;
+    padding: 2.1mm 0; border-bottom: 1px dotted #cbd5e1; font-size: 9.6pt;
+  }
+
+  .toc .n { width: 10mm; flex: 0 0 10mm; color: var(--gold); font-weight: 700; font-family: Georgia, "Times New Roman", serif; }
+  .toc .t { flex: 1 1 auto; color: var(--navy); }
+  .toc .d { color: var(--muted); font-size: 8pt; white-space: nowrap; }
+
+  /* ---------- DIAGRAM ---------- */
+  .diagram {
+    border: 1px solid var(--line); background: #ffffff; padding: 3mm;
+    margin: 3mm 0 4mm; page-break-inside: avoid; break-inside: avoid;
+  }
+
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram .cap { font-size: 7.6pt; color: var(--muted); margin-top: 2mm; border-top: 1px solid var(--line); padding-top: 1.5mm; }
+
+  /* ---------- CHECKLIST ---------- */
+  .checklist { list-style: none; padding: 0; margin: 2mm 0 4mm; }
+
+  .checklist li { position: relative; padding-left: 7mm; margin-bottom: 1.7mm; font-size: 9pt; page-break-inside: avoid; }
+
+  .checklist li::before {
+    content: ""; position: absolute; left: 0; top: 1.5px;
+    width: 3.4mm; height: 3.4mm; border: 1.2px solid var(--slate);
+    border-radius: 1px; background: #ffffff;
+  }
+
+  .checklist.two { column-count: 2; column-gap: 7mm; }
+  .checklist.two li { break-inside: avoid; }
+
+  /* ---------- CODE ---------- */
+  pre {
+    margin: 2mm 0 3.5mm; padding: 3mm 3.5mm; background: #0f172a; color: #e2e8f0;
+    font-family: Consolas, "Courier New", monospace; font-size: 7.8pt; line-height: 1.5;
+    white-space: pre-wrap; word-break: break-word; border-radius: 2px;
+    border-left: 3px solid var(--gold); page-break-inside: avoid; break-inside: avoid;
+  }
+
+  code {
+    font-family: Consolas, "Courier New", monospace; font-size: 8.4pt;
+    background: #eef2f7; padding: 0 3px; border-radius: 2px; color: var(--navy);
+  }
+
+  pre code { background: transparent; color: inherit; padding: 0; font-size: inherit; }
+
+  /* ---------- MISC ---------- */
+  .owner {
+    display: inline-block; font-size: 6.8pt; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 1px 5px; border-radius: 3px; background: var(--navy); color: #ffffff;
+  }
+
+  .owner.d { background: var(--blue); }
+  .owner.t { background: #7c3aed; }
+
+  .doc-footer {
+    margin-top: 8mm; border-top: 1px solid var(--line); padding-top: 3mm;
+    font-size: 7.6pt; color: var(--muted); display: flex; justify-content: space-between; gap: 12px;
+  }
+
+  @media screen and (max-width: 900px) {
+    .sheet { width: auto; margin: 0; padding: 22px; box-shadow: none; }
+    .cover { min-height: 0; }
+    .cover h1 { font-size: 28pt; }
+    .cover-main { padding-top: 18mm; }
+    .grid2, .grid3, .grid4, .cover-meta { grid-template-columns: 1fr; }
+    .checklist.two { column-count: 1; }
+    table.tbl { font-size: 8pt; }
+  }
+
+  @media print {
+    body { background: #ffffff; font-size: 9.4pt; }
+    .sheet { width: auto; margin: 0; padding: 0; box-shadow: none; }
+    .cover { min-height: 252mm; height: 252mm; page-break-after: always; break-after: page; }
+    .cover-main { padding-top: 30mm; }
+    .cover h1 { font-size: 34pt; }
+    .cover h1 .thin { font-size: 30pt; }
+    a { color: inherit; text-decoration: none; }
+    h2 { font-size: 18pt; }
+    table.tbl { font-size: 8.1pt; }
+    .doc-footer { margin-top: 4mm; padding-top: 2mm; page-break-inside: avoid; }
+    .pb { page-break-before: always; break-before: page; margin-top: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<!-- ================= COVER ================= -->
+<section class="cover">
+  <div class="cover-top">
+    <div class="brandmark">
+      <div class="monogram">N</div>
+      <div>
+        <div class="brandname">NYAYNOW</div>
+        <div class="brandtag">Legal intelligence for India</div>
+      </div>
+    </div>
+    <div class="conf">Internal &middot; Team planning &middot; v1.0</div>
+  </div>
+
+  <div class="cover-main">
+    <div class="kicker">Platform blueprint &middot; 2026</div>
+    <h1>Technology Stack,<br>Product Scope &amp;<span class="thin">Delivery Plan</span></h1>
+    <p class="cover-sub">A working reference for the NyayNow v2.0 Beta platform: what it does, who it serves, how it is built, and what Rudraksh, Dhruv and Tejas must deliver next.</p>
+
+    <div class="cover-meta">
+      <div><span>Product</span><strong>NyayNow &mdash; AI-assisted legal information &amp; lawyer marketplace</strong></div>
+      <div><span>Domain</span><strong>www.nyaynow.in</strong></div>
+      <div><span>Prepared for</span><strong>Rudraksh &middot; Dhruv &middot; Tejas</strong></div>
+      <div><span>Date / version</span><strong>22 October 2026 &middot; v1.0</strong></div>
+      <div><span>Repository</span><strong>github.com/dhruvkumar2107/NyayNow</strong></div>
+      <div><span>Jurisdiction</span><strong>India &mdash; BNS 2024, IPC mapping, eCourts</strong></div>
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="disclaimer-mini">AI-assisted legal information, not legal advice. Outputs may be incomplete or wrong. Verify primary sources and consult a qualified advocate before acting. Legal SOS is an information and contact workflow, not an emergency dispatch service.</div>
+    <div class="cover-stamp">NyayNow</div>
+  </div>
+</section>
+
+<!-- ================= DOC CONTROL ================= -->
+<section>
+  <h2><span class="num">00</span>Document control</h2>
+
+  <table class="tbl kv">
+    <tbody>
+      <tr><td>Document</td><td>NyayNow &mdash; Technology Stack, Product Scope &amp; Delivery Plan</td></tr>
+      <tr><td>Version / status</td><td>v1.0 &mdash; working draft for internal delivery planning</td></tr>
+      <tr><td>Date</td><td>22 October 2026</td></tr>
+      <tr><td>Product stage</td><td>v2.0 Beta &mdash; live public site with AI-assisted legal information, lawyer discovery and document workflows</td></tr>
+      <tr><td>Prepared for</td><td>Rudraksh (development &amp; deployment), Dhruv (API keys &amp; database), Tejas (HR frontend &amp; other development)</td></tr>
+      <tr><td>Evidence base</td><td>Public site www.nyaynow.in; repository package manifests, routes, models, deployment files, audits and docs (as of the document date)</td></tr>
+      <tr><td>Classification</td><td>Internal. Do not publish. Contains no secret values &mdash; environment variable names only.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout gold">
+    <span class="label">How to use this document</span>
+    <p>Sections 1&ndash;4 are the product brief: positioning, audience and feature inventory. Sections 5&ndash;9 are the engineering reference: stack, architecture, data, APIs, security and non-functional targets. Section 10 is the delivery plan with named owners. Sections 11&ndash;12 are the risk and launch gates. Appendices hold the environment register, deployment runbook, known gaps and glossary.</p>
+  </div>
+
+  <div class="callout">
+    <span class="label">Scope assumption</span>
+    <p>&ldquo;HR&rdquo; in the Tejas workstream is interpreted as the <strong>hiring and careers portal</strong> (public careers pages plus an internal applicant-tracking view). If it refers to a separate human-resources product, the same frontend, data-model and API patterns can be reused; confirm before Sprint 3.</p>
+  </div>
+
+  <div class="callout warn">
+    <span class="label">Honesty rules used throughout</span>
+    <p>Status labels reflect what is actually present in the repository and public site. &ldquo;Live&rdquo; does not mean citation-verified, legally validated, or audited. Experimental features are labelled as experimental. Proof receipts are gated and not part of the default public response path.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>NyayNow &middot; Internal planning document</span>
+    <span>v1.0 &middot; 22 October 2026</span>
+  </div>
+</section>
+
+<!-- ================= TOC ================= -->
+<section class="major">
+  <h2><span class="num">00</span>Contents</h2>
+
+  <ol class="toc">
+    <li><span class="n">01</span><span class="t">Executive summary</span><span class="d">Product &amp; delivery</span></li>
+    <li><span class="n">02</span><span class="t">Product at a glance</span><span class="d">Facts, plans, metrics</span></li>
+    <li><span class="n">03</span><span class="t">Target audience</span><span class="d">Personas &amp; segments</span></li>
+    <li><span class="n">04</span><span class="t">Feature inventory</span><span class="d">38 capabilities</span></li>
+    <li><span class="n">05</span><span class="t">Technology stack</span><span class="d">Frontend to infrastructure</span></li>
+    <li><span class="n">06</span><span class="t">Architecture &amp; data flow</span><span class="d">Topology and request paths</span></li>
+    <li><span class="n">07</span><span class="t">Data model</span><span class="d">25 MongoDB collections</span></li>
+    <li><span class="n">08</span><span class="t">API surface</span><span class="d">Route catalogue</span></li>
+    <li><span class="n">09</span><span class="t">Security, compliance &amp; NFRs</span><span class="d">Guardrails and targets</span></li>
+    <li><span class="n">10</span><span class="t">Delivery plan by workstream</span><span class="d">Rudraksh, Dhruv, Tejas</span></li>
+    <li><span class="n">11</span><span class="t">Risks &amp; mitigations</span><span class="d">Register</span></li>
+    <li><span class="n">12</span><span class="t">Launch gate &amp; definition of done</span><span class="d">Release checklist</span></li>
+    <li><span class="n">A</span><span class="t">Appendix A &mdash; Environment variable register</span><span class="d">Names only</span></li>
+    <li><span class="n">B</span><span class="t">Appendix B &mdash; Deployment runbook</span><span class="d">Local to production</span></li>
+    <li><span class="n">C</span><span class="t">Appendix C &mdash; Known gaps &amp; technical debt</span><span class="d">Fix list</span></li>
+    <li><span class="n">D</span><span class="t">Appendix D &mdash; Glossary</span><span class="d">Terms</span></li>
+  </ol>
+
+  <div class="callout" style="margin-top:8mm;">
+    <span class="label">Reading paths</span>
+    <p><strong>Founders / product:</strong> 1, 2, 3, 4, 10, 12.<br>
+    <strong>Rudraksh:</strong> 5, 6, 8, 9, 10.1, 11, 12, Appendices A&ndash;B.<br>
+    <strong>Dhruv:</strong> 5, 7, 9, 10.2, 11, 12, Appendices A&ndash;C.<br>
+    <strong>Tejas:</strong> 3, 4, 5.2, 6, 9, 10.3, 12, Appendix C.</p>
+  </div>
+</section>
+
+<!-- ================= 1 EXEC ================= -->
+<section class="major">
+  <h2><span class="num">01</span>Executive summary</h2>
+
+  <p class="lead">NyayNow is an India-first legal technology platform that combines AI-assisted legal information, document workflows, advocate discovery and practice tools in one product. It is currently positioned as <strong>v2.0 Beta</strong> at <strong>www.nyaynow.in</strong>.</p>
+
+  <p>The product deliberately separates three things that are often blurred in legal tech: (1) general legal <em>information</em>, (2) <em>workflow tools</em> such as drafting and case tracking, and (3) <em>access to a human advocate</em> through a marketplace. The public site repeats a clear caution: AI output is not citation-verified today, Legal SOS is not an emergency dispatch service, and lawyer credentials must be independently confirmed.</p>
+
+  <p>Technically, the repository is a working monorepo: a Next.js 15 / React 19 frontend, an Express 4 API with Socket.io, a small FastAPI AI service, and MongoDB Atlas with 25 collections. Production runs on Vercel and Render, with Cloudinary for media, Google Gemini for generation, Razorpay for payments, and a long list of optional integrations (Algolia, Brevo, Twilio/MTalkz, Bhashini, Setu/DigiLocker, Indian Kanoon, DocuSign, Sentry, PostHog).</p>
+
+  <p>This document converts that working system into a delivery plan. It assigns three workstreams with explicit boundaries, sequencing and acceptance criteria. The sequencing principle is simple: <strong>keys and database first, environments second, feature work in parallel, launch last</strong>. Dhruv&rsquo;s key and database work unblocks Rudraksh&rsquo;s deployment and Tejas&rsquo;s HR data model; Rudraksh&rsquo;s staging environment unblocks end-to-end testing; Tejas consumes both to ship the careers portal and frontend hardening.</p>
+
+  <div class="grid4">
+    <div class="kpi"><div class="v">v2.0</div><div class="l">Beta stage</div></div>
+    <div class="kpi"><div class="v">25</div><div class="l">MongoDB models</div></div>
+    <div class="kpi"><div class="v">38</div><div class="l">Features inventoried</div></div>
+    <div class="kpi"><div class="v">14</div><div class="l">UI languages</div></div>
+  </div>
+
+  <h3>What must be true at the end of this cycle</h3>
+  <ul>
+    <li><strong>One staging environment</strong> mirrors production, with its own database, keys and seeded data.</li>
+    <li><strong>Every production key</strong> is inventoried, stored in a secret manager, separated by environment and covered by a rotation date.</li>
+    <li><strong>Database backups and restore</strong> are proven, not assumed; indexes support the read paths and payment idempotency.</li>
+    <li><strong>Careers / HR portal v1</strong> works end-to-end (job listing to application to pipeline) with a candidate privacy notice and retention rules.</li>
+    <li><strong>Launch gates</strong> in Section 12 pass, including security, legal disclaimers, payments, accessibility and rollback drills.</li>
+  </ul>
+
+  <div class="callout gold">
+    <span class="label">The one-sentence brief</span>
+    <p>Ship a trustworthy, honest, India-first legal information and advocate-discovery platform that is operationally boring &mdash; deployable, observable, recoverable &mdash; before adding more AI surface area.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>01 &middot; Executive summary</span>
+    <span>NyayNow v2.0 Beta</span>
+  </div>
+</section>
+
+<!-- ================= 2 GLANCE ================= -->
+<section class="major">
+  <h2><span class="num">02</span>Product at a glance</h2>
+
+  <p class="quote">&ldquo;The operating system for the Indian justice system&rdquo; is the public positioning. The practical promise is narrower and more defensible: understand a legal problem, produce a first draft, and find a verified advocate &mdash; with clear limits on what AI can prove.</p>
+
+  <h3>2.1 Core facts</h3>
+  <table class="tbl kv">
+    <tbody>
+      <tr><td>Product name</td><td>NyayNow (also references &ldquo;NyaySathi&rdquo; in code and earlier branding)</td></tr>
+      <tr><td>Public domain</td><td>www.nyaynow.in</td></tr>
+      <tr><td>Primary market</td><td>India &mdash; citizens, advocates, law firms, law students, legal-aid organisations</td></tr>
+      <tr><td>Core jobs</td><td>Legal information &middot; document drafting &middot; advocate discovery &middot; practice management &middot; legal-language access</td></tr>
+      <tr><td>Business model</td><td>Freemium subscriptions plus credits, paid listings/leads, and a firm enquiry channel</td></tr>
+      <tr><td>Plans</td><td>Nyay Saathi (free), Nyay Pro, Nyay Gold, Nyay Firm (availability to be confirmed)</td></tr>
+      <tr><td>Languages</td><td>14 UI languages including English; 13 Indian languages incl. Urdu (RTL) and Sanskrit</td></tr>
+      <tr><td>AI engine</td><td>Google Gemini (Node SDK and Python SDK), optional Indian Kanoon search context</td></tr>
+      <tr><td>Deployment</td><td>Vercel (web) + Render (API/sockets) + MongoDB Atlas + Cloudinary</td></tr>
+      <tr><td>Trust posture</td><td>Explicit disclaimers, verified-profile gating, experimental labels, gated source-proof receipts</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.2 Commercial plans</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:16%">Plan</th><th style="width:14%">Monthly</th><th style="width:14%">Yearly</th><th style="width:28%">Primary buyer</th><th style="width:28%">Positioning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Nyay Saathi</strong></td><td>Free</td><td>Free</td><td>First-time citizens, students</td><td>Entry: assistant, lawyer finder, SOS info, awareness</td></tr>
+      <tr><td><strong>Nyay Pro</strong></td><td>&#8377;299</td><td>&#8377;2,499</td><td>Tenants, buyers, employees, students</td><td>Unlimited assistant, more drafts, research, voice, BNS</td></tr>
+      <tr><td><strong>Nyay Gold</strong></td><td>&#8377;799</td><td>&#8377;6,999</td><td>Solo advocates, junior associates</td><td>Practice tools: research, drafting, client portal, PDFs</td></tr>
+      <tr><td><strong>Nyay Firm</strong></td><td>&#8377;2,999</td><td>&#8377;24,999</td><td>Law firms, corporate legal teams</td><td>Team features &mdash; several still in development; enquiry-led</td></tr>
+    </tbody>
+  </table>
+  <p class="table-note">Prices are taken from the public pricing page and may exclude taxes. Firm availability, GST invoicing and SLAs must be confirmed before sale.</p>
+
+  <h3 class="pb">2.3 Proposed success metrics for this cycle</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:30%">Metric</th><th style="width:22%">Proposed target</th><th style="width:22%">Owner</th><th style="width:26%">Instrumentation</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Guest &rarr; registered conversion</td><td>&ge; 25%</td><td>Tejas</td><td>PostHog funnel on first-question flow</td></tr>
+      <tr><td>Time to first useful answer</td><td>&lt; 60 seconds</td><td>Rudraksh</td><td>API timing + client event</td></tr>
+      <tr><td>Free &rarr; paid conversion</td><td>3&ndash;5% monthly</td><td>Founders</td><td>Razorpay + PostHog cohort</td></tr>
+      <tr><td>Verified advocate response</td><td>&lt; 24 hours</td><td>Ops</td><td>Lead/appointment timestamps</td></tr>
+      <tr><td>API p95 latency (non-AI)</td><td>&lt; 800 ms</td><td>Rudraksh</td><td>Render metrics + Sentry</td></tr>
+      <tr><td>Availability</td><td>99.5%</td><td>Rudraksh</td><td>Uptime monitor on /healthz</td></tr>
+      <tr><td>AI answer helpfulness (sampled)</td><td>&ge; 4 / 5</td><td>Product</td><td>In-product rating, manual review</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <span class="label">Do not promise</span>
+    <p>Do not market AI output as verified, court-proof, guaranteed admissible, or a prediction of judicial outcomes. Do not describe Legal SOS as dispatch, routing or an emergency service. Do not expose unverified lawyer profiles as &ldquo;verified&rdquo; without the verification record.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>02 &middot; Product at a glance</span>
+    <span>Plans and metrics are proposals for internal alignment</span>
+  </div>
+</section>
+
+<!-- ================= 3 AUDIENCE ================= -->
+<section class="major">
+  <h2><span class="num">03</span>Target audience</h2>
+
+  <p class="lead">NyayNow serves two sides of one market: people who need legal clarity and advocates who need better workflows and qualified client access. The platform is not a substitute for an advocate, and it is not designed for immediate danger or guaranteed outcomes.</p>
+
+  <h3>3.1 Primary personas</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:15%">Persona</th><th style="width:20%">Situation</th><th style="width:28%">What they need</th><th style="width:22%">NyayNow entry point</th><th style="width:15%">Plan fit</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Aarav, 29</strong><br>Urban tenant</td>
+        <td>Security deposit withheld; landlord unresponsive; unclear notice process.</td>
+        <td>Plain-language explanation, a demand notice draft, and a reliable advocate if it escalates.</td>
+        <td>/assistant &middot; /drafting &middot; /rent-agreement &middot; /marketplace</td>
+        <td>Free &rarr; Pro</td>
+      </tr>
+      <tr>
+        <td><strong>Meera, 34</strong><br>Salaried professional</td>
+        <td>Workplace harassment or wrongful termination; privacy-sensitive; prefers Hindi or a regional language.</td>
+        <td>Confidential information, document review, language access, and a shortlist of advocates.</td>
+        <td>/assistant &middot; /analyze &middot; /nyayvoice &middot; /marketplace</td>
+        <td>Pro</td>
+      </tr>
+      <tr>
+        <td><strong>Rohan, 41</strong><br>Small-business owner</td>
+        <td>Vendor contracts, payment recovery, compliance questions; repeated legal needs.</td>
+        <td>Contract drafting and review, legal notices, invoice-ready outputs, ongoing counsel.</td>
+        <td>/drafting &middot; /analyze &middot; /agreements &middot; /marketplace</td>
+        <td>Pro &rarr; Gold</td>
+      </tr>
+      <tr>
+        <td><strong>Fatima, 26</strong><br>Law student</td>
+        <td>Moot court, research, exam prep, career guidance; price-sensitive.</td>
+        <td>Practice simulations, case-law research, structured feedback, career direction.</td>
+        <td>/moot-court &middot; /research &middot; /nyaycourt-simulator &middot; /career</td>
+        <td>Free &rarr; Pro</td>
+      </tr>
+      <tr>
+        <td><strong>Adv. Sharma, 38</strong><br>Solo advocate</td>
+        <td>High caseload, research and drafting overhead, client intake and billing admin.</td>
+        <td>Fast research and drafts, client portal, CRM, calendar, invoices, qualified leads.</td>
+        <td>/research &middot; /drafting &middot; /client &middot; /calendar &middot; leads</td>
+        <td>Gold</td>
+      </tr>
+      <tr>
+        <td><strong>Law firm / corporate legal</strong></td>
+        <td>Volume work, team consistency, auditability, billing and knowledge reuse.</td>
+        <td>Team workflows, shared templates, bulk processing, reporting, API access.</td>
+        <td>/professionals &middot; /pricing &middot; firm enquiry</td>
+        <td>Firm (enquiry)</td>
+      </tr>
+      <tr>
+        <td><strong>Legal-aid NGO / paralegal</strong></td>
+        <td>Low budgets, high volume, multilingual clients, limited lawyer capacity.</td>
+        <td>Free information, rights explainers, directory of nearby help, simple drafts.</td>
+        <td>/assistant &middot; /nearby &middot; /legal-sos &middot; /bns</td>
+        <td>Free / partnership</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 Jobs to be done</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:38%">When&hellip;</th><th style="width:32%">I want to&hellip;</th><th style="width:30%">So I can&hellip;</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>I have a legal problem and do not know where to start</td><td>Understand it in my language, with sources and limits</td><td>Decide the next step without panic or misinformation</td></tr>
+      <tr><td>I need a legal document</td><td>Generate a structured first draft</td><td>Review it with an advocate and file or sign with confidence</td></tr>
+      <tr><td>I need a lawyer</td><td>Compare profiles, experience, language and fee</td><td>Shortlist and contact an advocate who fits</td></tr>
+      <tr><td>I am an advocate</td><td>Research, draft, manage clients and get paid in one place</td><td>Serve more clients without losing quality</td></tr>
+      <tr><td>I run a firm</td><td>Standardise workflows and see what is happening</td><td>Reduce risk, improve turnaround and train juniors</td></tr>
+      <tr><td>I am in urgent legal distress</td><td>Find the right helpline, authority or nearby help</td><td>Reach a human or emergency service quickly</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.3 Segment priorities and offers</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:8%">Priority</th><th style="width:20%">Segment</th><th style="width:36%">Why it matters</th><th style="width:36%">Offer</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge b-live">P1</span></td><td>Urban citizens with a live dispute</td><td>Highest intent; clear first-value moment; strong word-of-mouth.</td><td>Assistant + draft + advocate shortlist; Pro subscription.</td></tr>
+      <tr><td><span class="badge b-live">P1</span></td><td>Solo and junior advocates</td><td>Recurring usage; willing to pay for time savings; supply side of marketplace.</td><td>Gold: research, drafting, client portal, CRM, leads.</td></tr>
+      <tr><td><span class="badge b-beta">P2</span></td><td>Law students</td><td>Low revenue but high engagement, future advocates, strong campus distribution.</td><td>Free tier + Pro; moot court and career tools.</td></tr>
+      <tr><td><span class="badge b-beta">P2</span></td><td>Small businesses</td><td>Repeat document needs; higher willingness to pay than consumers.</td><td>Pro/Gold; contract packs and legal notices.</td></tr>
+      <tr><td><span class="badge b-plan">P3</span></td><td>Law firms / corporate legal</td><td>Large contracts but require team features, security review and SLAs.</td><td>Firm: enquiry-led until team features ship.</td></tr>
+      <tr><td><span class="badge b-plan">P3</span></td><td>NGOs / legal-aid clinics</td><td>Mission alignment and distribution; budget constrained.</td><td>Free access, partnerships, multilingual materials.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="grid2">
+    <div class="card soft">
+      <span class="tag">Who this is not for</span>
+      <h4>Explicit anti-personas</h4>
+      <p>People in immediate physical danger (call 112), users seeking guaranteed case outcomes, users who need a court filing completed for them, and anyone outside Indian jurisdiction (except NRI matters with an Indian nexus).</p>
+    </div>
+    <div class="card soft">
+      <span class="tag">Accessibility &amp; inclusion</span>
+      <h4>Design for the next 100 million users</h4>
+      <p>Low-bandwidth networks, mid-range Android devices, 14 languages, RTL Urdu, plain language, large touch targets, screen-reader support and offline-tolerant error states. Legal information must not assume English fluency or legal literacy.</p>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <span>03 &middot; Target audience</span>
+    <span>Personas are composites for planning, not customer claims</span>
+  </div>
+</section>
+
+<!-- ================= 4 FEATURES ================= -->
+<section class="major">
+  <h2><span class="num">04</span>Feature inventory</h2>
+
+  <p class="lead">The platform currently exposes 38 capabilities across six areas. Status labels are deliberately conservative: <span class="badge b-live">Live</span> shipped and publicly accessible; <span class="badge b-beta">Beta</span> usable with known limitations; <span class="badge b-exp">Experimental</span> not validated; <span class="badge b-gated">Gated</span> behind an environment flag; <span class="badge b-plan">Planned</span> in development or roadmap.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:4%">#</th><th style="width:19%">Feature</th><th style="width:17%">Route / module</th><th style="width:34%">What it does</th><th style="width:10%">Status</th><th style="width:16%">Entitlement</th></tr>
+    </thead>
+    <tbody>
+      <tr class="group"><td colspan="6">A. AI legal intelligence &amp; knowledge</td></tr>
+      <tr><td>1</td><td>NyaySathi AI assistant</td><td>/assistant</td><td>Plain-language legal Q&amp;A with multilingual input and explicit disclaimers; optional legal search context.</td><td><span class="badge b-beta">Beta</span></td><td>Free 10/month; guests 3/day</td></tr>
+      <tr><td>2</td><td>Legal research</td><td>/research</td><td>Case-law and statute search; Indian Kanoon context when the API key is configured; Gemini fallback.</td><td><span class="badge b-beta">Beta</span></td><td>Pro 30/month; Gold unlimited</td></tr>
+      <tr><td>3</td><td>Document drafting</td><td>/drafting &middot; /agreements</td><td>First drafts of agreements, contracts, legal notices, wills and related templates.</td><td><span class="badge b-beta">Beta</span></td><td>Free 1/month; Pro 10/month</td></tr>
+      <tr><td>4</td><td>Document analyzer</td><td>/analyze</td><td>Upload a PDF, extract text and produce a structured analysis of clauses and risks.</td><td><span class="badge b-beta">Beta</span></td><td>Pro 5 docs/month</td></tr>
+      <tr><td>5</td><td>Case analysis / Judge AI</td><td>/judge-ai &middot; /judge-pro</td><td>Structured case analysis and FIRAC-style profiling. Not a validated outcome predictor.</td><td><span class="badge b-exp">Experimental</span></td><td>Labelled experimental</td></tr>
+      <tr><td>6</td><td>Devil&rsquo;s Advocate</td><td>/devils-advocate</td><td>Generates counter-arguments and weaknesses in a position for preparation.</td><td><span class="badge b-live">Live</span></td><td>Included</td></tr>
+      <tr><td>7</td><td>Moot court practice</td><td>/moot-court</td><td>Simulated argumentation with AI feedback for students and junior lawyers.</td><td><span class="badge b-beta">Beta</span></td><td>Gold unlimited</td></tr>
+      <tr><td>8</td><td>Courtroom battle</td><td>/nyaycourt-simulator</td><td>AI-versus-AI legal argument simulation with a courtroom-style flow.</td><td><span class="badge b-beta">Beta</span></td><td>Pro 3/month</td></tr>
+      <tr><td>9</td><td>Career mentor</td><td>Career tools</td><td>Guidance on legal careers, internships and specialisation.</td><td><span class="badge b-live">Live</span></td><td>Included</td></tr>
+      <tr><td>10</td><td>FIR / complaint draft</td><td>/legal-sos flow</td><td>Creates an editable complaint draft from supplied facts. It is not an FIR and is not filed automatically.</td><td><span class="badge b-beta">Beta</span></td><td>Included with limits</td></tr>
+
+      <tr class="group"><td colspan="6">B. Language, voice &amp; Indian-law navigation</td></tr>
+      <tr><td>11</td><td>NyayVoice</td><td>/nyayvoice</td><td>Voice-first legal assistant; browser speech support varies by language and device.</td><td><span class="badge b-beta">Beta</span></td><td>Pro 20 min/month; Gold unlimited</td></tr>
+      <tr><td>12</td><td>Translation</td><td>/translator</td><td>Text translation across Indian languages using configured providers (Bhashini/Gemini).</td><td><span class="badge b-beta">Beta</span></td><td>Included</td></tr>
+      <tr><td>13</td><td>IPC &rarr; BNS converter</td><td>/ipc-to-bns</td><td>Maps old IPC sections to BNS 2024 equivalents with caveats.</td><td><span class="badge b-live">Live</span></td><td>Pro and above</td></tr>
+      <tr><td>14</td><td>BNS legal directory</td><td>/bns</td><td>Searchable section reference and SEO surface for Bharatiya Nyaya Sanhita.</td><td><span class="badge b-live">Live</span></td><td>Public</td></tr>
+      <tr><td>15</td><td>Multilingual UI</td><td>Global</td><td>14 languages including English, 13 Indian languages, RTL Urdu and Sanskrit.</td><td><span class="badge b-live">Live</span></td><td>Public</td></tr>
+
+      <tr class="group"><td colspan="6">C. Citizen services &amp; safety</td></tr>
+      <tr><td>16</td><td>Legal SOS</td><td>/legal-sos</td><td>Information, rights guidance, complaint draft and emergency contacts (112, NALSA 15100). Not dispatch.</td><td><span class="badge b-live">Live</span></td><td>Public</td></tr>
+      <tr><td>17</td><td>Nearby radar map</td><td>/nearby</td><td>Map of courts, police stations and advocates using Leaflet/OpenStreetMap and geo search.</td><td><span class="badge b-beta">Beta</span></td><td>Public</td></tr>
+      <tr><td>18</td><td>eCourts tracker</td><td>/ecourts</td><td>Case status lookup and tracked-case list; depends on external court data availability.</td><td><span class="badge b-beta">Beta</span></td><td>Signed-in users</td></tr>
+      <tr><td>19</td><td>Rent agreement builder</td><td>/rent-agreement</td><td>Guided rent-agreement creation with export.</td><td><span class="badge b-beta">Beta</span></td><td>Pro</td></tr>
+      <tr><td>20</td><td>Grievance</td><td>/grievance</td><td>Complaint and feedback intake with a defined escalation path.</td><td><span class="badge b-live">Live</span></td><td>Public</td></tr>
+      <tr><td>21</td><td>Anonymous confession</td><td>Community</td><td>Anonymous legal confession/discussion space with moderation requirements.</td><td><span class="badge b-live">Live</span></td><td>Public, moderated</td></tr>
+      <tr><td>22</td><td>NyayProof receipts</td><td>/nyayproof</td><td>Source, passage and HMAC-signed proof receipt scaffolding. Exact-quote checks only; not semantic verification.</td><td><span class="badge b-gated">Gated</span></td><td>PROOF_RECEIPTS_ENABLED</td></tr>
+
+      <tr class="group"><td colspan="6">D. Marketplace &amp; advocate practice</td></tr>
+      <tr><td>23</td><td>Lawyer marketplace</td><td>/marketplace</td><td>Verified-profile discovery with city, language, experience and budget filters.</td><td><span class="badge b-beta">Beta</span></td><td>Public</td></tr>
+      <tr><td>24</td><td>Profile verification</td><td>/setup-profile &middot; /digilocker-verify</td><td>Bar Council / DigiLocker-assisted ID submission with manual admin review; never auto-approved.</td><td><span class="badge b-beta">Beta</span></td><td>Advocates</td></tr>
+      <tr><td>25</td><td>Appointments &amp; calendar</td><td>/calendar</td><td>Consultation booking, court dates and reminders.</td><td><span class="badge b-live">Live</span></td><td>Signed-in users</td></tr>
+      <tr><td>26</td><td>Real-time messaging</td><td>/messages</td><td>Socket.io chat between clients and advocates with persisted threads.</td><td><span class="badge b-live">Live</span></td><td>Signed-in users</td></tr>
+      <tr><td>27</td><td>Video consultation</td><td>/meet &middot; /video-call</td><td>Jitsi-based video rooms for consultations.</td><td><span class="badge b-beta">Beta</span></td><td>Signed-in users</td></tr>
+      <tr><td>28</td><td>Lawyer CRM</td><td>Practice console</td><td>Client records, notes and pipeline for advocates.</td><td><span class="badge b-live">Live</span></td><td>Gold</td></tr>
+      <tr><td>29</td><td>Paid leads</td><td>/api/leads</td><td>Lead pool and accept flow for advocates.</td><td><span class="badge b-live">Live</span></td><td>Gold</td></tr>
+      <tr><td>30</td><td>Invoices</td><td>Practice console</td><td>Advocate billing records and invoice generation.</td><td><span class="badge b-live">Live</span></td><td>Gold</td></tr>
+      <tr><td>31</td><td>Case workspace</td><td>/client</td><td>Case records, stages, timelines and document access.</td><td><span class="badge b-beta">Beta</span></td><td>Signed-in users</td></tr>
+
+      <tr class="group"><td colspan="6">E. Dashboards, admin &amp; operations</td></tr>
+      <tr><td>32</td><td>Client dashboard</td><td>/client</td><td>Cases, appointments, invoices, messages and AI history in one view.</td><td><span class="badge b-live">Live</span></td><td>Signed-in users</td></tr>
+      <tr><td>33</td><td>Advocate dashboard</td><td>/analytics &middot; /client</td><td>Practice analytics, profile performance and client activity.</td><td><span class="badge b-beta">Beta</span></td><td>Gold</td></tr>
+      <tr><td>34</td><td>Admin console</td><td>/admin</td><td>User management, lawyer verification, plan changes and platform metrics.</td><td><span class="badge b-live">Live</span></td><td>Admin only</td></tr>
+      <tr><td>35</td><td>Audit trail</td><td>AdminAuditLog</td><td>Append-only record of sensitive admin actions, with IP and target.</td><td><span class="badge b-live">Live</span></td><td>Admin only</td></tr>
+      <tr><td>36</td><td>Compliance tracker</td><td>/compliances</td><td>DPDP-oriented tasks and records for the platform.</td><td><span class="badge b-beta">Beta</span></td><td>Signed-in users</td></tr>
+
+      <tr class="group"><td colspan="6">F. Commerce, growth &amp; hiring</td></tr>
+      <tr><td>37</td><td>Subscriptions &amp; payments</td><td>/pricing &middot; /payment</td><td>Razorpay orders, signature verification, webhook handling, credits and plan activation.</td><td><span class="badge b-live">Live</span></td><td>All plans</td></tr>
+      <tr><td>38</td><td>Careers / HR portal</td><td>/career</td><td>Public job listings and applications; internal applicant pipeline is the Tejas workstream.</td><td><span class="badge b-beta">Beta</span></td><td>Public / internal</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.1 Feature dependency notes</h3>
+  <div class="grid2">
+    <div class="card">
+      <span class="tag">Depends on keys</span>
+      <h4>Dhruv unlocks these</h4>
+      <p>AI assistant and drafting (Gemini), research (Indian Kanoon), voice/translation (Bhashini), payments (Razorpay), uploads (Cloudinary), email/OTP (Brevo, Twilio/MTalkz), verification (Setu/DigiLocker), e-sign (DocuSign), observability (Sentry, PostHog).</p>
+    </div>
+    <div class="card">
+      <span class="tag">Depends on deployment</span>
+      <h4>Rudraksh unlocks these</h4>
+      <p>Staging end-to-end tests, preview deployments, socket connectivity, custom domains, health checks, uptime alerts, load tests, rollback drills and production releases.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Depends on frontend</span>
+      <h4>Tejas unlocks these</h4>
+      <p>Careers portal, application flow, admin HR views, design-system consistency, accessibility, responsive QA, i18n/RTL polish, loading/empty/error states and conversion instrumentation.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Depends on legal review</span>
+      <h4>External reviewer confirms</h4>
+      <p>Disclaimer wording, privacy notice, consent language, marketplace advertising rules, refund terms, AI limitations and proof-receipt claims before public promotion.</p>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <span>04 &middot; Feature inventory</span>
+    <span>Status as observed in the repository and public site</span>
+  </div>
+</section>
+
+<!-- ================= 5 STACK ================= -->
+<section class="major">
+  <h2><span class="num">05</span>Technology stack</h2>
+
+  <p class="lead">A conventional, low-ops stack chosen for speed of iteration: Next.js on Vercel for the product surface, Express on Render for stateful APIs and real-time, FastAPI for AI orchestration, MongoDB Atlas for flexible legal data, and managed services for payments, media and email.</p>
+
+  <h3>5.1 Stack summary</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:15%">Layer</th><th style="width:35%">Technology</th><th style="width:16%">Version</th><th style="width:34%">Why it is there</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Web</strong></td><td>Next.js (App Router)</td><td>15.5.28</td><td>SSR/SEO for legal content, routing, API rewrites, standalone Docker output.</td></tr>
+      <tr><td><strong>UI runtime</strong></td><td>React</td><td>19.2.1</td><td>Component model and concurrent rendering.</td></tr>
+      <tr><td><strong>Language</strong></td><td>JavaScript / JSX</td><td>&mdash;</td><td>Matches existing codebase; no TypeScript migration in this cycle.</td></tr>
+      <tr><td><strong>Styling</strong></td><td>Tailwind CSS</td><td>3.4.3</td><td>Utility-first design system; consistent spacing and responsive states.</td></tr>
+      <tr><td><strong>Motion</strong></td><td>Framer Motion + Lenis</td><td>12.33 / &mdash;</td><td>Page transitions and smooth scrolling; must respect reduced-motion.</td></tr>
+      <tr><td><strong>Maps</strong></td><td>Leaflet + react-leaflet</td><td>1.9.4 / 5</td><td>Nearby courts, police stations and advocates without a paid map key.</td></tr>
+      <tr><td><strong>Charts</strong></td><td>Recharts</td><td>2.12</td><td>Practice analytics and admin dashboards.</td></tr>
+      <tr><td><strong>Search UI</strong></td><td>Algolia InstantSearch</td><td>7.23</td><td>Fast site-wide content and BNS section discovery.</td></tr>
+      <tr><td><strong>Documents</strong></td><td>jsPDF + signature canvas</td><td>4.2 / 1.0.6</td><td>Client-side PDF export and signature capture.</td></tr>
+      <tr><td><strong>Markdown</strong></td><td>react-markdown</td><td>9.0.1</td><td>Safe rendering of AI responses.</td></tr>
+      <tr><td><strong>Realtime client</strong></td><td>socket.io-client</td><td>4.7.5</td><td>Chat, presence and live case updates.</td></tr>
+      <tr><td><strong>Frontend observability</strong></td><td>Sentry React + PostHog</td><td>8.55.2 / 1.131.4</td><td>Error tracking and product analytics/funnels.</td></tr>
+      <tr><td><strong>Auth client</strong></td><td>@react-oauth/google</td><td>0.13.4</td><td>Google sign-in alongside email/OTP.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 Frontend implementation notes</h3>
+  <ul>
+    <li><strong>App Router</strong> with route groups for public marketing, product tools, dashboards and admin. Client components are used where interaction demands it; SEO pages remain server-rendered.</li>
+    <li><strong>Standalone output</strong> enabled for container builds. Docker image runs `node server.js` on port 3000.</li>
+    <li><strong>CSP middleware</strong> generates a per-request nonce; inline scripts must carry the nonce. Third-party origins (Sentry, PostHog, Google, Razorpay, Cloudinary) are explicitly allowlisted.</li>
+    <li><strong>API proxying</strong>: the browser calls same-origin `/api/*`; Next rewrites to the Express service using `NEXT_PUBLIC_API_URL`. This keeps cookies first-party and avoids broad CORS in the browser.</li>
+    <li><strong>Design system</strong>: Tailwind tokens plus shared components; navy/gold brand palette; avoid one-off hex values in feature code.</li>
+    <li><strong>i18n</strong>: 14 locales, including RTL Urdu. Layout must be tested with `dir="rtl"`, not only translated strings.</li>
+    <li><strong>Performance</strong>: route-level code splitting, image optimisation, font discipline, and a budget for the assistant screen on mid-range Android.</li>
+  </ul>
+
+  <h3>5.3 Backend stack</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:24%">Concern</th><th style="width:34%">Technology</th><th style="width:42%">Implementation detail</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Runtime</td><td>Node.js &ge; 18 (CI: 22)</td><td>Express 4.18.2; CommonJS; single service with route modules.</td></tr>
+      <tr><td>Real-time</td><td>Socket.io 4.8.3</td><td>JWT-authenticated socket handshake; room per conversation/case.</td></tr>
+      <tr><td>Database</td><td>Mongoose 7.8.8 / MongoDB Atlas</td><td>25 models; indexes declared per schema; transactions where supported.</td></tr>
+      <tr><td>Auth</td><td>JWT 9.0.3 + bcryptjs 3.0.3</td><td>Access tokens, OTP login, Google ID-token verification, role checks.</td></tr>
+      <tr><td>Hardening</td><td>Helmet 8.1 + express-rate-limit 8.2.1</td><td>Security headers, request throttling, body-size limits, CORS allowlist.</td></tr>
+      <tr><td>Uploads</td><td>Multer 1.4.5-lts + pdf-parse 2.4.5</td><td>Memory/disk limits, MIME checks, PDF text extraction before AI analysis.</td></tr>
+      <tr><td>Payments</td><td>Razorpay 2.9.6</td><td>Order creation, signature verification, webhook processing, idempotency.</td></tr>
+      <tr><td>Media</td><td>Cloudinary 2.11</td><td>Signed uploads, transformations, profile and document assets.</td></tr>
+      <tr><td>Email / SMS</td><td>Nodemailer 10.1; Brevo; Twilio 5.12 / MTalkz</td><td>OTP and transactional email; provider fallback by environment.</td></tr>
+      <tr><td>AI</td><td>@google/generative-ai 0.21</td><td>Gemini calls from Node for feature-specific prompts; Python service for heavier flows.</td></tr>
+      <tr><td>Observability</td><td>Sentry 10.32</td><td>Backend error capture with request context; no PII in breadcrumbs.</td></tr>
+      <tr><td>Testing</td><td>Jest 30 + Supertest 7 + Playwright 1.58</td><td>Unit/integration tests and browser E2E; DB tests require a Mongo instance.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.4 AI service</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:26%">Item</th><th style="width:74%">Detail</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Runtime</td><td>Python 3.11-slim Docker image; FastAPI; Uvicorn; Pydantic v2.</td></tr>
+      <tr><td>Endpoints</td><td><code>/analyze</code> (document analysis), <code>/agreement</code> (agreement drafting), <code>/case-analysis</code> (structured case review), <code>/nearby</code> (geo lookup helper).</td></tr>
+      <tr><td>Model access</td><td>Google Gemini via the Python SDK; API key injected at runtime, never baked into the image.</td></tr>
+      <tr><td>Contract</td><td>JSON in/out with explicit schema; Node validates and normalises before persisting or returning to the client.</td></tr>
+      <tr><td>Failure mode</td><td>Timeout and fallback to the Node path or a clear, non-fabricated error. No silent fake citations.</td></tr>
+      <tr><td>Scaling</td><td>Stateless; scale horizontally behind Render. Long requests must stream or return job IDs rather than hold connections.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.5 Data, infrastructure &amp; tooling</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:22%">Area</th><th style="width:26%">Choice</th><th style="width:52%">Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Primary database</td><td>MongoDB Atlas</td><td>Managed replica set; separate staging/production clusters or databases; daily backups with tested restore.</td></tr>
+      <tr><td>Web hosting</td><td>Vercel</td><td>Preview deployments per PR; production domain; edge caching for marketing pages.</td></tr>
+      <tr><td>API hosting</td><td>Render</td><td>Web service + Socket.io; health check; autoscaling; zero-downtime deploys; free-tier cold starts are a known risk.</td></tr>
+      <tr><td>Media</td><td>Cloudinary</td><td>Signed uploads, transformations, deletion workflow for DPDP erasure.</td></tr>
+      <tr><td>CI</td><td>GitHub Actions</td><td>Lint, unit tests, build, Playwright; required checks before merge.</td></tr>
+      <tr><td>Local dev</td><td>Docker Compose</td><td>Mongo 6, Python AI, backend and frontend with healthchecks and named volumes.</td></tr>
+      <tr><td>IaC / config</td><td>render.yaml + env templates</td><td>Blueprint for the API; secrets live in the platform, not the repo.</td></tr>
+      <tr><td>Analytics</td><td>PostHog + GA4</td><td>Consent-gated; no legal query text in analytics events.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <span class="label">Version drift</span>
+    <p>Some docs still describe Next.js 14 and older package versions. The package manifests above are the source of truth for this document. Update the technical overview during Sprint 1 so new contributors are not misled.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>05 &middot; Technology stack</span>
+    <span>Versions from package manifests at document date</span>
+  </div>
+</section>
+
+<!-- ================= 6 ARCHITECTURE ================= -->
+<section class="major">
+  <h2><span class="num">06</span>Architecture &amp; data flow</h2>
+
+  <p class="lead">The system is a three-tier web application with an AI sidecar. The browser talks to Next.js; Next.js proxies API calls to Express; Express owns authentication, business rules and persistence; FastAPI handles heavier AI orchestration; MongoDB and Cloudinary hold state.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 980 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NyayNow architecture diagram">
+      <defs>
+        <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+          <path d="M0,0 L9,4.5 L0,9 z" fill="#64748b"/>
+        </marker>
+        <style>
+          .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+          .box-web { fill: #f4f8ff; stroke: #93b4f5; }
+          .box-api { fill: #f8fafc; stroke: #94a3b8; }
+          .box-ai { fill: #f5f0ff; stroke: #b9a4ea; }
+          .box-data { fill: #f0fdf4; stroke: #86c79a; }
+          .box-ext { fill: #fffaf0; stroke: #e3c47a; }
+          .lbl { font-family: Segoe UI, Arial, sans-serif; font-size: 12px; fill: #0f172a; font-weight: 600; }
+          .sub { font-family: Segoe UI, Arial, sans-serif; font-size: 10px; fill: #64748b; }
+          .flow { stroke: #64748b; stroke-width: 1.4; fill: none; marker-end: url(#arrow); }
+        </style>
+      </defs>
+
+      <rect x="20" y="24" width="190" height="74" rx="6" class="box box-web"/>
+      <text x="115" y="52" text-anchor="middle" class="lbl">Citizen / Advocate</text>
+      <text x="115" y="70" text-anchor="middle" class="sub">Browser &middot; mobile web</text>
+      <text x="115" y="85" text-anchor="middle" class="sub">14 languages</text>
+
+      <rect x="275" y="24" width="190" height="74" rx="6" class="box box-web"/>
+      <text x="370" y="50" text-anchor="middle" class="lbl">Next.js 15 on Vercel</text>
+      <text x="370" y="68" text-anchor="middle" class="sub">App Router &middot; SSR/SEO</text>
+      <text x="370" y="83" text-anchor="middle" class="sub">CSP nonce &middot; /api rewrite</text>
+
+      <rect x="530" y="24" width="190" height="74" rx="6" class="box box-api"/>
+      <text x="625" y="50" text-anchor="middle" class="lbl">Express 4 on Render</text>
+      <text x="625" y="68" text-anchor="middle" class="sub">REST &middot; JWT &middot; roles</text>
+      <text x="625" y="83" text-anchor="middle" class="sub">Socket.io 4.8</text>
+
+      <rect x="785" y="24" width="175" height="74" rx="6" class="box box-ai"/>
+      <text x="872" y="50" text-anchor="middle" class="lbl">FastAPI AI service</text>
+      <text x="872" y="68" text-anchor="middle" class="sub">Python 3.11</text>
+      <text x="872" y="83" text-anchor="middle" class="sub">analyze &middot; agreement</text>
+
+      <line x1="210" y1="61" x2="273" y2="61" class="flow"/>
+      <line x1="465" y1="61" x2="528" y2="61" class="flow"/>
+      <line x1="720" y1="61" x2="783" y2="61" class="flow"/>
+
+      <rect x="275" y="165" width="190" height="70" rx="6" class="box box-data"/>
+      <text x="370" y="191" text-anchor="middle" class="lbl">MongoDB Atlas</text>
+      <text x="370" y="208" text-anchor="middle" class="sub">25 collections</text>
+      <text x="370" y="223" text-anchor="middle" class="sub">Backups &middot; indexes</text>
+
+      <rect x="530" y="165" width="190" height="70" rx="6" class="box box-data"/>
+      <text x="625" y="191" text-anchor="middle" class="lbl">Cloudinary</text>
+      <text x="625" y="208" text-anchor="middle" class="sub">Signed uploads</text>
+      <text x="625" y="223" text-anchor="middle" class="sub">Profile &amp; documents</text>
+
+      <rect x="785" y="165" width="175" height="70" rx="6" class="box box-data"/>
+      <text x="872" y="191" text-anchor="middle" class="lbl">Sentry / PostHog</text>
+      <text x="872" y="208" text-anchor="middle" class="sub">Errors &middot; funnels</text>
+      <text x="872" y="223" text-anchor="middle" class="sub">No query text</text>
+
+      <line x1="625" y1="98" x2="625" y2="163" class="flow"/>
+      <line x1="530" y1="200" x2="467" y2="200" class="flow"/>
+      <line x1="720" y1="200" x2="783" y2="200" class="flow"/>
+
+      <rect x="275" y="300" width="190" height="66" rx="6" class="box box-ext"/>
+      <text x="370" y="325" text-anchor="middle" class="lbl">Google Gemini</text>
+      <text x="370" y="342" text-anchor="middle" class="sub">Generation</text>
+      <text x="370" y="356" text-anchor="middle" class="sub">Node + Python SDK</text>
+
+      <rect x="530" y="300" width="190" height="66" rx="6" class="box box-ext"/>
+      <text x="625" y="325" text-anchor="middle" class="lbl">Razorpay</text>
+      <text x="625" y="342" text-anchor="middle" class="sub">Orders &middot; webhooks</text>
+      <text x="625" y="356" text-anchor="middle" class="sub">Subscriptions</text>
+
+      <rect x="785" y="300" width="175" height="66" rx="6" class="box box-ext"/>
+      <text x="872" y="325" text-anchor="middle" class="lbl">External APIs</text>
+      <text x="872" y="342" text-anchor="middle" class="sub">Kanoon &middot; Bhashini</text>
+      <text x="872" y="356" text-anchor="middle" class="sub">DigiLocker &middot; eCourts</text>
+
+      <line x1="870" y1="98" x2="870" y2="298" class="flow"/>
+      <line x1="625" y1="235" x2="625" y2="298" class="flow"/>
+      <line x1="370" y1="235" x2="370" y2="298" class="flow"/>
+
+      <rect x="20" y="300" width="190" height="66" rx="6" class="box box-ext"/>
+      <text x="115" y="325" text-anchor="middle" class="lbl">Email / SMS / OTP</text>
+      <text x="115" y="342" text-anchor="middle" class="sub">Brevo &middot; Twilio</text>
+      <text x="115" y="356" text-anchor="middle" class="sub">MTalkz &middot; Nodemailer</text>
+      <line x1="275" y1="332" x2="212" y2="332" class="flow"/>
+
+      <text x="20" y="425" class="sub">Solid arrows show primary request/data flow. External services are optional by environment; missing keys must degrade gracefully, not crash the product.</text>
+      <text x="20" y="443" class="sub">Production: Vercel + Render + Atlas. Local: Docker Compose with the same four services (Mongo 6, AI, API, web).</text>
+    </svg>
+    <div class="cap">Figure 1 &mdash; Logical architecture. Payments and AI are external dependencies with explicit failure handling; the browser never receives provider secrets.</div>
+  </div>
+
+  <h3>6.1 Key request flows</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:14%">Flow</th><th style="width:56%">Path</th><th style="width:30%">Controls</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Sign in</strong></td><td>Browser &rarr; Next.js &rarr; <code>/api/auth/*</code> &rarr; Express &rarr; MongoDB &rarr; httpOnly cookie / JWT</td><td>Rate limit, OTP expiry, bcrypt hashing, Google token verification.</td></tr>
+      <tr><td><strong>Ask AI</strong></td><td>Browser &rarr; <code>/api/ai/ask</code> &rarr; Express (quota + auth) &rarr; Gemini / FastAPI &rarr; response &rarr; optional ChatHistory</td><td>Guest/day and plan/month quotas; timeout; disclaimer; no secret exposure.</td></tr>
+      <tr><td><strong>Upload &amp; analyse</strong></td><td>Browser &rarr; Express upload (Multer) &rarr; Cloudinary + pdf-parse &rarr; FastAPI <code>/analyze</code> &rarr; structured result</td><td>Size/MIME limits, signed URLs, deletion policy, PII caution.</td></tr>
+      <tr><td><strong>Pay</strong></td><td>Browser &rarr; Razorpay Checkout &rarr; Express order/signature &rarr; webhook &rarr; Payment/WebhookEvent &rarr; plan update</td><td>Signature verification, idempotency, audit log, reconciliation report.</td></tr>
+      <tr><td><strong>Message</strong></td><td>Browser &harr; Socket.io &rarr; Express &rarr; Message &rarr; recipient room</td><td>JWT handshake, room authorisation, content limits, report/block.</td></tr>
+      <tr><td><strong>Find advocate</strong></td><td>Browser &rarr; <code>/api/lawyers</code> &rarr; Express &rarr; MongoDB geo/text query &rarr; profile cards &rarr; lead/connection</td><td>Verification badge only when verified; no unverified ranking claims.</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="pb">6.2 Environments</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:18%">Environment</th><th style="width:26%">Purpose</th><th style="width:28%">Data</th><th style="width:28%">Access</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Local</strong></td><td>Feature development</td><td>Docker Mongo, seeded fixtures</td><td>Developer machines only</td></tr>
+      <tr><td><strong>Preview</strong></td><td>PR review / design QA</td><td>Staging API or mocked data</td><td>Vercel preview URLs; auth-protected</td></tr>
+      <tr><td><strong>Staging</strong></td><td>End-to-end and payment tests</td><td>Separate Mongo database; test Razorpay keys</td><td>Team + QA; no real customer data</td></tr>
+      <tr><td><strong>Production</strong></td><td>Public site</td><td>Atlas production cluster; live keys</td><td>Least privilege; audited admin access</td></tr>
+    </tbody>
+  </table>
+
+  <div class="doc-footer">
+    <span>06 &middot; Architecture &amp; data flow</span>
+    <span>Figure 1 is logical, not a network diagram</span>
+  </div>
+</section>
+
+<!-- ================= 7 DATA ================= -->
+<section class="major">
+  <h2><span class="num">07</span>Data model</h2>
+
+  <p class="lead">Twenty-five Mongoose models are present. The schema is document-oriented and pragmatic: user identity, marketplace transactions, AI artefacts, and practice-management records. The main design risks are cross-collection consistency, PII sprawl and missing uniqueness constraints on payment events.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:20%">Domain</th><th style="width:40%">Collections</th><th style="width:40%">Purpose / key fields</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Identity &amp; access</strong></td><td><code>User</code>, <code>OtpEntry</code>, <code>GuestUsage</code></td><td>Account, role (client/advocate/admin), plan, verification status; OTP hashes and expiry; per-IP/device guest quota.</td></tr>
+      <tr><td><strong>Audit &amp; safety</strong></td><td><code>AuditLog</code>, <code>AdminAuditLog</code></td><td>Append-only sensitive actions, actor, target, IP, timestamp. Must not store secrets.</td></tr>
+      <tr><td><strong>Marketplace</strong></td><td><code>Connection</code>, <code>Appointment</code>, <code>Message</code>, <code>Notification</code></td><td>Client&ndash;advocate connection, booking slot/status, chat thread, delivery state.</td></tr>
+      <tr><td><strong>Legal work</strong></td><td><code>Case</code>, <code>TrackedCase</code>, <code>CasePrediction</code></td><td>Case metadata, stages, hearings; external court tracking; experimental analysis output.</td></tr>
+      <tr><td><strong>Practice ops</strong></td><td><code>CRMClient</code>, <code>Invoice</code></td><td>Advocate client record, billing line items, tax fields, payment status.</td></tr>
+      <tr><td><strong>AI artefacts</strong></td><td><code>ChatHistory</code>, <code>Agreement</code>, <code>SourceDoc</code>, <code>Passage</code>, <code>ProofReceipt</code></td><td>Conversation turns; generated drafts; source corpus; cited passages; gated HMAC proof metadata.</td></tr>
+      <tr><td><strong>Commerce</strong></td><td><code>Payment</code>, <code>WebhookEvent</code></td><td>Razorpay order/payment IDs, amount, plan, status; raw webhook envelope for idempotency and replay.</td></tr>
+      <tr><td><strong>Community</strong></td><td><code>Post</code>, <code>Topic</code>, <code>Event</code>, <code>Confession</code></td><td>Forum posts, taxonomy, events/webinars, anonymous confessions with moderation state.</td></tr>
+      <tr><td><strong>HR (proposed)</strong></td><td><code>Job</code>, <code>Application</code>, <code>Interview</code>, <code>Offer</code></td><td>Tejas workstream: job requisition, candidate application, interview rounds, offer state. Not yet in the 25.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.1 Data rules that must hold</h3>
+  <ul>
+    <li><strong>Payment idempotency:</strong> a unique index on the provider event ID is mandatory; processing must be safe under retries and out-of-order delivery.</li>
+    <li><strong>Plan consistency:</strong> reconcile the legacy enum (<code>silver</code>, <code>gold</code>, <code>diamond</code>) with the public plan names (<code>pro</code>, <code>gold</code>, <code>firm</code>) before billing changes. One source of truth, migrated deliberately.</li>
+    <li><strong>PII minimisation:</strong> do not persist full legal queries, documents or chat content longer than needed. Define retention per collection and support erasure requests.</li>
+    <li><strong>Verification truth:</strong> advocate verification is a state machine (<code>pending</code> &rarr; <code>verified</code> / <code>rejected</code>) with an audit record; the UI must never infer verification from profile completeness.</li>
+    <li><strong>Soft delete:</strong> use <code>deletedAt</code> for user-facing records where recovery or legal hold is needed; hard-delete media from Cloudinary on erasure.</li>
+    <li><strong>Time zones:</strong> store UTC; render in Asia/Kolkata. Court dates are date-only and must not shift across time zones.</li>
+  </ul>
+
+  <h3 class="pb">7.2 Index and query priorities</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:32%">Query</th><th style="width:34%">Index</th><th style="width:34%">Why</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Login by email/phone</td><td>Unique on normalised identifier</td><td>Prevents duplicate accounts; fast auth.</td></tr>
+      <tr><td>Lawyer search by city + specialisation</td><td>Compound <code>{ city, specialisations, verificationStatus }</code></td><td>Current search is coarse; compound index supports filters.</td></tr>
+      <tr><td>Geo nearby</td><td><code>2dsphere</code> on coordinates</td><td>Map and nearby results.</td></tr>
+      <tr><td>User&rsquo;s cases / appointments</td><td><code>{ userId, createdAt }</code></td><td>Dashboard pagination.</td></tr>
+      <tr><td>Messages by thread</td><td><code>{ threadId, createdAt }</code></td><td>Chronological chat load.</td></tr>
+      <tr><td>Webhook lookup</td><td>Unique on <code>providerEventId</code></td><td>Idempotency and replay safety.</td></tr>
+      <tr><td>Guest quota</td><td><code>{ ipHash, dayKey }</code> unique</td><td>Atomic daily counter.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <span class="label">Migration discipline</span>
+    <p>MongoDB is schemaless at the database level but not at the application level. Every schema change needs a forward migration script, a rollback note, and a staging run against a production-like snapshot. Never run ad-hoc updates directly on production.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>07 &middot; Data model</span>
+    <span>25 existing collections + 4 proposed HR collections</span>
+  </div>
+</section>
+
+<!-- ================= 8 API ================= -->
+<section class="major">
+  <h2><span class="num">08</span>API surface</h2>
+
+  <p class="lead">The Express API is organised by domain route modules. Most endpoints are JSON over HTTPS; uploads use multipart; chat uses Socket.io; payments use a signed webhook. The client reaches them through the Next.js <code>/api/*</code> rewrite.</p>
+
+  <table class="tbl compact">
+    <thead>
+      <tr><th style="width:17%">Group</th><th style="width:32%">Representative endpoints</th><th style="width:15%">Auth</th><th style="width:36%">Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Auth</strong></td><td><code>POST /api/auth/register</code><br><code>POST /api/auth/login</code><br><code>POST /api/auth/otp/*</code><br><code>POST /api/auth/google</code><br><code>GET /api/auth/me</code></td><td>Public / JWT</td><td>OTP expiry, rate limits, bcrypt, Google ID-token verification, httpOnly cookies where supported.</td></tr>
+      <tr><td><strong>AI</strong></td><td><code>POST /api/ai/ask</code><br><code>POST /api/ai/draft</code><br><code>POST /api/ai/analyze</code><br><code>POST /api/ai/research</code></td><td>JWT / guest</td><td>Quota enforcement before provider call; timeout; disclaimer; optional history persistence.</td></tr>
+      <tr><td><strong>Cases</strong></td><td><code>GET/POST /api/cases</code><br><code>GET/PATCH /api/cases/:id</code><br><code>POST /api/cases/:id/track</code></td><td>JWT</td><td>Ownership checks; role-aware access; no cross-tenant reads.</td></tr>
+      <tr><td><strong>Marketplace</strong></td><td><code>GET /api/lawyers</code><br><code>GET /api/lawyers/:id</code><br><code>POST /api/connections</code></td><td>Public / JWT</td><td>Server-side filters; verified badge from verification state; pagination required.</td></tr>
+      <tr><td><strong>Appointments</strong></td><td><code>GET/POST /api/appointments</code><br><code>PATCH /api/appointments/:id</code></td><td>JWT</td><td>Slot conflict checks; timezone-safe date handling; cancellation policy.</td></tr>
+      <tr><td><strong>Messages</strong></td><td>Socket events + <code>GET /api/messages/:threadId</code></td><td>JWT</td><td>Room authorisation; message length limits; report/block; retention.</td></tr>
+      <tr><td><strong>Payments</strong></td><td><code>POST /api/payments/order</code><br><code>POST /api/payments/verify</code><br><code>POST /api/payments/webhook</code></td><td>JWT / signature</td><td>Raw body for signature; idempotent webhook; amount and plan validation; reconciliation.</td></tr>
+      <tr><td><strong>Leads</strong></td><td><code>GET /api/leads</code><br><code>POST /api/leads/:id/accept</code></td><td>JWT (advocate)</td><td>Plan entitlement; atomic accept; PII shared only after consent.</td></tr>
+      <tr><td><strong>Admin</strong></td><td><code>GET /api/admin/users</code><br><code>PATCH /api/admin/lawyers/:id/verify</code><br><code>GET /api/admin/metrics</code></td><td>JWT + admin role</td><td>Every mutation writes AdminAuditLog; least privilege; no bulk export without approval.</td></tr>
+      <tr><td><strong>HR / careers</strong></td><td><code>GET /api/jobs</code><br><code>POST /api/jobs/:id/apply</code><br><code>GET /api/admin/applications</code></td><td>Public / JWT</td><td>Tejas workstream; resume upload limits; candidate consent; retention.</td></tr>
+      <tr><td><strong>Ops</strong></td><td><code>GET /healthz</code><br><code>GET /readyz</code></td><td>Public</td><td>Liveness vs readiness; no secrets or dependency credentials in output.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.1 Contract rules</h3>
+  <ul>
+    <li><strong>Validate at the edge:</strong> every body, query and param is validated before hitting the database or an AI provider.</li>
+    <li><strong>Consistent errors:</strong> <code>{ error: { code, message, requestId } }</code>; never leak stack traces or provider messages in production.</li>
+    <li><strong>Pagination:</strong> cursor-based for high-volume lists; hard maximum page size; no unbounded queries.</li>
+    <li><strong>Idempotency:</strong> mutation endpoints that can be retried accept an idempotency key; payment webhooks are idempotent by provider event ID.</li>
+    <li><strong>Versioning:</strong> prefix breaking changes (<code>/api/v2</code>) rather than silently changing response shapes.</li>
+    <li><strong>Timeouts:</strong> provider calls have explicit deadlines; AI requests fail closed with a clear retry path.</li>
+    <li><strong>Documentation:</strong> maintain an OpenAPI file for the Express API; generate examples from tests, not memory.</li>
+  </ul>
+
+  <h3>8.2 Error and degradation policy</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:24%">Dependency</th><th style="width:38%">If unavailable</th><th style="width:38%">User-facing behaviour</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Gemini</td><td>Return a bounded error; optionally retry once with backoff.</td><td>&ldquo;The assistant is temporarily unavailable. Your question was not charged.&rdquo;</td></tr>
+      <tr><td>MongoDB</td><td>Fail readiness; stop accepting writes.</td><td>Generic maintenance message; no data loss; alert on-call.</td></tr>
+      <tr><td>Razorpay</td><td>Do not activate plans from the client callback alone.</td><td>&ldquo;Payment received; activation pending verification.&rdquo;</td></tr>
+      <tr><td>Cloudinary</td><td>Reject upload with a retry hint; keep metadata consistent.</td><td>&ldquo;Upload failed. Please retry.&rdquo;</td></tr>
+      <tr><td>Email/SMS</td><td>Queue and retry; expose OTP resend cooldown.</td><td>Clear resend state; do not reveal whether an account exists.</td></tr>
+      <tr><td>Indian Kanoon</td><td>Fall back to model knowledge with a visible limitation.</td><td>Label &ldquo;sources unavailable&rdquo; rather than inventing citations.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="doc-footer">
+    <span>08 &middot; API surface</span>
+    <span>Representative routes; confirm exact paths against server/routes</span>
+  </div>
+</section>
+
+<!-- ================= 9 SECURITY ================= -->
+<section class="major">
+  <h2><span class="num">09</span>Security, compliance &amp; NFRs</h2>
+
+  <p class="lead">Legal data is sensitive by default. The platform must be secure enough for confidential documents and a marketplace of professionals, compliant with India&rsquo;s DPDP Act 2023, and honest about the limits of AI.</p>
+
+  <h3>9.1 Security controls</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:24%">Control</th><th style="width:38%">Current / required</th><th style="width:38%">Verification</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Authentication</td><td>JWT access tokens, OTP, Google sign-in; short expiry; refresh strategy to be finalised.</td><td>Auth tests, token replay tests, cookie flags.</td></tr>
+      <tr><td>Authorisation</td><td>Role checks on every admin/advocate route; object-level ownership checks.</td><td>IDOR test suite across cases, messages, invoices.</td></tr>
+      <tr><td>Password storage</td><td>bcrypt with appropriate cost; no plaintext or reversible storage.</td><td>Code review + dependency audit.</td></tr>
+      <tr><td>Headers</td><td>Helmet; HSTS in production; CSP nonce; frame-ancestors restriction.</td><td>securityheaders.com / automated header test.</td></tr>
+      <tr><td>Rate limiting</td><td>Global + auth + AI + payment-specific limits.</td><td>Load test and abuse simulation.</td></tr>
+      <tr><td>Input handling</td><td>Schema validation, body-size caps, MIME allowlist, PDF parsing isolation.</td><td>Fuzz uploads; malformed JSON tests.</td></tr>
+      <tr><td>Secrets</td><td>Platform secret stores; no secrets in git, client bundles, logs or docs.</td><td>Secret scan in CI; bundle inspection.</td></tr>
+      <tr><td>Payments</td><td>Server-side amount validation, signature verification, idempotent webhooks.</td><td>Replay and tamper tests in Razorpay test mode.</td></tr>
+      <tr><td>Audit</td><td>AdminAuditLog for sensitive actions; immutable retention.</td><td>Sampled audit review each sprint.</td></tr>
+      <tr><td>Dependencies</td><td>Lockfiles, Dependabot/audit, pinned base images.</td><td>CI audit; monthly patch window.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.2 DPDP and legal-posture checklist</h3>
+  <ul class="checklist two">
+    <li>Privacy notice in plain language, linked at signup and in the footer.</li>
+    <li>Purpose limitation: legal information, drafting, marketplace, support only.</li>
+    <li>Consent for marketing separate from terms acceptance.</li>
+    <li>Data-principal rights: access, correction, erasure, grievance.</li>
+    <li>Retention schedule per collection; automated deletion jobs.</li>
+    <li>Processor register: Vercel, Render, Atlas, Cloudinary, Razorpay, Google, Sentry, PostHog.</li>
+    <li>Cross-border transfer assessment for each processor.</li>
+    <li>Breach response plan with 72-hour internal escalation.</li>
+    <li>Children/minors policy and age gate where required.</li>
+    <li>No special-category data in analytics or prompts without a lawful basis.</li>
+    <li>AI disclaimer at the point of output, not only in terms.</li>
+    <li>Advocate verification records and advertising compliance review.</li>
+    <li>Legal-hold and e-discovery procedure for disputes.</li>
+    <li>Vendor DPAs and sub-processor list maintained.</li>
+  </ul>
+
+  <h3 class="pb">9.3 Non-functional targets</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:24%">Attribute</th><th style="width:30%">Target</th><th style="width:46%">How measured</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Availability</td><td>99.5% monthly (API + web)</td><td>External uptime monitor on <code>/healthz</code> and home page.</td></tr>
+      <tr><td>API latency</td><td>p95 &lt; 800 ms non-AI; p95 &lt; 8 s AI first token</td><td>Render metrics, Sentry spans, synthetic checks.</td></tr>
+      <tr><td>Web performance</td><td>LCP &lt; 2.5 s on mid-range Android/4G</td><td>Lighthouse CI on key routes.</td></tr>
+      <tr><td>Error rate</td><td>&lt; 0.5% 5xx on non-AI routes</td><td>Sentry + access logs.</td></tr>
+      <tr><td>Recovery</td><td>RPO 24 h; RTO 4 h</td><td>Quarterly restore drill from Atlas backup.</td></tr>
+      <tr><td>Accessibility</td><td>WCAG 2.2 AA for core flows</td><td>axe + manual keyboard/screen-reader pass.</td></tr>
+      <tr><td>Browser support</td><td>Last 2 versions of Chrome, Safari, Edge, Firefox; Android Chrome</td><td>Playwright matrix + manual device lab.</td></tr>
+      <tr><td>Localisation</td><td>14 locales; RTL layout parity</td><td>Pseudo-localisation + Urdu visual QA.</td></tr>
+      <tr><td>Observability</td><td>Every request has a request ID; alerts on 5xx, latency, payment failures</td><td>Dashboards + on-call runbook.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout danger">
+    <span class="label">Non-negotiable before public launch</span>
+    <p>Rotate any key that has ever appeared in a screenshot, chat, commit or client bundle. Enable MongoDB authentication and network allowlisting. Remove demo users and seeded credentials from production. Prove the payment webhook rejects invalid signatures and duplicate events.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>09 &middot; Security, compliance &amp; NFRs</span>
+    <span>Targets are proposals; confirm with the founders</span>
+  </div>
+</section>
+
+<!-- ================= 10 DELIVERY ================= -->
+<section class="major">
+  <h2><span class="num">10</span>Delivery plan by workstream</h2>
+
+  <p class="lead">Three owners, deliberately separated by system boundary. Dhruv owns the inputs (keys, database, provider accounts). Rudraksh owns the runtime (environments, deployment, reliability, backend). Tejas owns the human interface (HR/careers frontend, design system, accessibility, conversion). The plan assumes part-time founders, not a full-time engineering org, so sequencing matters more than parallelism.</p>
+
+  <div class="callout gold">
+    <span class="label">Sequencing principle</span>
+    <p><strong>Unblock, then build.</strong> Dhruv&rsquo;s key/database work and Rudraksh&rsquo;s staging environment are prerequisites for reliable feature work. Tejas can start design and static UI immediately, but must not wire production data until staging and schemas are agreed.</p>
+  </div>
+
+  <h3>10.1 Rudraksh &mdash; development &amp; deployment</h3>
+  <p><strong>Mission:</strong> make the platform deployable, observable, recoverable and fast enough to trust. Own the backend runtime, infrastructure and release process.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:6%">ID</th><th style="width:30%">Deliverable</th><th style="width:44%">Scope</th><th style="width:10%">Priority</th><th style="width:10%">By</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>R1</td><td>Environment topology</td><td>Define local / preview / staging / production; document URLs, domains, DNS, TLS and ownership. Staging must be isolated from production data.</td><td>P0</td><td>Week 1</td></tr>
+      <tr><td>R2</td><td>CI/CD pipeline</td><td>GitHub Actions: install, lint, unit tests, build, Playwright smoke, Docker image. Required checks; protected main; PR previews.</td><td>P0</td><td>Week 1&ndash;2</td></tr>
+      <tr><td>R3</td><td>Render + Vercel deployment</td><td>Wire services, health checks, env groups, zero-downtime deploys, custom domains, rollback procedure. Confirm Socket.io works through the proxy.</td><td>P0</td><td>Week 2</td></tr>
+      <tr><td>R4</td><td>Observability</td><td>Sentry (web/API/AI), structured logs with request IDs, uptime monitor, dashboards for latency/5xx/payments, alert routing.</td><td>P0</td><td>Week 2&ndash;3</td></tr>
+      <tr><td>R5</td><td>Backend hardening</td><td>Validate all routes, consistent errors, rate limits, CORS allowlist, body limits, auth/role middleware, IDOR fixes.</td><td>P0</td><td>Week 2&ndash;4</td></tr>
+      <tr><td>R6</td><td>Payment reliability</td><td>Signature verification, idempotent webhook, replay handling, reconciliation job, failed-payment alert. Test in Razorpay test mode.</td><td>P0</td><td>Week 3</td></tr>
+      <tr><td>R7</td><td>AI resilience</td><td>Timeouts, retries with backoff, quota checks before provider calls, graceful degradation, no fabricated citations, cost logging.</td><td>P1</td><td>Week 3&ndash;4</td></tr>
+      <tr><td>R8</td><td>Performance</td><td>Add missing indexes, paginate lists, cache public reads, compress responses, set budgets; load test key endpoints.</td><td>P1</td><td>Week 4&ndash;5</td></tr>
+      <tr><td>R9</td><td>Backup &amp; restore drill</td><td>Verify Atlas backups; restore into staging; document RPO/RTO; test point-in-time recovery.</td><td>P0</td><td>Week 5</td></tr>
+      <tr><td>R10</td><td>Release runbook</td><td>Pre-deploy checklist, migration order, smoke tests, rollback, incident contacts, post-deploy verification.</td><td>P0</td><td>Week 5</td></tr>
+      <tr><td>R11</td><td>Security pass</td><td>Headers/CSP, dependency audit, secret scan, admin route review, upload limits, production demo-data cleanup.</td><td>P0</td><td>Week 5&ndash;6</td></tr>
+      <tr><td>R12</td><td>Launch operations</td><td>Go-live window, DNS cutover, monitoring watch, rollback decision, post-launch smoke and 48-hour hypercare.</td><td>P0</td><td>Week 6</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Rudraksh &mdash; acceptance criteria</h4>
+  <ul class="checklist">
+    <li>A new contributor can run the full stack locally from the README in under 30 minutes.</li>
+    <li>Every PR gets a preview; main cannot merge with failing checks.</li>
+    <li>Staging deploy is one click/command and production rollback is documented and rehearsed.</li>
+    <li>An alert reaches the on-call owner within 5 minutes for 5xx, downtime or payment failure spikes.</li>
+    <li>Restore from backup has been performed successfully, with evidence and timings recorded.</li>
+    <li>No critical/high dependency vulnerability or exposed secret remains open at launch.</li>
+  </ul>
+
+  <h3>10.2 Dhruv &mdash; API keys, provider accounts &amp; database</h3>
+  <p><strong>Mission:</strong> make every external dependency real, scoped, rotated and recoverable &mdash; and make the database safe to grow. Own the provider console work and schema/index quality.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:6%">ID</th><th style="width:30%">Deliverable</th><th style="width:44%">Scope</th><th style="width:10%">Priority</th><th style="width:10%">By</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>D1</td><td>Key inventory</td><td>List every env var, provider, owner, environment, scope, creation date, rotation date and last use. No values in the register.</td><td>P0</td><td>Week 1</td></tr>
+      <tr><td>D2</td><td>Secret storage</td><td>Create separate staging/production secret groups in Render/Vercel (or a secret manager). Remove secrets from local files and chat.</td><td>P0</td><td>Week 1</td></tr>
+      <tr><td>D3</td><td>Core provider accounts</td><td>Gemini, Razorpay, Cloudinary, Google OAuth, MongoDB Atlas, Sentry, PostHog. Verify billing, quotas and ownership.</td><td>P0</td><td>Week 1&ndash;2</td></tr>
+      <tr><td>D4</td><td>Database topology</td><td>Separate staging/production; dedicated app users; least-privilege roles; IP allowlist; TLS; connection-string rotation.</td><td>P0</td><td>Week 2</td></tr>
+      <tr><td>D5</td><td>Schema audit</td><td>Review 25 models for required fields, enums, defaults, timestamps, soft delete and PII. Fix inconsistencies.</td><td>P0</td><td>Week 2&ndash;3</td></tr>
+      <tr><td>D6</td><td>Index plan</td><td>Implement Section 7.2 indexes; remove redundant indexes; verify query plans on seeded data.</td><td>P0</td><td>Week 3</td></tr>
+      <tr><td>D7</td><td>Payment idempotency</td><td>Unique index on provider event ID; safe replay; reconciliation query; orphan-payment review.</td><td>P0</td><td>Week 3</td></tr>
+      <tr><td>D8</td><td>Backup &amp; retention</td><td>Daily backups, retention policy, PITR window, restore test with Rudraksh; deletion jobs for expired OTP/quota records.</td><td>P0</td><td>Week 4</td></tr>
+      <tr><td>D9</td><td>Optional integrations</td><td>Bhashini, Indian Kanoon, Brevo/Twilio/MTalkz, Setu/DigiLocker, DocuSign: enable only with signed-off use cases; otherwise document as disabled.</td><td>P1</td><td>Week 3&ndash;5</td></tr>
+      <tr><td>D10</td><td>HR schemas</td><td>Agree and implement <code>Job</code>, <code>Application</code>, <code>Interview</code>, <code>Offer</code> with Tejas; indexes, status enums, consent and retention.</td><td>P0</td><td>Week 4</td></tr>
+      <tr><td>D11</td><td>Key rotation drill</td><td>Rotate one non-critical and one critical key end-to-end; record steps and downtime.</td><td>P1</td><td>Week 5</td></tr>
+      <tr><td>D12</td><td>Data protection ops</td><td>Processor register, DPAs, erasure procedure, export procedure, access review.</td><td>P0</td><td>Week 5&ndash;6</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Dhruv &mdash; acceptance criteria</h4>
+  <ul class="checklist">
+    <li>Every production key exists in a secret store, is environment-scoped, and has an owner and rotation date.</li>
+    <li>Staging and production never share a database, bucket, OAuth client or payment key.</li>
+    <li>Payment webhooks are provably idempotent under duplicate and out-of-order delivery.</li>
+    <li>The index plan is applied and the top 10 queries have acceptable plans.</li>
+    <li>An erasure request can be completed across MongoDB and Cloudinary with an audit record.</li>
+    <li>No credential is present in git history, screenshots, client bundles or this document.</li>
+  </ul>
+
+  <h3>10.3 Tejas &mdash; HR frontend &amp; other development</h3>
+  <p><strong>Mission:</strong> ship the careers/HR experience and raise the quality of the entire frontend: consistent design, accessible states, fast pages, clear conversion paths. Own the interface, not the infrastructure.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:6%">ID</th><th style="width:30%">Deliverable</th><th style="width:44%">Scope</th><th style="width:10%">Priority</th><th style="width:10%">By</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>T1</td><td>Careers IA &amp; design</td><td>Public careers landing, role detail, application form, confirmation and status page. Mobile-first, brand-consistent, SEO metadata.</td><td>P0</td><td>Week 1&ndash;2</td></tr>
+      <tr><td>T2</td><td>Application flow</td><td>Form validation, resume upload (type/size), consent, duplicate prevention, success/error states, analytics events.</td><td>P0</td><td>Week 2&ndash;3</td></tr>
+      <tr><td>T3</td><td>Admin HR views</td><td>Applicant list, filters, detail drawer, stage changes, interview scheduling, offer state; role-gated.</td><td>P0</td><td>Week 3&ndash;4</td></tr>
+      <tr><td>T4</td><td>Design-system pass</td><td>Buttons, inputs, tables, modals, toasts, empty/loading/error states; replace one-off styles with shared components.</td><td>P1</td><td>Week 2&ndash;4</td></tr>
+      <tr><td>T5</td><td>Accessibility</td><td>Keyboard navigation, focus management, labels, contrast, reduced motion, screen-reader pass on core flows.</td><td>P0</td><td>Week 4&ndash;5</td></tr>
+      <tr><td>T6</td><td>i18n / RTL polish</td><td>Careers strings externalised; Urdu RTL layout; date/number formatting; no hard-coded English in shared components.</td><td>P1</td><td>Week 4&ndash;5</td></tr>
+      <tr><td>T7</td><td>Conversion instrumentation</td><td>PostHog events for view &rarr; start &rarr; submit &rarr; interview &rarr; offer; dashboards; no PII in event properties.</td><td>P1</td><td>Week 5</td></tr>
+      <tr><td>T8</td><td>Frontend performance</td><td>Route splitting, image/font optimisation, LCP budget, bundle analysis, Lighthouse CI on careers and assistant.</td><td>P1</td><td>Week 5</td></tr>
+      <tr><td>T9</td><td>Cross-browser QA</td><td>Chrome, Safari, Edge, Firefox, Android Chrome; fix layout and input issues; document known limitations.</td><td>P0</td><td>Week 5</td></tr>
+      <tr><td>T10</td><td>Launch polish</td><td>Copy review, legal links, consent text, favicon/OG images, 404/500 states, final visual QA.</td><td>P0</td><td>Week 6</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Tejas &mdash; acceptance criteria</h4>
+  <ul class="checklist">
+    <li>A candidate can find a role, apply, and receive confirmation on a mid-range Android phone without layout breakage.</li>
+    <li>An admin can review an application and move it through every stage with an audit trail.</li>
+    <li>Core flows pass keyboard-only and screen-reader smoke tests; contrast meets WCAG 2.2 AA.</li>
+    <li>Urdu RTL renders correctly; no clipped text or mirrored icons where direction matters.</li>
+    <li>Careers funnel events appear in PostHog with no resume content or personal data.</li>
+    <li>Lighthouse performance &ge; 85 on the careers landing and application pages.</li>
+  </ul>
+
+  <h3>10.4 RACI</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:30%">Area</th><th style="width:14%">Rudraksh</th><th style="width:14%">Dhruv</th><th style="width:14%">Tejas</th><th style="width:28%">Decision / escalation</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Cloud accounts &amp; keys</td><td>C</td><td><strong>A/R</strong></td><td>I</td><td>Founders approve spend and provider choice.</td></tr>
+      <tr><td>Database schema &amp; indexes</td><td>C</td><td><strong>A/R</strong></td><td>C</td><td>Rudraksh signs off on query performance.</td></tr>
+      <tr><td>Environments &amp; deployment</td><td><strong>A/R</strong></td><td>C</td><td>I</td><td>Rudraksh owns go/no-go with founders.</td></tr>
+      <tr><td>HR frontend</td><td>C</td><td>C</td><td><strong>A/R</strong></td><td>Tejas owns UX; Dhruv owns schema.</td></tr>
+      <tr><td>Backend features</td><td><strong>A/R</strong></td><td>C</td><td>C</td><td>Rudraksh owns; Tejas owns client contract.</td></tr>
+      <tr><td>Payments</td><td>R</td><td><strong>A</strong></td><td>C</td><td>Founders approve pricing/refund policy.</td></tr>
+      <tr><td>Security &amp; DPDP</td><td>R</td><td>R</td><td>C</td><td>External counsel reviews public claims.</td></tr>
+      <tr><td>Launch comms</td><td>C</td><td>I</td><td>R</td><td>Founders approve messaging.</td></tr>
+    </tbody>
+  </table>
+  <p class="table-note">R = responsible, A = accountable, C = consulted, I = informed. One accountable owner per row.</p>
+
+  <h3>10.5 Six-sprint / 90-day plan</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:10%">Sprint</th><th style="width:30%">Rudraksh</th><th style="width:30%">Dhruv</th><th style="width:30%">Tejas</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>S0</strong><br>Week 1</td><td>Topology, CI skeleton, local runbook.</td><td>Key inventory, secret groups, provider ownership.</td><td>Careers IA, wireframes, component inventory.</td></tr>
+      <tr><td><strong>S1</strong><br>Week 2</td><td>Staging deploy, previews, observability.</td><td>Atlas staging/prod split, roles, schema audit start.</td><td>Careers landing + role detail static build.</td></tr>
+      <tr><td><strong>S2</strong><br>Week 3</td><td>Backend hardening, payment reliability, AI timeouts.</td><td>Index plan, payment idempotency, provider enablement.</td><td>Application form + validation + consent.</td></tr>
+      <tr><td><strong>S3</strong><br>Week 4</td><td>Performance, load tests, backup automation.</td><td>HR schemas, retention jobs, optional integrations.</td><td>Admin HR views + stage transitions.</td></tr>
+      <tr><td><strong>S4</strong><br>Week 5</td><td>Security pass, restore drill, release runbook.</td><td>Key rotation drill, DPDP ops, data export/erasure.</td><td>Accessibility, RTL, performance, analytics.</td></tr>
+      <tr><td><strong>S5</strong><br>Week 6</td><td>Launch, hypercare, rollback watch.</td><td>Post-launch key/database monitoring.</td><td>Launch polish, cross-browser QA, funnel review.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>10.6 Working agreement</h3>
+  <div class="grid2">
+    <div class="card">
+      <span class="tag">Cadence</span>
+      <h4>Weekly rhythm</h4>
+      <p>Monday 30-min planning; Wednesday 15-min blocker check; Friday demo + written status. Status format: shipped, next, blocked, decisions needed. No status without a link to a PR, deploy or document.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Definition of done</span>
+      <h4>Every ticket</h4>
+      <p>Code reviewed, tests passing, preview deployed, analytics/error handling considered, docs updated, rollback noted, acceptance criteria demonstrated. &ldquo;Works on my machine&rdquo; is not done.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Change control</span>
+      <h4>Schema and secrets</h4>
+      <p>No production schema change without a migration script and staging run. No new secret without an owner, scope and rotation date. No direct production edits outside an approved runbook.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Escalation</span>
+      <h4>Blockers</h4>
+      <p>If a dependency is blocked for more than one working day, raise it in the Wednesday check and choose: work around, descope, or escalate to founders. Silent blocking is the main delivery risk.</p>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <span>10 &middot; Delivery plan by workstream</span>
+    <span>Owners and dates are proposals for confirmation</span>
+  </div>
+</section>
+
+<!-- ================= 11 RISKS ================= -->
+<section class="major">
+  <h2><span class="num">11</span>Risks &amp; mitigations</h2>
+
+  <p class="lead">The highest risks are not feature gaps. They are trust, legal exposure, payment correctness and operational fragility. Each risk below has an owner and a trigger for escalation.</p>
+
+  <table class="tbl compact">
+    <thead>
+      <tr><th style="width:5%">ID</th><th style="width:23%">Risk</th><th style="width:8%">Likelihood</th><th style="width:8%">Impact</th><th style="width:34%">Mitigation</th><th style="width:10%">Owner</th><th style="width:12%">Trigger</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>X1</td><td>AI gives wrong or fabricated legal information</td><td>High</td><td>High</td><td>Visible disclaimers; source-first UI; no invented citations; human review for high-stakes templates; evaluation set; escalation to advocate.</td><td>Product</td><td>Any user report of harmful output</td></tr>
+      <tr><td>X2</td><td>Unauthorised practice of law / marketplace liability</td><td>Medium</td><td>High</td><td>Position as information and connection, not representation; advocate verification; terms; advertising compliance review; no fee-sharing that violates Bar Council rules.</td><td>Founders + counsel</td><td>New revenue model or claim</td></tr>
+      <tr><td>X3</td><td>Payment activation errors or double charging</td><td>Medium</td><td>High</td><td>Webhook idempotency, server-side amount checks, reconciliation, test-mode E2E, refund runbook, alerting.</td><td>Dhruv + Rudraksh</td><td>Any mismatch in daily reconciliation</td></tr>
+      <tr><td>X4</td><td>Data breach or PII leak</td><td>Medium</td><td>High</td><td>Least privilege, secret rotation, encryption, audit logs, retention limits, DPDP procedures, incident plan, pen test before scale.</td><td>Dhruv</td><td>Suspicious access or leaked key</td></tr>
+      <tr><td>X5</td><td>Provider outage or price change</td><td>Medium</td><td>Medium</td><td>Timeouts, fallbacks, provider abstraction, usage caps, cost alerts, documented degraded modes.</td><td>Rudraksh</td><td>Error spike or bill anomaly</td></tr>
+      <tr><td>X6</td><td>Free-tier cold starts hurt first impression</td><td>High</td><td>Medium</td><td>Keep API warm, move to paid instance before launch, loading states, uptime monitor, measure p95.</td><td>Rudraksh</td><td>p95 &gt; 3 s on non-AI</td></tr>
+      <tr><td>X7</td><td>Marketplace supply is unverified or inactive</td><td>High</td><td>High</td><td>Manual verification, response SLA, seed supply in launch cities, remove stale profiles, measure response rate.</td><td>Ops</td><td>&lt; 60% response in 24 h</td></tr>
+      <tr><td>X8</td><td>Scope creep across three owners</td><td>High</td><td>Medium</td><td>Frozen sprint scope, explicit descope list, weekly trade-off review, one accountable owner per area.</td><td>Founders</td><td>Two consecutive missed sprints</td></tr>
+      <tr><td>X9</td><td>Accessibility / language gaps exclude users</td><td>Medium</td><td>Medium</td><td>WCAG 2.2 AA checks, RTL QA, plain language, device testing, user feedback in Hindi/regional languages.</td><td>Tejas</td><td>Usability test failure</td></tr>
+      <tr><td>X10</td><td>Key-person dependency</td><td>High</td><td>High</td><td>Runbooks, shared secret ownership, documented architecture, pair reviews, no single-person production access.</td><td>Founders</td><td>Owner unavailable &gt; 1 week</td></tr>
+      <tr><td>X11</td><td>Legal document templates invalid by state</td><td>Medium</td><td>High</td><td>State-aware templates, stamp-duty notes, advocate review, versioned template library, clear &ldquo;review before use&rdquo; warning.</td><td>Product + counsel</td><td>Template complaint</td></tr>
+      <tr><td>X12</td><td>Reputational damage from overclaiming</td><td>Medium</td><td>High</td><td>Evidence-based marketing, no &ldquo;verified AI&rdquo; claims, publish limitations, correct errors publicly, monitor reviews.</td><td>Founders</td><td>Public claim challenge</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout danger">
+    <span class="label">Stop-the-line risks</span>
+    <p>Any confirmed payment double-charge, exposed production secret, cross-tenant data access, or AI output that could cause imminent harm triggers an immediate pause of the affected flow. Fix, document, then resume. Do not &ldquo;monitor and see.&rdquo;</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>11 &middot; Risks &amp; mitigations</span>
+    <span>Review weekly; update owners and triggers</span>
+  </div>
+</section>
+
+<!-- ================= 12 LAUNCH ================= -->
+<section class="major">
+  <h2><span class="num">12</span>Launch gate &amp; definition of done</h2>
+
+  <p class="lead">Launch is a decision, not a date. The gate below is intentionally strict because the product handles legal problems and money. Every item needs evidence, not an assertion.</p>
+
+  <h3>12.1 Product &amp; content</h3>
+  <ul class="checklist two">
+    <li>All public claims match actual capability; experimental features are labelled.</li>
+    <li>AI disclaimer appears at output, not only in Terms.</li>
+    <li>Legal SOS clearly states it is not emergency dispatch and lists 112/15100.</li>
+    <li>Pricing, taxes, refunds and cancellation terms are published and accurate.</li>
+    <li>Advocate profiles show verification state truthfully.</li>
+    <li>Careers privacy notice and candidate consent are live.</li>
+    <li>14-language UI spot-checked; Urdu RTL verified.</li>
+    <li>Help, contact and grievance routes work.</li>
+  </ul>
+
+  <h3>12.2 Engineering &amp; operations</h3>
+  <ul class="checklist two">
+    <li>CI green; unit, integration and Playwright smoke tests pass.</li>
+    <li>Staging mirrors production and has been exercised end-to-end.</li>
+    <li>Backup restore proven; RPO/RTO recorded.</li>
+    <li>Payment test-mode E2E passes, including duplicate webhook replay.</li>
+    <li>No critical/high vulnerabilities; secrets scanned and rotated.</li>
+    <li>Uptime, error, latency and payment alerts route to an on-call owner.</li>
+    <li>Rollback rehearsed; release runbook current.</li>
+    <li>Load test at 2&times; expected launch traffic passes.</li>
+  </ul>
+
+  <h3>12.3 Security &amp; compliance</h3>
+  <ul class="checklist two">
+    <li>Production demo users/data removed; admin accounts reviewed.</li>
+    <li>MongoDB auth + network allowlist enabled; least-privilege users.</li>
+    <li>DPDP privacy notice, retention and erasure procedure published/operational.</li>
+    <li>Processor register and DPAs in place.</li>
+    <li>Incident response contacts and breach procedure tested.</li>
+    <li>Admin audit log verified for sensitive actions.</li>
+    <li>Upload limits and file-type checks verified.</li>
+    <li>External counsel sign-off on public legal/marketplace claims.</li>
+  </ul>
+
+  <h3>12.4 Go / no-go</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:20%">Role</th><th style="width:40%">Sign-off</th><th style="width:40%">Can block launch for</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Rudraksh</td><td>Deployment, reliability, rollback, security controls.</td><td>Unproven restore, failing payments, no rollback, open critical vuln.</td></tr>
+      <tr><td>Dhruv</td><td>Keys, database, provider readiness, DPDP operations.</td><td>Shared prod/staging credentials, missing index/idempotency, no erasure path.</td></tr>
+      <tr><td>Tejas</td><td>Careers UX, accessibility, cross-browser, conversion instrumentation.</td><td>Broken application flow, inaccessible core journey, false consent copy.</td></tr>
+      <tr><td>Founders / counsel</td><td>Product claims, pricing, legal posture, launch comms.</td><td>Overclaiming, unresolved regulatory exposure, missing disclaimers.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout gold">
+    <span class="label">Definition of done for this cycle</span>
+    <p>Staging is production-like; every key is owned and rotated; the database is backed up and restorable; payments are idempotent; the careers portal works end-to-end; core flows are accessible and multilingual; and the public product tells the truth about what it can and cannot do.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>12 &middot; Launch gate &amp; definition of done</span>
+    <span>Evidence required for every checkbox</span>
+  </div>
+</section>
+
+<!-- ================= APPENDIX A ================= -->
+<section class="major">
+  <h2><span class="num">A</span>Appendix A &mdash; Environment variable register</h2>
+
+  <p class="lead">Names only &mdash; no values belong in this document. Each variable needs an owner, environment scope and rotation date in the secret manager. Variables marked optional must degrade gracefully when absent.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:18%">Group</th><th style="width:52%">Variables</th><th style="width:30%">Required for</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Core</strong></td><td><code>NODE_ENV</code>, <code>PORT</code>, <code>MONGO_URI</code>, <code>JWT_SECRET</code>, <code>CLIENT_URL</code></td><td>API startup, auth, CORS, cookies.</td></tr>
+      <tr><td><strong>AI</strong></td><td><code>GEMINI_API_KEY</code>, <code>GEMINI_MODEL</code>, <code>AI_SERVICE_URL</code>, <code>INDIANKANOON_API_KEY</code></td><td>Assistant, drafting, research, analysis.</td></tr>
+      <tr><td><strong>Payments</strong></td><td><code>RZP_KEY_ID</code>, <code>RZP_KEY_SECRET</code>, <code>RZP_WEBHOOK_SECRET</code></td><td>Orders, verification, webhook signature.</td></tr>
+      <tr><td><strong>Auth / OAuth</strong></td><td><code>GOOGLE_CLIENT_ID</code>, <code>GOOGLE_CLIENT_SECRET</code>, <code>JWT_EXPIRES_IN</code></td><td>Google sign-in, token lifetime.</td></tr>
+      <tr><td><strong>Media</strong></td><td><code>CLOUDINARY_CLOUD_NAME</code>, <code>CLOUDINARY_API_KEY</code>, <code>CLOUDINARY_API_SECRET</code></td><td>Signed uploads, transformations, deletion.</td></tr>
+      <tr><td><strong>Email / SMS</strong></td><td><code>EMAIL_USER</code>, <code>EMAIL_PASS</code>, <code>BREVO_API_KEY</code>, <code>TWILIO_ACCOUNT_SID</code>, <code>TWILIO_AUTH_TOKEN</code>, <code>TWILIO_PHONE_NUMBER</code>, <code>MTALKZ_API_KEY</code>, <code>MTALKZ_SENDER_ID</code></td><td>OTP, transactional email, alerts.</td></tr>
+      <tr><td><strong>Language</strong></td><td><code>BHASHINI_API_KEY</code>, <code>BHASHINI_USER_ID</code>, <code>BHASHINI_PIPELINE_ID</code></td><td>Translation, voice/ASR.</td></tr>
+      <tr><td><strong>Verification / e-sign</strong></td><td><code>SETU_CLIENT_ID</code>, <code>SETU_CLIENT_SECRET</code>, <code>DOCUSIGN_INTEGRATION_KEY</code>, <code>DOCUSIGN_USER_ID</code>, <code>DOCUSIGN_ACCOUNT_ID</code>, <code>DOCUSIGN_PRIVATE_KEY</code></td><td>DigiLocker verification, document signing.</td></tr>
+      <tr><td><strong>Observability</strong></td><td><code>SENTRY_DSN</code>, <code>SENTRY_ENVIRONMENT</code>, <code>POSTHOG_KEY</code>, <code>POSTHOG_HOST</code>, <code>NEXT_PUBLIC_SENTRY_DSN</code></td><td>Server/client errors, product analytics.</td></tr>
+      <tr><td><strong>Proof receipts</strong></td><td><code>PROOF_RECEIPT_HMAC_SECRET</code>, <code>PROOF_RECEIPTS_ENABLED</code></td><td>Gated receipt signing; keep disabled until validated.</td></tr>
+      <tr><td><strong>Admin / demo</strong></td><td><code>ADMIN_EMAIL</code>, <code>ADMIN_PASSWORD</code>, <code>DEMO_USER_ENABLED</code></td><td>Bootstrap admin; remove demo access in production.</td></tr>
+      <tr><td><strong>Search</strong></td><td><code>ALGOLIA_APP_ID</code>, <code>ALGOLIA_ADMIN_KEY</code>, <code>ALGOLIA_SEARCH_KEY</code></td><td>InstantSearch indexing and query.</td></tr>
+      <tr><td><strong>Client public</strong></td><td><code>NEXT_PUBLIC_API_URL</code>, <code>NEXT_PUBLIC_GA_ID</code>, <code>NEXT_PUBLIC_GOOGLE_CLIENT_ID</code>, <code>NEXT_PUBLIC_POSTHOG_KEY</code>, <code>NEXT_PUBLIC_POSTHOG_HOST</code></td><td>Browser configuration. Public by design &mdash; never put secrets here.</td></tr>
+      <tr><td><strong>Feature flags</strong></td><td><code>FEATURE_*</code> / experimental flags</td><td>Controlled rollout. Default off; document owner and expiry.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <span class="label">Public variable rule</span>
+    <p>Anything prefixed <code>NEXT_PUBLIC_</code> is shipped to the browser. It may contain an identifier (e.g. a PostHog key) but never a secret with write, admin or payment capability. Review the built bundle before every launch.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>Appendix A &middot; Environment variable register</span>
+    <span>Names only &middot; values live in the secret manager</span>
+  </div>
+</section>
+
+<!-- ================= APPENDIX B ================= -->
+<section class="major">
+  <h2><span class="num">B</span>Appendix B &mdash; Deployment runbook</h2>
+
+  <h3>B.1 Local stack</h3>
+  <pre><code># 1. Clone and install
+git clone https://github.com/dhruvkumar2107/NyayNow.git
+cd NyayNow
+
+# 2. Frontend
+cd client
+npm ci
+cp ../.env.example .env.local   # fill local values; never commit
+
+# 3. Backend
+cd ../server
+npm ci
+cp ../.env.example .env         # local Mongo + test keys
+
+# 4. AI service (optional for non-AI work)
+cd "../python service"
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+
+# 5. Full stack
+cd ..
+docker compose up --build</code></pre>
+
+  <p class="small">Windows note: activate the virtual environment with <code>.venv\Scripts\activate</code>. Docker Compose starts MongoDB 6, the AI service, the API and the web app. Confirm ports before running multiple stacks.</p>
+
+  <h3>B.2 Pre-deploy checklist</h3>
+  <ul class="checklist two">
+    <li>CI green on the release commit.</li>
+    <li>Migrations reviewed and rehearsed on staging.</li>
+    <li>Environment variables present in the target environment.</li>
+    <li>Payment keys point to the correct mode (test vs live).</li>
+    <li>CORS/CLIENT_URL matches the deployed domain.</li>
+    <li>Backup taken immediately before migration.</li>
+    <li>Rollback image/commit identified.</li>
+    <li>On-call owner available for the window.</li>
+  </ul>
+
+  <h3 class="pb">B.3 Production release sequence</h3>
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:8%">Step</th><th style="width:30%">Action</th><th style="width:36%">Verification</th><th style="width:26%">Rollback</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Take Atlas backup / confirm PITR window.</td><td>Backup ID recorded.</td><td>Restore point known.</td></tr>
+      <tr><td>2</td><td>Deploy API to Render.</td><td><code>/healthz</code> and <code>/readyz</code> 200; Sentry release created.</td><td>Redeploy previous image.</td></tr>
+      <tr><td>3</td><td>Run migrations in order.</td><td>Migration log; row counts; index build status.</td><td>Run down-migration or restore.</td></tr>
+      <tr><td>4</td><td>Deploy web to Vercel.</td><td>Home, pricing, assistant, careers load; CSP has no violations.</td><td>Promote previous deployment.</td></tr>
+      <tr><td>5</td><td>Smoke test payments in live mode with a low-value plan.</td><td>Order &rarr; webhook &rarr; plan activation &rarr; receipt.</td><td>Disable checkout; refund; fix.</td></tr>
+      <tr><td>6</td><td>Watch dashboards for 60 minutes.</td><td>5xx, latency, payment success, socket connections.</td><td>Roll back if thresholds breached.</td></tr>
+      <tr><td>7</td><td>Announce and monitor 48 hours.</td><td>Support queue, Sentry, uptime, conversion.</td><td>Incident runbook.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>B.4 Rollback</h3>
+  <pre><code># Render: redeploy the previous successful image/commit
+# Vercel: promote the previous production deployment
+# Database: prefer forward-fix; restore only with explicit approval
+# 1. Stop writes if data integrity is at risk
+# 2. Capture logs and current state
+# 3. Restore to the pre-deploy backup
+# 4. Verify auth, payments, and core reads
+# 5. Write an incident note with timeline and follow-ups</code></pre>
+
+  <div class="doc-footer">
+    <span>Appendix B &middot; Deployment runbook</span>
+    <span>Adjust commands to the final repository layout</span>
+  </div>
+</section>
+
+<!-- ================= APPENDIX C ================= -->
+<section class="major">
+  <h2><span class="num">C</span>Appendix C &mdash; Known gaps &amp; technical debt</h2>
+
+  <p class="lead">This is the honest fix list. None of these should be hidden from the team or from investors during diligence.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:6%">ID</th><th style="width:30%">Gap</th><th style="width:38%">Impact</th><th style="width:16%">Owner</th><th style="width:10%">Priority</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>G1</td><td>Legacy plan enum vs public plan names</td><td>Billing and entitlement mismatches; reporting confusion.</td><td>Dhruv</td><td>P0</td></tr>
+      <tr><td>G2</td><td>No unique constraint on payment provider event ID</td><td>Double activation or duplicate side effects on webhook retry.</td><td>Dhruv</td><td>P0</td></tr>
+      <tr><td>G3</td><td>Integration tests need a live Mongo instance</td><td>CI cannot fully validate data behaviour without a service container.</td><td>Rudraksh</td><td>P1</td></tr>
+      <tr><td>G4</td><td>Marketplace search is coarse</td><td>Poor match quality; users cannot filter by fee, language and availability reliably.</td><td>Rudraksh + Tejas</td><td>P1</td></tr>
+      <tr><td>G5</td><td>Proof receipts are gated and incomplete</td><td>Cannot claim verified citations; exact-quote only, not semantic support.</td><td>Product</td><td>P1</td></tr>
+      <tr><td>G6</td><td>Firm/team features are in development</td><td>Firm plan cannot be sold as complete; avoid enterprise commitments.</td><td>Founders</td><td>P0</td></tr>
+      <tr><td>G7</td><td>Admin audit UI is limited</td><td>Harder to investigate sensitive actions and demonstrate accountability.</td><td>Tejas + Rudraksh</td><td>P1</td></tr>
+      <tr><td>G8</td><td>Free-tier cold starts</td><td>Slow first request; hurts trust and conversion.</td><td>Rudraksh</td><td>P0</td></tr>
+      <tr><td>G9</td><td>Docs drift (Next 14 vs 15.5)</td><td>Onboarding errors and incorrect assumptions.</td><td>Rudraksh</td><td>P1</td></tr>
+      <tr><td>G10</td><td>AI evaluation is ad hoc</td><td>No regression signal for prompt/model changes; quality is anecdotal.</td><td>Product</td><td>P0</td></tr>
+      <tr><td>G11</td><td>No formal accessibility audit</td><td>Legal-aid and disabled users may be excluded; compliance risk.</td><td>Tejas</td><td>P1</td></tr>
+      <tr><td>G12</td><td>Notification delivery is not fully unified</td><td>Missed appointments and lead responses; inconsistent channel behaviour.</td><td>Rudraksh</td><td>P1</td></tr>
+      <tr><td>G13</td><td>State-specific legal template coverage is uneven</td><td>Drafts may omit stamp duty or local requirements.</td><td>Product + counsel</td><td>P1</td></tr>
+      <tr><td>G14</td><td>No published status page</td><td>Users cannot distinguish outage from their own issue.</td><td>Rudraksh</td><td>P2</td></tr>
+      <tr><td>G15</td><td>Analytics lacks a consent-gated data map</td><td>DPDP ambiguity; possible collection of sensitive query text.</td><td>Dhruv</td><td>P0</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <span class="label">Debt rule</span>
+    <p>Every sprint reserves at least 20% capacity for P0 debt. If a P0 gap is not closed by the launch gate, the launch scope is reduced rather than the gate being waived.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>Appendix C &middot; Known gaps</span>
+    <span>Review at every sprint planning</span>
+  </div>
+</section>
+
+<!-- ================= APPENDIX D ================= -->
+<section class="major">
+  <h2><span class="num">D</span>Appendix D &mdash; Glossary</h2>
+
+  <table class="tbl kv">
+    <tbody>
+      <tr><td>BNS 2024</td><td>Bharatiya Nyaya Sanhita, which replaced the Indian Penal Code (IPC) for criminal offences.</td></tr>
+      <tr><td>DPDP Act 2023</td><td>Digital Personal Data Protection Act, India&rsquo;s data-protection law; requires notice, consent, purpose limitation and data-principal rights.</td></tr>
+      <tr><td>eCourts</td><td>Government platform for court case status and related services.</td></tr>
+      <tr><td>FIRAC</td><td>Facts, Issues, Rules, Application, Conclusion &mdash; a legal analysis structure.</td></tr>
+      <tr><td>HMAC</td><td>Hash-based message authentication code; used for tamper-evident proof receipts.</td></tr>
+      <tr><td>IDOR</td><td>Insecure direct object reference; accessing another user&rsquo;s record by changing an identifier.</td></tr>
+      <tr><td>JWT</td><td>JSON Web Token; signed credential used for authentication.</td></tr>
+      <tr><td>LCP</td><td>Largest Contentful Paint; a Core Web Vital for perceived load speed.</td></tr>
+      <tr><td>NALSA</td><td>National Legal Services Authority; legal aid coordination body (helpline 15100).</td></tr>
+      <tr><td>PITR</td><td>Point-in-time recovery; restoring a database to a specific moment.</td></tr>
+      <tr><td>RACI</td><td>Responsible, Accountable, Consulted, Informed &mdash; a decision-rights matrix.</td></tr>
+      <tr><td>RPO / RTO</td><td>Recovery point objective (acceptable data loss) / recovery time objective (acceptable downtime).</td></tr>
+      <tr><td>RTL</td><td>Right-to-left script direction, required for Urdu.</td></tr>
+      <tr><td>Socket.io</td><td>Real-time bidirectional event transport used for chat and live updates.</td></tr>
+      <tr><td>SSR</td><td>Server-side rendering; improves SEO and first paint for content pages.</td></tr>
+      <tr><td>WCAG 2.2 AA</td><td>Web Content Accessibility Guidelines, level AA &mdash; the accessibility target for core flows.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout gold">
+    <span class="label">Final note</span>
+    <p>This document is a planning artefact, not a legal opinion or a security certification. It should be updated as the system changes, with the date and owner of each revision recorded. When the document and the code disagree, inspect the code, then fix the document.</p>
+  </div>
+
+  <div class="doc-footer">
+    <span>Appendix D &middot; Glossary</span>
+    <span>End of document</span>
+  </div>
+</section>
+
+
+</div>
+</body>
+</html>
+

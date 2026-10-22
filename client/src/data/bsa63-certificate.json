@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-10-18T00:00:00Z",
+  "version": "1.0.0-seed",
+  "legalReview": true,
+  "reviewStatus": "pending-counsel-review",
+  "instrument": {
+    "act": "Bharatiya Sakshya Adhiniyam, 2023",
+    "section": "63",
+    "schedule": "Second Schedule",
+    "replaces": "Section 65B, Indian Evidence Act, 1872",
+    "source": {
+      "name": "India Code - Bharatiya Sakshya Adhiniyam, 2023 (Act 47 of 2023)",
+      "url": "https://www.indiacode.nic.in/handle/123456789/20066"
+    }
+  },
+  "disclaimer": "This is a draft template for a Section 63 BSA certificate, generated for review by a qualified advocate. It is NOT a valid certificate and must not be filed as-is. The exact form prescribed in the Second Schedule, the certifier's authority, and the hash procedure must be verified by counsel before use. NyayNow does not certify, timestamp, or store evidence.",
+  "parts": [
+    {
+      "id": "A",
+      "title": "Certificate by the person in charge of the computer or communication device",
+      "clauses": [
+        "I, {{certifierName}}, {{certifierDesignation}}, being the person in charge of the computer or communication device described below, do hereby certify the following.",
+        "The electronic record described above was produced by the computer or communication device described below, which was used regularly to create, process, store or transmit information of the kind contained in the electronic record.",
+        "The information contained in the electronic record was supplied to the computer or communication device in the ordinary course of its lawful use.",
+        "Throughout the material period, the computer or communication device was operating properly, and if it was not, that did not affect the accuracy of the electronic record or the proper operation of the device.",
+        "The electronic record was produced by the computer or communication device in the ordinary course of its use, and the information reproduced is derived from the information supplied in the ordinary course of use."
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Certificate by an expert regarding the hash value",
+      "clauses": [
+        "I, {{expertName}}, {{expertDesignation}}, an expert in computing the hash value of an electronic record, do hereby certify the following.",
+        "I have computed the hash value of the electronic record described above using the {{hashAlgorithm}} algorithm.",
+        "The hash value so computed is: {{hashValue}}.",
+        "The electronic record has been produced in accordance with the requirements of Section 63 of the Bharatiya Sakshya Adhiniyam, 2023 and the Second Schedule thereto.",
+        "The hash value and the method of computation are, to the best of my knowledge and belief, true and correct."
+      ]
+    }
+  ],
+  "reviewNote": "LEGAL-REVIEW-REQUIRED: confirm clause wording, the prescribed Second Schedule form, Part A/Part B roles, and the hash procedure with Indian counsel before enabling any filing or download."
+}

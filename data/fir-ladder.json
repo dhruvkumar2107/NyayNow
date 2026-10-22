@@ -1,0 +1,15 @@
+﻿{
+  "generatedAt": "2026-10-18T00:00:00Z",
+  "legalReview": true,
+  "version": "1.0.0-seed",
+  "steps": [
+    { "id": 1, "title": "FIR draft for the police station", "provisions": ["BNSS Section 173"], "required": ["situation", "details"] },
+    { "id": 2, "title": "Written complaint to the Superintendent of Police", "provisions": ["BNSS Section 175"], "required": ["refusal note"] },
+    { "id": 3, "title": "Application to the Magistrate", "provisions": ["BNSS Section 176"], "required": ["covering letter"] }
+  ],
+  "provisions": {
+    "173": "BNSS Section 173 (FIR registration)",
+    "175": "BNSS Section 175 (Complaint to SP)",
+    "176": "BNSS Section 176 (Magistrate direction)"
+  }
+}
